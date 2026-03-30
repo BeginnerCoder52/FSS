@@ -1,0 +1,84 @@
+# ==============================================================================
+# .gitignore cho dự án Fridge Supervisor System (FSS)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. C/C++ & CMake (sensor_daemon, cpp_camera_core)
+# ------------------------------------------------------------------------------
+# Bỏ qua toàn bộ thư mục build sinh ra từ CMake
+build/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+# Bỏ qua các file thực thi và object
+*.o
+*.so
+*.a
+*.out
+*.exe
+sensor_daemon_exec
+camera_core_exec
+
+# ------------------------------------------------------------------------------
+# 2. Python (py_ai_core, db_daemon, py_bridge)
+# ------------------------------------------------------------------------------
+# Bỏ qua môi trường ảo (Virtual Environments)
+venv/
+env/
+.env
+# Bỏ qua cache của Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+# Bỏ qua log của Python
+*.log
+
+# ------------------------------------------------------------------------------
+# 3. Node.js & UI (magicmirror)
+# ------------------------------------------------------------------------------
+# Bỏ qua các dependencies tải về từ npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# (Tùy chọn) Có thể bỏ qua config thật, chỉ giữ lại file config.js.template
+magicmirror/config/config.js
+
+# ------------------------------------------------------------------------------
+# 4. Trí tuệ nhân tạo (YOLOv11 & Ultralytics)
+# ------------------------------------------------------------------------------
+# Bỏ qua các file trọng số (Weights) vì dung lượng rất lớn (hàng chục/trăm MB)
+*.pt
+*.onnx
+*.engine
+# Bỏ qua thư mục sinh ra khi training/testing model của Ultralytics
+runs/
+# Bỏ qua các tập dữ liệu ảnh/video test cục bộ
+frt_app/py_ai_core/tests/data/*
+
+# ------------------------------------------------------------------------------
+# 5. Database & Dữ liệu hệ thống
+# ------------------------------------------------------------------------------
+# Bỏ qua database thật để tránh đè dữ liệu của nhau khi pull/push
+*.db
+*.sqlite
+*.sqlite3
+db_daemon/data/fss_core.db
+# Bỏ qua thư mục chứa ảnh chụp thực tế nếu bạn có test local (giả lập /opt/fss)
+images_test/
+local_fss_data/
+
+# ------------------------------------------------------------------------------
+# 6. OS & IDE (Visual Studio Code, Clion, etc.)
+# ------------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
