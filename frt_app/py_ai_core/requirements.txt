@@ -1,0 +1,9 @@
+# OpenCV bản không có GUI, cực kỳ phù hợp cho môi trường Embedded/Headless (Pi 4)
+opencv-python-headless>=4.8.0
+
+# Xử lý ma trận dữ liệu ảnh đọc ra từ Shared Memory
+numpy>=1.24.0
+
+# Giao tiếp IPC
+pyzmq>=25.0.0
+sdbus-python>=0.12.0

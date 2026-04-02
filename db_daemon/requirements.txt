@@ -1,0 +1,3 @@
+# Giao tiếp IPC
+pyzmq>=25.0.0
+sdbus-python>=0.12.0

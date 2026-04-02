@@ -15,7 +15,84 @@ Dựa trên sơ đồ SAD và SDD mới nhất, hệ thống được tối ưu 
 
 ## 📁 Cấu Trúc Hệ Thống
 
-_(Tham khảo cây thư mục bên trên)_
+FSS/
+├── setup.sh # Script tự động cấu hình môi trường, build C++ và cài Python/Node
+├── fss_env_setup.sh # Script cấu hình systemd service và mount /opt/fss vào RAM (tmpfs)
+├── docs/ # Chứa tài liệu SAD, SDD, Class Diagram
+│
+├── drivers/ # Hardware Abstraction Layer (HAL)
+│ ├── sensor/
+│ │ ├── mc-38/ # Driver cho cảm biến cửa từ tính
+│ │ ├── sht3x/ # Driver I2C cho cảm biến nhiệt độ/độ ẩm
+│ │ └── vl53l0x/ # Driver I2C cho cảm biến khoảng cách ToF
+│ └── usb_web_camera/ # Driver bọc các hàm V4L2 cho Camera
+│
+├── sensor_daemon/ # [C/C++] Core giao tiếp phần cứng tốc độ cao
+│ ├── CMakeLists.txt # File cấu hình build CMake
+│ ├── include/ # Header files (_.h, _.hpp)
+│ │ ├── SensorDaemonApp.hpp
+│ │ ├── InputProcessor.hpp # Đọc I2C SHT3x, GPIO Door/Distance Sensor
+│ │ ├── OutputProcessor.hpp # Bắn ZMQ IPC
+│ │ ├── SystemdWatchdog.hpp
+│ │ └── SdbusInterface.hpp # Giao tiếp D-Bus C++ (sdbus-c++)
+│ └── src/ # Source files (\*.cpp)
+│ ├── main.cpp
+│ ├── SensorDaemonApp.cpp
+│ └── ... (các file implement tương ứng)
+│
+├── frt_app/ # [C/C++ & Python] Hybrid AI Vision Core
+│ ├── cpp_camera_core/ # [C/C++] Xử lý V4L2 và ghi Shared Memory siêu tốc
+│ │ ├── CMakeLists.txt
+│ │ ├── include/
+│ │ └── src/
+│ │ ├── main.cpp
+│ │ ├── VideoCapture.cpp # Đọc USB Camera qua V4L2 API
+│ │ └── ShmWriter.cpp # Ghi mảng byte frame vào /fss_video_frame
+│ │
+│ └── py_ai_core/ # [Python] Chạy suy luận YOLOv11
+│ ├── requirements.txt # ultralytics, numpy, zmq, sdbus-python
+│ ├── models/ # Chứa weights YOLO (.pt)
+│ └── src/
+│ ├── **init**.py
+│ ├── main.py
+│ ├── FrtDaemonApp.py
+│ ├── YoloPipeline.py # Đọc frame từ SHM, chạy model
+│ └── SdbusInterface.py# Bắn tín hiệu FoodDetected qua D-Bus
+│
+├── db_daemon/ # [Python] Data Controller trung tâm
+│ ├── requirements.txt # sqlite3, asyncio, zmq, sdbus-python
+│ ├── data/ # Nơi chứa db fss_core.db
+│ └── src/
+│ ├── **init**.py
+│ ├── main.py
+│ ├── DbDaemonApp.py
+│ ├── SqliteManager.py # Cập nhật số lượng thực phẩm
+│ ├── PosixShmReader.py # Lấy ảnh lúc có sự kiện đóng cửa
+│ ├── DiskFileManager.py # Lưu file vật lý
+│ └── DbDbusInterface.py # Phát tín hiệu lên UI (UIUpdateRequired)
+│
+└── magicmirror/ # [Node.js & Python] UI & Dashboard
+├── package.json
+├── serveronly/
+├── js/
+├── config/
+│ └── config.js
+└── modules/
+├── MMM-FSS-Food/ # UI Quản lý thực phẩm
+│ ├── MMM-FSS-Food.js # [JS] Render DOM, hiệu ứng Frontend
+│ ├── MMM-FSS-Food.css
+│ ├── node_helper.js # [JS] Quản lý vòng đời module Node.js
+│ └── py_bridge/ # [Python] Script chạy ngầm để hứng IPC/D-Bus
+│ ├── requirements.txt
+│ └── food_dbus_listener.py # Chuyển D-Bus thành JSON bắn qua stdout cho node_helper
+│
+└── MMM-FSS-Env/ # UI Giám sát môi trường
+├── MMM-FSS-Env.js
+├── MMM-FSS-Env.css
+├── node_helper.js
+└── py_bridge/
+├── requirements.txt
+└── env_zmq_client.py # Client Python lắng nghe EnvDataUpdated qua ZMQ
 
 ## ⚙️ Hướng dẫn Khởi chạy (Dành cho Development)
 

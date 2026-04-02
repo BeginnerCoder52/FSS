@@ -8,12 +8,26 @@ set -e
 
 echo "[*] Cập nhật hệ thống & Cài đặt Build Tools, C++ Dependencies..."
 sudo apt-get update
-sudo apt-get install -y build-essential cmake pkg-config \
-                        libi2c-dev libv4l-dev \
-                        libsystemd-dev libsdbus-c++-dev \
-                        libzmq3-dev libsqlite3-dev \
-                        python3-venv python3-dev \
-                        nodejs npm
+sudo apt-get install -y \
+    build-essential cmake pkg-config \
+    libi2c-dev i2c-tools \
+    libv4l-dev v4l-utils \
+    libsystemd-dev libsdbus-c++-dev libdbus-1-dev \
+    libzmq3-dev \
+    libsqlite3-dev \
+    libopencv-dev \
+    python3-venv python3-dev \
+    nodejs npm
+
+# Ghi chú cho các thư viện trên:
+# - i2c-tools, v4l-utils: Giúp bạn gõ lệnh i2cdetect, v4l2-ctl để test cảm biến/camera ngay trên terminal.
+# - libdbus-1-dev: Bắt buộc phải có để `pip install sdbus-python` biên dịch thành công.
+# - libopencv-dev: Cung cấp header C++ cho CMake của `cpp_camera_core`.
+
+# --- THÊM DÒNG NÀY VÀO ---
+echo "[*] Cài đặt PM2 toàn cục để quản lý tiến trình UI..."
+sudo npm install -g pm2
+# -------------------------
 
 echo "[*] Cấu hình thư mục Data chia sẻ (/opt/fss)..."
 sudo mkdir -p /opt/fss/images
