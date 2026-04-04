@@ -1,0 +1,2 @@
+# Chỉ cần ZMQ Client để nhận Data Sensor từ DBDaemon/SensorDaemon
+pyzmq>=25.0.0

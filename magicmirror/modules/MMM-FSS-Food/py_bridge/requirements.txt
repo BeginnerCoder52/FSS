@@ -1,0 +1,3 @@
+# Lắng nghe tín hiệu từ DBDaemon và FRTApp qua D-Bus/ZMQ
+pyzmq>=25.0.0
+sdbus-python>=0.12.0
