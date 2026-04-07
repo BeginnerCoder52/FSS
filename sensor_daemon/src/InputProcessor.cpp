@@ -1,6 +1,6 @@
 /**
  * @file InputProcessor.cpp
- * @brief Implementation of the InputProcessor class.
+ * @brief Implementation of the InputProcessor class for real data polling.
  */
 
 #include "InputProcessor.hpp"
@@ -34,31 +34,36 @@ bool InputProcessor::init_sensors() {
 }
 
 std::map<std::string, float> InputProcessor::poll_all_data() {
-    // API matching Bảng 1
     std::map<std::string, float> data;
     
     // Update timestamp
     last_poll_timestamp = static_cast<float>(std::time(nullptr));
-    
-    // TODO: Poll real data from drivers
-    data["temp"] = 25.0f; // Placeholder
-    data["humid"] = 60.0f; // Placeholder
-    data["distance"] = 0.5f; // Placeholder (meters)
-    data["door"] = 0.0f; // 0 for CLOSED, 1 for OPEN
     data["timestamp"] = last_poll_timestamp;
+    
+    // Poll SHT3x
+    auto env = sht3x->calculate_readings();
+    data["temp"] = env["temp"];
+    data["humid"] = env["humid"];
+
+    // Poll VL53L0X
+    data["distance"] = vl53l0x->read_distance_meters();
+    data["presence"] = vl53l0x->is_user_detected() ? 1.0f : 0.0f;
+
+    // Poll Door
+    data["door"] = door_sensor->is_open() ? 1.0f : 0.0f;
 
     return data;
 }
 
 void InputProcessor::get_env_data(float& temp, float& hum) {
-    temp = 25.0f;
-    hum = 60.0f;
+    temp = sht3x->get_temperature();
+    hum = sht3x->get_humidity();
 }
 
 uint16_t InputProcessor::get_distance_data() {
-    return 500;
+    return vl53l0x->get_distance();
 }
 
 bool InputProcessor::get_door_status() {
-    return false;
+    return door_sensor->is_open();
 }

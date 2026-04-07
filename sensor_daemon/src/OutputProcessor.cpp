@@ -26,9 +26,7 @@ void OutputProcessor::broadcast_env_data(float temp, float hum) {
 }
 
 void OutputProcessor::broadcast_distance_data(uint16_t distance) {
-    // Convert mm to meters if needed or send as is
-    bool detected = (distance < 800);
-    sdbus_interface->emit_presence_signal(detected);
+    // Distance usually triggers presence
 }
 
 void OutputProcessor::broadcast_door_status(bool is_open) {
@@ -36,8 +34,7 @@ void OutputProcessor::broadcast_door_status(bool is_open) {
 }
 
 void OutputProcessor::broadcast_system_events(const std::map<std::string, float>& data) {
-    // API matching Bảng 1
-    // Analyze data and trigger signals
+    // Logic to decide when to broadcast based on thresholds or change detection
     if (data.count("temp") && data.count("humid")) {
         broadcast_env_data(data.at("temp"), data.at("humid"));
     }
@@ -46,8 +43,7 @@ void OutputProcessor::broadcast_system_events(const std::map<std::string, float>
         broadcast_door_status(data.at("door") > 0.5f);
     }
     
-    if (data.count("distance")) {
-        // Example logic for presence
-        sdbus_interface->emit_presence_signal(data.at("distance") < 0.8f);
+    if (data.count("presence")) {
+        sdbus_interface->emit_presence_signal(data.at("presence") > 0.5f);
     }
 }
