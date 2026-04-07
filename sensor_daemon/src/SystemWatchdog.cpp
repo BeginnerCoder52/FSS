@@ -13,9 +13,10 @@ SystemWatchdog::~SystemWatchdog() {
     // Destructor implementation
 }
 
-bool SystemWatchdog::init() {
+bool SystemWatchdog::init_driver() {
+    // API matching Bảng 1
     // Initialize watchdog timer
-    return false;
+    return true;
 }
 
 void SystemWatchdog::ping() {

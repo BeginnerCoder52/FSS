@@ -27,10 +27,10 @@ public:
     ~SystemWatchdog();
 
     /**
-     * @brief Initializes the watchdog timer and parameters.
+     * @brief Initializes the watchdog driver and parameters (API matching Bảng 1).
      * @return true if initialized successfully, false otherwise.
      */
-    bool init();
+    bool init_driver();
 
     /**
      * @brief Pings the watchdog to indicate the application is still alive.

@@ -13,12 +13,13 @@
 
 InputProcessor::InputProcessor() 
     : last_poll_timestamp(0.0f) {
-    m_i2c_handler = std::make_shared<I2cHandler>("/dev/i2c-1");
+    m_i2c_main = std::make_shared<I2cHandler>("/dev/i2c-1");
+    m_i2c_ext = std::make_shared<I2cHandler>("/dev/i2c-6");
     m_gpio_handler = std::make_shared<GpioHandler>("gpiochip4");
 
-    sht3x = std::make_unique<Sht3xDriver>(m_i2c_handler);
-    vl53l0x = std::make_unique<Vl53l0xDriver>(m_i2c_handler);
-    door_sensor = std::make_unique<DoorSensorDriver>(m_gpio_handler, 17); // Example pin
+    sht3x = std::make_unique<Sht3xDriver>(m_i2c_main, 0x44);
+    vl53l0x = std::make_unique<Vl53l0xDriver>(m_i2c_ext, 0x29);
+    door_sensor = std::make_unique<DoorSensorDriver>(m_gpio_handler, 17); // MC-38 (GPIO 17)
 }
 
 InputProcessor::~InputProcessor() {
@@ -26,9 +27,9 @@ InputProcessor::~InputProcessor() {
 
 bool InputProcessor::init_sensors() {
     bool success = true;
-    if (!sht3x->init()) success = false;
-    if (!vl53l0x->init()) success = false;
-    if (!door_sensor->init()) success = false;
+    if (!sht3x->init_driver()) success = false;
+    if (!vl53l0x->init_driver()) success = false;
+    if (!door_sensor->init_driver()) success = false;
     return success;
 }
 

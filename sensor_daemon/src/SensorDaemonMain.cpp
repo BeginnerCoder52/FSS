@@ -25,7 +25,7 @@ SensorDaemonMain::~SensorDaemonMain() {
 bool SensorDaemonMain::init_app() {
     if (!input_processor->init_sensors()) return false;
     if (!output_processor->init_ipc()) return false;
-    if (!watchdog->init()) return false;
+    if (!watchdog->init_driver()) return false;
     current_state = "IDLE";
     return true;
 }

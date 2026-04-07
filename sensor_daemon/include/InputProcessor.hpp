@@ -66,7 +66,8 @@ public:
     bool get_door_status();
 
 private:
-    std::shared_ptr<I2cHandler> m_i2c_handler;
+    std::shared_ptr<I2cHandler> m_i2c_main; ///< Handler for i2c-1.
+    std::shared_ptr<I2cHandler> m_i2c_ext;  ///< Handler for i2c-6.
     std::shared_ptr<GpioHandler> m_gpio_handler;
 
     std::unique_ptr<Sht3xDriver> sht3x;     ///< SHT3x Environmental sensor.
