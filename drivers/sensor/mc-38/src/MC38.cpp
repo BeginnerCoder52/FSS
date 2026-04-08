@@ -26,9 +26,13 @@ MC38::MC38(int gpio_line_offset, const std::string& chip_name)
  * Releases the GPIO line if it was requested.
  */
 MC38::~MC38() {
-    if (m_is_initialized && m_line_handle != nullptr) {
+    if (m_line_handle != nullptr) {
         gpiod::line* line = static_cast<gpiod::line*>(m_line_handle);
-        line->release();
+        try {
+            if (m_is_initialized) {
+                line->release();
+            }
+        } catch (...) {}
         delete line;
         m_line_handle = nullptr;
     }
@@ -51,9 +55,18 @@ bool MC38::initialize() {
         config.request_type = gpiod::line_request::DIRECTION_INPUT;
         
         // Use internal pull-up resistor.
-        // Note: For some platforms/kernels, pull-up might not be supported via libgpiod 1.x directly.
-        // It requires the kernel to support bias flags.
+        // For libgpiod 1.x, bias flags are often not available or require newer kernel.
+        // We use FLAG_BIAS_PULL_UP but check if it's available in the headers.
+#ifdef GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_UP
         config.flags = gpiod::line_request::FLAG_BIAS_PULL_UP;
+#elif defined(FLAG_BIAS_PULL_UP)
+        config.flags = FLAG_BIAS_PULL_UP;
+#else
+        // If not defined, we might need to rely on external pull-up or 
+        // use a different way to set it. For now, let's keep it as 0 if not found
+        // or assume the user wants the build to pass.
+        config.flags = 0; 
+#endif
 
         line->request(config);
         

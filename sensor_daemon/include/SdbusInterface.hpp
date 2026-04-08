@@ -64,7 +64,7 @@ public:
     void log_bus_error(const std::string& error_msg);
 
 private:
-    void* system_bus;           ///< Linux System D-Bus connection.
+    void* system_bus;           ///< Internal sdbus-c++ data (SdbusData*).
     std::string interface_name; ///< D-Bus interface name (vn.edu.uit.FSS.Sensor).
     bool is_connected;          ///< Bus connection status.
     int dropped_messages_count; ///< Count of failed signal deliveries.

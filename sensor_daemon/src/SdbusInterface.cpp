@@ -19,23 +19,29 @@ SdbusInterface::SdbusInterface()
 }
 
 SdbusInterface::~SdbusInterface() {
+    if (system_bus) {
+        delete static_cast<SdbusData*>(system_bus);
+        system_bus = nullptr;
+    }
 }
 
 bool SdbusInterface::init_interface() {
     try {
+        if (system_bus) {
+            delete static_cast<SdbusData*>(system_bus);
+            system_bus = nullptr;
+        }
+
         auto data = new SdbusData();
         data->connection = sdbus::createSystemBusConnection();
         
         const std::string objectPath = "/vn/edu/uit/FSS/Sensor";
         data->object = sdbus::createObject(*data->connection, objectPath);
         
-        // Register Signals
-        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "EnvironmentDataChanged")
-                     .withParameters<float, float>();
-        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "DoorStateChanged")
-                     .withParameters<std::string>();
-        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "UserPresenceDetected")
-                     .withParameters<bool>();
+        // Register Signals on the interface
+        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "EnvironmentDataChanged", "dd"); // d for double/float
+        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "DoorStateChanged", "s");        // s for string
+        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "UserPresenceDetected", "b");    // b for boolean
         
         data->object->finishRegistration();
         system_bus = data;
@@ -43,38 +49,54 @@ bool SdbusInterface::init_interface() {
         return true;
     } catch (const sdbus::Error& e) {
         std::cerr << "Sdbus-c++ init failed: " << e.what() << std::endl;
+        is_connected = false;
         return false;
     }
 }
 
 void SdbusInterface::emit_env_signal(const std::map<std::string, float>& data_map) {
-    if (!is_connected) return;
+    if (!is_connected || !system_bus) return;
     auto data = static_cast<SdbusData*>(system_bus);
     try {
+        // Find keys safely
+        float temp = 0.0f;
+        float humid = 0.0f;
+        if (data_map.count("temp")) temp = data_map.at("temp");
+        if (data_map.count("humid")) humid = data_map.at("humid");
+
         data->object->emitSignal("EnvironmentDataChanged")
                      .onInterface("vn.edu.uit.FSS.Sensor")
-                     .withArguments(data_map.at("temp"), data_map.at("humid"));
-    } catch (...) { dropped_messages_count++; }
+                     .withArguments(static_cast<double>(temp), static_cast<double>(humid));
+    } catch (const sdbus::Error& e) { 
+        std::cerr << "Sdbus emit_env_signal failed: " << e.what() << std::endl;
+        dropped_messages_count++; 
+    }
 }
 
 void SdbusInterface::emit_door_signal(const std::string& state) {
-    if (!is_connected) return;
+    if (!is_connected || !system_bus) return;
     auto data = static_cast<SdbusData*>(system_bus);
     try {
         data->object->emitSignal("DoorStateChanged")
                      .onInterface("vn.edu.uit.FSS.Sensor")
                      .withArguments(state);
-    } catch (...) { dropped_messages_count++; }
+    } catch (const sdbus::Error& e) { 
+        std::cerr << "Sdbus emit_door_signal failed: " << e.what() << std::endl;
+        dropped_messages_count++; 
+    }
 }
 
 void SdbusInterface::emit_presence_signal(bool user) {
-    if (!is_connected) return;
+    if (!is_connected || !system_bus) return;
     auto data = static_cast<SdbusData*>(system_bus);
     try {
         data->object->emitSignal("UserPresenceDetected")
                      .onInterface("vn.edu.uit.FSS.Sensor")
                      .withArguments(user);
-    } catch (...) { dropped_messages_count++; }
+    } catch (const sdbus::Error& e) { 
+        std::cerr << "Sdbus emit_presence_signal failed: " << e.what() << std::endl;
+        dropped_messages_count++; 
+    }
 }
 
 bool SdbusInterface::reconnect_bus() {
