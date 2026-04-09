@@ -8,9 +8,10 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <cstring>
 
 // Include original driver header
-#include "../../drivers/sensor/sht3x/src/driver_sht31.h"
+#include "driver_sht31.h"
 
 // Static handle for the C driver callbacks
 static sht31_handle_t g_sht31_handle;

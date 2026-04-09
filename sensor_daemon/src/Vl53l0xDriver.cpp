@@ -8,7 +8,7 @@
 #include <iostream>
 
 // Include original driver header
-#include "../../drivers/sensor/vl53l0x/src/vl53l0x.h"
+#include "vl53l0x.h"
 
 // Private data structure for VL53L0X driver
 static vl53l0x_t g_vl53l0x_dev;

@@ -35,15 +35,8 @@ bool SdbusInterface::init_interface() {
         auto data = new SdbusData();
         data->connection = sdbus::createSystemBusConnection();
         
-        const std::string objectPath = "/vn/edu/uit/FSS/Sensor";
-        data->object = sdbus::createObject(*data->connection, objectPath);
+        data->object = sdbus::createObject(*data->connection, sdbus::ObjectPath{"/vn/edu/uit/FSS/Sensor"});
         
-        // Register Signals on the interface
-        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "EnvironmentDataChanged", "dd"); // d for double/float
-        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "DoorStateChanged", "s");        // s for string
-        data->object->registerSignal("vn.edu.uit.FSS.Sensor", "UserPresenceDetected", "b");    // b for boolean
-        
-        data->object->finishRegistration();
         system_bus = data;
         is_connected = true;
         return true;
