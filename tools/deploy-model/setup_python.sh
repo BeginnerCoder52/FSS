@@ -6,8 +6,8 @@
 
 curl -LsSf https://astral.sh/uv/install.sh | sh # Tải công cụ uv
 uv python install 3.11.5 # Tải python
-mkdir -p ~/tools/deploy-model
-cd ~/tools/deploy-model # Trỏ đến thư mục tạm
+mkdir -p ./fss-test
+cd ./fss-test # Trỏ đến thư mục tạm
 uv venv --python 3.11.5 # Tạo môi trường với python
 source .venv/bin/activate # Kích hoạt môi trường
 python -m ensurepip --default-pip # Đảm bảo pip tồn tại

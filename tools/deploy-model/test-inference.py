@@ -179,7 +179,7 @@ class YoloTfliteEngine:
         return json_output
 
 if __name__ == "__main__":
-    MODEL_PATH = "models/best_int8.tflite"
+    MODEL_PATH = "models/model_int8.tflite"
     IMAGE_DIR  = "test-images"
     OUTPUT_CSV = "results.csv"
 
