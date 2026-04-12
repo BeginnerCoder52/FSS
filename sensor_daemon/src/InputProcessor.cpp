@@ -36,20 +36,24 @@ bool InputProcessor::init_sensors() {
 std::map<std::string, float> InputProcessor::poll_all_data() {
     std::map<std::string, float> data;
     
-    // Update timestamp
+    /* Update timestamp */
     last_poll_timestamp = static_cast<float>(std::time(nullptr));
     data["timestamp"] = last_poll_timestamp;
     
-    // Poll SHT3x
-    auto env = sht3x->calculate_readings();
-    data["temp"] = env["temp"];
-    data["humid"] = env["humid"];
+    /* Poll SHT3x */
+    if (sht3x->single_read(true)) {
+        data["temp"] = sht3x->get_temperature();
+        data["humid"] = sht3x->get_humidity();
+    } else {
+        data["temp"] = 0.0f;
+        data["humid"] = 0.0f;
+    }
 
-    // Poll VL53L0X
+    /* Poll VL53L0X */
     data["distance"] = vl53l0x->read_distance_meters();
     data["presence"] = vl53l0x->is_user_detected() ? 1.0f : 0.0f;
 
-    // Poll Door
+    /* Poll Door */
     data["door"] = door_sensor->is_open() ? 1.0f : 0.0f;
 
     return data;

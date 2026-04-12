@@ -15,8 +15,8 @@
 
 /**
  * @brief Constructor for the MC38 sensor driver.
- * @param gpio_line_offset The GPIO line offset (e.g., 4 for GPIO 4).
- * @param chip_name The GPIO chip name (defaults to "/dev/gpiochip4" for RPi 4B GPIO).
+ * @param gpio_line_offset The GPIO line offset (e.g., 26 for GPIO 26).
+ * @param chip_name The GPIO chip name (defaults to "/dev/gpiochip0" for RPi 4B GPIO).
  */
 MC38::MC38(int gpio_line_offset, const std::string& chip_name)
     : m_line_offset(gpio_line_offset), m_chip_name(chip_name), m_is_initialized(false), m_line_handle(nullptr) {

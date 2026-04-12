@@ -19,8 +19,8 @@
  * 
  * The MC-38 is a simple switch that is closed when the magnet is near and open when it is far.
  * In a typical connection:
- * - One wire to GPIO (e.g., GPIO 4 / Pin 7)
- * - One wire to Ground (e.g., Pin 14)
+ * - One wire to GPIO (e.g., GPIO 26 / Pin 37)
+ * - One wire to Ground (e.g., Pin 39)
  * - Requires internal pull-up on the GPIO.
  * 
  * Active Low Logic:
@@ -41,10 +41,10 @@ public:
 
     /**
      * @brief Constructor for the MC38 sensor driver.
-     * @param gpio_line_offset The GPIO line offset (e.g., 4 for GPIO 4).
-     * @param chip_name The GPIO chip name (defaults to "gpiochip4" for RPi 4B GPIO).
+     * @param gpio_line_offset The GPIO line offset (e.g., 26 for GPIO 26).
+     * @param chip_name The GPIO chip name (defaults to "/dev/gpiochip0" for RPi 4B GPIO).
      */
-    MC38(int gpio_line_offset, const std::string& chip_name = "/dev/gpiochip4");
+    MC38(int gpio_line_offset, const std::string& chip_name = "/dev/gpiochip0");
 
     /**
      * @brief Destructor.

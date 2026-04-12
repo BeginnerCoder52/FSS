@@ -18,6 +18,8 @@ pkg_check_modules(GPIOD REQUIRED libgpiod)
 include_directories(
     include
     ../drivers/sensor/sht3x/src
+    ../drivers/sensor/sht3x/interface
+    ../drivers/sensor/sht3x/example
     ../drivers/sensor/vl53l0x/src
     ../drivers/sensor/mc-38/include
     ${SDBUS_INCLUDE_DIRS}
@@ -29,6 +31,7 @@ include_directories(
 file(GLOB SOURCES "src/*.cpp")
 set(DRIVER_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/../drivers/sensor/sht3x/src/driver_sht31.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/sht31_driver_interface.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/../drivers/sensor/vl53l0x/src/vl53l0x.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/../drivers/sensor/mc-38/src/MC38.cpp"
 )

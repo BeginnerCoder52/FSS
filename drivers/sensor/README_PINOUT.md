@@ -19,8 +19,8 @@ This document describes the physical connections between the sensors and the Ras
 | | GND | 20 | Ground | Pin 20 near pins 22/24 |
 | | SDA | 22 | GPIO 22 | Extended I2C SDA |
 | | SCL | 24 | GPIO 23 | Extended I2C SCL |
-| **MC-38** | Terminal 1 | 11 | GPIO 17 | Magnetic Door Sensor |
-| | Terminal 2 | 25 | Ground | |
+| **MC-38** | Terminal 1 | 37 | GPIO 26 | Magnetic Door Sensor |
+| | Terminal 2 | 39 | Ground | |
 
 ## Software Configuration
 Ensure that I2C-6 is enabled in `/boot/config.txt` (or `/boot/firmware/config.txt` on newer OS versions) by adding the following line:

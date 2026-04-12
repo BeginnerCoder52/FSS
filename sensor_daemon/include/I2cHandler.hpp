@@ -71,6 +71,26 @@ public:
      */
     bool read_data(uint8_t* buffer, size_t length);
 
+    /**
+     * @brief Read from I2C device with 16-bit register address (combined transaction).
+     * @param addr I2C slave address (8-bit, will be shifted to 7-bit).
+     * @param reg 16-bit register address.
+     * @param buf Buffer to store read data.
+     * @param len Number of bytes to read.
+     * @return true if successful, false otherwise.
+     */
+    bool read_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len);
+
+    /**
+     * @brief Write to I2C device with 16-bit register address.
+     * @param addr I2C slave address (8-bit, will be shifted to 7-bit).
+     * @param reg 16-bit register address.
+     * @param buf Buffer containing data to write.
+     * @param len Number of bytes to write.
+     * @return true if successful, false otherwise.
+     */
+    bool write_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len);
+
 private:
     std::string m_bus_device; ///< Path to the I2C device.
     int m_fd;                 ///< File descriptor.
