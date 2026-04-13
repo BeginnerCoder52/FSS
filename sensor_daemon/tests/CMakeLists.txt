@@ -17,6 +17,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/interface
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/vl53l0x/src
     ${GPIOD_INCLUDE_DIRS}
 )
 
@@ -68,3 +69,39 @@ target_link_libraries(sht3x_native_test
     i2c
     pthread
 )
+
+# VL53L0X Driver source files
+set(VL53L0X_DRIVER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/vl53l0x/src/vl53l0x.c"
+)
+
+# VL53L0X Wrapper implementation
+set(VL53L0X_WRAPPER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/I2cHandler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/Vl53l0xDriver.cpp"
+)
+
+# VL53L0X Test sources
+set(VL53L0X_TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/vl53l0x/Vl53l0xTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vl53l0x/test_main.cpp"
+)
+
+# Create VL53L0X test executable
+add_executable(vl53l0x_test
+    ${VL53L0X_DRIVER_SOURCES}
+    ${VL53L0X_WRAPPER_SOURCES}
+    ${VL53L0X_TEST_SOURCES}
+)
+
+# Link libraries for VL53L0X test
+target_link_libraries(vl53l0x_test
+    PRIVATE
+    i2c
+    pthread
+    ${GPIOD_LIBRARIES}
+)
+
+# Compilation flags for libgpiod
+target_compile_options(vl53l0x_test PRIVATE ${GPIOD_CFLAGS})
+

@@ -95,6 +95,7 @@ private:
     float last_distance_meters;        ///< Last recorded distance value in METERS.
     bool m_is_connected;               ///< Connection status flag.
     int m_error_count;                 ///< Counter for measurement or communication errors.
+    bool m_continuous_mode;            ///< Flag to track if continuous measurement mode is active.
 };
 
 #endif // VL53L0X_DRIVER_HPP

@@ -15,7 +15,7 @@ static vl53l0x_t g_vl53l0x_dev;
 
 Vl53l0xDriver::Vl53l0xDriver(std::shared_ptr<I2cHandler> i2c_handler, uint8_t i2c_address)
     : m_i2c(i2c_handler), device_address(i2c_address), threshold_meters(0.8f), last_distance_meters(0.0f),
-      m_is_connected(false), m_error_count(0) {
+      m_is_connected(false), m_error_count(0), m_continuous_mode(false) {
 }
 
 Vl53l0xDriver::~Vl53l0xDriver() {
@@ -41,13 +41,33 @@ bool Vl53l0xDriver::init_driver() {
 
 float Vl53l0xDriver::read_distance_meters() {
     uint16_t dist_mm;
-    if (vl53l0x_read_single(&g_vl53l0x_dev, &dist_mm) == VL53L0X_OK) {
-        last_distance_meters = static_cast<float>(dist_mm) / 1000.0f;
-        m_is_connected = true;
-        m_error_count = 0;
+    vl53l0x_error_t err;
+    
+    if (m_continuous_mode) {
+        // Use non-blocking continuous read
+        err = vl53l0x_read_continuous(&g_vl53l0x_dev, &dist_mm);
+        if (err == VL53L0X_OK) {
+            last_distance_meters = static_cast<float>(dist_mm) / 1000.0f;
+            m_is_connected = true;
+            m_error_count = 0;
+        } else if (err == VL53L0X_ERROR_NOT_READY) {
+            // Data not ready yet, return last value
+            return last_distance_meters;
+        } else {
+            m_error_count++;
+            if (m_error_count > 5) m_is_connected = false;
+        }
     } else {
-        m_error_count++;
-        if (m_error_count > 5) m_is_connected = false;
+        // Use single shot read
+        err = vl53l0x_read_single(&g_vl53l0x_dev, &dist_mm);
+        if (err == VL53L0X_OK) {
+            last_distance_meters = static_cast<float>(dist_mm) / 1000.0f;
+            m_is_connected = true;
+            m_error_count = 0;
+        } else {
+            m_error_count++;
+            if (m_error_count > 5) m_is_connected = false;
+        }
     }
     return last_distance_meters;
 }
@@ -70,11 +90,19 @@ void Vl53l0xDriver::handle_i2c_timeout() {
 }
 
 bool Vl53l0xDriver::start_continuous() {
-    return vl53l0x_start_continuous(&g_vl53l0x_dev) == VL53L0X_OK;
+    if (vl53l0x_start_continuous(&g_vl53l0x_dev) == VL53L0X_OK) {
+        m_continuous_mode = true;
+        return true;
+    }
+    return false;
 }
 
 bool Vl53l0xDriver::stop_continuous() {
-    return vl53l0x_stop_continuous(&g_vl53l0x_dev) == VL53L0X_OK;
+    if (vl53l0x_stop_continuous(&g_vl53l0x_dev) == VL53L0X_OK) {
+        m_continuous_mode = false;
+        return true;
+    }
+    return false;
 }
 
 uint16_t Vl53l0xDriver::get_distance() {
