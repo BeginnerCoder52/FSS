@@ -28,31 +28,31 @@ if [ $# -eq 0 ]; then
     #
     # Disable unnecessary services
     #
-    sudo systemctl disable bluetooth # Tắt bluetooth service không cần thiết sử dụng Bluetooth
-    sudo systemctl disable hciuart # Tắt hciuart service không cần thiết sử dụng Bluetooth
-    sudo systemctl disable ModemManager.service # Tắt Modem Manager vì không cần sử dụng modem dữ liệu di động
+    sudo systemctl disable bluetooth || true # Tắt bluetooth service không cần thiết sử dụng Bluetooth
+    sudo systemctl disable hciuart || true # Tắt hciuart service không cần thiết sử dụng Bluetooth
+    sudo systemctl disable ModemManager.service || true # Tắt Modem Manager vì không cần sử dụng modem dữ liệu di động
 fi
 
-for arg in "$@"; do
-    case $arg in
+while [ $# -gt 0 ]; do
+    case "$1" in
         --download-models)
             #
             # Download models
             #
             mkdir -p ./fss-test/models
-            cd ./fss-test/models
             MODEL_INT8_URL="https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_int8.tflite"
             MODEL_FP32_URL="https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_float32.tflite"
             echo "[+] Downloading models..."
-            wget -O model_int8.tflite "$MODEL_INT8_URL"
-            wget -O model_fp32.tflite "$MODEL_FP32_URL"
+            wget -O ./fss-test/models/model_int8.tflite "$MODEL_INT8_URL"
+            wget -O ./fss-test/models/model_fp32.tflite "$MODEL_FP32_URL"
             shift
             ;;
         --disable-swap)
             #
             # Disable swap file, change to zram
             #
-            sudo apt install zram-tools
+            sudo apt update
+            sudo apt install -y zram-tools
             echo "[+] Disabling swap and enabling zram..."
             sudo apt purge -y dphys-swapfile # Xóa hoàn toàn phần tương tác file swap
             sudo rm -f /var/swap # Tắt swap file để bảo vệ thẻ nhớ
@@ -68,7 +68,8 @@ EOF'
             #
             # Force CPU performance
             #
-            sudo apt install linux-cpupower
+            sudo apt update
+            sudo apt install -y linux-cpupower
             sudo bash -c 'cat <<EOF > /etc/systemd/system/cpupower-performance.service
 [Unit]
 Description=Set CPU governor to performance
