@@ -1,13 +1,49 @@
-This directory where I store scripts to inference and evalutate models.
+This directory contains scripts to run **inference** and **evaluation** for models on a Raspberry Pi 4B.
 
-### !!! NOTES
-If you use wget to download the release (include models).
-You should create a PAT on GitHub then add flag `--header="Authorization: token YOUR_TOKEN"` to wget command in scripts [Setup](tools/deploy-model/setup.sh).
-You must install the dataset dependency.
+## Notes
+- The setup scripts may download model artifacts from **GitHub Releases**.
+- If you use `wget` to download release assets (including models), you may need a **GitHub Personal Access Token (PAT)** to avoid rate limits or to access private assets.
+  - Create a PAT and provide it to `wget` via a header:
+    `--header="Authorization: token YOUR_TOKEN"`
+  - **Do not commit tokens** to the repository. Prefer exporting it as an environment variable (e.g. `GITHUB_TOKEN`) and using that in scripts.
+- You must install dataset dependencies before running evaluation.
 
-### If you do not want to use wget to get release. Use SSH.
-1. Download models on your host (from: Release [FP32](https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_float32.tflite) and [INT8](https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_int8.tflite) or **OneDrive `FSS\4. SOFTWARE ENGINEERING\temp\models`**). Then copy 2 models to the Pi 4B in folder `fss-test/models` (You should use `scp` to copy through ssh).
-2. Download dataset on your host (from OneDrive `FSS\4. SOFTWARE ENGINEERING\temp\test-images`). Then copy to the Pi 4B in folder `fss-test/test-images`.
-3. Run `setup.sh`. Then reboot.
-4. Run `setup_python.sh`.
-5. Run `python test-inference.py`.
+## Download models & dataset on host, then copy via SSH
+### 1) Download models on your host
+Download from GitHub Release:
+- FP32: https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_float32.tflite
+- INT8: https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_int8.tflite
+
+(**Internal alternative**: OneDrive `FSS\4. SOFTWARE ENGINEERING\temp\models`)
+
+### 2) Copy models to the Pi
+Copy both `.tflite` files to the Pi folder:
+- Destination on Pi: `fss-test/models`
+
+Example (PATH BASED-ON YOUR ENV):
+```bash
+scp best_float32.tflite best_int8.tflite pi@192.168.2.2:~/fss-test/models/
+```
+
+### 3) Download dataset on your host and copy to the Pi
+(**Internal source**: OneDrive `FSS\4. SOFTWARE ENGINEERING\temp\test-images`)
+
+Copy to:
+- Destination on Pi: `fss-test/test-images`
+
+Example:
+```bash
+scp -r test-images pi@192.168.2.2:~/fss-test/
+```
+
+### 4) Run setup scripts on the Pi
+```bash
+./setup.sh
+sudo reboot
+```
+
+After reboot:
+```bash
+./setup_python.sh
+python tools/deploy-model/test-inference.py
+```
