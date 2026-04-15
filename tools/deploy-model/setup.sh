@@ -22,7 +22,8 @@ if [ $# -eq 0 ]; then
     #
     # Create folder test
     #
-    mkdir -p fss-test
+    mkdir -p fss-test/models
+    mkdir -p fss-test/test-images
 
     #
     # Disable unnecessary services
