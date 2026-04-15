@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#
+# Run in user mode
+#
+
 usage() {
     echo "Use: $0 [--disable-swap] [--force-cpu]"
     echo "  --disable-swap  Disable swap file and config zram"
@@ -12,7 +16,7 @@ if [ $# -eq 0 ]; then
     # Update and Install packages
     #
     sudo apt update && sudo apt full-upgrade -y # Cập nhật các gói và nâng cấp hệ thống
-    sudo apt install -y htop zram-tools linux-cpupower curl wget git
+    sudo apt install -y htop curl wget git
 
     #
     # Download models
@@ -39,6 +43,7 @@ for arg in "$@"; do
             #
             # Disable swap file, change to zram
             #
+            sudo apt install zram-tools
             echo "[+] Disabling swap and enabling zram..."
             sudo apt purge -y dphys-swapfile # Xóa hoàn toàn phần tương tác file swap
             sudo rm -f /var/swap # Tắt swap file để bảo vệ thẻ nhớ
@@ -54,6 +59,7 @@ EOF'
             #
             # Force CPU performance
             #
+            sudo apt install linux-cpupower
             sudo bash -c 'cat <<EOF > /etc/systemd/system/cpupower-performance.service
 [Unit]
 Description=Set CPU governor to performance
