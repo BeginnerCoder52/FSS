@@ -6,8 +6,9 @@
 
 usage() {
     echo "Use: $0 [--disable-swap] [--force-cpu]"
-    echo "  --disable-swap  Disable swap file and config zram"
-    echo "  --force-cpu     Set performance mode for CPU"
+    echo "  --disable-swap     Disable swap file and config zram"
+    echo "  --force-cpu        Set performance mode for CPU"
+    echo "  --download-models  Download models"
     exit 1
 }
 
@@ -19,15 +20,9 @@ if [ $# -eq 0 ]; then
     sudo apt install -y htop curl wget git
 
     #
-    # Download models
+    # Create folder test
     #
-    mkdir -p ./models
-    cd ./models
-    MODEL_INT8_URL="https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_int8.tflite"
-    MODEL_FP32_URL="https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_float32.tflite"
-    echo "[+] Downloading models..."
-    wget -O model_int8.tflite "$MODEL_INT8_URL"
-    wget -O model_fp32.tflite "$MODEL_FP32_URL"
+    mkdir -p fss-test
 
     #
     # Disable unnecessary services
@@ -39,6 +34,19 @@ fi
 
 for arg in "$@"; do
     case $arg in
+        --download-models)
+            #
+            # Download models
+            #
+            mkdir -p ./fss-test/models
+            cd ./fss-test/models
+            MODEL_INT8_URL="https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_int8.tflite"
+            MODEL_FP32_URL="https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_float32.tflite"
+            echo "[+] Downloading models..."
+            wget -O model_int8.tflite "$MODEL_INT8_URL"
+            wget -O model_fp32.tflite "$MODEL_FP32_URL"
+            shift
+            ;;
         --disable-swap)
             #
             # Disable swap file, change to zram
