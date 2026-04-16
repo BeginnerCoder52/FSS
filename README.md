@@ -2,6 +2,16 @@
 
 Hệ thống nhúng quản lý thực phẩm và giám sát tủ lạnh thông minh, tích hợp AI Vision (YOLOv11), kiến trúc đa tiến trình (C/C++, Python) và giao diện MagicMirror.
 
+## 🏛️ Sơ Đồ Kiến Trúc Phần Mềm
+
+Kiến trúc chi tiết của toàn bộ hệ thống được mô tả tại **Hình 1** (xem `docs/FSS_ArchitectureDiagram_Q1_v1.0.0.png`). Sơ đồ tuân thủ ký hiệu UML Component Diagram / mô hình C4, thể hiện đầy đủ ba tầng (L1 Hardware, L2 Middleware/HAL, L3 Application Logic), ranh giới tiến trình độc lập, giao thức IPC trên mỗi mũi tên, và ký hiệu đặc trưng cho thành phần AI Inference.
+
+![Hình 1: Kiến trúc phần mềm FSS](docs/FSS_ArchitectureDiagram_Q1_v1.0.0.png)
+
+*Hình 1: Kiến trúc phần mềm hệ thống Fridge Supervisor System (FSS) – Phân tầng ba lớp (L1/L2/L3), ranh giới tiến trình, giao thức IPC và thành phần AI*
+
+---
+
 ## 🚀 Kiến Trúc Đa Ngôn Ngữ (Polyglot Architecture)
 
 Dựa trên sơ đồ SAD và SDD mới nhất, hệ thống được tối ưu hóa theo ngôn ngữ lập trình để tận dụng tối đa sức mạnh phần cứng:
