@@ -10,9 +10,9 @@ LABELS_DIR="test-images/labels" # Để trống ("") nếu bạn không có nhã
 OUTPUT_DIR="benchmark_results"
 
 # --- Cấu hình đường dẫn mô hình ---
-MODEL_INT8="models/best_int8.tflite"
-MODEL_FP32="models/best_fp32.tflite"
-MODEL_FP16="models/best_fp16.tflite"
+MODEL_INT8="models/model_int8.tflite"
+MODEL_FP32="models/model_fp32.tflite"
+MODEL_FP16="models/model_fp16.tflite"
 
 # Tạo thư mục output nếu chưa có
 mkdir -p "$OUTPUT_DIR"

@@ -136,16 +136,4 @@ Typical files:
 - `benchmark_summary_<model>.csv` (when running one or multiple thread configurations)
 
 ## Important Path Mismatch
-
-`setup.sh --download-models` downloads:
-
-- `fss-test/models/model_int8.tflite`
-- `fss-test/models/model_fp32.tflite`
-
-But `test-cases.sh` expects:
-
-- `models/best_int8.tflite`
-- `models/best_fp32.tflite`
-- `models/best_fp16.tflite`
-
 Before running `test-cases.sh`, make sure model files are copied/renamed to the expected paths, or update variables in `test-cases.sh`.
