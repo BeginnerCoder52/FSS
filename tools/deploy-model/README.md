@@ -1,49 +1,151 @@
-This directory contains scripts to run **inference** and **evaluation** for models on a Raspberry Pi 4B.
+## Deploy Model Tools
 
-## Notes
-- The setup scripts may download model artifacts from **GitHub Releases**.
-- If you use `wget` to download release assets (including models), you may need a **GitHub Personal Access Token (PAT)** to avoid rate limits or to access private assets.
-  - Create a PAT and provide it to `wget` via a header:
-    `--header="Authorization: token YOUR_TOKEN"`
-  - **Do not commit tokens** to the repository. Prefer exporting it as an environment variable (e.g. `GITHUB_TOKEN`) and using that in scripts.
-- You must install dataset dependencies before running evaluation.
+This folder contains 4 scripts:
 
-## Download models & dataset on host, then copy via SSH
-### 1) Download models on your host
-Download from GitHub Release:
-- FP32: https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_float32.tflite
-- INT8: https://github.com/BeginnerCoder52/FSS/releases/download/v0.1.0-alpha/best_int8.tflite
+- `tools/deploy-model/setup.sh`
+- `tools/deploy-model/setup_python.sh`
+- `tools/deploy-model/test-cases.sh`
+- `tools/deploy-model/test-inference.py`
 
-(**Internal alternative**: OneDrive `FSS\4. SOFTWARE ENGINEERING\temp\models`)
+The previous README described CLI options for `test-cases.sh`, but that script currently uses fixed values and does not parse CLI arguments.
 
-### 2) Copy models to the Pi
-Copy both `.tflite` files to the Pi folder:
-- Destination on Pi: `fss-test/models`
+## 1) System Setup (`setup.sh`)
 
-Example (PATH BASED-ON YOUR ENV):
+Run without arguments to perform base machine setup:
+
 ```bash
-scp best_float32.tflite best_int8.tflite pi@192.168.2.2:~/fss-test/models/
+bash tools/deploy-model/setup.sh
 ```
 
-### 3) Download dataset on your host and copy to the Pi
-(**Internal source**: OneDrive `FSS\4. SOFTWARE ENGINEERING\temp\test-images`)
+Default actions:
 
-Copy to:
-- Destination on Pi: `fss-test/test-images`
+1. `apt update && apt full-upgrade`
+2. Install base tools: `htop curl wget git`
+3. Create folders:
+  - `fss-test/models`
+  - `fss-test/test-images`
+4. Disable unnecessary services:
+  - `bluetooth`
+  - `hciuart`
+  - `ModemManager.service`
 
-Example:
+Optional flags:
+
+- `--download-models`: download two models into `./fss-test/models/`
+  - `model_int8.tflite`
+  - `model_fp32.tflite`
+- `--disable-swap`: remove swapfile and configure `zram-tools`
+- `--force-cpu`: set CPU governor to performance and write Pi overclock config
+
+Examples:
+
 ```bash
-scp -r test-images pi@192.168.2.2:~/fss-test/
+bash tools/deploy-model/setup.sh --download-models
+bash tools/deploy-model/setup.sh --disable-swap
+bash tools/deploy-model/setup.sh --force-cpu
 ```
 
-### 4) Run setup scripts on the Pi
+## 2) Python Setup (`setup_python.sh`)
+
 ```bash
-./setup.sh
-sudo reboot
+bash tools/deploy-model/setup_python.sh
 ```
 
-After reboot:
+What it does:
+
+1. Install `uv`
+2. Install Python `3.11.5`
+3. Create and activate virtual environment at `./fss-test/.venv`
+4. Install packages:
+  - `tflite-runtime`
+  - `opencv-python-headless`
+  - `numpy<2`
+
+## 3) Automated Batch Runner (`test-cases.sh`)
+
 ```bash
-./setup_python.sh
-python tools/deploy-model/test-inference.py
+bash tools/deploy-model/test-cases.sh
 ```
+
+This script is fixed-config (no CLI options) and runs 3 jobs in sequence:
+
+1. INT8 benchmark with threads `1,2,4`
+2. FP32 benchmark with threads `1,2,4`
+3. FP16 single run with `--num-threads 4`
+
+Current hardcoded paths inside script:
+
+- Image dir: `test-images/images`
+- Labels dir: `test-images/labels`
+- Output root: `benchmark_results`
+- Models:
+  - `models/best_int8.tflite`
+  - `models/best_fp32.tflite`
+  - `models/best_fp16.tflite`
+
+If a model file is missing, that step is skipped with a warning.
+
+## 4) Direct Inference/Benchmark (`test-inference.py`)
+
+You can run this script directly for custom experiments:
+
+```bash
+python tools/deploy-model/test-inference.py --model models/model_int8.tflite --image-dir test-images
+```
+
+Supported image extensions:
+
+- `.jpg`
+- `.jpeg`
+- `.png`
+- `.bmp`
+
+CLI options:
+
+| Option | Default | Description |
+|---|---|---|
+| `--model` | `models/model_int8.tflite` | TFLite model path |
+| `--image-dir` | `test-images` | Test image directory (or dataset root containing `images/`) |
+| `--labels-dir` | empty | YOLO label directory; if empty, script auto-detects from dataset |
+| `--output-dir` | `results` | Output root folder |
+| `--conf` | `0.5` | Confidence threshold |
+| `--eval-iou` | `0.5` | IoU threshold for eval (`mAP50`) |
+| `--num-threads` | `2` | TFLite threads for single run |
+| `--benchmark-num-threads` | empty | Comma-separated thread list, e.g. `1,2,4` |
+| `--debug` | off | Enable debug logs |
+| `--auto-disable-debug` | off | Disable debug after first image |
+
+Notes on image/label auto-detection:
+
+1. If no image files are found directly in `--image-dir`, script tries `--image-dir/images`.
+2. If `--labels-dir` is empty, script tries:
+  - `--image-dir/labels`
+  - sibling `labels` folder of active image dir
+3. If labels dir is not found, evaluation metrics are skipped and speed-only benchmark is performed.
+
+## Output Files
+
+Each run creates a timestamped folder:
+
+- `<output-dir>/run_YYYYMMDD_HHMMSS/`
+
+Typical files:
+
+- `results_<model>_t<threads>.csv` (per-image detections + timing)
+- `eval_per_class_<model>_t<threads>.csv` (when labels are available)
+- `benchmark_summary_<model>.csv` (when running one or multiple thread configurations)
+
+## Important Path Mismatch
+
+`setup.sh --download-models` downloads:
+
+- `fss-test/models/model_int8.tflite`
+- `fss-test/models/model_fp32.tflite`
+
+But `test-cases.sh` expects:
+
+- `models/best_int8.tflite`
+- `models/best_fp32.tflite`
+- `models/best_fp16.tflite`
+
+Before running `test-cases.sh`, make sure model files are copied/renamed to the expected paths, or update variables in `test-cases.sh`.
