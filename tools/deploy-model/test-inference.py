@@ -202,14 +202,15 @@ if __name__ == "__main__":
                 "x1", "y1", "x2", "y2"
             ])
 
+            print(f"[INFO] Start inference...")
             for filename in image_files:
                 img_path = os.path.join(IMAGE_DIR, filename)
                 
-                print(f"[INFO] Processing: {filename}")
+                # print(f"[INFO] Processing: {filename}")
                 start_e2e = time.time()
                 result_json = engine.infer(img_path=img_path)
                 e2e_ms = (time.time() - start_e2e) * 1000
-                print(f"[INFO] End-to-end: {e2e_ms:.2f} ms ({1000 / e2e_ms:.2f} FPS)")
+                # print(f"[INFO] End-to-end: {e2e_ms:.2f} ms ({1000 / e2e_ms:.2f} FPS)")
                 result = json.loads(result_json)
 
                 detections = result["detections"]
@@ -227,8 +228,8 @@ if __name__ == "__main__":
                             x1, y1, x2, y2
                         ])
             
-                print("\n[RESULT] INFERENCE RESULTS (JSON):")
-                print(result_json)
+                # print("\n[RESULT] INFERENCE RESULTS (JSON):")
+                # print(result_json)
         print(f"\n[INFO] Save results at '{OUTPUT_CSV}'")
         
     except Exception as e:
