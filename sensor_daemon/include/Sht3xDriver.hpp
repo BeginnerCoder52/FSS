@@ -105,6 +105,13 @@ public:
     bool set_repeatability(uint8_t repeatability);
 
     /**
+     * @brief Gets the current sensor repeatability level.
+     * @param repeatability Pointer to store current repeatability level.
+     * @return true if successful, false otherwise.
+     */
+    bool get_repeatability(uint8_t *repeatability);
+
+    /**
      * @brief Enables or disables sensor heater.
      * @param enable true to enable heater, false to disable.
      * @return true if successful, false otherwise.

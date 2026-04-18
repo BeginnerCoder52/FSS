@@ -17,15 +17,18 @@
  * @class MC38
  * @brief Represents an MC-38 Magnetic Door Sensor.
  * 
- * The MC-38 is a simple switch that is closed when the magnet is near and open when it is far.
- * In a typical connection:
+ * Hardware: Normally Closed (N.C.) Reed Switch
  * - One wire to GPIO (e.g., GPIO 26 / Pin 37)
  * - One wire to Ground (e.g., Pin 39)
- * - Requires internal pull-up on the GPIO.
+ * - GPIO has internal pull-up resistor
  * 
- * Active Low Logic:
- * - 0 (Low)  = Circuit Closed (Magnet Near) -> Door CLOSED
- * - 1 (High) = Circuit Open (Magnet Far)    -> Door OPEN
+ * N.C. Reed Switch Principle:
+ * - Without magnet: Reed switch contacts are CLOSED (circuit complete) → GPIO reads 0 (LOW)
+ * - With magnet:    Reed switch contacts are OPEN (circuit broken)   → GPIO reads 1 (HIGH)
+ * 
+ * Semantic Mapping (User Perspective):
+ * - GPIO 0 (No magnet): Door is OPEN (user can open it)
+ * - GPIO 1 (Magnet):    Door is CLOSED (magnet keeps it closed)
  */
 class MC38 {
 public:
@@ -80,9 +83,8 @@ private:
     std::string m_chip_name;    /**< Name of the GPIO chip device */
     bool m_is_initialized;      /**< Flag indicating if the sensor is initialized */
     
-    // Internal handle for GPIO could be added here depending on the implementation
-    // For this prototype, we'll implement it in MC38.cpp using libgpiod-style logic.
-    void* m_line_handle;        /**< Opaque pointer for GPIO line resource management */
+    void* m_chip_handle;        /**< Handle to the GPIO chip (must remain open) */
+    void* m_line_handle;        /**< Opaque pointer to the GPIO line resource */
 };
 
 #endif // MC38_HPP

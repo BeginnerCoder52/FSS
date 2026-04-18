@@ -26,8 +26,8 @@ DoorSensorDriver::~DoorSensorDriver() {
 }
 
 bool DoorSensorDriver::init_driver() {
-    // Instantiate MC38 with BCM offset (17) and chip name
-    g_mc38_ptr = new MC38(pin_offset, "/dev/gpiochip4");
+    // Instantiate MC38 with GPIO26 offset and correct chip device (/dev/gpiochip0)
+    g_mc38_ptr = new MC38(pin_offset, "/dev/gpiochip0");
     if (!g_mc38_ptr->initialize()) {
         is_connected = false;
         return false;

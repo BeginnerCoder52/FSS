@@ -112,3 +112,10 @@ uint16_t Vl53l0xDriver::get_distance() {
 bool Vl53l0xDriver::is_data_ready() {
     return true; 
 }
+
+bool Vl53l0xDriver::get_model(uint8_t *model, uint8_t *revision) {
+    if (vl53l0x_get_model(&g_vl53l0x_dev, model, revision) == VL53L0X_OK) {
+        return true;
+    }
+    return false;
+}

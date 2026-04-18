@@ -88,6 +88,14 @@ public:
      */
     bool is_data_ready();
 
+    /**
+     * @brief Gets the sensor model and revision information.
+     * @param model Pointer to store model ID (can be NULL).
+     * @param revision Pointer to store revision ID (can be NULL).
+     * @return true if successful, false otherwise.
+     */
+    bool get_model(uint8_t *model, uint8_t *revision);
+
 private:
     std::shared_ptr<I2cHandler> m_i2c; ///< Reference to the I2C communication handler.
     uint8_t device_address;            ///< I2C address of the device (API matching Bảng 1).

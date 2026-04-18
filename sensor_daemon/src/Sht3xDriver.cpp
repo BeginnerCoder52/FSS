@@ -330,6 +330,33 @@ bool Sht3xDriver::set_repeatability(uint8_t repeatability)
     return sht31_set_repeatability(&g_sht31_handle, repeat) == 0;
 }
 
+bool Sht3xDriver::get_repeatability(uint8_t *repeatability)
+{
+    if (!m_is_connected || repeatability == nullptr) {
+        return false;
+    }
+
+    sht31_repeatability_t repeat;
+    if (sht31_get_repeatability(&g_sht31_handle, &repeat) != 0) {
+        return false;
+    }
+
+    switch (repeat) {
+        case SHT31_REPEATABILITY_MEDIUM:
+            *repeatability = 1;
+            break;
+        case SHT31_REPEATABILITY_LOW:
+            *repeatability = 2;
+            break;
+        case SHT31_REPEATABILITY_HIGH:
+        default:
+            *repeatability = 0;
+            break;
+    }
+
+    return true;
+}
+
 bool Sht3xDriver::set_heater(bool enable)
 {
     if (!m_is_connected) {

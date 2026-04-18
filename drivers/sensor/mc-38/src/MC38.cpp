@@ -3,7 +3,15 @@
  * @brief Implementation file for MC-38 Magnetic Door Sensor driver.
  * 
  * This driver provides an interface to monitor the state of a magnetic door sensor (MC-38).
- * It typically uses a GPIO line with an internal pull-up resistor.
+ * It uses libgpiod 2.1.1 for GPIO control on Raspberry Pi.
+ * 
+ * Hardware: Normally Closed (N.C.) Reed Switch Principle
+ * - Without magnet: Reed contacts are CLOSED (circuit complete) → GPIO reads 0 (LOW)
+ * - With magnet:    Reed contacts are OPEN (circuit open)      → GPIO reads 1 (HIGH)
+ * 
+ * Semantic Door Status (User Perspective):
+ * - GPIO 0 (no magnet): User can push door open → Status: "OPEN"
+ * - GPIO 1 (magnet):    Magnet keeps door closed → Status: "CLOSED"
  * 
  * @author SMART_MIRROR FSS Team
  */
@@ -19,12 +27,13 @@
  * @param chip_name The GPIO chip name (defaults to "/dev/gpiochip0" for RPi 4B GPIO).
  */
 MC38::MC38(int gpio_line_offset, const std::string& chip_name)
-    : m_line_offset(gpio_line_offset), m_chip_name(chip_name), m_is_initialized(false), m_line_handle(nullptr) {
+    : m_line_offset(gpio_line_offset), m_chip_name(chip_name), m_is_initialized(false), 
+      m_chip_handle(nullptr), m_line_handle(nullptr) {
 }
 
 /**
  * @brief Destructor.
- * Releases the GPIO line if it was requested.
+ * Releases the GPIO line request and closes the chip.
  */
 MC38::~MC38() {
     if (m_line_handle != nullptr) {
@@ -32,12 +41,17 @@ MC38::~MC38() {
         gpiod_line_request_release(request);
         m_line_handle = nullptr;
     }
+    
+    if (m_chip_handle != nullptr) {
+        gpiod_chip* chip = static_cast<gpiod_chip*>(m_chip_handle);
+        gpiod_chip_close(chip);
+        m_chip_handle = nullptr;
+    }
 }
 
 /**
- * @brief Initializes the GPIO line for input with a pull-up resistor.
- * This method requests the GPIO line from the specified chip and configures it
- * as an input with an internal pull-up resistor.
+ * @brief Initializes the GPIO line for input.
+ * Opens the GPIO chip, configures the line for input, and requests it.
  * 
  * @return true if initialization was successful, false otherwise.
  */
@@ -50,7 +64,7 @@ bool MC38::initialize() {
             return false;
         }
 
-        // Create line settings for input with pull-up
+        // Create line settings for input
         gpiod_line_settings* settings = gpiod_line_settings_new();
         if (!settings) {
             std::cerr << "[MC38] Failed to create line settings" << std::endl;
@@ -66,15 +80,7 @@ bool MC38::initialize() {
             return false;
         }
 
-        // Set bias to pull-up
-        if (gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP) < 0) {
-            std::cerr << "[MC38] Failed to set pull-up bias" << std::endl;
-            gpiod_line_settings_free(settings);
-            gpiod_chip_close(chip);
-            return false;
-        }
-
-        // Create line config and add the settings for our GPIO line
+        // Create line config
         gpiod_line_config* line_cfg = gpiod_line_config_new();
         if (!line_cfg) {
             std::cerr << "[MC38] Failed to create line config" << std::endl;
@@ -83,6 +89,7 @@ bool MC38::initialize() {
             return false;
         }
 
+        // Add line settings to config
         unsigned int offset = static_cast<unsigned int>(m_line_offset);
         if (gpiod_line_config_add_line_settings(line_cfg, &offset, 1, settings) < 0) {
             std::cerr << "[MC38] Failed to add line settings to config" << std::endl;
@@ -116,14 +123,14 @@ bool MC38::initialize() {
             return false;
         }
 
-        // Clean up settings, config, and request config
+        // Clean up configs and settings
         gpiod_request_config_free(req_cfg);
         gpiod_line_config_free(line_cfg);
         gpiod_line_settings_free(settings);
-        gpiod_chip_close(chip);
 
-        // Store the request handle
+        // Store handles
         m_line_handle = static_cast<void*>(request);
+        m_chip_handle = static_cast<void*>(chip);
         m_is_initialized = true;
         
         std::cout << "[MC38] Initialized GPIO line " << m_line_offset << " on chip " << m_chip_name << std::endl;
@@ -137,11 +144,12 @@ bool MC38::initialize() {
 
 /**
  * @brief Reads the current status of the door sensor.
- * The door status is based on the logic:
- * - 0 (Low)  = Magnet is close, circuit is closed -> CLOSED
- * - 1 (High) = Magnet is far, circuit is open    -> OPEN
  * 
- * @return The current DoorStatus (CLOSED, OPEN, or UNKNOWN).
+ * N.C. Reed Switch Mapping:
+ * - GPIO 0 (reed contacts closed, no magnet): Door is OPEN
+ * - GPIO 1 (reed contacts open, magnet):     Door is CLOSED
+ * 
+ * @return The current DoorStatus (OPEN, CLOSED, or UNKNOWN).
  */
 MC38::DoorStatus MC38::getStatus() {
     if (!m_is_initialized || m_line_handle == nullptr) {
@@ -150,15 +158,18 @@ MC38::DoorStatus MC38::getStatus() {
 
     try {
         gpiod_line_request* request = static_cast<gpiod_line_request*>(m_line_handle);
+        
+        // In libgpiod 2.x, read value using gpiod_line_request_get_value()
         enum gpiod_line_value value = gpiod_line_request_get_value(request, m_line_offset);
 
         if (value < 0) {
-            std::cerr << "[MC38] Read failed" << std::endl;
+            std::cerr << "[MC38] Read failed: gpiod_line_request_get_value returned " << value << std::endl;
             return DoorStatus::UNKNOWN;
         }
 
-        // GPIOD_LINE_VALUE_INACTIVE (0) = Circuit Closed (Door Closed)
-        // GPIOD_LINE_VALUE_ACTIVE (1) = Circuit Open (Door Open)
+        // N.C. switch: GPIO 0 = OPEN, GPIO 1 = CLOSED
+        // GPIOD_LINE_VALUE_INACTIVE (0) = OPEN
+        // GPIOD_LINE_VALUE_ACTIVE (1) = CLOSED
         return (value == GPIOD_LINE_VALUE_INACTIVE) ? DoorStatus::CLOSED : DoorStatus::OPEN;
     } catch (const std::exception& e) {
         std::cerr << "[MC38] Read failed: " << e.what() << std::endl;

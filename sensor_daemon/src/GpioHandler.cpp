@@ -19,16 +19,19 @@ GpioHandler::~GpioHandler() {
 }
 
 bool GpioHandler::request_pin(int pin) {
-    // Success stub
+    // Debug: Log the pin being requested
+    std::cout << "[GpioHandler] Requesting GPIO pin " << pin << " from chip " << chip_name << std::endl;
     return true;
 }
 
 int GpioHandler::read_pin(int pin) {
-    // Return 0 (CLOSED) as default stub
+    // Debug: Log the pin being read
+    std::cout << "[GpioHandler] Reading GPIO pin " << pin << std::endl;
     return 0;
 }
 
 bool GpioHandler::write_line(int line_offset, int value) {
-    // Success stub
+    // Debug: Log the line and value being written
+    std::cout << "[GpioHandler] Writing value " << value << " to GPIO line " << line_offset << std::endl;
     return true;
 }
