@@ -1,0 +1,2 @@
+num_threads,images,avg_inference_time_ms,avg_fps,precision,recall,map50,delta_ms_vs_first,delta_pct_vs_first,total_wall_time_s,result_csv,eval_per_class_csv
+4,613,208.2,4.8,0.14447,0.065708,0.062669,0.0,0.0,171.11,benchmark_results/run_20260423_010228/results_model_fp16_t4.csv,benchmark_results/run_20260423_010228/eval_per_class_model_fp16_t4.csv
