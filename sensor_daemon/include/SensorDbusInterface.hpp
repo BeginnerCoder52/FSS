@@ -1,31 +1,31 @@
 /**
- * @file SdbusInterface.hpp
- * @brief Header file for the SdbusInterface class.
+ * @file SensorDbusInterface.hpp
+ * @brief Header file for the SensorDbusInterface class.
  * 
  * Provides an interface for D-Bus communication within the system.
  */
 
-#ifndef SDBUS_INTERFACE_HPP
-#define SDBUS_INTERFACE_HPP
+#ifndef SENSOR_DBUS_INTERFACE_HPP
+#define SENSOR_DBUS_INTERFACE_HPP
 
 #include <string>
 #include <map>
 
 /**
- * @class SdbusInterface
+ * @class SensorDbusInterface
  * @brief Manages D-Bus signals and method calls for inter-process communication.
  */
-class SdbusInterface {
+class SensorDbusInterface {
 public:
     /**
-     * @brief Constructor for SdbusInterface.
+     * @brief Constructor for SensorDbusInterface.
      */
-    SdbusInterface();
+    SensorDbusInterface();
 
     /**
-     * @brief Destructor for SdbusInterface.
+     * @brief Destructor for SensorDbusInterface.
      */
-    ~SdbusInterface();
+    ~SensorDbusInterface();
 
     /**
      * @brief Establishes a connection to the system D-Bus.
@@ -70,4 +70,4 @@ private:
     int dropped_messages_count; ///< Count of failed signal deliveries.
 };
 
-#endif // SDBUS_INTERFACE_HPP
+#endif // SENSOR_DBUS_INTERFACE_HPP

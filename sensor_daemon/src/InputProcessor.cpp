@@ -10,6 +10,7 @@
 #include "I2cHandler.hpp"
 #include "GpioHandler.hpp"
 #include <ctime>
+#include <iostream>
 
 InputProcessor::InputProcessor() 
     : last_poll_timestamp(0.0f) {
@@ -26,48 +27,104 @@ InputProcessor::~InputProcessor() {
 }
 
 bool InputProcessor::init_sensors() {
-    bool success = true;
-    if (!sht3x->init_driver()) success = false;
-    if (!vl53l0x->init_driver()) success = false;
-    if (!door_sensor->init_driver()) success = false;
-    return success;
+    try {
+        bool success = true;
+        
+        // Initialize SHT3x environmental sensor
+        if (!sht3x || !sht3x->init_driver()) {
+            std::cerr << "Failed to initialize SHT3x environmental sensor" << std::endl;
+            success = false;
+        }
+        
+        // Initialize VL53L0x distance sensor
+        if (!vl53l0x || !vl53l0x->init_driver()) {
+            std::cerr << "Failed to initialize VL53L0x distance sensor" << std::endl;
+            success = false;
+        }
+        
+        // Initialize Door sensor
+        if (!door_sensor || !door_sensor->init_driver()) {
+            std::cerr << "Failed to initialize Door sensor" << std::endl;
+            success = false;
+        }
+        
+        return success;
+    } catch (const std::exception& e) {
+        std::cerr << "InputProcessor init_sensors exception: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 std::map<std::string, float> InputProcessor::poll_all_data() {
     std::map<std::string, float> data;
     
-    /* Update timestamp */
-    last_poll_timestamp = static_cast<float>(std::time(nullptr));
-    data["timestamp"] = last_poll_timestamp;
-    
-    /* Poll SHT3x */
-    if (sht3x->single_read(true)) {
-        data["temp"] = sht3x->get_temperature();
-        data["humid"] = sht3x->get_humidity();
-    } else {
-        data["temp"] = 0.0f;
-        data["humid"] = 0.0f;
+    try {
+        // Update timestamp with current Unix time
+        last_poll_timestamp = static_cast<float>(std::time(nullptr));
+        data["timestamp"] = last_poll_timestamp;
+        
+        // Poll SHT3x environmental sensor
+        if (sht3x) {
+            if (sht3x->single_read(true)) {
+                data["temp"] = sht3x->get_temperature();
+                data["humid"] = sht3x->get_humidity();
+            } else {
+                data["temp"] = 0.0f;
+                data["humid"] = 0.0f;
+            }
+        }
+
+        // Poll VL53L0x distance sensor
+        if (vl53l0x) {
+            data["distance"] = vl53l0x->read_distance_meters();
+            data["presence"] = vl53l0x->is_user_detected() ? 1.0f : 0.0f;
+        }
+
+        // Poll Door sensor
+        if (door_sensor) {
+            data["door"] = door_sensor->is_open() ? 1.0f : 0.0f;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "InputProcessor poll_all_data exception: " << e.what() << std::endl;
     }
-
-    /* Poll VL53L0X */
-    data["distance"] = vl53l0x->read_distance_meters();
-    data["presence"] = vl53l0x->is_user_detected() ? 1.0f : 0.0f;
-
-    /* Poll Door */
-    data["door"] = door_sensor->is_open() ? 1.0f : 0.0f;
 
     return data;
 }
 
 void InputProcessor::get_env_data(float& temp, float& hum) {
-    temp = sht3x->get_temperature();
-    hum = sht3x->get_humidity();
+    try {
+        if (sht3x) {
+            temp = sht3x->get_temperature();
+            hum = sht3x->get_humidity();
+        } else {
+            temp = 0.0f;
+            hum = 0.0f;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "InputProcessor get_env_data exception: " << e.what() << std::endl;
+        temp = 0.0f;
+        hum = 0.0f;
+    }
 }
 
 uint16_t InputProcessor::get_distance_data() {
-    return vl53l0x->get_distance();
+    try {
+        if (vl53l0x) {
+            return vl53l0x->get_distance();
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "InputProcessor get_distance_data exception: " << e.what() << std::endl;
+    }
+    return 0;
 }
 
 bool InputProcessor::get_door_status() {
-    return door_sensor->is_open();
+    try {
+        if (door_sensor) {
+            return door_sensor->is_open();
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "InputProcessor get_door_status exception: " << e.what() << std::endl;
+    }
+    return false;
 }

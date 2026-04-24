@@ -13,7 +13,7 @@
 #include <string>
 
 // Forward declaration
-class SdbusInterface;
+class SensorDbusInterface;
 
 /**
  * @class OutputProcessor
@@ -63,7 +63,7 @@ public:
     void broadcast_system_events(const std::map<std::string, float>& data);
 
 private:
-    std::shared_ptr<SdbusInterface> sdbus_interface; ///< Interface for D-Bus communication.
+    std::shared_ptr<SensorDbusInterface> sdbus_interface; ///< Interface for D-Bus communication.
 };
 
 #endif // OUTPUT_PROCESSOR_HPP

@@ -27,7 +27,7 @@ public:
     ~SystemWatchdog();
 
     /**
-     * @brief Initializes the watchdog driver and parameters (API matching Bảng 1).
+     * @brief Initializes the watchdog driver and parameters.
      * @return true if initialized successfully, false otherwise.
      */
     bool init_driver();
