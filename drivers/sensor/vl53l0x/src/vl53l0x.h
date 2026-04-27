@@ -13,6 +13,10 @@
 #include <stdint.h>
 #include <time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Default I2C address of the VL53L0X sensor
  */
@@ -149,5 +153,9 @@ vl53l0x_error_t vl53l0x_read_continuous(vl53l0x_t *dev, uint16_t *distance_mm);
 vl53l0x_error_t vl53l0x_get_last_measurement(vl53l0x_t *dev,
                                              uint16_t *distance_mm,
                                              struct timespec *timestamp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* VL53L0X_H_ */
