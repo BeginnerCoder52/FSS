@@ -11,8 +11,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall")
 # Tìm các package cần thiết thông qua pkg-config
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDBUS REQUIRED sdbus-c++)
-pkg_check_modules(ZMQ REQUIRED libzmq)
-pkg_check_modules(GPIOD REQUIRED libgpiod)
+pkg_check_modules(GPIOD REQUIRED libgpiod>=2.1.1)
 
 # Bao gồm thư mục header của daemon và thư mục drivers
 include_directories(
@@ -23,7 +22,6 @@ include_directories(
     ../drivers/sensor/vl53l0x/src
     ../drivers/sensor/mc-38/include
     ${SDBUS_INCLUDE_DIRS}
-    ${ZMQ_INCLUDE_DIRS}
     ${GPIOD_INCLUDE_DIRS}
 )
 
@@ -42,12 +40,11 @@ add_executable(sensor_daemon_exec ${SOURCES} ${DRIVER_SOURCES})
 # Add compile flags for libgpiod
 target_compile_options(sensor_daemon_exec PRIVATE ${GPIOD_CFLAGS})
 
-# Link libraries (i2c für sensor, gpiod für GPIO, sdbus-c++ for D-Bus, zmq for IPC)
+# Link libraries (i2c für sensor, gpiod für GPIO, sdbus-c++ for D-Bus)
 target_link_libraries(sensor_daemon_exec
     PRIVATE
     i2c
     systemd
     ${SDBUS_LIBRARIES}
-    ${ZMQ_LIBRARIES}
     ${GPIOD_LIBRARIES}
 )
