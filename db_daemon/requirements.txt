@@ -1,3 +1,14 @@
-# Giao tiếp IPC
-pyzmq>=25.0.0
+# Inter-Process Communication (IPC) - D-Bus based
 sdbus-python>=0.12.0
+
+# Database Management
+# sqlite3 is included in Python standard library
+
+# Shared Memory Management (for FRTApp integration - future)
+# posix_ipc will be added when FRTApp is implemented
+
+# Image Processing (for FRTApp integration - future)
+# Pillow will be added when FRTApp is implemented
+
+# System and Logging
+# logging is included in Python standard library
