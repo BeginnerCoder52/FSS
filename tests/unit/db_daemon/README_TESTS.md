@@ -11,7 +11,7 @@ Following ASPICE principles and clean code practices for comprehensive test cove
 
 ## Overview
 
-This directory contains comprehensive unit tests for the Database Daemon (DBDaemon) 
+This directory contains comprehensive unit tests for the Database Daemon (DBDaemon)
 component of the Fridge Supervisor System. The test suite provides complete coverage
 of all DBDaemon modules following ASPICE principles and industry best practices.
 
@@ -31,9 +31,11 @@ tests/unit/db_daemon/
 ## Test Files and Coverage
 
 ### 1. conftest.py
+
 **Purpose**: Pytest configuration and shared test fixtures.
 
 **Key Features**:
+
 - `TemporaryTestEnvironment`: Context manager for isolated test environments
 - Database fixtures for connection management
 - Mock D-Bus system bus
@@ -41,13 +43,16 @@ tests/unit/db_daemon/
 - In-memory database creation helpers
 
 **Usage**:
+
 - All test files automatically inherit these fixtures
 - No direct import needed - pytest discovers conftest.py automatically
 
 ### 2. test_sqlite_manager.py (31 Test Cases)
+
 **Module Tested**: `SqliteManager`
 
 **Test Classes**:
+
 1. **TestSqliteManagerInitialization** (3 tests)
    - Default parameter initialization
    - Custom parameter handling
@@ -95,15 +100,18 @@ tests/unit/db_daemon/
    - Concurrent operations safety
 
 **Key Test Patterns**:
+
 - ASPICE compliance markers (BP1-BP31)
 - Comprehensive error path testing
 - Resource cleanup verification
 - State consistency validation
 
 ### 3. test_disk_file_manager.py (29 Test Cases)
+
 **Module Tested**: `DiskFileManager`
 
 **Test Classes**:
+
 1. **TestDiskFileManagerInitialization** (3 tests)
    - Default configuration
    - Custom configuration
@@ -152,15 +160,18 @@ tests/unit/db_daemon/
    - Empty image bytes handling
 
 **Key Features**:
+
 - ASPICE compliance for each test (BP1-BP29)
 - Feature flag testing (FRT_APP_ENABLED)
 - Path sanitization verification
 - Disk space quota management
 
 ### 4. test_posix_shm_reader.py (36 Test Cases)
+
 **Module Tested**: `PosixShmReader`
 
 **Test Classes**:
+
 1. **TestPosixShmReaderInitialization** (5 tests)
    - Default parameter initialization
    - Custom configuration
@@ -219,15 +230,18 @@ tests/unit/db_daemon/
     - Long name handling
 
 **Key Features**:
+
 - ASPICE compliance markers (BP1-BP36)
 - Comprehensive feature flag testing
 - State machine validation
 - Error recovery testing
 
 ### 5. test_dbus_interface.py (35 Test Cases)
+
 **Module Tested**: `DbDbusInterface`
 
 **Test Classes**:
+
 1. **TestDbDbusInterfaceInitialization** (5 tests)
    - Default configuration
    - Logger creation
@@ -285,15 +299,18 @@ tests/unit/db_daemon/
     - Constants documentation
 
 **Key Features**:
+
 - ASPICE compliance (BP1-BP35)
 - D-Bus service registration validation
 - Signal emission testing with mocks
 - Thread-safe operation verification
 
 ### 6. test_dbd_daemon_main.py (38 Test Cases)
+
 **Module Tested**: `DbDaemonMain`
 
 **Test Classes**:
+
 1. **TestDbDaemonMainInitialization** (6 tests)
    - Initial state (INIT)
    - Component references initialization
@@ -353,6 +370,7 @@ tests/unit/db_daemon/
     - Concurrent event processing
 
 **Key Features**:
+
 - ASPICE compliance (BP1-BP38)
 - Lifecycle management validation
 - Component initialization testing
@@ -362,37 +380,44 @@ tests/unit/db_daemon/
 ## Running the Tests
 
 ### Prerequisites
+
 ```bash
 pip install pytest pytest-cov pytest-mock
 ```
 
 ### Run All Tests
+
 ```bash
 cd tests/unit/db_daemon
 pytest -v
 ```
 
 ### Run Specific Test File
+
 ```bash
 pytest test_sqlite_manager.py -v
 ```
 
 ### Run Specific Test Class
+
 ```bash
 pytest test_sqlite_manager.py::TestDatabaseConnection -v
 ```
 
 ### Run Specific Test Case
+
 ```bash
 pytest test_sqlite_manager.py::TestDatabaseConnection::test_connect_db_creates_connection -v
 ```
 
 ### Run with Coverage Report
+
 ```bash
 pytest --cov=db_daemon --cov-report=html --cov-report=term-missing
 ```
 
 ### Run with Markers
+
 ```bash
 # Run only tests with marker 'integration'
 pytest -m integration -v
@@ -401,24 +426,29 @@ pytest -m integration -v
 ## Test Organization Principles
 
 ### ASPICE Compliance
+
 Each test case is marked with ASPICE principles:
+
 - **SQC.BP1-BP40**: Software Quality Compliance Best Practices
 - Each test includes docstring with principle reference
 - Enables traceability and compliance verification
 
 ### Clean Code Principles
+
 - Clear, descriptive test names following `test_<feature>_<scenario>` pattern
 - Single responsibility per test method
 - Proper setup/teardown using fixtures
 - Meaningful assertions with clear failure messages
 
 ### Test Isolation
+
 - Use of fixtures for resource management
 - Temporary directories for file operations
 - Mock objects for external dependencies
 - No test interdependencies
 
 ### Comprehensive Coverage
+
 - **Unit tests**: Individual method and class testing
 - **Integration tests**: Component interaction verification
 - **Error path testing**: Exception and error condition handling
@@ -441,6 +471,7 @@ Each test case is marked with ASPICE principles:
 11. **sample_jpeg_bytes**: Minimal valid JPEG data
 
 ### Usage Example
+
 ```python
 def test_example(temp_db_path, sample_food_inventory):
     """Test using fixtures."""
@@ -451,6 +482,7 @@ def test_example(temp_db_path, sample_food_inventory):
 ## Common Test Patterns
 
 ### Mock External Dependency
+
 ```python
 with patch('Module.ExternalDependency') as mock_dep:
     mock_dep.return_value = MagicMock()
@@ -458,12 +490,14 @@ with patch('Module.ExternalDependency') as mock_dep:
 ```
 
 ### Test Exception Handling
+
 ```python
 with pytest.raises(Exception):
     function_that_raises()
 ```
 
 ### Test Resource Cleanup
+
 ```python
 manager = DbDaemonMain()
 # Verify initial state
@@ -477,6 +511,7 @@ assert manager.current_state == DaemonState.STOPPED
 ## Expected Test Results
 
 ### Total Test Count
+
 - **test_sqlite_manager.py**: 31 tests
 - **test_disk_file_manager.py**: 29 tests
 - **test_posix_shm_reader.py**: 36 tests
@@ -485,6 +520,7 @@ assert manager.current_state == DaemonState.STOPPED
 - **Total**: ~169 tests
 
 ### Coverage Goals
+
 - **Statements**: > 85%
 - **Branches**: > 80%
 - **Lines**: > 85%
@@ -492,7 +528,9 @@ assert manager.current_state == DaemonState.STOPPED
 ## Continuous Integration
 
 ### GitHub Actions Integration
+
 Tests can be run in CI/CD pipeline:
+
 ```yaml
 - name: Run DBDaemon Tests
   run: |
@@ -503,21 +541,27 @@ Tests can be run in CI/CD pipeline:
 ## Troubleshooting
 
 ### Import Errors
+
 Ensure Python path includes db_daemon/src:
+
 ```python
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__),
                                 '../../..', 'db_daemon/src'))
 ```
 
 ### Database Lock Errors
+
 Use temporary paths in tests to avoid conflicts:
+
 ```python
 def test_with_temp_db(temp_db_path):
     # Use temp_db_path instead of default path
 ```
 
 ### Mock Not Working
+
 Ensure patch is applied before object instantiation:
+
 ```python
 with patch('Module.Class') as mock:
     obj = Module.Class()  # Should use the mock
@@ -548,6 +592,7 @@ with patch('Module.Class') as mock:
 - File system operations use temporary directories
 
 ---
+
 Last Updated: 2024
 ASPICE Compliance: Level 2-3
 Test Framework: pytest
