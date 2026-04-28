@@ -13,7 +13,7 @@ sudo apt-get install -y \
     libi2c-dev i2c-tools \
     libv4l-dev v4l-utils \
     libsystemd-dev libsdbus-c++-dev libdbus-1-dev \
-    libzmq3-dev \
+    libgtest-dev google-mock cmake \
     libsqlite3-dev \
     libopencv-dev \
     python3-venv python3-dev \

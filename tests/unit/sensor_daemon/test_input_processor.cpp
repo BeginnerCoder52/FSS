@@ -18,6 +18,7 @@
 #include <thread>
 #include <chrono>
 #include "InputProcessor.hpp"
+#include "I2cHandler.hpp"
 
 // ============================================================================
 // Mock Classes for Dependencies
@@ -124,6 +125,23 @@ protected:
      */
     virtual void SetUp() override
     {
+        // ---- RESET PHAN CUNG TRUOC MOI TEST ----
+        // Ban truc tiep tin hieu I2C doc lap de ep SHT3x ve trang thai IDLE
+        I2cHandler i2c_reset("/dev/i2c-1");
+        if (i2c_reset.open_bus()) {
+            // 1. Gui lenh Break (0x3093) ngat che do lien tuc (Continuous Mode)
+            i2c_reset.write_address16(0x44, 0x3093, nullptr, 0);
+            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            
+            // 2. Gui lenh Soft Reset (0x30A2) xoa bo dem
+            i2c_reset.write_address16(0x44, 0x30A2, nullptr, 0);
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            
+            i2c_reset.close_bus();
+        }
+        // --------------------------------------------------------------
+
+        // Khoi tao processor nhu binh thuong
         processor = std::make_unique<InputProcessor>();
     }
 
@@ -132,7 +150,18 @@ protected:
      */
     virtual void TearDown() override
     {
+        // Huy processor
         processor.reset();
+
+        // ---- DON DEP PHAN CUNG SAU KHI TEST ----
+        // Dam bao SHT3x khong bi ket lai cho test case tiep theo
+        I2cHandler i2c_reset("/dev/i2c-1");
+        if (i2c_reset.open_bus()) {
+            i2c_reset.write_address16(0x44, 0x3093, nullptr, 0);
+            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            i2c_reset.close_bus();
+        }
+        // --------------------------------------------------------------
     }
 
     std::unique_ptr<InputProcessor> processor; ///< Processor under test

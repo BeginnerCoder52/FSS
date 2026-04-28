@@ -149,10 +149,11 @@ set(TEST_TARGETS
 
 foreach(test_target ${TEST_TARGETS})
     # Google Test library
-    target_link_libraries(${test_target} PRIVATE ${GTEST_LIBRARIES} gtest 
-    gtest_main 
-    gmock 
-    gmock_main
+    target_link_libraries(${test_target} PRIVATE
+    GTest::gtest 
+    GTest::gtest_main 
+    GTest::gmock 
+    GTest::gmock_main
     pthread)
     
     # System libraries
