@@ -1,7 +1,7 @@
 /**
  * @file InputProcessor.hpp
  * @brief Header file for the InputProcessor class.
- * 
+ *
  * Manages sensor data acquisition from various hardware drivers.
  */
 
@@ -22,7 +22,8 @@ class GpioHandler;
  * @class InputProcessor
  * @brief Handles data collection from all sensors (Environmental, Distance, Door).
  */
-class InputProcessor {
+class InputProcessor
+{
 public:
     /**
      * @brief Constructor for InputProcessor.
@@ -51,7 +52,7 @@ public:
      * @param temp Reference to store temperature.
      * @param hum Reference to store humidity.
      */
-    void get_env_data(float& temp, float& hum);
+    void get_env_data(float &temp, float &hum);
 
     /**
      * @brief Gets the last measured distance data.
@@ -70,10 +71,12 @@ private:
     std::shared_ptr<I2cHandler> m_i2c_ext;  ///< Handler for i2c-6.
     std::shared_ptr<GpioHandler> m_gpio_handler;
 
-    std::unique_ptr<Sht3xDriver> sht3x;     ///< SHT3x Environmental sensor.
-    std::unique_ptr<Vl53l0xDriver> vl53l0x; ///< VL53L0X Distance sensor.
+    std::unique_ptr<Sht3xDriver> sht3x;            ///< SHT3x Environmental sensor.
+    std::unique_ptr<Vl53l0xDriver> vl53l0x;        ///< VL53L0X Distance sensor.
     std::unique_ptr<DoorSensorDriver> door_sensor; ///< MC-38 Door sensor.
 
+    std::shared_ptr<I2cHandler> m_i2c_env2;
+    std::unique_ptr<Sht3xDriver> sht3x_2;
     float last_poll_timestamp; ///< Precise Unix timestamp of the last poll.
 };
 
