@@ -106,6 +106,64 @@ void SensorDbusInterface::emit_env_signal(const std::map<std::string, float>& da
     }
 }
 
+void SensorDbusInterface::emit_distance_signal(const std::map<std::string, float>& data_map) {
+    if (!is_connected || !system_bus) {
+        std::cerr << "[D-Bus] Cannot emit signal, interface not connected" << std::endl;
+        dropped_messages_count++;
+        return;
+    }
+    
+    try {
+        auto data = static_cast<SdbusData*>(system_bus);
+        if (!data || !data->object) {
+            std::cerr << "[D-Bus] Invalid data object" << std::endl;
+            dropped_messages_count++;
+            return;
+        }
+        
+        // Extract distance with safe defaults
+        float distance = 0.0f;
+        if (data_map.count("distance")) distance = data_map.at("distance");
+
+        data->object->emitSignal("DistanceDataChanged")
+                     .onInterface(interface_name)
+                     .withArguments(static_cast<double>(distance));
+    } catch (const sdbus::Error& e) { 
+        std::cerr << "[D-Bus] emit_distance_signal failed: " << e.what() << std::endl;
+        dropped_messages_count++;
+    } catch (const std::exception& e) {
+        std::cerr << "[D-Bus] emit_distance_signal unexpected error: " << e.what() << std::endl;
+        dropped_messages_count++;
+    }
+}
+
+void SensorDbusInterface::emit_env_data_updated(const std::string& json_data) {
+    if (!is_connected || !system_bus) {
+        std::cerr << "[D-Bus] Cannot emit signal, interface not connected" << std::endl;
+        dropped_messages_count++;
+        return;
+    }
+    
+    try {
+        auto data = static_cast<SdbusData*>(system_bus);
+        if (!data || !data->object) {
+            std::cerr << "[D-Bus] Invalid data object" << std::endl;
+            dropped_messages_count++;
+            return;
+        }
+        
+        data->object->emitSignal("EnvironmentDataUpdated")
+                     .onInterface(interface_name)
+                     .withArguments(json_data);
+    } catch (const sdbus::Error& e) { 
+        std::cerr << "[D-Bus] emit_env_data_updated failed: " << e.what() << std::endl;
+        dropped_messages_count++;
+    } catch (const std::exception& e) {
+        std::cerr << "[D-Bus] emit_env_data_updated unexpected error: " << e.what() << std::endl;
+        dropped_messages_count++;
+    }
+}
+
 void SensorDbusInterface::emit_door_signal(const std::string& state) {
     if (!is_connected || !system_bus) {
         std::cerr << "[D-Bus] Cannot emit signal, interface not connected" << std::endl;

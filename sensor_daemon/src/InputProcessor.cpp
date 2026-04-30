@@ -23,10 +23,8 @@ InputProcessor::InputProcessor()
     // Both sensors use default address 0x44, separated by physical bus
     sht3x = std::make_unique<Sht3xDriver>(m_i2c_main, 0x44);   // Ngăn mát (Bus 1)
     sht3x_2 = std::make_unique<Sht3xDriver>(m_i2c_env2, 0x44); // Ngăn đông (Bus 5)
-
-    sht3x = std::make_unique<Sht3xDriver>(m_i2c_main, 0x44);
     vl53l0x = std::make_unique<Vl53l0xDriver>(m_i2c_ext, 0x29);
-    door_sensor = std::make_unique<DoorSensorDriver>(m_gpio_handler, 17); // MC-38 (GPIO 17)
+    door_sensor = std::make_unique<DoorSensorDriver>(m_gpio_handler, 26); // MC-38 (GPIO 26)
 }
 
 InputProcessor::~InputProcessor()

@@ -26,13 +26,23 @@ DoorSensorDriver::~DoorSensorDriver() {
 }
 
 bool DoorSensorDriver::init_driver() {
-    // Instantiate MC38 with GPIO26 offset and correct chip device (/dev/gpiochip0)
+    // Prevent memory leak on re-initialization
+    if (g_mc38_ptr) {
+        delete g_mc38_ptr;
+        g_mc38_ptr = nullptr;
+    }
+
+    // Instantiate MC38 with GPIO offset and correct chip device (/dev/gpiochip0)
     g_mc38_ptr = new MC38(pin_offset, "/dev/gpiochip0");
     if (!g_mc38_ptr->initialize()) {
         is_connected = false;
         return false;
     }
     is_connected = true;
+    
+    // Reset sensor state by reading once after initialization
+    read_state();
+    
     return true;
 }
 
