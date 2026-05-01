@@ -40,6 +40,18 @@ public:
     void emit_env_signal(const std::map<std::string, float>& data);
 
     /**
+     * @brief Emits a signal containing distance measurement data.
+     * @param data A map containing distance measurement in meters.
+     */
+    void emit_distance_signal(const std::map<std::string, float>& data);
+
+    /**
+     * @brief Emits a signal containing updated environmental data from all sensors in JSON format.
+     * @param json_data JSON string containing all environmental sensor readings.
+     */
+    void emit_env_data_updated(const std::string& json_data);
+
+    /**
      * @brief Emits a signal when the door state changes.
      * @param state The current state of the door ("OPEN" or "CLOSED").
      */
