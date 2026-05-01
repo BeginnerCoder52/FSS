@@ -51,6 +51,12 @@ public:
     void broadcast_distance_data(uint16_t distance);
 
     /**
+     * @brief Broadcasts updated environmental data from all sensors in JSON format.
+     * @param data Data map containing all sensor readings.
+     */
+    void broadcast_env_data_updated(const std::map<std::string, float>& data);
+
+    /**
      * @brief Broadcasts door status to the D-Bus system.
      * @param is_open Current door status.
      */

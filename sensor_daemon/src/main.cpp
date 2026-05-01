@@ -5,6 +5,8 @@
 
 #include "SensorDaemonMain.hpp"
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 /**
  * @brief Main function.
@@ -16,10 +18,11 @@ int main(int argc, char *argv[])
 {
     SensorDaemonMain app;
 
-    if (!app.init_app())
+    // Retry initialization until successful
+    while (!app.init_app())
     {
-        std::cerr << "Failed to initialize Sensor Daemon application." << std::endl;
-        return 1;
+        std::cerr << "Initialization failed. Retrying in 2 seconds..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 
     if (!app.start_app())
