@@ -1,5 +1,5 @@
 # Inter-Process Communication (IPC) - D-Bus based
-sdbus-python>=0.12.0
+sdbus>=0.14.0  # D-Bus Python bindings (was: sdbus-python)
 
 # Database Management
 # sqlite3 is included in Python standard library

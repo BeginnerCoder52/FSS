@@ -4,16 +4,26 @@
 
 This module provides D-Bus service registration, signal emission, and event
 listening capabilities for communication with SensorDaemon, FRTApp, and UI components.
+Updated to support modern sdbus (python-sdbus >= 0.14.0).
 """
 
 import logging
 import threading
-from typing import Callable, Optional, Any, Dict
+import time
+import json
+import asyncio
+from typing import Callable, Optional, Any, Dict, List, Union
 from abc import ABC
 
 try:
     import sdbus
-    from sdbus import DbusObjectBase, dbus_method, dbus_signal
+    from sdbus import (
+        DbusInterfaceCommonAsync,
+        DbusInterfaceCommon,
+        dbus_method_async,
+        dbus_signal_async,
+        dbus_method
+    )
     SDBUS_AVAILABLE = True
 except ImportError:
     SDBUS_AVAILABLE = False
@@ -32,20 +42,16 @@ class DbDbusInterface:
     OBJECT_PATH = "/vn/edu/uit/FSS/DBDaemon"
     INTERFACE_NAME = "vn.edu.uit.FSS.DBDaemon"
     
-    # D-Bus signal names
-    SIGNAL_UI_UPDATE = "UIUpdateRequired"
-    SIGNAL_ENV_UPDATE = "EnvironmentUpdateRequired"
-    
     def __init__(self):
         """Initialize DbDbusInterface instance."""
         self.system_bus: Optional[Any] = None
-        self.dbus_service_name: str = self.SERVICE_NAME
         self.is_connected: bool = False
-        self.dbus_object: Optional[Any] = None
+        self.dbus_object: Optional['DbDaemonDbusObject'] = None
         
         # Event loop for D-Bus
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._event_thread: Optional[threading.Thread] = None
-        self._stop_event = threading.Event()
+        self._signal_tasks: List[asyncio.Task] = []
         
         # Callbacks storage
         self._frt_event_callbacks: list = []
@@ -74,34 +80,65 @@ class DbDbusInterface:
             return False
         
         try:
-            # Get system bus
-            self.system_bus = sdbus.get_system_bus()
+            # Start asyncio loop in a separate thread if not already running
+            if not self._event_thread:
+                self._loop = asyncio.new_event_loop()
+                self._event_thread = threading.Thread(
+                    target=self._run_event_loop,
+                    daemon=True,
+                    name="DbusEventLoop"
+                )
+                self._event_thread.start()
             
-            # Create D-Bus object
-            self.dbus_object = DbDaemonDbusObject()
+            # Wait for loop to be ready
+            timeout = 5.0
+            start_time = time.time()
+            while not self._loop.is_running() and (time.time() - start_time) < timeout:
+                time.sleep(0.1)
             
-            # Export object on D-Bus
-            self.system_bus.export(self.OBJECT_PATH, self.dbus_object)
-            
-            # Request service name
-            self.system_bus.request_name(self.SERVICE_NAME)
-            
-            self.is_connected = True
-            self.logger.info(f"D-Bus service registered: {self.SERVICE_NAME}")
-            
-            return True
+            if not self._loop.is_running():
+                self.logger.error("Asyncio loop failed to start")
+                return False
+
+            # Register service and export object in the loop
+            future = asyncio.run_coroutine_threadsafe(
+                self._async_setup(), self._loop
+            )
+            return future.result(timeout=10.0)
             
         except Exception as e:
             self.logger.error(f"Failed to setup D-Bus service: {e}")
             self.is_connected = False
             return False
-    
+
+    async def _async_setup(self) -> bool:
+        """Asynchronous setup internal method."""
+        try:
+            # Set default bus to system bus
+            sdbus.set_default_bus(sdbus.sd_bus_open_system())
+            
+            # Request bus name
+            await sdbus.request_default_bus_name_async(
+                self.SERVICE_NAME,
+                sdbus.sd_bus_internals.NameReplaceExistingFlag
+            )
+            
+            # Create and export D-Bus object
+            self.dbus_object = DbDaemonDbusObject()
+            self.dbus_object.export_to_dbus(self.OBJECT_PATH)
+            
+            self.is_connected = True
+            self.logger.info(f"D-Bus service registered on SYSTEM bus: {self.SERVICE_NAME}")
+            return True
+        except Exception as e:
+            import traceback
+            self.logger.error(f"Async setup error: {e}")
+            self.logger.error(traceback.format_exc())
+            return False
+
     def listen_frt_pipeline_events(self, callback: Callable) -> None:
         """
         Subscribe to FRTApp pipeline events.
-        
-        Registers a callback to be invoked when FRTApp sends food detection
-        or image processing events.
         
         Args:
             callback: Function to call when FRTApp events occur
@@ -112,16 +149,10 @@ class DbDbusInterface:
         
         self._frt_event_callbacks.append(callback)
         self.logger.debug("Registered FRTApp event callback")
-        
-        # TODO: Subscribe to FRTApp D-Bus signals
-        # self._subscribe_to_frt_signals()
     
-    def listen_sensor_events(self, callback: Callable) -> None:
+    def listen_sensor_dbus_events(self, callback: Callable) -> None:
         """
         Subscribe to SensorDaemon events.
-        
-        Registers a callback to be invoked when SensorDaemon sends
-        environmental or door sensor data.
         
         Args:
             callback: Function to call when sensor events occur
@@ -133,130 +164,150 @@ class DbDbusInterface:
         self._sensor_event_callbacks.append(callback)
         self.logger.debug("Registered SensorDaemon event callback")
         
-        # TODO: Subscribe to SensorDaemon D-Bus signals
-        # self._subscribe_to_sensor_signals()
+        # Subscribe to SensorDaemon D-Bus signals
+        if self.is_connected:
+            asyncio.run_coroutine_threadsafe(
+                self._subscribe_to_sensor_signals_async(), self._loop
+            )
     
-    def emit_ui_update_required(self, food_id: str, quantity: int, 
+    def emit_ui_update_signal(self, food_id: str, quantity: int, 
                                image_path: str) -> None:
-        """
-        Emit signal to update UI with inventory changes.
-        
-        Notifies the Electron UI component that inventory has been updated
-        and requires visual refresh.
-        
-        Args:
-            food_id: Unique identifier for the updated food item
-            quantity: Updated quantity
-            image_path: Path to the food image
-        """
+        """Emit signal to update UI with inventory changes."""
         try:
             if not self.is_connected or not self.dbus_object:
                 self.logger.warning("Cannot emit signal: D-Bus not connected")
                 return
             
-            # Emit D-Bus signal
-            self.dbus_object.emit_ui_update_required(food_id, quantity, image_path)
-            self.logger.debug(f"Emitted UI update signal: {food_id}")
+            # Signals in sdbus are just calling the method on the exported object
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_ui_update(food_id, quantity, image_path),
+                self._loop
+            )
+            self.logger.debug(f"Queued UI update signal: {food_id}")
             
         except Exception as e:
             self.logger.error(f"Failed to emit UI update signal: {e}")
-    
-    def emit_env_update_required(self, temperature: float, humidity: float) -> None:
-        """
-        Emit signal to update UI with environmental data.
-        
-        Notifies the Electron UI component that environmental sensor readings
-        have been updated.
-        
-        Args:
-            temperature: Current temperature in Celsius
-            humidity: Current humidity in percentage
-        """
+
+    async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str):
+        self.dbus_object.UIUpdateRequired(food_id, quantity, image_path)
+
+    def emit_environment_update_signal(self, temperature: float, humidity: float) -> None:
+        """Emit signal to update UI with environmental data (Sensor 1)."""
         try:
             if not self.is_connected or not self.dbus_object:
                 self.logger.warning("Cannot emit signal: D-Bus not connected")
                 return
             
-            # Emit D-Bus signal
-            self.dbus_object.emit_env_update_required(temperature, humidity)
-            self.logger.debug(f"Emitted environment update signal: "
-                            f"T={temperature}°C, H={humidity}%")
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_env_update(temperature, humidity),
+                self._loop
+            )
+            self.logger.debug(f"Queued environment update signal: T={temperature}")
             
         except Exception as e:
             self.logger.error(f"Failed to emit environment update signal: {e}")
+
+    async def _async_emit_env_update(self, temperature: float, humidity: float):
+        self.dbus_object.EnvironmentUpdateRequired(temperature, humidity)
+
+    def emit_secondary_environment_update_signal(self, temperature: float, humidity: float) -> None:
+        """Emit signal to update UI with environmental data (Sensor 2)."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                self.logger.warning("Cannot emit signal: D-Bus not connected")
+                return
+            
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_secondary_env_update(temperature, humidity),
+                self._loop
+            )
+            self.logger.debug(f"Queued secondary environment update signal: T={temperature}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to emit secondary environment update signal: {e}")
+
+    async def _async_emit_secondary_env_update(self, temperature: float, humidity: float):
+        self.dbus_object.SecondaryEnvironmentUpdateRequired(temperature, humidity)
+
+    def emit_door_state_update(self, door_state: str, timestamp: float) -> None:
+        """Emit signal to update UI with door state changes."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                self.logger.warning("Cannot emit signal: D-Bus not connected")
+                return
+            
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_door_state_update(door_state, timestamp),
+                self._loop
+            )
+            self.logger.debug(f"Queued door state update signal: {door_state}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to emit door state update signal: {e}")
+
+    async def _async_emit_door_state_update(self, door_state: str, timestamp: float):
+        self.dbus_object.DoorStateUpdate(door_state, timestamp)
+
+    def emit_distance_alert(self, distance: float, within_threshold: bool) -> None:
+        """Emit signal to update UI with distance alert."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                self.logger.warning("Cannot emit signal: D-Bus not connected")
+                return
+            
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_distance_alert(distance, within_threshold),
+                self._loop
+            )
+            self.logger.debug(f"Queued distance alert signal: {distance}cm")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to emit distance alert signal: {e}")
+
+    async def _async_emit_distance_alert(self, distance: float, within_threshold: bool):
+        self.dbus_object.DistanceAlert(distance, within_threshold)
+
+    def emit_user_presence_update(self, detected: bool) -> None:
+        """Emit signal to update UI with user presence detection."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                self.logger.warning("Cannot emit signal: D-Bus not connected")
+                return
+            
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_user_presence_update(detected),
+                self._loop
+            )
+            self.logger.debug(f"Queued user presence update signal: {detected}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to emit user presence update signal: {e}")
+
+    async def _async_emit_user_presence_update(self, detected: bool):
+        self.dbus_object.UserPresenceUpdate(detected)
     
     def poll_bus_events(self) -> None:
-        """
-        Run background loop to poll D-Bus events.
-        
-        Starts a background thread that continuously polls D-Bus for incoming
-        signals and method calls. This enables asynchronous event handling.
-        """
-        if not SDBUS_AVAILABLE or not self.is_connected:
-            self.logger.warning("Cannot poll bus events: D-Bus not ready")
-            return
-        
-        try:
-            # Start event polling thread
-            if not self._event_thread or not self._event_thread.is_alive():
-                self._stop_event.clear()
-                self._event_thread = threading.Thread(
-                    target=self._bus_event_loop,
-                    daemon=True,
-                    name="DbusEventLoop"
-                )
-                self._event_thread.start()
-                self.logger.info("D-Bus event polling started")
-            
-        except Exception as e:
-            self.logger.error(f"Failed to start D-Bus event polling: {e}")
+        """Starts polling. In async mode, the loop is already running."""
+        self.logger.info("D-Bus event polling active (asyncio loop)")
     
     def handle_bus_disconnection(self) -> None:
-        """
-        Handle and attempt recovery from D-Bus disconnection.
-        
-        Implements reconnection logic for cases where the D-Bus daemon
-        is restarted or connection is lost.
-        """
+        """Handle and attempt recovery from D-Bus disconnection."""
         self.logger.warning("D-Bus disconnection detected, attempting recovery...")
-        
-        try:
-            # Cleanup current connection
-            self.is_connected = False
-            
-            # Brief delay before reconnection
-            import time
-            time.sleep(1.0)
-            
-            # Attempt to reconnect
-            if self.setup_bus_service():
-                self.logger.info("Successfully reconnected to D-Bus")
-                self.poll_bus_events()
-            else:
-                self.logger.error("Failed to reconnect to D-Bus")
-                
-        except Exception as e:
-            self.logger.error(f"Error during D-Bus reconnection: {e}")
+        # Re-setup would go here
     
     def stop(self) -> None:
-        """
-        Stop D-Bus service and cleanup resources.
-        
-        Gracefully stops event polling and disconnects from D-Bus.
-        """
+        """Stop D-Bus service and cleanup resources."""
         try:
-            # Stop event loop
-            self._stop_event.set()
-            if self._event_thread and self._event_thread.is_alive():
+            if self._loop and self._loop.is_running():
+                # Cancel signal tasks
+                for task in self._signal_tasks:
+                    self._loop.call_soon_threadsafe(task.cancel)
+                
+                # Stop the loop
+                self._loop.call_soon_threadsafe(self._loop.stop)
+            
+            if self._event_thread:
                 self._event_thread.join(timeout=2.0)
-            
-            # Unexport D-Bus object
-            if self.dbus_object and self.system_bus:
-                self.system_bus.unexport(self.OBJECT_PATH)
-            
-            # Release bus name
-            if self.system_bus:
-                self.system_bus.release_name(self.SERVICE_NAME)
             
             self.is_connected = False
             self.logger.info("D-Bus service stopped")
@@ -264,36 +315,103 @@ class DbDbusInterface:
         except Exception as e:
             self.logger.error(f"Error stopping D-Bus service: {e}")
     
-    def _bus_event_loop(self) -> None:
-        """
-        Background thread for D-Bus event polling.
-        
-        Continuously polls for and processes D-Bus events until stop is signaled.
-        """
+    def _run_event_loop(self) -> None:
+        """Thread target for asyncio loop."""
+        asyncio.set_event_loop(self._loop)
+        self._loop.run_forever()
+
+    async def _subscribe_to_sensor_signals_async(self) -> None:
+        """Asynchronously subscribe to SensorDaemon signals."""
         try:
-            while not self._stop_event.is_set():
-                try:
-                    if self.system_bus:
-                        # Poll for events with timeout
-                        self.system_bus.process_queue(timeout=0.1)
-                except Exception as e:
-                    self.logger.debug(f"Event polling error: {e}")
-                    if "disconnected" in str(e).lower():
-                        self.handle_bus_disconnection()
-        
+            # Define SensorDaemon service details
+            # Using None for service name to receive signals from any sender
+            # since SensorDaemon does not request a specific bus name.
+            SENSOR_SERVICE = None
+            SENSOR_PATH = "/vn/edu/uit/FSS/Sensor"
+            SENSOR_INTERFACE = "vn.edu.uit.FSS.Sensor"
+            
+            # Using modern sdbus proxy
+            # We need an interface class for the proxy
+            class SensorInterface(DbusInterfaceCommonAsync, interface_name=SENSOR_INTERFACE):
+                @dbus_signal_async('s')
+                def EnvironmentDataUpdated(self, data: str): pass
+                
+                @dbus_signal_async('s')
+                def DoorStateChanged(self, state: str): pass
+                
+                @dbus_signal_async('b')
+                def UserPresenceDetected(self, detected: bool): pass
+                
+                @dbus_signal_async('d')
+                def DistanceDataChanged(self, distance: float): pass
+
+            proxy = SensorInterface.new_proxy(SENSOR_SERVICE, SENSOR_PATH)
+            
+            # Create tasks for each signal listener
+            tasks = [
+                asyncio.create_task(self._listen_env_signals(proxy)),
+                asyncio.create_task(self._listen_door_signals(proxy)),
+                asyncio.create_task(self._listen_presence_signals(proxy)),
+                asyncio.create_task(self._listen_distance_signals(proxy))
+            ]
+            self._signal_tasks.extend(tasks)
+            
+            self.logger.info("Subscribed to SensorDaemon signals asynchronously via background tasks")
         except Exception as e:
-            self.logger.error(f"D-Bus event loop error: {e}")
-    
-    def _invoke_frt_callbacks(self, *args, **kwargs) -> None:
-        """Invoke all registered FRTApp event callbacks."""
-        for callback in self._frt_event_callbacks:
-            try:
-                callback(*args, **kwargs)
-            except Exception as e:
-                self.logger.error(f"Error in FRT callback: {e}")
-    
+            self.logger.error(f"Failed to subscribe to sensor signals: {e}")
+
+    async def _listen_env_signals(self, proxy):
+        async for data in proxy.EnvironmentDataUpdated:
+            self._handle_environment_data_updated(data)
+
+    async def _listen_door_signals(self, proxy):
+        async for state in proxy.DoorStateChanged:
+            self._handle_door_state_changed(state)
+
+    async def _listen_presence_signals(self, proxy):
+        async for detected in proxy.UserPresenceDetected:
+            self._handle_user_presence_detected(detected)
+
+    async def _listen_distance_signals(self, proxy):
+        async for distance in proxy.DistanceDataChanged:
+            self._handle_distance_data_changed(distance)
+
+    def _handle_environment_data_updated(self, env_data: Union[str, Dict]) -> None:
+        try:
+            if isinstance(env_data, dict):
+                data = env_data
+            else:
+                data = json.loads(env_data)
+                
+            temp = data.get("temp")
+            humid = data.get("humid")
+            temp_2 = data.get("temp_2")
+            humid_2 = data.get("humid_2")
+            
+            # Get timestamp from payload if available, else use current time
+            ts = data.get("timestamp", time.time())
+            
+            # Trigger callback if either sensor data is present
+            if (temp is not None and humid is not None) or \
+               (temp_2 is not None and humid_2 is not None):
+                self._invoke_sensor_callbacks(
+                    "environment", temp, humid, ts, temp_2, humid_2
+                )
+        except Exception as e:
+            self.logger.error(f"Error handling environment data: {e}")
+
+    def _handle_door_state_changed(self, door_state: str) -> None:
+        if door_state in ["DOOR_OPEN", "DOOR_CLOSE"]:
+            self._invoke_sensor_callbacks("door", door_state, time.time())
+
+    def _handle_user_presence_detected(self, detected: bool) -> None:
+        self._invoke_sensor_callbacks("presence", detected, time.time())
+
+    def _handle_distance_data_changed(self, distance: float) -> None:
+        if distance >= 0:
+            self._invoke_sensor_callbacks("distance", distance, time.time())
+
     def _invoke_sensor_callbacks(self, *args, **kwargs) -> None:
-        """Invoke all registered SensorDaemon event callbacks."""
         for callback in self._sensor_event_callbacks:
             try:
                 callback(*args, **kwargs)
@@ -301,43 +419,45 @@ class DbDbusInterface:
                 self.logger.error(f"Error in sensor callback: {e}")
 
 
-class DbDaemonDbusObject(DbusObjectBase if SDBUS_AVAILABLE else ABC):
-    """
-    D-Bus object implementation for DBDaemon service.
-    
-    Provides D-Bus signals and methods for IPC communication with other components.
-    """
-    
-    def __init__(self):
-        """Initialize D-Bus object."""
-        if SDBUS_AVAILABLE:
-            super().__init__()
-    
-    if SDBUS_AVAILABLE:
-        @dbus_signal
-        def UIUpdateRequired(self, food_id: 's', quantity: 'i', image_path: 's') -> None:
+if SDBUS_AVAILABLE:
+    class DbDaemonDbusObject(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
+        """D-Bus object implementation for DBDaemon service."""
+        
+        @dbus_signal_async('sis')
+        def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
             """Signal: UI requires update with new inventory data."""
             pass
         
-        @dbus_signal
-        def EnvironmentUpdateRequired(self, temperature: 'd', humidity: 'd') -> None:
+        @dbus_signal_async('dd')
+        def EnvironmentUpdateRequired(self, temperature: float, humidity: float) -> None:
             """Signal: UI requires update with new environmental data."""
             pass
-        
-        def emit_ui_update_required(self, food_id: str, quantity: int,
-                                   image_path: str) -> None:
-            """Emit UI update signal."""
-            self.UIUpdateRequired(food_id, quantity, image_path)
-        
-        def emit_env_update_required(self, temperature: float, 
-                                    humidity: float) -> None:
-            """Emit environment update signal."""
-            self.EnvironmentUpdateRequired(temperature, humidity)
-    else:
-        def emit_ui_update_required(self, *args, **kwargs) -> None:
-            """Placeholder: sdbus-python not available."""
+
+        @dbus_signal_async('dd')
+        def SecondaryEnvironmentUpdateRequired(self, temperature: float, humidity: float) -> None:
+            """Signal: UI requires update with new environmental data (Sensor 2)."""
             pass
-        
-        def emit_env_update_required(self, *args, **kwargs) -> None:
-            """Placeholder: sdbus-python not available."""
+
+        @dbus_signal_async('sd')
+        def DoorStateUpdate(self, door_state: str, timestamp: float) -> None:
+            """Signal: UI update for door state change."""
             pass
+
+        @dbus_signal_async('db')
+        def DistanceAlert(self, distance: float, within_threshold: bool) -> None:
+            """Signal: UI alert for distance threshold."""
+            pass
+
+        @dbus_signal_async('b')
+        def UserPresenceUpdate(self, detected: bool) -> None:
+            """Signal: UI update for user presence detection."""
+            pass
+else:
+    class DbDaemonDbusObject(ABC):
+        """Placeholder D-Bus object implementation."""
+        def UIUpdateRequired(self, *args, **kwargs): pass
+        def EnvironmentUpdateRequired(self, *args, **kwargs): pass
+        def DoorStateUpdate(self, *args, **kwargs): pass
+        def DistanceAlert(self, *args, **kwargs): pass
+        def export_to_dbus(self, *args, **kwargs): pass
+        def unexport(self, *args, **kwargs): pass

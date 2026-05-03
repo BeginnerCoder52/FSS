@@ -34,7 +34,13 @@ def setup_logging(log_dir: str = "/var/log/fss") -> None:
     """
     # Create log directory if needed
     log_path = Path(log_dir)
-    log_path.mkdir(parents=True, exist_ok=True)
+    try:
+        log_path.mkdir(parents=True, exist_ok=True)
+    except (PermissionError, OSError):
+        # Fallback to local logs directory if system log dir is not writable
+        log_path = Path(__file__).parent.parent / "logs"
+        log_path.mkdir(parents=True, exist_ok=True)
+        print(f"WARNING: Cannot write to {log_dir}, falling back to {log_path}")
     
     # Root logger configuration
     root_logger = logging.getLogger()
@@ -54,14 +60,17 @@ def setup_logging(log_dir: str = "/var/log/fss") -> None:
     
     # File handler - DEBUG level with rotation
     log_file = log_path / "db_daemon.log"
-    file_handler = logging.handlers.RotatingFileHandler(
-        str(log_file),
-        maxBytes=10 * 1024 * 1024,  # 10MB
-        backupCount=5
-    )
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(log_format)
-    root_logger.addHandler(file_handler)
+    try:
+        file_handler = logging.handlers.RotatingFileHandler(
+            str(log_file),
+            maxBytes=10 * 1024 * 1024,  # 10MB
+            backupCount=5
+        )
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(log_format)
+        root_logger.addHandler(file_handler)
+    except (PermissionError, OSError):
+        print(f"WARNING: Cannot create log file at {log_file}. File logging disabled.")
 
 
 # ============================================================================

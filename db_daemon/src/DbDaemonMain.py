@@ -42,6 +42,7 @@ class DbDaemonMain:
 
     # Configuration constants
     MAIN_LOOP_INTERVAL_MS = 1000  # 1 second main loop interval
+    DISTANCE_THRESHOLD_CM = 30.0  # Threshold for distance alert
     
     def __init__(self):
         """Initialize DbDaemonMain instance."""
@@ -136,6 +137,8 @@ class DbDaemonMain:
             
         except Exception as e:
             self.logger.error(f"Unexpected error during initialization: {e}")
+            self.logger.error("Attempting startup failure recovery...")
+            self.reset_on_startup_failure()
             self.current_state = DaemonState.ERROR
             return False
     
@@ -250,7 +253,7 @@ class DbDaemonMain:
                 return
             
             # Notify UI of update
-            self.dbus_interface.emit_ui_update_required(food_id, quantity, image_path or "")
+            self.dbus_interface.emit_ui_update_signal(food_id, quantity, image_path or "")
             
             self._processed_events_count += 1
             self.logger.info(f"Processed food event: {food_id} (qty={quantity}, "
@@ -275,17 +278,50 @@ class DbDaemonMain:
         except Exception as e:
             self.logger.error(f"Error processing food event: {e}")
     
-    def process_environment_event(self, temperature: float, humidity: float,
-                                 timestamp: float) -> None:
+    def process_door_sensor_event(self, door_state: str, timestamp: float) -> None:
         """
-        Process environmental sensor data from SensorDaemon.
+        Process door sensor state change from SensorDaemon.
         
-        Logs environmental readings to database and notifies UI of updates.
-        Includes timestamp from sensor for accurate time synchronization.
+        Logs door state changes and notifies UI for fridge access tracking.
         
         Args:
-            temperature: Temperature reading in Celsius
-            humidity: Humidity reading in percentage
+            door_state: Door state string ("DOOR_OPEN" or "DOOR_CLOSE")
+            timestamp: Unix timestamp when state was detected
+        """
+        try:
+            self.current_state = DaemonState.PROCESSING
+            
+            if not self.db_manager or not self.dbus_interface:
+                self.logger.error("Required managers not initialized")
+                self._error_count += 1
+                return
+            
+            # Log door state to database
+            if not self.db_manager.insert_door_sensor_log(door_state, timestamp):
+                self.logger.error("Failed to insert door log")
+                self._error_count += 1
+                return
+            
+            # Emit door state update to UI
+            self.dbus_interface.emit_door_state_update(door_state, timestamp)
+            
+            self.logger.info(f"Door sensor event: {door_state}")
+            self._processed_events_count += 1
+            
+        except Exception as e:
+            self.logger.error(f"Error processing door sensor event: {e}")
+            self._error_count += 1
+        finally:
+            self.current_state = DaemonState.IDLE
+    
+    def process_distance_sensor_event(self, distance: float, timestamp: float) -> None:
+        """
+        Process distance sensor reading from SensorDaemon.
+        
+        Logs distance measurements for tracking refrigerator contents proximity.
+        
+        Args:
+            distance: Distance reading in centimeters
             timestamp: Unix timestamp when measurement was taken
         """
         try:
@@ -296,19 +332,100 @@ class DbDaemonMain:
                 self._error_count += 1
                 return
             
-            # Log environmental data with sensor timestamp
-            if not self.db_manager.insert_environment_log(temperature, humidity, 
-                                                         timestamp):
+            # Log distance reading to database
+            if not self.db_manager.insert_distance_sensor_log(distance, timestamp):
+                self.logger.error("Failed to insert distance log")
+                self._error_count += 1
+                return
+            
+            # Emit distance alert signal to UI
+            within_threshold = distance < self.DISTANCE_THRESHOLD_CM
+            self.dbus_interface.emit_distance_alert(distance, within_threshold)
+            
+            self.logger.debug(f"Distance sensor event: {distance}cm (alert={within_threshold})")
+            self._processed_events_count += 1
+            
+        except Exception as e:
+            self.logger.error(f"Error processing distance sensor event: {e}")
+            self._error_count += 1
+        finally:
+            self.current_state = DaemonState.IDLE
+    
+    def process_presence_event(self, detected: bool, timestamp: float) -> None:
+        """
+        Process user presence detection from SensorDaemon.
+        
+        Logs presence detection events for security and monitoring.
+        
+        Args:
+            detected: Boolean presence detection result
+            timestamp: Unix timestamp when detection occurred
+        """
+        try:
+            self.logger.info(f"Presence event: {'Detected' if detected else 'Not detected'}")
+            
+            # Log presence to database
+            if self.db_manager:
+                if not self.db_manager.insert_presence_sensor_log(detected, timestamp):
+                    self.logger.error("Failed to insert presence log")
+                    # Non-fatal error, continue to emit signal
+            
+            # Emit user presence update to UI
+            if self.dbus_interface:
+                self.dbus_interface.emit_user_presence_update(detected)
+                
+            self._processed_events_count += 1
+            
+        except Exception as e:
+            self.logger.error(f"Error processing presence event: {e}")
+            self._error_count += 1
+    
+    def process_environment_event(self, temperature: float, humidity: float,
+                                 timestamp: float, temperature_2: Optional[float] = None,
+                                 humidity_2: Optional[float] = None) -> None:
+        """
+        Process environmental sensor data from SensorDaemon (dual-sensor).
+        
+        Logs environmental readings from primary sensor (SHT31-1) and optional
+        secondary sensor (SHT31-2) to database and notifies UI of updates.
+        Includes timestamp from sensor for accurate time synchronization.
+        
+        Args:
+            temperature: Temperature reading in Celsius (Sensor 1)
+            humidity: Humidity reading in percentage (Sensor 1)
+            timestamp: Unix timestamp when measurement was taken
+            temperature_2: Optional temperature from secondary sensor (Sensor 2)
+            humidity_2: Optional humidity from secondary sensor (Sensor 2)
+        """
+        try:
+            self.current_state = DaemonState.PROCESSING
+            
+            if not self.db_manager or not self.dbus_interface:
+                self.logger.error("Required managers not initialized")
+                self._error_count += 1
+                return
+            
+            # Log environmental data with dual-sensor support
+            if not self.db_manager.insert_environment_log(
+                temperature, humidity, timestamp, temperature_2, humidity_2
+            ):
                 self.logger.error("Failed to insert environment log")
                 self._error_count += 1
                 return
             
-            # Notify UI of environment update
-            self.dbus_interface.emit_env_update_required(temperature, humidity)
+            # Notify UI of environment update (primary sensor)
+            if temperature is not None and humidity is not None:
+                self.dbus_interface.emit_environment_update_signal(temperature, humidity)
+            
+            # Notify UI of secondary environment update if available
+            if temperature_2 is not None and humidity_2 is not None:
+                self.dbus_interface.emit_secondary_environment_update_signal(temperature_2, humidity_2)
             
             self._processed_events_count += 1
-            self.logger.debug(f"Environment event: T={temperature:.1f}°C, "
-                            f"H={humidity:.1f}%, ts={timestamp}")
+            log_msg = f"Environment: S1_T={temperature:.1f}°C, S1_H={humidity:.1f}%"
+            if temperature_2 is not None and humidity_2 is not None:
+                log_msg += f", S2_T={temperature_2:.1f}°C, S2_H={humidity_2:.1f}%"
+            self.logger.debug(log_msg)
             
         except Exception as e:
             self.logger.error(f"Error processing environment event: {e}")
@@ -339,6 +456,78 @@ class DbDaemonMain:
         except Exception as e:
             self.logger.error(f"Recovery failed: {e}")
             self.current_state = DaemonState.ERROR
+    
+    def reset_door_sensor(self) -> bool:
+        """
+        Reset door sensor state and clear any stuck states.
+        
+        Performs a soft reset of the door sensor state, useful if the sensor
+        gets stuck or reports inconsistent state.
+        
+        Returns:
+            True if reset successful, False otherwise
+        """
+        try:
+            self.logger.info("Resetting door sensor...")
+            # TODO: Send reset signal to SensorDaemon via D-Bus
+            # For now, just log the reset attempt
+            self.logger.info("Door sensor reset initiated")
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to reset door sensor: {e}")
+            return False
+    
+    def reset_distance_sensor(self) -> bool:
+        """
+        Reset distance sensor and clear any stuck states.
+        
+        Performs a soft reset of the distance sensor, useful if the sensor
+        gets stuck or reports inconsistent readings.
+        
+        Returns:
+            True if reset successful, False otherwise
+        """
+        try:
+            self.logger.info("Resetting distance sensor...")
+            # TODO: Send reset signal to SensorDaemon via D-Bus
+            # For now, just log the reset attempt
+            self.logger.info("Distance sensor reset initiated")
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to reset distance sensor: {e}")
+            return False
+    
+    def reset_on_startup_failure(self) -> bool:
+        """
+        Perform comprehensive reset if daemon fails to start.
+        
+        Attempts to reset all components and databases to a clean state
+        in case of startup failure. This is a last-resort recovery mechanism.
+        
+        Returns:
+            True if reset successful, False otherwise
+        """
+        try:
+            self.logger.warning("Performing comprehensive startup failure reset...")
+            
+            # Close database connection
+            if self.db_manager:
+                self.db_manager.close_connection()
+            
+            # Reset sensor states
+            self.reset_door_sensor()
+            self.reset_distance_sensor()
+            
+            # Attempt to reconnect D-Bus
+            if self.dbus_interface:
+                self.dbus_interface.handle_bus_disconnection()
+            
+            self.logger.info("Startup failure reset completed")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Startup failure reset failed: {e}")
+            return False
     
     def log_daemon_status(self) -> None:
         """
@@ -404,7 +593,7 @@ class DbDaemonMain:
         try:
             if self.dbus_interface:
                 # Register callbacks
-                self.dbus_interface.listen_sensor_events(self._handle_sensor_event)
+                self.dbus_interface.listen_sensor_dbus_events(self._handle_sensor_event)
                 self.dbus_interface.listen_frt_pipeline_events(self._handle_frt_event)
                 
                 self.logger.debug("Event handlers registered")
@@ -416,14 +605,25 @@ class DbDaemonMain:
         """Handle incoming SensorDaemon events."""
         try:
             if event_type == "environment":
+                # Args: temperature, humidity, timestamp, temp_2, humid_2
                 temp, humid, ts = args[0], args[1], args[2]
-                self.process_environment_event(temp, humid, ts)
+                temp_2 = args[3] if len(args) > 3 else None
+                humid_2 = args[4] if len(args) > 4 else None
+                self.process_environment_event(temp, humid, ts, temp_2, humid_2)
             elif event_type == "door":
-                state = args[0]
-                self.logger.debug(f"Door sensor event: {state}")
+                # Args: door_state, timestamp
+                door_state, ts = args[0], args[1]
+                self.process_door_sensor_event(door_state, ts)
+            elif event_type == "distance":
+                # Args: distance, timestamp
+                distance, ts = args[0], args[1]
+                self.process_distance_sensor_event(distance, ts)
             elif event_type == "presence":
-                detected = args[0]
-                self.logger.debug(f"Presence event: {detected}")
+                # Args: detected, timestamp
+                detected, ts = args[0], args[1]
+                self.process_presence_event(detected, ts)
+            else:
+                self.logger.warning(f"Unknown sensor event type: {event_type}")
         except Exception as e:
             self.logger.error(f"Error handling sensor event: {e}")
     

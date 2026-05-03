@@ -28,6 +28,9 @@ class SqliteManager:
     DEFAULT_TRANSACTION_TIMEOUT_MS = 5000
     INVENTORY_TABLE_NAME = "inventory"
     ENVIRONMENT_LOG_TABLE_NAME = "environment_log"
+    DOOR_SENSOR_TABLE_NAME = "door_sensor_log"
+    DISTANCE_SENSOR_TABLE_NAME = "distance_sensor_log"
+    PRESENCE_SENSOR_TABLE_NAME = "presence_sensor_log"
     
     def __init__(self, db_path: str = DEFAULT_DB_PATH, 
                  transaction_timeout_ms: int = DEFAULT_TRANSACTION_TIMEOUT_MS):
@@ -64,9 +67,11 @@ class SqliteManager:
             db_dir.mkdir(parents=True, exist_ok=True)
             
             # Connect to database
+            # check_same_thread=False is required for multi-threaded access
             self.db_connection = sqlite3.connect(
                 self.db_path,
-                timeout=self.transaction_timeout_ms / 1000.0  # Convert ms to seconds
+                timeout=self.transaction_timeout_ms / 1000.0,  # Convert ms to seconds
+                check_same_thread=False
             )
             self.db_cursor = self.db_connection.cursor()
             
@@ -90,7 +95,7 @@ class SqliteManager:
         """
         Create database tables if they don't already exist.
         
-        Creates the inventory and environment_log tables with proper schema,
+        Creates the inventory and environmental log tables with proper schema,
         indexes, and constraints to support FSS operations.
         """
         if not self.db_connection or not self.db_cursor:
@@ -117,12 +122,14 @@ class SqliteManager:
                 ON {self.INVENTORY_TABLE_NAME}(food_id)
             """)
             
-            # Create environment log table
+            # Create environment log table (Sensor 1)
             self.db_cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS {self.ENVIRONMENT_LOG_TABLE_NAME} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     temperature REAL NOT NULL,
                     humidity REAL NOT NULL,
+                    temperature_2 REAL,
+                    humidity_2 REAL,
                     timestamp REAL NOT NULL,
                     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
@@ -132,6 +139,54 @@ class SqliteManager:
             self.db_cursor.execute(f"""
                 CREATE INDEX IF NOT EXISTS idx_env_log_timestamp 
                 ON {self.ENVIRONMENT_LOG_TABLE_NAME}(timestamp)
+            """)
+            
+            # Create door sensor log table
+            self.db_cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.DOOR_SENSOR_TABLE_NAME} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    door_state TEXT NOT NULL,
+                    timestamp REAL NOT NULL,
+                    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            # Create index on door timestamp
+            self.db_cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_door_log_timestamp 
+                ON {self.DOOR_SENSOR_TABLE_NAME}(timestamp)
+            """)
+            
+            # Create distance sensor log table
+            self.db_cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.DISTANCE_SENSOR_TABLE_NAME} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    distance REAL NOT NULL,
+                    timestamp REAL NOT NULL,
+                    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            # Create index on distance timestamp
+            self.db_cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_distance_log_timestamp 
+                ON {self.DISTANCE_SENSOR_TABLE_NAME}(timestamp)
+            """)
+
+            # Create presence sensor log table
+            self.db_cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.PRESENCE_SENSOR_TABLE_NAME} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    detected INTEGER NOT NULL,
+                    timestamp REAL NOT NULL,
+                    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            # Create index on presence timestamp
+            self.db_cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_presence_log_timestamp 
+                ON {self.PRESENCE_SENSOR_TABLE_NAME}(timestamp)
             """)
             
             self.db_connection.commit()
@@ -188,17 +243,21 @@ class SqliteManager:
             return False
     
     def insert_environment_log(self, temperature: float, humidity: float, 
-                               timestamp: float) -> bool:
+                               timestamp: float, temperature_2: Optional[float] = None,
+                               humidity_2: Optional[float] = None) -> bool:
         """
-        Log environmental sensor readings to database.
+        Log environmental sensor readings to database (dual-sensor support).
         
-        Records temperature and humidity measurements along with their acquisition
+        Records temperature and humidity measurements from primary sensor (SHT31-1)
+        and optional secondary sensor (SHT31-2) along with their acquisition
         timestamp for time-series analysis and monitoring.
         
         Args:
-            temperature: Temperature reading in Celsius
-            humidity: Humidity reading in percentage
+            temperature: Temperature reading in Celsius (Sensor 1)
+            humidity: Humidity reading in percentage (Sensor 1)
             timestamp: Unix timestamp when measurement was taken (from SensorDaemon)
+            temperature_2: Optional temperature from secondary sensor (Sensor 2)
+            humidity_2: Optional humidity from secondary sensor (Sensor 2)
         
         Returns:
             True if insertion successful, False otherwise
@@ -210,13 +269,16 @@ class SqliteManager:
         try:
             self.db_cursor.execute(f"""
                 INSERT INTO {self.ENVIRONMENT_LOG_TABLE_NAME}
-                (temperature, humidity, timestamp)
-                VALUES (?, ?, ?)
-            """, (temperature, humidity, timestamp))
+                (temperature, humidity, temperature_2, humidity_2, timestamp)
+                VALUES (?, ?, ?, ?, ?)
+            """, (temperature, humidity, temperature_2, humidity_2, timestamp))
             
             self.db_connection.commit()
-            self.logger.debug(f"Logged environment data: temp={temperature}°C, "
-                            f"humid={humidity}%, ts={timestamp}")
+            log_msg = f"Logged environment: S1_T={temperature}°C, S1_H={humidity}%"
+            if temperature_2 is not None and humidity_2 is not None:
+                log_msg += f", S2_T={temperature_2}°C, S2_H={humidity_2}%"
+            log_msg += f", ts={timestamp}"
+            self.logger.debug(log_msg)
             return True
             
         except sqlite3.DatabaseError as e:
@@ -225,6 +287,129 @@ class SqliteManager:
             return False
         except Exception as e:
             self.logger.error(f"Unexpected error inserting environment log: {e}")
+            self.db_connection.rollback()
+            return False
+    
+    def insert_door_sensor_log(self, door_state: str, timestamp: float) -> bool:
+        """
+        Log door sensor state changes to database.
+        
+        Records door state (DOOR_OPEN / DOOR_CLOSE) and its acquisition timestamp
+        for tracking fridge access patterns.
+        
+        Args:
+            door_state: Door state string ("DOOR_OPEN" or "DOOR_CLOSE")
+            timestamp: Unix timestamp when state was detected
+        
+        Returns:
+            True if insertion successful, False otherwise
+        """
+        if not self.db_connection or not self.db_cursor:
+            self.logger.error("Database connection not established")
+            return False
+        
+        try:
+            # Validate door state
+            if door_state not in ["DOOR_OPEN", "DOOR_CLOSE"]:
+                self.logger.warning(f"Invalid door state: {door_state}")
+                return False
+            
+            self.db_cursor.execute(f"""
+                INSERT INTO {self.DOOR_SENSOR_TABLE_NAME}
+                (door_state, timestamp)
+                VALUES (?, ?)
+            """, (door_state, timestamp))
+            
+            self.db_connection.commit()
+            self.logger.debug(f"Logged door state: {door_state}, ts={timestamp}")
+            return True
+            
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error inserting door log: {e}")
+            self.handle_db_lock_exception()
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error inserting door log: {e}")
+            self.db_connection.rollback()
+            return False
+    
+    def insert_distance_sensor_log(self, distance: float, timestamp: float) -> bool:
+        """
+        Log distance sensor readings to database.
+        
+        Records distance measurement (in cm) from ToF sensor and its acquisition
+        timestamp for tracking refrigerator contents proximity.
+        
+        Args:
+            distance: Distance reading in centimeters
+            timestamp: Unix timestamp when measurement was taken
+        
+        Returns:
+            True if insertion successful, False otherwise
+        """
+        if not self.db_connection or not self.db_cursor:
+            self.logger.error("Database connection not established")
+            return False
+        
+        try:
+            # Validate distance value
+            if distance < 0:
+                self.logger.warning(f"Invalid distance value: {distance}")
+                return False
+            
+            self.db_cursor.execute(f"""
+                INSERT INTO {self.DISTANCE_SENSOR_TABLE_NAME}
+                (distance, timestamp)
+                VALUES (?, ?)
+            """, (distance, timestamp))
+            
+            self.db_connection.commit()
+            self.logger.debug(f"Logged distance: {distance}cm, ts={timestamp}")
+            return True
+            
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error inserting distance log: {e}")
+            self.handle_db_lock_exception()
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error inserting distance log: {e}")
+            self.db_connection.rollback()
+            return False
+    
+    def insert_presence_sensor_log(self, detected: bool, timestamp: float) -> bool:
+        """
+        Log presence sensor detection events to database.
+        
+        Records user detection status (True/False) and its acquisition timestamp.
+        
+        Args:
+            detected: Boolean presence detection status
+            timestamp: Unix timestamp when state was detected
+        
+        Returns:
+            True if insertion successful, False otherwise
+        """
+        if not self.db_connection or not self.db_cursor:
+            self.logger.error("Database connection not established")
+            return False
+        
+        try:
+            self.db_cursor.execute(f"""
+                INSERT INTO {self.PRESENCE_SENSOR_TABLE_NAME}
+                (detected, timestamp)
+                VALUES (?, ?)
+            """, (1 if detected else 0, timestamp))
+            
+            self.db_connection.commit()
+            self.logger.debug(f"Logged presence: {detected}, ts={timestamp}")
+            return True
+            
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error inserting presence log: {e}")
+            self.handle_db_lock_exception()
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error inserting presence log: {e}")
             self.db_connection.rollback()
             return False
     
@@ -294,8 +479,15 @@ class SqliteManager:
         """
         try:
             if self.db_connection:
-                self.db_connection.commit()
+                # Check if connection is still open before committing
+                try:
+                    self.db_connection.commit()
+                except (sqlite3.ProgrammingError, sqlite3.Error):
+                    # Connection might already be closed or in invalid state
+                    pass
+                
                 self.db_connection.close()
+                self.db_connection = None
                 self.db_cursor = None
                 self.logger.info("Database connection closed successfully")
         except sqlite3.Error as e:
@@ -335,7 +527,3 @@ class SqliteManager:
         except sqlite3.Error as e:
             self.logger.error(f"Error retrieving inventory item: {e}")
             return None
-    
-    def __del__(self):
-        """Cleanup resources on object destruction."""
-        self.close_connection()
