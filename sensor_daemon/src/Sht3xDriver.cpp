@@ -12,6 +12,7 @@
 #include <thread>
 #include <chrono>
 #include <cstring>
+#include <mutex>
 
 extern "C"
 {
@@ -19,8 +20,8 @@ extern "C"
 }
 
 /* Global state for C driver */
-// static sht31_handle_t g_sht31_handle;
-static std::shared_ptr<I2cHandler> g_i2c_ptr = nullptr;
+static std::mutex g_driver_mutex;
+static I2cHandler* g_active_i2c = nullptr;
 
 /* Bridge functions for LibDriver C API */
 extern "C"
@@ -30,7 +31,7 @@ extern "C"
      */
     uint8_t iic_init(void)
     {
-        return g_i2c_ptr && g_i2c_ptr->open_bus() ? 0 : 1;
+        return g_active_i2c && g_active_i2c->open_bus() ? 0 : 1;
     }
 
     /**
@@ -38,9 +39,9 @@ extern "C"
      */
     uint8_t iic_deinit(void)
     {
-        if (g_i2c_ptr)
+        if (g_active_i2c)
         {
-            g_i2c_ptr->close_bus();
+            g_active_i2c->close_bus();
             return 0;
         }
         return 1;
@@ -51,13 +52,13 @@ extern "C"
      */
     uint8_t iic_read_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len)
     {
-        if (!g_i2c_ptr)
+        if (!g_active_i2c)
         {
             return 1;
         }
 
         /* Use I2cHandler's atomic 16-bit address transaction */
-        if (!g_i2c_ptr->read_address16(addr, reg, buf, len))
+        if (!g_active_i2c->read_address16(addr, reg, buf, len))
         {
             return 1;
         }
@@ -70,13 +71,13 @@ extern "C"
      */
     uint8_t iic_write_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len)
     {
-        if (!g_i2c_ptr)
+        if (!g_active_i2c)
         {
             return 1;
         }
 
         /* Use I2cHandler's atomic 16-bit address transaction */
-        if (!g_i2c_ptr->write_address16(addr, reg, buf, len))
+        if (!g_active_i2c->write_address16(addr, reg, buf, len))
         {
             return 1;
         }
@@ -84,6 +85,11 @@ extern "C"
         return 0;
     }
 
+    // uint8_t iic_scl_read_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len) {
+    //     if (!g_active_i2c) return 1;
+    //     return g_active_i2c->read_address16(addr, reg, buf, len) ? 0 : 1;
+    // }
+    
     /**
      * Delay milliseconds callback.
      */
@@ -114,10 +120,8 @@ Sht3xDriver::Sht3xDriver(std::shared_ptr<I2cHandler> i2c_handler, uint8_t i2c_ad
       last_humidity(0.0f), m_is_connected(false), m_error_count(0),
       m_driver_handle(nullptr)
 {
-    // g_i2c_ptr = m_i2c;
-    // m_driver_handle = static_cast<void *>(&g_sht31_handle);
-    // Allocate a unique C-struct handle for this specific sensor instance
-    m_driver_handle = static_cast<void *>(new sht31_handle_t());
+    m_driver_handle = new sht31_handle_t();
+    memset(m_driver_handle, 0, sizeof(sht31_handle_t));
 }
 
 Sht3xDriver::~Sht3xDriver()
@@ -134,10 +138,19 @@ Sht3xDriver::~Sht3xDriver()
     }
 }
 
+
+
 bool Sht3xDriver::init_driver()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+
+    /* CRITICAL FIX: Do not re-initialize if already running to prevent loop crashing */
+    if (m_is_connected) {
+        return true;
+    }
+    
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
     /* Initialize handle structure */
     DRIVER_SHT31_LINK_INIT(g_sht31_handle, sht31_handle_t);
 
@@ -154,6 +167,12 @@ bool Sht3xDriver::init_driver()
 
     /* Set I2C address pin based on device address */
     sht31_address_t addr_pin = (device_address == 0x44) ? SHT31_ADDRESS_0 : SHT31_ADDRESS_1;
+    /* CRITICAL FIX: Send a BREAK command to snap the sensor out of a stuck continuous loop */
+    if (g_active_i2c && g_active_i2c->open_bus()) {
+        g_active_i2c->write_address16(addr_pin, 0x3093, nullptr, 0); // 0x3093 is the Break command
+        delay_ms(20); // Give the sensor time to halt
+    }
+    
     if (sht31_set_addr_pin(g_sht31_handle, addr_pin) != 0)
     {
         m_is_connected = false;
@@ -201,8 +220,9 @@ bool Sht3xDriver::init_driver()
 
 bool Sht3xDriver::deinit_driver()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -220,8 +240,9 @@ bool Sht3xDriver::deinit_driver()
 
 bool Sht3xDriver::single_read(bool clock_stretching)
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -254,8 +275,9 @@ bool Sht3xDriver::single_read(bool clock_stretching)
 
 bool Sht3xDriver::start_continuous_read(float rate)
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -297,8 +319,9 @@ bool Sht3xDriver::start_continuous_read(float rate)
 
 bool Sht3xDriver::stop_continuous_read()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -310,8 +333,9 @@ bool Sht3xDriver::stop_continuous_read()
 
 bool Sht3xDriver::continuous_read()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -357,8 +381,9 @@ bool Sht3xDriver::check_connection() const
 
 bool Sht3xDriver::soft_reset()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -376,8 +401,9 @@ bool Sht3xDriver::soft_reset()
 
 bool Sht3xDriver::set_repeatability(uint8_t repeatability)
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -404,8 +430,9 @@ bool Sht3xDriver::set_repeatability(uint8_t repeatability)
 
 bool Sht3xDriver::get_repeatability(uint8_t *repeatability)
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected || repeatability == nullptr)
     {
@@ -437,8 +464,9 @@ bool Sht3xDriver::get_repeatability(uint8_t *repeatability)
 
 bool Sht3xDriver::set_heater(bool enable)
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -451,8 +479,9 @@ bool Sht3xDriver::set_heater(bool enable)
 
 uint16_t Sht3xDriver::get_status()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -466,8 +495,9 @@ uint16_t Sht3xDriver::get_status()
 
 bool Sht3xDriver::clear_status()
 {
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    g_active_i2c = m_i2c.get(); 
+    sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
@@ -477,18 +507,19 @@ bool Sht3xDriver::clear_status()
     return sht31_clear_status(g_sht31_handle) == 0;
 }
 
-bool Sht3xDriver::get_serial_number(uint8_t sn[4])
-{
-    g_i2c_ptr = m_i2c;                                                               // 1. Context switch to this object's I2C bus
-    sht31_handle_t *g_sht31_handle = static_cast<sht31_handle_t *>(m_driver_handle); // 2. Cast handle
+// bool Sht3xDriver::get_serial_number(uint8_t sn[4])
+// {
+//     std::lock_guard<std::mutex> lock(g_driver_mutex);
+//     g_active_i2c = m_i2c.get(); 
+//     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
-    if (!m_is_connected)
-    {
-        return false;
-    }
+//     if (!m_is_connected)
+//     {
+//         return false;
+//     }
 
-    return sht31_get_serial_number(g_sht31_handle, sn) == 0;
-}
+//     return sht31_get_serial_number(g_sht31_handle, sn) == 0;
+// }
 
 void Sht3xDriver::handle_i2c_timeout()
 {

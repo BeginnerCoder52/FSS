@@ -17,7 +17,7 @@ This document describes the physical connections between the sensors and the Ras
 |                 | GND           | 9                    | Ground          |                          |
 |                 | SDA           | 3                    | GPIO 2          | Default I2C SDA          |
 |                 | SCL           | 5                    | GPIO 3          | Default I2C SCL          |
-| **SHT3x (2nd)** | VCC           | 2                    | 5V              | Dedicated 5V Power       |
+| **SHT3x (2nd)** | VCC           | 1                    | 3.3V              | Dedicated 5V Power       |
 |                 | GND           | 34                   | Ground          | Dedicated Ground         |
 |                 | SDA           | 32                   | GPIO 12         | I2C-5 SDA (Separate Bus) |
 |                 | SCL           | 33                   | GPIO 13         | I2C-5 SCL (Separate Bus) |

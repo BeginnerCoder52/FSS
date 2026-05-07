@@ -14,6 +14,7 @@
 #include <linux/i2c-dev.h>
 #include <linux/i2c.h>
 #include <cstring>
+#include <cerrno>
 
 I2cHandler::I2cHandler(const std::string& bus_device)
     : m_bus_device(bus_device), m_fd(-1), m_current_addr(0x00),
@@ -44,6 +45,7 @@ bool I2cHandler::open_bus() {
     }
 
     is_bus_open = true;
+    usleep(50000); // 20ms delay to allow hardware lines to settle
     return true;
 }
 
@@ -67,13 +69,11 @@ std::vector<uint8_t> I2cHandler::read_bytes(int addr, int cmd) {
     memset(&i2c_rdwr_data, 0, sizeof(struct i2c_rdwr_ioctl_data));
     memset(msgs, 0, sizeof(struct i2c_msg) * 2);
 
-    /* Message 1: Write register address */
     msgs[0].addr = (static_cast<uint8_t>(addr)) >> 1;
     msgs[0].flags = 0;
     msgs[0].buf = &reg;
     msgs[0].len = 1;
 
-    /* Message 2: Read data */
     msgs[1].addr = (static_cast<uint8_t>(addr)) >> 1;
     msgs[1].flags = I2C_M_RD;
     msgs[1].buf = buffer;
@@ -102,7 +102,7 @@ bool I2cHandler::write_data(const uint8_t* data, size_t length) {
 
     struct i2c_rdwr_ioctl_data i2c_rdwr_data;
     struct i2c_msg msgs[1];
-    uint8_t addr_7bit = (m_current_addr >> 1) & 0x7F;  /* Convert 8-bit to 7-bit address */
+    uint8_t addr_7bit = (m_current_addr >> 1) & 0x7F;  
 
     memset(&i2c_rdwr_data, 0, sizeof(struct i2c_rdwr_ioctl_data));
     memset(msgs, 0, sizeof(struct i2c_msg));
@@ -119,7 +119,6 @@ bool I2cHandler::write_data(const uint8_t* data, size_t length) {
         std::cerr << "I2C write failed" << std::endl;
         return false;
     }
-
     return true;
 }
 
@@ -128,7 +127,7 @@ bool I2cHandler::read_data(uint8_t* buffer, size_t length) {
 
     struct i2c_rdwr_ioctl_data i2c_rdwr_data;
     struct i2c_msg msgs[1];
-    uint8_t addr_7bit = (m_current_addr >> 1) & 0x7F;  /* Convert 8-bit to 7-bit address */
+    uint8_t addr_7bit = (m_current_addr >> 1) & 0x7F;  
 
     memset(&i2c_rdwr_data, 0, sizeof(struct i2c_rdwr_ioctl_data));
     memset(msgs, 0, sizeof(struct i2c_msg));
@@ -145,13 +144,12 @@ bool I2cHandler::read_data(uint8_t* buffer, size_t length) {
         std::cerr << "I2C read failed" << std::endl;
         return false;
     }
-
     return true;
 }
 
 bool I2cHandler::read_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len)
 {
-    if (!is_bus_open || m_fd < 0) return false;
+    if (!is_bus_open && !open_bus()) return false;
 
     struct i2c_rdwr_ioctl_data i2c_rdwr_data;
     struct i2c_msg msgs[2];
@@ -161,17 +159,14 @@ bool I2cHandler::read_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint16
     memset(&i2c_rdwr_data, 0, sizeof(struct i2c_rdwr_ioctl_data));
     memset(msgs, 0, sizeof(struct i2c_msg) * 2);
 
-    /* Prepare 16-bit register address */
     addr_buf[0] = (reg >> 8) & 0xFF;
     addr_buf[1] = reg & 0xFF;
 
-    /* Message 1: Write 16-bit register address */
     msgs[0].addr = addr_7bit;
     msgs[0].flags = 0;
     msgs[0].buf = addr_buf;
     msgs[0].len = 2;
 
-    /* Message 2: Read data */
     msgs[1].addr = addr_7bit;
     msgs[1].flags = I2C_M_RD;
     msgs[1].buf = buf;
@@ -181,16 +176,21 @@ bool I2cHandler::read_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint16
     i2c_rdwr_data.nmsgs = 2;
 
     if (ioctl(m_fd, I2C_RDWR, &i2c_rdwr_data) < 0) {
-        std::cerr << "I2C read_address16 failed" << std::endl;
-        return false;
+        /* CRITICAL FIX: Retry 1 l?n n?u I2C-5 b? NACK do chua t?nh ng? */
+        usleep(10000); // doi 10ms
+        if (ioctl(m_fd, I2C_RDWR, &i2c_rdwr_data) < 0) {
+            std::cerr << "[I2cHandler] read_address16 failed for addr 0x" 
+                      << std::hex << (int)addr_7bit << std::dec 
+                      << ", Error: " << strerror(errno) << std::endl;
+            return false;
+        }
     }
-
     return true;
 }
 
 bool I2cHandler::write_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len)
 {
-    if (!is_bus_open || m_fd < 0) return false;
+    if (!is_bus_open && !open_bus()) return false;
 
     struct i2c_rdwr_ioctl_data i2c_rdwr_data;
     struct i2c_msg msgs[1];
@@ -200,15 +200,13 @@ bool I2cHandler::write_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint1
     memset(&i2c_rdwr_data, 0, sizeof(struct i2c_rdwr_ioctl_data));
     memset(msgs, 0, sizeof(struct i2c_msg));
 
-    /* Build write buffer: [cmd_high, cmd_low, data...] */
     write_buf[0] = (reg >> 8) & 0xFF;
     write_buf[1] = reg & 0xFF;
 
-    if (len > 0 && len <= 32) {
+    if (len > 0 && len <= 32 && buf != nullptr) {
         memcpy(&write_buf[2], buf, len);
     }
 
-    /* Single message: Write command + data */
     msgs[0].addr = addr_7bit;
     msgs[0].flags = 0;
     msgs[0].buf = write_buf;
@@ -218,9 +216,15 @@ bool I2cHandler::write_address16(uint8_t addr, uint16_t reg, uint8_t* buf, uint1
     i2c_rdwr_data.nmsgs = 1;
 
     if (ioctl(m_fd, I2C_RDWR, &i2c_rdwr_data) < 0) {
-        std::cerr << "I2C write_address16 failed" << std::endl;
-        return false;
+        /* CRITICAL FIX: Retry 1 l?n n?u I2C-5 b? NACK do chua t?nh ng? */
+        usleep(10000); // Doi 10ms
+        if (ioctl(m_fd, I2C_RDWR, &i2c_rdwr_data) < 0) {
+            std::cerr << "[I2cHandler] write_address16 failed for addr 0x" 
+                      << std::hex << (int)addr_7bit << std::dec 
+                      << ", Error: " << strerror(errno) << std::endl;
+            return false;
+        }
     }
-
     return true;
 }
+

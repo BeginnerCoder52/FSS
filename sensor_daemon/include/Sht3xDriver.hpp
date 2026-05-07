@@ -130,12 +130,12 @@ public:
      */
     bool clear_status();
 
-    /**
-     * @brief Retrieves sensor serial number.
-     * @param sn Buffer to store 4-byte serial number.
-     * @return true if successful, false otherwise.
-     */
-    bool get_serial_number(uint8_t sn[4]);
+    // /**
+    //  * @brief Retrieves sensor serial number.
+    //  * @param sn Buffer to store 4-byte serial number.
+    //  * @return true if successful, false otherwise.
+    //  */
+    // bool get_serial_number(uint8_t sn[4]);
 
     /**
      * @brief Handles I2C communication errors.
