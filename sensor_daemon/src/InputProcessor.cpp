@@ -33,22 +33,22 @@ InputProcessor::~InputProcessor()
 
 bool InputProcessor::init_sensors()
 {
-    try
-    {
-        bool success = true;
-
-        // Initialize SHT3x environmental sensor
-        if (!sht3x || !sht3x->init_driver())
-        {
-            std::cerr << "Failed to initialize SHT3x environmental sensor" << std::endl;
-            success = false;
+    bool success = true;
+    try {
+        // Initialize First SHT3x environmental sensor (Ngan mat)
+        if (sht3x && !sht3x->check_connection()) {
+            if (!sht3x->init_driver()) {
+                std::cerr << "Failed to initialize SHT3x environmental sensor" << std::endl;
+                success = false;
+            }
         }
 
-        // Initialize Secondary SHT3x
-        if (!sht3x_2 || !sht3x_2->init_driver())
-        {
-            std::cerr << "Failed to initialize Secondary SHT3x sensor on I2C-5" << std::endl;
-            success = false;
+        // Initialize Secondary SHT3x environmental sensor (Ngan dong)
+        if (sht3x_2 && !sht3x_2->check_connection()) {
+            if (!sht3x_2->init_driver()) {
+                std::cerr << "Failed to initialize Secondary SHT3x sensor on I2C-5" << std::endl;
+                success = false;
+            }
         }
 
         // Initialize VL53L0x distance sensor
@@ -65,13 +65,12 @@ bool InputProcessor::init_sensors()
             success = false;
         }
 
-        return success;
-    }
-    catch (const std::exception &e)
-    {
+    } catch (const std::exception& e) {
         std::cerr << "InputProcessor init_sensors exception: " << e.what() << std::endl;
-        return false;
+        success = false;
     }
+
+    return success;
 }
 
 std::map<std::string, float> InputProcessor::poll_all_data()

@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <string>
 
 class I2cHandler;
 class Sht3xDriver;
@@ -81,11 +82,11 @@ public:
      */
     bool test_status_register();
 
-    /**
-     * @brief Test serial number retrieval.
-     * @return true if test passed, false otherwise.
-     */
-    bool test_serial_number();
+    // /**
+    //  * @brief Test serial number retrieval.
+    //  * @return true if test passed, false otherwise.
+    //  */
+    // bool test_serial_number();
 
     /**
      * @brief Test connection checking mechanism.
@@ -105,6 +106,7 @@ private:
     uint8_t m_i2c_address;                      ///< Sensor I2C address.
     int m_tests_passed;                         ///< Count of passed tests.
     int m_tests_failed;                         ///< Count of failed tests.
+    std::string m_bus_name;                     ///< Store bus name for logging
 
     /**
      * @brief Print test result.
