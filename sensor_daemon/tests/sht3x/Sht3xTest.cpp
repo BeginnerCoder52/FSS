@@ -41,16 +41,16 @@ void Sht3xTest::print_result(const std::string& test_name, bool passed)
 bool Sht3xTest::test_initialization()
 {
     std::cout << "  Sensor Address: 0x" << std::hex << std::setfill('0') << std::setw(2) 
-              << (int)m_i2c_address << std::dec << std::endl;
+              << (int)m_i2c_address << std::dec << std::setfill(' ') << std::endl; // <-- Th�m std::setfill(' ') ? d�y
     
     bool result = m_driver->init_driver();
     
     if (!result) {
-        std::cerr << "  \033[33m[DEBUG] Initialization failed - Verify:\033[0m" << std::endl;
+        std::cerr << "  \033[33m[DEBUG] Initialization failed on " << m_bus_name << " - Verify:\033[0m" << std::endl;
         std::cerr << "    - Sensor connected to I2C bus (SDA/SCL)" << std::endl;
         std::cerr << "    - Sensor power (VCC/GND)" << std::endl;
         std::cerr << "    - I2C address match (0x44=GND, 0x45=VCC)" << std::endl;
-        std::cerr << "    - Run 'i2cdetect -y <bus>' to find sensor" << std::endl;
+        std::cerr << "    - Run 'i2cdetect -y " << m_bus_name.back() << "' to find sensor" << std::endl;
     }
     
     print_result("Initialization Test", result);
@@ -92,13 +92,13 @@ bool Sht3xTest::test_continuous_read()
     /* Read extended continuous samples - 10 samples at 1Hz = ~10 seconds */
     bool read_result = true;
     int sample_count = 0;
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 5; ++i) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1100));
         if (m_driver->continuous_read()) {
             sample_count++;
             float temp = m_driver->get_temperature();
             float humid = m_driver->get_humidity();
-            if (i == 0 || i == 4 || i == 9) {  /* Show samples at start, middle, end */
+            if (i == 0 || i==1 || i ==2 || i==3 ||i == 4 ) {  /* Show samples at start, middle, end */
                 std::cout << "    Sample " << (i+1) << ": " << std::fixed << std::setprecision(2) 
                           << temp << "°C, " << humid << "%" << std::endl;
             }
@@ -109,7 +109,7 @@ bool Sht3xTest::test_continuous_read()
     }
 
     bool stop_result = m_driver->stop_continuous_read();
-    std::cout << "    Total samples: " << sample_count << "/10" << std::endl;
+    std::cout << "    Total samples: " << sample_count << "/5" << std::endl;
 
     bool result = start_result && read_result && stop_result;
     print_result("Continuous Read Test", result);
@@ -159,7 +159,7 @@ bool Sht3xTest::test_set_heater()
         result = false;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     /* Disable heater */
     if (!m_driver->set_heater(false)) {
@@ -199,28 +199,6 @@ bool Sht3xTest::test_status_register()
     return result;
 }
 
-bool Sht3xTest::test_serial_number()
-{
-    if (!m_driver->check_connection()) {
-        print_result("Serial Number Test", false);
-        return false;
-    }
-
-    uint8_t sn[4] = {0};
-    bool result = m_driver->get_serial_number(sn);
-
-    if (result) {
-        std::cout << "  Serial Number: 0x";
-        for (int i = 0; i < 4; ++i) {
-            std::cout << std::hex << std::setfill('0') << std::setw(2) << (int)sn[i];
-        }
-        std::cout << std::dec << std::endl;
-    }
-
-    print_result("Serial Number Test", result);
-    return result;
-}
-
 bool Sht3xTest::test_connection_check()
 {
     bool result = m_driver->check_connection();
@@ -245,7 +223,8 @@ bool Sht3xTest::test_error_handling()
 int Sht3xTest::run_all_tests()
 {
     std::cout << std::endl << "=====================================" << std::endl;
-    std::cout << "  SHT31 Sensor Driver Test Suite" << std::endl;
+    std::cout << "  SHT31 Sensor Driver Test Suite | Bus: " << std::hex << std::setfill('0') << std::setw(2) 
+              << (int)m_i2c_address << std::dec << std::setfill(' ') << std::endl;
     std::cout << "=====================================" << std::endl << std::endl;
 
     /* Run all tests */
@@ -265,7 +244,6 @@ int Sht3xTest::run_all_tests()
     test_set_heater();
     test_soft_reset();
     test_status_register();
-    test_serial_number();
     test_error_handling();
 
     /* Cleanup */

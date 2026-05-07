@@ -24,7 +24,11 @@ include_directories(
 # SHT31 Driver source files
 set(SHT3X_DRIVER_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/src/driver_sht31.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/sht31_driver_interface.c"
+)
+
+# SHT31 Driver source files with wrapper
+set(SHT3X_DRIVER_WRAPPER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/src/driver_sht31.c"
 )
 
 # Wrapper implementation
@@ -41,7 +45,7 @@ set(TEST_SOURCES
 
 # Create test executable
 add_executable(sht3x_test
-    ${SHT3X_DRIVER_SOURCES}
+    ${SHT3X_DRIVER_WRAPPER_SOURCES}
     ${WRAPPER_SOURCES}
     ${TEST_SOURCES}
 )

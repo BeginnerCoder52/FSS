@@ -37,6 +37,7 @@ void check_i2c_device(const std::string& i2c_bus)
 int main(int argc, char *argv[])
 {
     std::string i2c_bus = "/dev/i2c-1";
+    std::string i2c_bus_2 = "/dev/i2c-5";
     uint8_t i2c_address = 0x44;
 
     /* Parse command line arguments */
@@ -60,11 +61,13 @@ int main(int argc, char *argv[])
     }
 
     std::cout << "I2C Bus: " << i2c_bus << std::endl;
+    std::cout << "I2C Bus 2: " << i2c_bus_2 << std::endl;
     std::cout << "Sensor Address: 0x" << std::hex << std::setfill('0') << std::setw(2) 
               << (int)i2c_address << std::dec << std::endl << std::endl;
     
     /* Check if I2C device exists */
     check_i2c_device(i2c_bus);
+    check_i2c_device(i2c_bus_2);
     
     std::cout << "\033[33m[SETUP HELP]\033[0m Before running tests:" << std::endl;
     std::cout << "  1. Verify I2C bus number (typically 1 for default, check README_PINOUT.md)" << std::endl;
@@ -74,8 +77,10 @@ int main(int argc, char *argv[])
     std::cout << "  4. Check hardware: SDA=GPIO2, SCL=GPIO3 for default I2C-1" << std::endl << std::endl;
 
     /* Create test suite and run */
-    Sht3xTest test_suite(i2c_bus, i2c_address);
-    int failed_tests = test_suite.run_all_tests();
+    Sht3xTest test_suite_1(i2c_bus, i2c_address);
+    int failed_tests_1 = test_suite_1.run_all_tests();
 
-    return failed_tests > 0 ? 1 : 0;
+    Sht3xTest test_suite_2(i2c_bus_2, i2c_address);
+    int failed_tests_2 = test_suite_2.run_all_tests();
+    return (failed_tests_1 + failed_tests_2) > 0 ? 1 : 0;
 }
