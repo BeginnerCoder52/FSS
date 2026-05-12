@@ -62,7 +62,13 @@ module.exports = NodeHelper.create({
 
 		try {
 			const pythonExecutable = "/home/richardmelvin52/FSS/.venv/bin/python3";
-			this.pythonProcess = spawn(pythonExecutable, [pythonScriptPath], {
+			// Read FRT_APP_ENABLED flag from config or use default
+			const frtAppEnabled = this.config?.frtAppEnabled ?? false;
+			const args = [pythonScriptPath, frtAppEnabled.toString()];
+			
+			console.log(`${this.name}: FRT App enabled = ${frtAppEnabled}`);
+
+			this.pythonProcess = spawn(pythonExecutable, args, {
 				stdio: ["pipe", "pipe", "pipe"],
 				detached: false,
 			});

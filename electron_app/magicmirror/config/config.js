@@ -126,7 +126,7 @@ let config = {
             position: "top_center", // Invisible module, position doesn't strictly matter
             config: {
                 distanceThreshold: 0.6, // 60cm threshold from SDD
-                showDebugInfo: false    // Set to true if you want to see raw distance on screen
+                showDebugInfo: true    // Set to true if you want to see raw distance on screen
             }
         },
         {
