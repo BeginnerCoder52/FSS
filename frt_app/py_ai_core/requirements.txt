@@ -1,9 +1,49 @@
-# OpenCV bản không có GUI, cực kỳ phù hợp cho môi trường Embedded/Headless (Pi 4)
+# FRTApp Python AI Core Requirements
+# Version: 1.0
+# Description: Dependencies for Food Recognition Tracking AI pipeline
+# SDD Version: 1.1.0
+# NOTE: Uses tflite-runtime per SDD requirement (NO Ultralytics - Pi 4B constraint)
+
+# =====================================================================
+# CORE VISION & AI DEPENDENCIES
+# =====================================================================
+# Headless OpenCV - optimized for Embedded/Headless systems (Raspberry Pi 4)
+# - No GUI dependencies (X11, GTK)
+# - Lightweight for ARM aarch64
+# - V4L2 backend for USB camera integration
 opencv-python-headless>=4.8.0
 
-# Xử lý ma trận dữ liệu ảnh đọc ra từ Shared Memory
+# NumPy - numerical computing for tensor operations
+# Used in: ImagePreprocessor, YoloTfliteEngine for matrix operations
 numpy>=1.24.0
 
-# Giao tiếp IPC
-pyzmq>=25.0.0
+# TFLite Runtime - lightweight TensorFlow Lite inference engine
+# REQUIRED: Per SDD v1.1.0 constraint (NO Ultralytics for Pi 4B)
+# Install: pip install tflite-runtime
+# Note: Package name varies by platform:
+#   - Raspberry Pi OS: tflite-runtime
+#   - Ubuntu x86_64: tflite-runtime or tensorflow-cpu
+tflite-runtime>=2.14.0
+
+# Pillow - image processing utilities for preprocessing
+Pillow>=9.0.0
+
+# =====================================================================
+# IPC & SYSTEM INTEGRATION
+# =====================================================================
+# D-Bus communication - inter-process message passing
+# Used for: Door events from SensorDaemon, results to DBDaemon
 sdbus-python>=0.12.0
+
+# Python-systemd - integration with systemd service management
+python-systemd>=235
+
+# =====================================================================
+# LOGGING & MONITORING
+# =====================================================================
+# Loguru - advanced structured logging with file rotation
+loguru>=0.7.0
+
+# psutil - system monitoring for crash recovery
+# Used in: YoloTfliteEngine.handle_tensor_allocation_error()
+psutil>=5.9.0
