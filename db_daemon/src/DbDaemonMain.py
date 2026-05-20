@@ -91,8 +91,8 @@ class DbDaemonMain:
             # Initialize SqliteManager
             self.logger.info("Initializing database manager...")
             self.db_manager = SqliteManager()
-            if not self.db_manager.connect_db():
-                self.logger.error("Failed to connect to database")
+            if not self.db_manager.connect_all_dbs():
+                self.logger.error("Failed to connect to databases")
                 self.current_state = DaemonState.ERROR
                 return False
             
@@ -225,7 +225,7 @@ class DbDaemonMain:
             self.logger.error(f"Error during daemon shutdown: {e}")
     
     def process_food_tracking_event(self, food_id: str, confidence_score: float,
-                                   quantity: int) -> None:
+                                   quantity_delta: int) -> None:
         """
         Process food tracking event from FRTApp.
         
@@ -234,7 +234,7 @@ class DbDaemonMain:
         Args:
             food_id: Unique identifier for the food item
             confidence_score: AI model confidence score (0.0 - 1.0)
-            quantity: Updated quantity of the item
+            quantity_delta: Change in quantity (+1 for ADD, -1 for REMOVE)
         """
         try:
             self.current_state = DaemonState.PROCESSING
@@ -246,18 +246,22 @@ class DbDaemonMain:
             
             # Update inventory in database
             image_path = None  # TODO: Will be set by FRTApp integration
-            if not self.db_manager.update_inventory(food_id, quantity, 
+            if not self.db_manager.update_inventory(food_id, quantity_delta, 
                                                     confidence_score, image_path):
                 self.logger.error(f"Failed to update inventory for {food_id}")
                 self._error_count += 1
                 return
             
+            # Fetch current total quantity for UI notification
+            item = self.db_manager.get_inventory_item(food_id)
+            total_qty = item['quantity'] if item else 0
+            
             # Notify UI of update
-            self.dbus_interface.emit_ui_update_signal(food_id, quantity, image_path or "")
+            self.dbus_interface.emit_ui_update_signal(food_id, total_qty, image_path or "")
             
             self._processed_events_count += 1
-            self.logger.info(f"Processed food event: {food_id} (qty={quantity}, "
-                           f"score={confidence_score:.2f})")
+            self.logger.info(f"Processed food event: {food_id} (delta={quantity_delta}, "
+                           f"total={total_qty}, score={confidence_score:.2f})")
             
         except Exception as e:
             self.logger.error(f"Error processing food event: {e}")
@@ -596,11 +600,25 @@ class DbDaemonMain:
                 self.dbus_interface.listen_sensor_dbus_events(self._handle_sensor_event)
                 self.dbus_interface.listen_frt_pipeline_events(self._handle_frt_event)
                 
-                self.logger.debug("Event handlers registered")
+                # Register comparison callback for GetMissingIngredients D-Bus method
+                self.dbus_interface.set_comparison_callback(self.get_missing_ingredients)
+                
+                self.logger.debug("Event handlers and comparison callback registered")
                 
         except Exception as e:
             self.logger.error(f"Failed to register event handlers: {e}")
     
+    def get_missing_ingredients(self) -> list:
+        """
+        Wrapper for database comparison logic.
+        
+        Returns:
+            List of dictionaries with missing ingredient details
+        """
+        if self.db_manager:
+            return self.db_manager.compare_inventory_vs_request()
+        return []
+
     def _handle_sensor_event(self, event_type: str, *args, **kwargs) -> None:
         """Handle incoming SensorDaemon events."""
         try:
@@ -631,8 +649,8 @@ class DbDaemonMain:
         """Handle incoming FRTApp pipeline events."""
         try:
             if event_type == "food_detected":
-                food_id, score, qty = args[0], args[1], args[2]
-                self.process_food_tracking_event(food_id, score, qty)
+                food_id, score, qty_delta = args[0], args[1], args[2]
+                self.process_food_tracking_event(food_id, score, qty_delta)
         except Exception as e:
             self.logger.error(f"Error handling FRT event: {e}")
     
