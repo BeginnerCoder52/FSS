@@ -95,29 +95,88 @@ class ImagePreprocessor:
             logger.exception("Error converting BGR to RGB: {}".format(e))
             return None
     
+    def apply_letterboxing(self, img: np.ndarray, color: Tuple[int, int, int] = (114, 114, 114)) -> np.ndarray:
+        """
+        Apply letterboxing technique to maintain original aspect ratio.
+        
+        Purpose:
+            Preserves image aspect ratio by resizing and padding with borders.
+            Prevents physical distortion that occurs with simple resizing.
+        
+        Method:
+            1. Calculate scaling ratio to fit image in target dimensions
+            2. Resize image while maintaining aspect ratio
+            3. Add padding (letterbox borders) to reach target size
+        
+        Arguments:
+            img (np.ndarray): Input frame (H, W, 3)
+            color (tuple): RGB color for padding borders (default: gray (114, 114, 114))
+        
+        Returns:
+            np.ndarray: Letterboxed frame (target_height, target_width, 3)
+        """
+        try:
+            if img is None:
+                logger.error("Image is None, cannot apply letterboxing")
+                return None
+            
+            shape = img.shape[:2]  # Get (height, width)
+            
+            # Calculate scaling ratio to fit image in target size
+            r = min(self.target_height / shape[0], self.target_width / shape[1])
+            
+            # Calculate new dimensions after scaling
+            new_height = int(round(shape[0] * r))
+            new_width = int(round(shape[1] * r))
+            new_unpad = (new_width, new_height)
+            
+            # Calculate total padding needed
+            pad_height = self.target_height - new_height
+            pad_width = self.target_width - new_width
+            pad_top = pad_height // 2
+            pad_bottom = pad_height - pad_top
+            pad_left = pad_width // 2
+            pad_right = pad_width - pad_left
+            
+            # Resize image if needed (maintaining aspect ratio)
+            if shape != (new_height, new_width):
+                img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
+            
+            # Add letterbox borders
+            img = cv2.copyMakeBorder(img, pad_top, pad_bottom, pad_left, pad_right,
+                                    cv2.BORDER_CONSTANT, value=color)
+            
+            return img
+            
+        except Exception as e:
+            logger.exception("Error applying letterboxing: {}".format(e))
+            return None
+    
     def resize_frame(self, frame: np.ndarray) -> np.ndarray:
         """
-        Resize frame to target dimensions.
+        Resize frame to target dimensions using letterboxing.
         
         SDD Requirement:
             Ép kích thước khung hình vào shape mô hình.
         
         Method:
-            cv2.INTER_LINEAR (fast, good quality for downsampling)
+            Letterboxing technique - maintains aspect ratio and adds padding
+            Prevents image distortion while fitting target dimensions
+            Uses cv2.INTER_LINEAR for quality resampling
         
         Arguments:
             frame (np.ndarray): Input frame (H, W, 3)
         
         Returns:
-            np.ndarray: Resized frame (target_height, target_width, 3)
+            np.ndarray: Resized frame with letterboxing (target_height, target_width, 3)
         """
         try:
             if frame is None:
                 logger.error("Frame is None, cannot resize")
                 return None
             
-            resized = cv2.resize(frame, (self.target_width, self.target_height),
-                               interpolation=cv2.INTER_LINEAR)
+            # Apply letterboxing to maintain aspect ratio
+            resized = self.apply_letterboxing(frame, color=(114, 114, 114))
             return resized
             
         except Exception as e:
