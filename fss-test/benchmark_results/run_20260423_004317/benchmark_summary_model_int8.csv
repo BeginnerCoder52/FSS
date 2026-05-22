@@ -1,0 +1,4 @@
+num_threads,images,avg_inference_time_ms,avg_fps,precision,recall,map50,delta_ms_vs_first,delta_pct_vs_first,total_wall_time_s,result_csv,eval_per_class_csv
+1,613,206.53,4.84,0.14978,0.069815,0.068224,0.0,0.0,169.76,benchmark_results/run_20260423_004317/results_model_int8_t1.csv,benchmark_results/run_20260423_004317/eval_per_class_model_int8_t1.csv
+2,613,186.87,5.35,0.14978,0.069815,0.068224,-19.66,-9.52,155.92,benchmark_results/run_20260423_004317/results_model_int8_t2.csv,benchmark_results/run_20260423_004317/eval_per_class_model_int8_t2.csv
+4,613,455.94,2.19,0.14978,0.069815,0.068224,249.41,120.76,320.27,benchmark_results/run_20260423_004317/results_model_int8_t4.csv,benchmark_results/run_20260423_004317/eval_per_class_model_int8_t4.csv
