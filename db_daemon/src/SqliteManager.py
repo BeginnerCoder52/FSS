@@ -55,6 +55,7 @@ class SqliteManager:
     
     # Table names for inventory database
     INVENTORY_TABLE_NAME = "current_inventory"
+    INVENTORY_HISTORY_TABLE_NAME = "inventory_history"
     
     # Table names for request database
     REQUEST_TABLE_NAME = "request"
@@ -296,6 +297,7 @@ class SqliteManager:
         
         try:
             # Create inventory table for food items from YOLO
+            # Phase 1 Update: Added version_id, last_change_reason, last_changed_by for audit tracking
             cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS {self.INVENTORY_TABLE_NAME} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -303,6 +305,9 @@ class SqliteManager:
                     quantity INTEGER NOT NULL DEFAULT 0,
                     confidence_score REAL NOT NULL DEFAULT 0.0,
                     image_path TEXT,
+                    version_id INTEGER NOT NULL DEFAULT 1,
+                    last_change_reason TEXT DEFAULT 'INITIAL',
+                    last_changed_by TEXT DEFAULT 'SYSTEM',
                     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
@@ -312,6 +317,36 @@ class SqliteManager:
             cursor.execute(f"""
                 CREATE INDEX IF NOT EXISTS idx_inventory_food_id 
                 ON {self.INVENTORY_TABLE_NAME}(food_id)
+            """)
+            
+            # Create inventory history table for complete audit trail (Phase 1: NLP Recommendation System)
+            # Purpose: Track all inventory changes for compliance, analytics, and undo functionality
+            # Schema: Records before/after state, reason, actor, and timestamp for each change
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.INVENTORY_HISTORY_TABLE_NAME} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    food_id TEXT NOT NULL,
+                    quantity_before INTEGER NOT NULL,
+                    quantity_after INTEGER NOT NULL,
+                    confidence_score REAL NOT NULL,
+                    image_path TEXT,
+                    change_reason TEXT NOT NULL,
+                    changed_by TEXT NOT NULL,
+                    changed_at TIMESTAMP NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            
+            # Create index on food_id for quick history lookups by food item
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_inventory_history_food_id 
+                ON {self.INVENTORY_HISTORY_TABLE_NAME}(food_id)
+            """)
+            
+            # Create index on changed_at for time-series queries
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_inventory_history_timestamp 
+                ON {self.INVENTORY_HISTORY_TABLE_NAME}(changed_at)
             """)
             
             connection.commit()
@@ -332,14 +367,36 @@ class SqliteManager:
         
         try:
             # Create request table for NLP recipe requirements
+            # Phase 1 Update: Added recipe_name and request_batch_id for recipe grouping
+            # Purpose: Track which items belong to which recipe for easy recipe management
             cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS {self.REQUEST_TABLE_NAME} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    recipe_name TEXT,
                     food_id TEXT NOT NULL,
                     quantity INTEGER NOT NULL DEFAULT 0,
                     unit TEXT,
+                    request_batch_id TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
+            """)
+            
+            # Create index on recipe_name for quick recipe lookups
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_request_recipe_name 
+                ON {self.REQUEST_TABLE_NAME}(recipe_name)
+            """)
+            
+            # Create index on request_batch_id for batch management (undo/clear recipe)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_request_batch_id 
+                ON {self.REQUEST_TABLE_NAME}(request_batch_id)
+            """)
+            
+            # Create index on food_id for cross-reference lookups
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_request_food_id 
+                ON {self.REQUEST_TABLE_NAME}(food_id)
             """)
             
             connection.commit()
@@ -876,4 +933,247 @@ class SqliteManager:
              
         except sqlite3.Error as e:
             self.logger.error(f"Error comparing inventory vs request: {e}")
+            return []
+    
+    # ========================================================================
+    # New Helper Methods for Phase 1: Inventory History Management
+    # ========================================================================
+    # Purpose: Support NLP Recommendation System audit trail and version tracking
+    # IMPORTANT: These are NEW methods and do NOT modify existing core APIs
+    # ========================================================================
+    
+    def insert_inventory_history(self, food_id: str, quantity_before: int, quantity_after: int,
+                                  confidence_score: float, image_path: Optional[str],
+                                  change_reason: str, changed_by: str, changed_at: str) -> bool:
+        """
+        Insert a record into inventory history (audit trail).
+        
+        Purpose:
+            Track all inventory changes for compliance, analytics, version control,
+            and potential rollback functionality. Supports ASPICE traceability requirements.
+        
+        Args:
+            food_id: Unique identifier for the food item
+            quantity_before: Quantity before the change
+            quantity_after: Quantity after the change
+            confidence_score: AI confidence score for this detection
+            image_path: Path to the food item image (if updated)
+            change_reason: Reason for change (e.g., "FRT_DETECTION", "RECIPE_COMPARISON", "USER_MANUAL")
+            changed_by: Actor who triggered the change (e.g., "FRTApp", "DBDaemon", "ElectronApp")
+            changed_at: ISO 8601 timestamp when change occurred
+        
+        Returns:
+            True if insertion successful, False otherwise
+            
+        ASPICE Compliance:
+            - Immutable audit log (INSERT only, no UPDATE/DELETE)
+            - Complete traceability with who/what/when/why
+            - Support for compliance queries and audits
+        """
+        if not self._connections[DatabaseType.INVENTORY] or not self._cursors[DatabaseType.INVENTORY]:
+            self.logger.error("Inventory database connection not established")
+            return False
+        
+        connection = self._connections[DatabaseType.INVENTORY]
+        cursor = self._cursors[DatabaseType.INVENTORY]
+        
+        try:
+            cursor.execute(f"""
+                INSERT INTO {self.INVENTORY_HISTORY_TABLE_NAME}
+                (food_id, quantity_before, quantity_after, confidence_score, image_path, change_reason, changed_by, changed_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (food_id, quantity_before, quantity_after, confidence_score, image_path,
+                   change_reason, changed_by, changed_at))
+            
+            connection.commit()
+            self.logger.debug(f"Inventory history recorded: {food_id}, delta={quantity_after-quantity_before}, "
+                            f"reason={change_reason}, actor={changed_by}")
+            return True
+            
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error inserting inventory history: {e}")
+            self.handle_db_lock_exception(DatabaseType.INVENTORY)
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error inserting inventory history: {e}")
+            connection.rollback()
+            return False
+    
+    def get_inventory_history(self, food_id: str, limit: int = 50) -> list:
+        """
+        Retrieve inventory change history for a specific food item.
+        
+        Purpose:
+            Audit trail retrieval for compliance, analytics, and user notifications.
+            Shows complete history of quantity/image/confidence changes.
+        
+        Args:
+            food_id: Unique identifier for the food item
+            limit: Maximum number of history records to return (default 50)
+        
+        Returns:
+            List of history records as dictionaries, sorted by most recent first
+        """
+        if not self._cursors[DatabaseType.INVENTORY]:
+            return []
+        
+        try:
+            self._cursors[DatabaseType.INVENTORY].execute(f"""
+                SELECT id, food_id, quantity_before, quantity_after, confidence_score, image_path,
+                       change_reason, changed_by, changed_at, created_at
+                FROM {self.INVENTORY_HISTORY_TABLE_NAME}
+                WHERE food_id = ?
+                ORDER BY created_at DESC
+                LIMIT ?
+            """, (food_id, limit))
+            
+            rows = self._cursors[DatabaseType.INVENTORY].fetchall()
+            return [{
+                'id': row[0],
+                'food_id': row[1],
+                'quantity_before': row[2],
+                'quantity_after': row[3],
+                'confidence_score': row[4],
+                'image_path': row[5],
+                'change_reason': row[6],
+                'changed_by': row[7],
+                'changed_at': row[8],
+                'created_at': row[9]
+            } for row in rows]
+            
+        except sqlite3.Error as e:
+            self.logger.error(f"Error retrieving inventory history: {e}")
+            return []
+    
+    def insert_request_batch(self, recipe_name: str, ingredients_list: list, batch_id: str) -> bool:
+        """
+        Insert a batch of recipe ingredients into the request table.
+        
+        Purpose:
+            Handle multiple ingredient insertions from NLP inference in a single operation.
+            Supports recipe management (view/clear specific recipes).
+        
+        Args:
+            recipe_name: Vietnamese recipe name (e.g., "Gỏi Trộn Khô Mực")
+            ingredients_list: List of dicts: [{"food_id": str, "quantity": int, "unit": str}, ...]
+            batch_id: Unique identifier to group ingredients from same recipe (UUID recommended)
+        
+        Returns:
+            True if all insertions successful, False if any failed
+            
+        Note:
+            Does NOT modify existing insert_request() API.
+            All ingredients use same batch_id for easy recipe management.
+        """
+        if not self._connections[DatabaseType.REQUEST] or not self._cursors[DatabaseType.REQUEST]:
+            self.logger.error("Request database connection not established")
+            return False
+        
+        connection = self._connections[DatabaseType.REQUEST]
+        cursor = self._cursors[DatabaseType.REQUEST]
+        
+        try:
+            for ingredient in ingredients_list:
+                cursor.execute(f"""
+                    INSERT INTO {self.REQUEST_TABLE_NAME}
+                    (recipe_name, food_id, quantity, unit, request_batch_id)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (recipe_name, ingredient.get('food_id'),
+                       ingredient.get('quantity', 0), ingredient.get('unit'), batch_id))
+            
+            connection.commit()
+            self.logger.debug(f"Inserted request batch: recipe={recipe_name}, "
+                            f"items={len(ingredients_list)}, batch_id={batch_id}")
+            return True
+            
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error inserting request batch: {e}")
+            self.handle_db_lock_exception(DatabaseType.REQUEST)
+            connection.rollback()
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error inserting request batch: {e}")
+            connection.rollback()
+            return False
+    
+    def clear_request_batch(self, batch_id: str) -> bool:
+        """
+        Delete all ingredients from a specific recipe batch.
+        
+        Purpose:
+            Support recipe management - allow users to clear requests from previous recipes.
+            Enables recipe switching without manual item deletion.
+        
+        Args:
+            batch_id: request_batch_id to delete
+        
+        Returns:
+            True if deletion successful, False otherwise
+        """
+        if not self._connections[DatabaseType.REQUEST] or not self._cursors[DatabaseType.REQUEST]:
+            self.logger.error("Request database connection not established")
+            return False
+        
+        connection = self._connections[DatabaseType.REQUEST]
+        cursor = self._cursors[DatabaseType.REQUEST]
+        
+        try:
+            cursor.execute(f"""
+                DELETE FROM {self.REQUEST_TABLE_NAME}
+                WHERE request_batch_id = ?
+            """, (batch_id,))
+            
+            deleted_count = cursor.rowcount
+            connection.commit()
+            self.logger.debug(f"Cleared request batch: batch_id={batch_id}, deleted_count={deleted_count}")
+            return True
+            
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error clearing request batch: {e}")
+            self.handle_db_lock_exception(DatabaseType.REQUEST)
+            connection.rollback()
+            return False
+        except Exception as e:
+            self.logger.error(f"Unexpected error clearing request batch: {e}")
+            connection.rollback()
+            return False
+    
+    def get_requests_by_recipe(self, recipe_name: str) -> list:
+        """
+        Retrieve all ingredients for a specific recipe.
+        
+        Purpose:
+            Support recipe-level queries for comparison/analytics.
+            Alternative to get_all_requests() for specific recipe.
+        
+        Args:
+            recipe_name: Vietnamese recipe name
+        
+        Returns:
+            List of ingredients as dictionaries: [{"food_id": str, "quantity": int, "unit": str}, ...]
+        """
+        if not self._cursors[DatabaseType.REQUEST]:
+            return []
+        
+        try:
+            self._cursors[DatabaseType.REQUEST].execute(f"""
+                SELECT id, recipe_name, food_id, quantity, unit, request_batch_id, created_at
+                FROM {self.REQUEST_TABLE_NAME}
+                WHERE recipe_name = ?
+                ORDER BY created_at DESC
+            """, (recipe_name,))
+            
+            rows = self._cursors[DatabaseType.REQUEST].fetchall()
+            return [{
+                'id': row[0],
+                'recipe_name': row[1],
+                'food_id': row[2],
+                'quantity': row[3],
+                'unit': row[4],
+                'request_batch_id': row[5],
+                'created_at': row[6]
+            } for row in rows]
+            
+        except sqlite3.Error as e:
+            self.logger.error(f"Error retrieving requests by recipe: {e}")
             return []
