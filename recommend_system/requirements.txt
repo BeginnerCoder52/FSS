@@ -1,0 +1,3 @@
+scikit-crfsuite>=0.12.2
+pyvi>=0.1
+joblib>=1.1.0
