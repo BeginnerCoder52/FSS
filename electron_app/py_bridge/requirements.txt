@@ -1,0 +1,2 @@
+# Python D-Bus Communication Library
+sdbus-python>=0.14.0

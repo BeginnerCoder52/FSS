@@ -1,0 +1,15 @@
+{
+  "dbus": {
+    "system_bus_name": "vn.edu.uit.FSS",
+    "dbdaemon_service": "vn.edu.uit.FSS.DBDaemon",
+    "dbdaemon_interface": "vn.edu.uit.FSS.DBDaemon",
+    "dbdaemon_path": "/vn/edu/uit/FSS/DBDaemon",
+    "sensor_service": "vn.edu.uit.FSS.Sensor",
+    "sensor_interface": "vn.edu.uit.FSS.Sensor",
+    "sensor_path": "/vn/edu/uit/FSS/Sensor"
+  },
+  "system": {
+    "distance_threshold_m": 0.60,
+    "frt_app_enabled": false
+  }
+}

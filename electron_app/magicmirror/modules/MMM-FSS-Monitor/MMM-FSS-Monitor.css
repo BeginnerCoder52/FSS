@@ -1,0 +1,24 @@
+/**
+ * @file MMM-FSS-Monitor.css
+ * @brief Styling for the monitor and screen control module.
+ * * Provides a fixed, full-screen black overlay with a high z-index.
+ * When active, it blocks out the UI, enabling the two-way mirror effect.
+ */
+
+.fss-blackout-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000;
+    z-index: 9999; /* Ensure it covers all other MagicMirror modules */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.fss-blackout-overlay.active {
+    opacity: 1;
+    pointer-events: all; /* Optional: Block clicks while blacked out */
+}

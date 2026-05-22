@@ -1,0 +1,308 @@
+/**
+ * @file MMM-FSS-Inventory.css
+ * @brief Styling for inventory module with notifications and food display.
+ *
+ * Dark theme with:
+ * - Notification section with fade in/out animations
+ * - Inventory grid with food items and quantities
+ */
+
+.mmm-fss-inventory-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
+	background: linear-gradient(135deg, rgba(20, 20, 30, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%);
+	border-radius: 10px;
+	font-family: "Roboto", sans-serif;
+	color: #e0e0e0;
+}
+
+/**
+ * Notification Section Styling
+ */
+.mmm-fss-inventory-notification-section {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 150px;
+}
+
+/**
+ * Placeholder when FRT App not available
+ */
+.mmm-fss-inventory-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 40px 20px;
+	background: rgba(60, 40, 40, 0.6);
+	border-radius: 8px;
+	border: 2px dashed rgba(255, 107, 107, 0.5);
+	color: #ffb3b3;
+	text-align: center;
+}
+
+.mmm-fss-inventory-placeholder i {
+	font-size: 48px;
+	opacity: 0.6;
+}
+
+.mmm-fss-inventory-placeholder p {
+	font-size: 16px;
+	font-weight: 600;
+	margin: 5px 0;
+}
+
+.mmm-fss-inventory-placeholder small {
+	font-size: 12px;
+	opacity: 0.7;
+	font-style: italic;
+}
+
+/**
+ * Notification Box - Active Detection Display
+ */
+.mmm-fss-inventory-notification {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	padding: 20px;
+	background: rgba(40, 60, 80, 0.8);
+	border-radius: 10px;
+	border: 2px solid #4db8ff;
+	box-shadow: 0 0 20px rgba(77, 184, 255, 0.4);
+	animation: notificationFadeIn 0.4s ease-in-out;
+	max-width: 300px;
+	margin: 0 auto;
+}
+
+.mmm-fss-inventory-notification-image {
+	width: 120px;
+	height: 120px;
+	border-radius: 8px;
+	overflow: hidden;
+	background: rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(77, 184, 255, 0.3);
+}
+
+.mmm-fss-inventory-notification-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.mmm-fss-inventory-notification-message {
+	text-align: center;
+	font-size: 16px;
+	color: #ffffff;
+	line-height: 1.4;
+}
+
+.mmm-fss-inventory-notification-message strong {
+	font-size: 18px;
+	color: #81d4fa;
+	display: block;
+	margin-bottom: 5px;
+}
+
+.mmm-fss-inventory-notification-message small {
+	font-size: 13px;
+	color: #b0bec5;
+	font-style: italic;
+}
+
+/**
+ * Inventory Section Styling
+ */
+.mmm-fss-inventory-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.mmm-fss-inventory-title {
+	font-size: 18px;
+	font-weight: 700;
+	color: #81d4fa;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	text-align: center;
+	padding: 10px 0;
+	border-bottom: 2px solid rgba(129, 212, 250, 0.3);
+}
+
+/**
+ * Inventory Grid
+ */
+.mmm-fss-inventory-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+	gap: 12px;
+	padding: 12px;
+	background: rgba(40, 40, 55, 0.6);
+	border-radius: 8px;
+	border: 1px solid rgba(100, 150, 200, 0.2);
+	min-height: 120px;
+	transition: all 0.3s ease;
+}
+
+.mmm-fss-inventory-grid.stale {
+	opacity: 0.6;
+	border-color: rgba(255, 152, 0, 0.3);
+}
+
+/**
+ * Individual Food Item in Grid
+ */
+.mmm-fss-inventory-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 10px;
+	background: rgba(50, 50, 70, 0.8);
+	border-radius: 8px;
+	border: 1px solid rgba(77, 184, 255, 0.2);
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.mmm-fss-inventory-item:hover {
+	background: rgba(60, 80, 100, 0.9);
+	border-color: rgba(77, 184, 255, 0.6);
+	transform: translateY(-2px);
+}
+
+.mmm-fss-inventory-item img {
+	width: 80px;
+	height: 80px;
+	object-fit: cover;
+	border-radius: 4px;
+	background: rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(77, 184, 255, 0.2);
+}
+
+.mmm-fss-inventory-item-info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 100%;
+	text-align: center;
+}
+
+.mmm-fss-inventory-item-name {
+	font-size: 12px;
+	font-weight: 600;
+	color: #ffffff;
+	word-break: break-word;
+	max-width: 90px;
+}
+
+.mmm-fss-inventory-item-quantity {
+	font-size: 11px;
+	color: #4db8ff;
+	font-weight: 700;
+	background: rgba(77, 184, 255, 0.1);
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+/**
+ * Empty Inventory Message
+ */
+.mmm-fss-inventory-empty {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100px;
+	color: #b0bec5;
+	font-size: 14px;
+	font-style: italic;
+	text-align: center;
+}
+
+/**
+ * Animations
+ */
+@keyframes notificationFadeIn {
+	0% {
+		opacity: 0;
+		transform: scale(0.9) translateY(-20px);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes notificationFadeOut {
+	0% {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.9) translateY(-20px);
+	}
+}
+
+/**
+ * Responsive Design
+ */
+@media (max-width: 768px) {
+	.mmm-fss-inventory-container {
+		padding: 12px;
+		gap: 12px;
+	}
+
+	.mmm-fss-inventory-notification {
+		max-width: 250px;
+		padding: 15px;
+	}
+
+	.mmm-fss-inventory-notification-image {
+		width: 100px;
+		height: 100px;
+	}
+
+	.mmm-fss-inventory-grid {
+		grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+		gap: 8px;
+		padding: 8px;
+	}
+
+	.mmm-fss-inventory-item {
+		padding: 8px;
+	}
+
+	.mmm-fss-inventory-item img {
+		width: 70px;
+		height: 70px;
+	}
+
+	.mmm-fss-inventory-title {
+		font-size: 16px;
+	}
+}
+
+/**
+ * Glow effect on new items
+ */
+@keyframes itemGlow {
+	0% {
+		box-shadow: 0 0 10px rgba(129, 212, 250, 0.5);
+	}
+	100% {
+		box-shadow: 0 0 0 rgba(129, 212, 250, 0);
+	}
+}
+
+.mmm-fss-inventory-item.new {
+	animation: itemGlow 1s ease-out;
+}
