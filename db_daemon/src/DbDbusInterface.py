@@ -42,6 +42,11 @@ class DbDbusInterface:
     OBJECT_PATH = "/vn/edu/uit/FSS/DBDaemon"
     INTERFACE_NAME = "vn.edu.uit.FSS.DBDaemon"
     
+    # FRTApp service details
+    FRT_SERVICE = "vn.edu.uit.FSS.FRTApp"
+    FRT_PATH = "/vn/edu/uit/FSS/FRTApp"
+    FRT_INTERFACE = "vn.edu.uit.FSS.FRTApp"
+    
     def __init__(self):
         """Initialize DbDbusInterface instance."""
         self.system_bus: Optional[Any] = None
@@ -56,6 +61,9 @@ class DbDbusInterface:
         # Callbacks storage
         self._frt_event_callbacks: list = []
         self._sensor_event_callbacks: list = []
+        
+        # External comparison function callback
+        self._compare_callback: Optional[Callable] = None
         
         # Setup logging
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -125,6 +133,7 @@ class DbDbusInterface:
             
             # Create and export D-Bus object
             self.dbus_object = DbDaemonDbusObject()
+            self.dbus_object.set_interface_instance(self)
             self.dbus_object.export_to_dbus(self.OBJECT_PATH)
             
             self.is_connected = True
@@ -135,6 +144,10 @@ class DbDbusInterface:
             self.logger.error(f"Async setup error: {e}")
             self.logger.error(traceback.format_exc())
             return False
+
+    def set_comparison_callback(self, callback: Callable) -> None:
+        """Set the callback for GetMissingIngredients method."""
+        self._compare_callback = callback
 
     def listen_frt_pipeline_events(self, callback: Callable) -> None:
         """
@@ -149,6 +162,12 @@ class DbDbusInterface:
         
         self._frt_event_callbacks.append(callback)
         self.logger.debug("Registered FRTApp event callback")
+        
+        # Subscribe to FRTApp D-Bus signals if connected
+        if self.is_connected:
+            asyncio.run_coroutine_threadsafe(
+                self._subscribe_to_frt_signals_async(), self._loop
+            )
     
     def listen_sensor_dbus_events(self, callback: Callable) -> None:
         """
@@ -324,14 +343,10 @@ class DbDbusInterface:
         """Asynchronously subscribe to SensorDaemon signals."""
         try:
             # Define SensorDaemon service details
-            # Using None for service name to receive signals from any sender
-            # since SensorDaemon does not request a specific bus name.
             SENSOR_SERVICE = None
             SENSOR_PATH = "/vn/edu/uit/FSS/Sensor"
             SENSOR_INTERFACE = "vn.edu.uit.FSS.Sensor"
             
-            # Using modern sdbus proxy
-            # We need an interface class for the proxy
             class SensorInterface(DbusInterfaceCommonAsync, interface_name=SENSOR_INTERFACE):
                 @dbus_signal_async('s')
                 def EnvironmentDataUpdated(self, data: str): pass
@@ -347,7 +362,6 @@ class DbDbusInterface:
 
             proxy = SensorInterface.new_proxy(SENSOR_SERVICE, SENSOR_PATH)
             
-            # Create tasks for each signal listener
             tasks = [
                 asyncio.create_task(self._listen_env_signals(proxy)),
                 asyncio.create_task(self._listen_door_signals(proxy)),
@@ -356,9 +370,29 @@ class DbDbusInterface:
             ]
             self._signal_tasks.extend(tasks)
             
-            self.logger.info("Subscribed to SensorDaemon signals asynchronously via background tasks")
+            self.logger.info("Subscribed to SensorDaemon signals")
         except Exception as e:
             self.logger.error(f"Failed to subscribe to sensor signals: {e}")
+
+    async def _subscribe_to_frt_signals_async(self) -> None:
+        """Asynchronously subscribe to FRTApp signals."""
+        try:
+            class FrtInterface(DbusInterfaceCommonAsync, interface_name=self.FRT_INTERFACE):
+                @dbus_signal_async('s')
+                def FoodDetected(self, json_data: str): pass
+
+            proxy = FrtInterface.new_proxy(None, self.FRT_PATH)
+            
+            task = asyncio.create_task(self._listen_frt_signals(proxy))
+            self._signal_tasks.append(task)
+            
+            self.logger.info("Subscribed to FRTApp signals")
+        except Exception as e:
+            self.logger.error(f"Failed to subscribe to FRTApp signals: {e}")
+
+    async def _listen_frt_signals(self, proxy):
+        async for json_data in proxy.FoodDetected:
+            self._handle_food_detected(json_data)
 
     async def _listen_env_signals(self, proxy):
         async for data in proxy.EnvironmentDataUpdated:
@@ -376,6 +410,22 @@ class DbDbusInterface:
         async for distance in proxy.DistanceDataChanged:
             self._handle_distance_data_changed(distance)
 
+    def _handle_food_detected(self, json_data: str) -> None:
+        try:
+            data = json.loads(json_data)
+            food_id = data.get("id")
+            score = data.get("score")
+            qty = data.get("qty")
+            
+            if food_id is not None:
+                for callback in self._frt_event_callbacks:
+                    try:
+                        callback("food_detected", str(food_id), score, qty)
+                    except Exception as e:
+                        self.logger.error(f"Error in FRT callback: {e}")
+        except Exception as e:
+            self.logger.error(f"Error parsing food detection data: {e}")
+
     def _handle_environment_data_updated(self, env_data: Union[str, Dict]) -> None:
         try:
             if isinstance(env_data, dict):
@@ -387,11 +437,8 @@ class DbDbusInterface:
             humid = data.get("humid")
             temp_2 = data.get("temp_2")
             humid_2 = data.get("humid_2")
-            
-            # Get timestamp from payload if available, else use current time
             ts = data.get("timestamp", time.time())
             
-            # Trigger callback if either sensor data is present
             if (temp is not None and humid is not None) or \
                (temp_2 is not None and humid_2 is not None):
                 self._invoke_sensor_callbacks(
@@ -423,6 +470,28 @@ if SDBUS_AVAILABLE:
     class DbDaemonDbusObject(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
         """D-Bus object implementation for DBDaemon service."""
         
+        def __init__(self):
+            super().__init__()
+            self._interface_instance: Optional[DbDbusInterface] = None
+
+        def set_interface_instance(self, instance: DbDbusInterface):
+            self._interface_instance = instance
+
+        @dbus_method_async('', 'as')
+        async def GetMissingIngredients(self) -> List[str]:
+            """
+            D-Bus Method: Compare inventory vs request and return missing items.
+            """
+            if self._interface_instance and self._interface_instance._compare_callback:
+                try:
+                    shortage_list = self._interface_instance._compare_callback()
+                    # Format: ["Food: Qty", ...]
+                    return [f"{item['food_id']}: {item['shortage']}" for item in shortage_list]
+                except Exception as e:
+                    logging.error(f"Error in GetMissingIngredients D-Bus method: {e}")
+                    return ["Error: Internal server error"]
+            return ["Error: Comparison callback not set"]
+
         @dbus_signal_async('sis')
         def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
             """Signal: UI requires update with new inventory data."""
@@ -461,3 +530,4 @@ else:
         def DistanceAlert(self, *args, **kwargs): pass
         def export_to_dbus(self, *args, **kwargs): pass
         def unexport(self, *args, **kwargs): pass
+        def set_interface_instance(self, *args, **kwargs): pass
