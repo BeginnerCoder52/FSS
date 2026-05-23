@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Cá Nướng Pa Pỉnh Tộp",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá rô phi 1 con (1kg)",
+        "Hành tím băm 3M",
+        "Hạt mắc khén 2m",
+        "Húng lủi cắt nhỏ 2M",
+        "Húng quế cắt nhỏ 2M",
+        "Sả băm 2M",
+        "Ớt sừng bỏ hạt, cắt nhỏ 1 quả",
+        "ĂN KÈM: Xà lách, rau thơm, dưa leo, quả tắc"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Bột canh"
+    ],
+    "process": [
+        "Cá rô phi làm sạch, cắt dọc lưng cá làm đôi, lóc bỏ xương sống và xương lườn, khứa 2 đường chéo bên ngoài thịt cá.",
+        "Hạt mắc khén rang thơm, giã bể. Ớt sừng băm giã nhuyễn.",
+        "Làm gia vị ướp cá: trộn đều hành tím, rau húng lũi, rau húng quế, sả băm với 1m hạt mắc khén, 2m Bột canh, 1/2m Bột ngọt AJINOMOTO®, 1M ớt sừng băm."
+    ],
+    "cook": [
+        "Ướp cá: 1/2 hỗn hợp gia vị nhồi vào trong bụng cá, 1/2 hỗn hợp xát đều bên ngoài thịt cá sao cho gia vị thấm đều.",
+        "Nướng cá:  Bật nóng lò nướng ở 250 độ, cho cá vào lò, nướng trong 20 phút hoặc đến khi lớp da cá chín vàng, lấy ra dĩa.",
+        "Pha chẩm chéo: 1M Bột canh, 1/2m hạt mắc khén giã, 1m ớt sừng, 1M rau gia vị lấy từ trong bụng cá đã nướng, trộn đều, vắt vào 1 trái tắc."
+    ],
+    "usage": [],
+    "tips": []
+}

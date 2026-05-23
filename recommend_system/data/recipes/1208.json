@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Mì Gói Trộn",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì gói: 3 gói",
+        "Thịt heo xay: 150g",
+        "Hành lá, cà chua, xà lách",
+        "Muối, tiêu, đường, dầu ăn",
+        "Tỏi băm, ớt, ngò"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt heo xay ướp với 1/2m muối, 1m hạt nêm Aji-ngon®, 1/2m tiêu đầu hành băm và 1/3m đường, cho thêm 1M nước vào trộn đều, để thấm.",
+        "Hành lá cắt nhỏ. Ớt dùng 1 ít cắt lát, còn lại cắt sợi. Cá chua cắt đôi, bỏ hạt, băm nhỏ. Xà lách cắt sợi nhỏ, xếp ra dĩa."
+    ],
+    "cook": [
+        "Trụng mì gói trong nước sôi khoảng 1 phút, vớt ra để ráo, trộn với 1M dầu ăn rồi cho ra dĩa xà lách.",
+        "Phi thơm tỏi, xào săn thịt, nêm 1M nước tương “Phú Sĩ”, rồi cho cà chua vào, nêm thêm 1/2m hạt nêm Aji-ngon®, 1/2m đường, 1/2m muối. Xào đến khi sốt cô đặc lại thì cho hành lá và ít ớt vào. Tắt bếp."
+    ],
+    "usage": [
+        "Bày mì và xốt ra diã, rắc thêm tí tiêu và trang trí dĩa mì với ngò rí và ớt sợi. Khi ăn trộn đều tất cả các thành phần với nhau. Có thể dùng kèm với nước tương “Phú Sĩ” và ớt cắt lát."
+    ],
+    "tips": [
+        "Cho  nước vào thịt khi ướp để thịt được tơi sau khi xào.",
+        "Không nên luộc mì quá lâu vì mì sẽ mất độ dòn và giai.",
+        "Mì gói thường có vị mặn sẵn nên khi xào nhân lưu ý nêm gia vị vừa phải."
+    ]
+}

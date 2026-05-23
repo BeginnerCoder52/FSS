@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Gỏi Rau Cần Thịt Bò",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò phi lê: 150g",
+        "Rau cần cạn: 200g",
+        "Hành tây: 1 củ",
+        "Hành tím: 3 củ",
+        "Ớt sừng cắt sợi: 1 trái",
+        "Mè rang: 2M",
+        "Ăn kèm: bánh đa chiên",
+        "Muối, đường, nước mắm, tương ớt",
+        "Tỏi băm, ớt băm, rau răm"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt bò cắt lát mỏng, trụng sơ với nước giấm đường, vớt ra để nguội.",
+        "Rau cần nhặt rửa sạch, chỉ lấy 1 ít phần lá non. Hành tây cắt sợi nhuyễn. Hành tím bào mỏng. Rau răm nhặt sạch. Ngâm rau cần, hành tím, hành tây và rau răm với 1 chén nước, 1/2 chén Giấm gạo lên men LISA®, 3M đường, 1/2m Bột ngọt AJI-NO-MOTO® khoảng 15 phút, vớt ra để ráo.",
+        "Pha nước trộn gỏi: trộn đều 2M Giấm gạo lên men LISA® với 1.5M đường, 1M nước mắm, 1m tỏi băm, 1.5m ớt băm, 1M tương ớt và 1/5m muối."
+    ],
+    "cook": [
+        "Trộn tất cả nguyên liệu với nước trộn gỏi."
+    ],
+    "usage": [
+        "Xếp món ăn ra dĩa, rắc mè rang và ớt sừng cắt sợi lên trên, dùng kèm bánh đa chiên."
+    ],
+    "tips": [
+        "Trụng thịt bò trong nước có pha giấm giúp thịt bò không bị khô, giữ được chất ngọt và màu sắc đẹp hơn.",
+        "Ngâm rau cần với nước vo gạo giúp cho rau sạch và tiết kiệm thời gian."
+    ]
+}

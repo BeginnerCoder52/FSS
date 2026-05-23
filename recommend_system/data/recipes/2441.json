@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Xáo Lòng",
+    "serving": "0 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tim heo 100g",
+        "Gan heo 100g",
+        "Dồi trường 100g",
+        "Hành lá cắt nhỏ 1/2 chén",
+        "Bánh tráng nướng 1 cái",
+        "Rau húng lũi, ngò rí cắt nhỏ",
+        "Hành tím băm, chanh",
+        "Tiêu, đường, nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Dồi trường cắt khúc ngắn. Tim, gan cắt lát mỏng. Gan để riêng.  Ướp dồi trường và tim với 1M hành tím băm, 1/3m tiêu, 1/2m hạt nêm Aji-ngon® và 1M nước mắm."
+    ],
+    "cook": [
+        "Phi thơm hành tím, cho tim và dồi trường vào xào nhanh tay. Nhắc ra khỏi bếp.",
+        "Đặt 1 lít nước sôi lên bếp, nước vừa sôi cho tim và dồi trường vào, nêm thêm 1m hạt nêm Aji-ngon® và 1m nước mắm, chờ nước sôi trở lại, trút gan vào, nhắc xuống, cho hành lá, ngò rí vào."
+    ],
+    "usage": [
+        "Múc ra tô, trang trí với rau húng lủi. Khi ăn bẻ nhỏ bánh tráng nướng cho vào tô, vắt thêm 1 miếng chanh, dùng nóng."
+    ],
+    "tips": [
+        "Cho gan vào sau cùng để gan mềm mại và gan vừa chín tới.",
+        "Xào tim và dồi trường nhanh tay, lửa lớn để giữ độ giòn."
+    ]
+}

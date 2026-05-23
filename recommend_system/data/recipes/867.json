@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Gỏi Ếch Cóc Xanh",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đùi ếch to: 300g",
+        "Cóc xanh: 250g",
+        "Ớt sừng: 1 trái",
+        "Tôm khô: 30g",
+        "Sả ớt băm nhuyễn: 2M",
+        "Hành tây: 1/4 củ",
+        "Lá cóc non: 10 lá",
+        "Hành tím bào mỏng: 1/2 chén",
+        "RAU NÊM: rau răm, tỏi ớt, hành tỏi băm",
+        "ĂN KÈM: Bánh phồng tôm, mè rang, hành phi",
+        "Gia vị: Nước mắm, chanh, đường, dầu ăn."
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Đùi ếch ướp với 1M hành tỏi băm, 2M sả ớt băm, 1M dầu hoặc mỡ, 1M đường, 1m Hạt nêm Aji-ngon® (Heo) và 1M nước mắm, để thấm.",
+        "Tôm khô rửa sạch, ngâm nước nóng cho mềm, đập giập.",
+        "Cóc xanh cắt miếng rồi cắt sợi, ướp với 1M đường. Ớt sừng cắt sợi. Lá cóc non cắt sợi."
+    ],
+    "cook": [
+        "Chiên ếch: đun nóng dầu, cho đùi ếch vào chiên áp chảo đến khi chín, gỡ lấy thịt miếng to.",
+        "Phi thơm 1/2 lượng hành tím bào với dầu ăn, vớt ra để ráo dầu. Lấy 2M dầu đã phi hành còn nóng trộn vào tôm khô cho thơm.",
+        "Pha nước trộn gỏi: 1M nước mắm, 1/2m muối, 3M đường, 1M nước cốt chanh, 1M tỏi ớt băm",
+        "Trộn gỏi: Cho cóc, hành tím bào, tôm khô, thịt ếch chiên, rau răm, ớt sừng sợi, hành tây, lá cóc và mè rang, hành phi vào tô, trộn đều với nước trộn gỏi."
+    ],
+    "usage": [
+        "Cho gỏi ếch cóc xanh ra dĩa, rắc mè rang, hành phi và rau răm lên."
+    ],
+    "tips": [
+        "Áp chảo đùi ếch vừa chín tới để giữ vị ngọt, không khô",
+        "Dùng dầu đã phi hành tím trộn với tôm khô cho thơm",
+        "Ướp cóc với đường cho vị chua dịu lại."
+    ]
+}

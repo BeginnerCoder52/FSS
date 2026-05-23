@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Bò Cuộn Phô Mai",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bò phi lê: 400g",
+        "Thịt băm: 120g",
+        "Giò sống: 25g",
+        "Phô mai: 2 lát",
+        "Trứng gà, hành tây, lá thơm, cần tây",
+        "Cà chua hộp, mù tạc vàng, bột mì",
+        "Cà rốt, hành boaro, ngò tây băm",
+        "Muối, tiêu, dầu ăn, rượu Brandy"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt bò cắt thành 4 miếng bằng nhau, dùng dụng cụ đập thịt đập dẹp còn dày cỡ 5mm, ướp với 1/2m muối và 1/2m tiêu, để thấm.",
+        "Cà rốt, hành tây, cần tây, boaro mỗi thứ băm lấy 1M, còn lại cắt miếng nhỏ.",
+        "Xào thơm các loại rau băm, để nguội, cho vào trộn đều với thịt xay, giò sống, ngò tây băm, 1m mù tạc vàng, 1/2 trứng gà đánh tan, tất cả quết dẻo.",
+        "Trải miếng thịt bò ra, cho nhân và ½ miếng phô mai vào giữa, gấp 2 đầu rồi cuộn lại, dùng dây buộc chặt vừa."
+    ],
+    "cook": [
+        "Đun nóng ít dầu, cho từng cuộn thịt bò vào chiên vàng và thêm 1M rượu Brandy vào chiên, tắt lửa, gắp thịt ra dĩa.",
+        "Tiếp tục cho các loại rau vào xào đến khi rau vừa vàng thì thêm 1M bột mì và 1M cà chua hộp cho lên màu, thêm 2 lá thơm nhỏ, 4 chén nước và 2m hạt nêm Aji-ngon®. Cho tiếp cuộn thịt bò vào, nấu nhỏ lửa khoảng 30 phút cho thịt mềm, nước sệt lại thì gắp thịt ra riêng, nước xốt lược bỏ xác."
+    ],
+    "usage": [],
+    "tips": [
+        "Dùng lửa mạnh để đốt rượu cho thịt được thơm",
+        "Nên xào rau củ với lửa vừa để rau củ không bị cháy và nước xốt không bị đắng."
+    ]
+}

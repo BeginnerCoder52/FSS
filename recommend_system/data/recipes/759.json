@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Vịt Kho Sấu",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt vịt: 1kg",
+        "Măng luộc: 250g",
+        "Sấu: 100g",
+        "Nước dừa tươi: 2 chén",
+        "Ớt hiểm: 3 trái",
+        "Hành tỏi băm",
+        "Tiêu, muối, đường, dầu điều"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Vịt cắt chéo da. Áp chảo da vịt cho ra bớt mỡ, chặt miếng 4-5 cm, ướp 1M hành tỏi băm, 1M muối, 1M đường, 1M hạt nêm Aji-ngon®, 4M nước tương “Phú Sĩ” và ớt hiểm đập đập, để thấm 10 phút.",
+        "Măng cắt miếng hình chữ nhật 1.5 x 2.5 cm. Sấu cắt bỏ cuống, khứa chữ thập làm bốn."
+    ],
+    "cook": [
+        "Phi thơm hành tỏi với 2M dầu điều, xào săn vịt và măng cho thấm gia vị. Cho 2 chén nước dừa vào kho khoảng 15 phút cho thịt chín, thêm sấu vào kho tiếp và dầm nhẹ cho sấu ra nước chua. Kho đến khi thịt chín mềm, nước hơi sánh thì tắt lửa."
+    ],
+    "usage": [
+        "Múc vịt kho ra đĩa, rắc thêm hành lá, tiêu, ngò rí và ớt cắt lát lên trên. Dùng với cơm nóng."
+    ],
+    "tips": [
+        "Chọn vịt tươi mới, nạc nhiều, ít mỡ, thịt chắc.",
+        "Chọn măng mạnh tông, dày thịt, giòn và ngọt hơn măng tre tàu."
+    ]
+}

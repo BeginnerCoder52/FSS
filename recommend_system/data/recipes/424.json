@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Gà Luộc Xôi Gấc",
+    "serving": "10 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gà ta thả vườn: 1 con",
+        "Nếp Bắc: 1kg",
+        "Trái gấc chín: 1 quả",
+        "Rượu nếp: 10ml",
+        "Tỏi: 10g",
+        "Hành tím nguyên củ: 1 quả",
+        "Gừng lát: 2 lát",
+        "Lá chanh: 5 lá",
+        "ĂN KÈM: Bột canh chanh",
+        "Gia vị: Dầu ăn, muối, tiêu, đường"
+    ],
+    "spices": [
+        "Bột canh"
+    ],
+    "process": [
+        "Gà ta làm sạch, mổ kính, chéo cách chân để cúng.",
+        "Tỏi xay chung 15ml nước. Vắt lấy nước, giữ xác.",
+        "Gấc lấy thịt bóp thịt gấc với 1m rượu nếp.",
+        "Ngâm nếp 4h, để ráo. Nướng thơm gừng với hành tím. Lá chanh cắt chỉ"
+    ],
+    "cook": [
+        "Luộc gà: Đun sôi lượng nước vừa xấp mặt con gà. Thêm 1M bột canh, gừng nướng, hành tím nướng cho gà vào luộc riu riu 90oC đến khi gà chín (90phút) vớt ra xả qua nước lạnh cho nguội bớt rồi ngâm vô nước đá làm nguội nhanh xong vớt ra đẻ ráo. Lưu ý: Luôn đảm bảo con gà ngập hẳn trong nước suốt qua trình luộc và tuyệt đối không để nước sôi.",
+        "Nấu xôi: Trộn 1/2 lượng gấc với nếp, thêm 1m muối, 1m đường trộn đều. Cho vào chõ hấp 15phút lấy ra thêm 1/2 gấc còn tiếp tục trộn đều. Cho vào hấp tiếp 30 phút nữa. Lấy ra cho 1M dầu ăn vào trộn đều, hoàn tất."
+    ],
+    "usage": [],
+    "tips": [
+        "Luộc gà trong nước không sôi để thịt gà chín thấm vị không khô.",
+        "Bóp rượu với gấc để giữ được màu đỏ của gấc được tươi hơn.",
+        "Trộn gấc 2 lần để xôi thấm vị màu gấc hơn."
+    ]
+}

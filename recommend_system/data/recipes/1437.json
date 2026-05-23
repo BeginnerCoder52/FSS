@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Phở Chay",
+    "serving": "0 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bò lát chay 100g",
+        "Tép mỡ chay 50g",
+        "Ham chay 100g",
+        "Boa-ro băm 1 cây",
+        "Cà rốt 50g",
+        "Nấm đông cô tươi 10 tai",
+        "Cải thảo 100g",
+        "Bánh phở 800g",
+        "Bơ tươi 1M",
+        "Ngò rí, cọng ngò gai",
+        "Nước dùng: Củ cải trắng, bắp mỹ, cà rốt, mía, poa-rô, quế, hồi, thảo quả, gừng, nấm hương khô",
+        "Muối, đường phèn, gia vị phở chay, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Nấm",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Nấu nước dùng: Rang thơm quế, hồi, thảo quả. Gừng nướng thơm, bóc vỏ, đập dập. Cho vào nồi nước cùng với boa-rô, củ cải trắng, bắp, cà rốt, nấm hương, mía đun sôi, giảm lửa, vớt bọt, nấu khoảng 1 giờ. Lọc lấy 2 lít nước dùng.",
+        "Bò lát ngâm nở, lạng mỏng. Tép mỡ ngâm nở, chiên vàng. Ham chay lát mỏng, chiên sơ. Cà rốt tỉa hoa, cắt lát. Nấm đông cô, bỏ gốc, cắt lát. Cải thảo cắt khúc 3cm. Ngò rí, cọng ngò gai cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm poa- rô cho bò lát vào xào sơ, nêm 1/2M hạt nêm Aji-ngon® từ nấm hương và hạt sen, trút ra để riêng.",
+        "Đun sôi 2 lít nước dùng cho nấm đông cô, cà rốt, cải thảo vào, nêm 1M nước tương “Phú Sĩ”, 1M bột ngọt AJI-NO-MOTO®, 1/2M đường phèn, 2M muối, 1.5M hạt nêm Aji-ngon® từ nấm hương và hạt sen, 2 viên súp phở chay, nếm vị vừa ăn, cho bơ tươi vào, tắt lửa."
+    ],
+    "usage": [
+        "Cho bánh phở vào tô, xếp bò lát, ham chay, tép mở lên, rắc ít ngò rí và cọng ngò gai, múc nước dùng vào, dùng nóng. Ăn kèm giá sống, các loại rau sống và tương."
+    ],
+    "tips": [
+        "Xào thịt bò chay với gia vị để thịt bò đậm đà, ngon hơn.",
+        "Sử dụng đường phèn giúp nước dùng có hương vị thanh nhẹ, hài hòa, hấp dẫn hơn.",
+        "Cho bơ tươi để nước dùng có váng béo thơm và hấp dẫn."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Canh Long Thả",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lòng gà (có trứng non) : 3 bộ",
+        "Nước dùng gà: 1 lít",
+        "Bông hẹ: 30g",
+        "Bắp non: 50g",
+        "Cà rốt: 50g",
+        "Nấm đông cô: 3 tai",
+        "Hành tím nướng: 1 củ",
+        "Gừng nướng: 1 miếng",
+        "Rau húng lủi: 1 ít",
+        "Tiêu, nước mắm, muối"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Lòng sơ chế sạch, luộc chín với 1/2m muối và hành tím nướng, 1 miếng gừng nướng, vớt ra ngâm nước lạnh, cắt sợi.",
+        "Nấm đông cô ngâm nở, luộc với nước có 1/2m hạt nêm Aji-ngon®, vớt ra để nguội, cắt sợi. Bông hẹ bỏ phần già, cắt khúc 2cm. Cà rốt cắt sợi. Húng lủi cắt nhỏ. Bắp non cắt đôi."
+    ],
+    "cook": [
+        "Nấu sôi 1 lít nước dùng gà, nêm 1M hạt nêm Aji-ngon®, cho bắp, cà rốt và nấm đông cô vào nấu khoảng 1 phút, tiếp tục cho lòng gà và bông hẹ vào, nêm 1m nước mắm. Tắt bếp."
+    ],
+    "usage": [
+        "Múc canh ra tô, rắc thêm tiêu và húng lủi. Dùng với cơm."
+    ],
+    "tips": [
+        "Chọn lòng gà tươi ngon, gan mịn màu nâu nhạt, không có mùi hôi khó chịu.",
+        "Luộc lòng gà chín kĩ, khi nấu nước canh sẽ trong hơn."
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "recipe_name": "Bún Thái",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò fillet mềm 120g",
+        "Râu mực 160g",
+        "Tôm sú tươi (size 30 - 40) 8 con",
+        "Nghêu to 500g",
+        "Rau muống 200g",
+        "Cà chua 2 quả",
+        "Nấm đông cô tươi 8 tai",
+        "Gừng cắt sợi 10g",
+        "Riềng cắt sợi 10g",
+        "Hành tím 4 củ",
+        "Sữa đậu nành 4M",
+        "Bún sợi to",
+        "RAU NÊM: Ngó rí cắt ngắn 2cm",
+        "ĂN KÈM: Chanh, ớt, nước mắm",
+        "Gia vị: Dầu điều"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Thịt bò cắt lát mỏng, ướp gừng cắt sợi. Râu mực bỏ mắt, rửa sạch. Tôm lột vỏ, bỏ chỉ lưng. Nghêu ngâm sạch cát.",
+        "Rau muống cắt khúc 6cm. Cà chua cắt múi cau. Nấm đông cô rửa sạch, cắt bỏ 1/3 chân nấm. Hành tím cắt làm tư.",
+        "Đun sôi 1.6 lít nước cho nghêu vào luộc vừa chín, vớt ra xả nước lạnh gỡ lấy thịt. Nước luộc nghêu gạn bỏ cặn, đun sôi cho tôm, râu mực vào luộc chín, vớt ra xả nước lạnh. Để ráo."
+    ],
+    "cook": [
+        "Xào thơm hành tím, riềng với dầu điều. Cho cà chua, nấm xào nhanh. Cho nước luộc hải sản vào đun sôi, nêm 1 gói Gia vị nêm sẵn Aji-Quick® Lẩu Thái, nếm vị đậm đà."
+    ],
+    "usage": [
+        "Trụng bún và rau muống qua nước sôi cho vào tô, trụng tái thịt bò trong nước dùng, xếp vào tô cùng các loại hải sản, cà chua, nấm, thêm 1M sữa đậu nành, nước dùng. Thả ít ngò lên trên, dùng nóng kèm chanh, ớt và nước mắm tùy khẩu vị."
+    ],
+    "tips": [
+        "Sử dụng nước luộc hải sản nấu nước dùng tạo vị ngọt tự nhiên mà không cần nấu thêm nước dùng từ xương.",
+        "Cho sữa vào sau cùng để tạo vị béo mà không bị vữa.",
+        "Dùng bún sợi to cho các món nước sẽ ngon hơn."
+    ]
+}

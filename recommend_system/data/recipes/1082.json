@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Sandwich Nướng Trứng Xốt Mayonnaise",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì sandwich lạt 4 lát",
+        "Ba rọi xông khói 100g",
+        "Hành tây 1/2 củ",
+        "Ớt chuông đỏ 1/2 quả",
+        "Hành lá 1 nhánh",
+        "Trứng gà 3 quả",
+        "Hương thảo 1 nhánh",
+        "Gia vị: bơ lạt, tiêu, tương cà"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Ngọt Dịu"
+    ],
+    "process": [
+        "Xếp 4 lát sandwich chồng lên nhau, dùng dao mũi nhọn khoét hình vuông bên trong sandwich, cách viền khoảng 1cm, lấy ra khỏi bánh.",
+        "Ba rọi áp chảo vàng thơm, cắt nhỏ.",
+        "Hành tây cắt nhỏ, ớt chuông cắt nhỏ, xào thơm với bơ. Hành lá cắt nhỏ."
+    ],
+    "cook": [
+        "Đánh tan trứng gà, thêm ba rọi xông khói, 1M hành tây, 1M ớt chuông, hành lá và ít tiêu.",
+        "Làm nóng chảo, cho nhánh hương thảo quết dầu cho thơm, lấy hương thảo ra, đặt khung sandwich lên trên, tiếp theo đổ phần trứng vào bên trong, đợi cho trứng se lại thì đặt lát sandwich hình vuông lên trên, lật bánh lại khoảng 2 phút cho sandwich sém mặt. Lấy bánh ra. Lần lượt làm hết 4 lát sandwich.",
+        "Đặt 1 lát sandwich lên thớt, topping tương cà và Xốt Mayonnaise Aji-mayo® Ngọt Dịu, đặt lát sandwich thứ 2 lên trên. Dùng dao cắt đôi theo đường chéo thành 2 cặp bánh sandwich. Tiếp tục làm với 2 miếng sandwich còn lại."
+    ],
+    "usage": [
+        "Sandwich dùng làm món ăn sáng, khi ăn có thể chấm thêm mayonnaise tùy thích."
+    ],
+    "tips": [
+        "Áp chảo bánh với lửa nhỏ vừa để bánh vàng thơm và không bị đen.",
+        "Xào hành tây và ớt chuông với bơ trước giúp giảm mùi hăng và món ăn thơm ngon hơn.",
+        "Phết dầu bằng nhánh hương thảo giúp tăng hương thơm cho món ăn."
+    ]
+}

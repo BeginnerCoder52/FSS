@@ -1,0 +1,28 @@
+{
+    "recipe_name": "Salad Su Su",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Su su: 2 củ",
+        "Cà rốt: 1/2 củ",
+        "Thịt thăn heo xông khói: 100g",
+        "Rau húng lủi: 3 nhánh",
+        "Muối, tiêu",
+        "Xốt Mayonnaise LISA"
+    ],
+    "spices": [],
+    "process": [
+        "Su su gọt vỏ, bỏ hạt, cắt khối 2cm, ngâm vào nước có pha tí muối. Cà rốt cắt bằng su su. Luộc su su và cà rốt vừa chín tới, vớt ra ngâm vào nước lạnh rồi để ráo.",
+        "Thăn heo cắt sợi 0,5cm. Rau húng lủi 2 nhánh băm nhỏ, 1 nhánh để trang trí."
+    ],
+    "cook": [
+        "Trộn su su, cà rốt, thịt thăn heo với 1/3m tiêu, 1/3m muối và 4M xốt Mayonnaise LISA, cho vào tủ lạnh."
+    ],
+    "usage": [
+        "Bày salad ra dĩa, trang trí với rau húng lủi và vài sợi thịt thăn."
+    ],
+    "tips": [
+        "Chọn su su trái to, tươi non, màu xanh đậm, su su mới ngọt và giòn. Ngâm su su với nước muối giúp loại bớt chất nhựa trong su su."
+    ]
+}

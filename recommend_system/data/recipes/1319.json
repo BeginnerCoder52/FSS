@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bánh Bột Lọc",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột năng: 200g",
+        "Tôm đát nhỏ: 150g",
+        "Thịt ba chỉ: 200g",
+        "Hành lá cắt nhỏ: 1 chén",
+        "Hành tím băm, ớt sừng, tiêu, đường",
+        "Dầu ăn, dầu điều, nước mắm"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt ba chỉ cắt sợi nhỏ. Tôm bóc vỏ. Cho tôm thịt vào tô, nêm 1m hạt nêm Aji-ngon®, 1/2m tiêu, 2m đường, 1M dầu điều và 1 ít hành tím băm, trộn đều để 15 phút cho thấm gia vị.",
+        "Đun nóng chảo với ít dầu, cho tôm thịt vào xào săn, cho ra tô.",
+        "Làm dầu hành: cho vào chén hành lá 1/2m muối, đun nóng 3m dầu ăn rồi đổ vào chén hành.",
+        "Nước nhồi bột: đun sôi 0,5l nước, cho 1/2m muối và 1M dầu ăn vào."
+    ],
+    "cook": [
+        "Nhồi bột: lấy 1/2 tô bột năng và cho nước sôi từ từ vào khuấy đều, thoa bột vào tay rồi lấy khối bột trong tô ra nhồi cho thật mịn. Sau đó rắc 1 ít bột khô lên mặt bàn, rồi cán bột mỏng khối bột vừa nhồi, nắn và se bột thành khối tròn, dài, đường kính 3cm.",
+        "Tạo hình: Cắt bột thành lát dày 3mm, ép mỏng, cho tôm, thịt vào giữa rồi gấp lại, dùng nước dán mí cho bánh dính lại thanh hình bán nguyệt.",
+        "Luộc bánh: đun sôi nước, cho bánh vào luộc, khi bánh nổi lên là đã chín, vớt ra nhúng qua nước lạnh, vảy ráo nước rồi cho bánh vào dĩa, rưới dầu hành lên cho bánh không bị dính vào nhau.",
+        "Pha nước măm chua ngọt: trộn đều 1M nước mắm với 4M nước lọc, 1M đường, 1m nước cốt chanh và ớt sừng cắt lát."
+    ],
+    "usage": [
+        "Xếp bánh bột lọc ra dĩa, rưới dầu hành lên trên, khi ăn chấm với nước mắm chua ngọt."
+    ],
+    "tips": [
+        "Nên nhồi khi bột còn nóng để bột được mịn và dễ nhồi hơn.",
+        "Khi làm dầu hành, thêm 1m dầu nguội sẽ giúp hành giữ được màu xanh."
+    ]
+}

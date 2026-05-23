@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Lẩu Ghẹ Kim Chi",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nghêu: 1kg",
+        "Ghẹ: 2 con 700g",
+        "Bắp bò hoa: 300g",
+        "Kim chi bắp cải: 500g",
+        "Nấm kim châm: 200g",
+        "Bún gạo: 300g",
+        "Củ cải trắng: 1 củ nhỏ",
+        "Rau tần ô, hành boaro, củ cải trắng",
+        "Tàu hũ non: 1 miếng",
+        "Muối, tiêu, đường, nước mắm"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Ghẹ rửa sạch, chặt làm tư. Bắp bò hoa cắt lát mỏng theo xớ ngang. Nghêu ngâm nước, rửa sạch cát. Xếp tất cả ra dĩa.",
+        "Củ cải cắt thanh dài 5x2cm, nấu với 1,5 lít nước đến khi củ cải trong, chín mềm.",
+        "Rau tần ô lặt cọng dài 10 cm, tước bỏ xơ. Hành boaro cắt miếng xéo dày 1cm. Nấm kim châm cắt bỏ gốc, tách sợi. Đậu hũ non cắt miếng vuông vừa ăn, trụng qua nước sôi. Xếp tất cả ra dĩa.",
+        "Bún gạo trụng sơ, xả nước lạnh, trộn với 1/2m dầu ăn cho khỏi dính."
+    ],
+    "cook": [
+        "Nêm vào nước củ cải  3m hạt nêm Aji-ngon®, 1m muối, 2m đường, cho tiếp kim chi cắt khúc và nước kim chi vào và 1m nước mắm, nếm vị chua ngọt vừa ăn."
+    ],
+    "usage": [
+        "Nhúng ghẹ và nghêu ăn chơi trước, sau đó nhúng thịt bò, rau, nấm và đậu hũ, ăn chung với bún gạo, kim chi, củ cải, chấm kèm nước tương “Phú Sĩ”."
+    ],
+    "tips": [
+        "Nên trụng đậu hũ non với nước sôi để đậu hũ được dai hơn."
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Canh Cá Bống Mú",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá bống mú 1 Con (800g - 1kg)",
+        "Đậu hủ trắng 1 Miếng nhỏ",
+        "Cà chua 2 trái",
+        "Hành lá 30g",
+        "Cần tàu 50g",
+        "Hành tím 50g",
+        "RAU NÊM: Lá quế. Dầu tỏi phi, rau cần",
+        "ĂN KÈM: Cơm trắng & bún, nước mắm, ớt cắt lát.",
+        "Gia vị: Dầu ăn, ớt bột VN (loại ớt vẩy) đường, nước mắm,"
+    ],
+    "spices": [
+        "Bột canh",
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Cá làm sạch, giữ lại phần gan và bao tử cá. Ướp cá với 1/2M ớt bột, 1m Bột Canh của công ty AJINOMOTO®, 1m Bột ngọt AJI-NO-MOTO® trộn đều để 15 phút cho cá thấm gia vị.",
+        "Đậu hũ cắt làm tư. Cà chua cắt múi cau. Hành lá và cần tàu cắt khúc vừa ăn. Hành tím bào lát."
+    ],
+    "cook": [
+        "Làm nóng dầu cho đậu hủ vào chiên áp chảo sơ gắp ra, cho hành tím vào phi thơm cho cá, lòng cá vào áp chảo vàng hai mặt cho 2L nước nóng vào nấu sôi để nhỏ lửa, cho tiếp đậu hủ, cà chua, nêm vào 1M đường ,2M nước mắm, 1m Bột Canh của công ty AJINOMOTO®,  1/2m Bột ngọt AJI-NO-MOTO® vào nấu 10 phút cho cá chín nếm lại cho hành lá cần tàu vào tắt lửa nêm vào 2M Giấm gạo lên men LISA®của công ty AJINOMOTO® vào khuấy đều."
+    ],
+    "usage": [
+        "Múc canh ra tô cho rau quế, dầu tỏi phi vào dùng nóng kèm cơm trắng hoặc bún."
+    ],
+    "tips": [
+        "Áp chảo cá trước khi nấu để thịt cá thơm và không bị tanh.",
+        "Chiên áp chảo đậu hủ trước để đậu hủ không bị nát khi nấu canh.",
+        "Tắt lửa cho Giấm gạo lên men LISA®của công ty AJINOMOTO®vào để giữ được mùi thơm của giấm và tạo vị chua nhẹ cho món canh."
+    ]
+}

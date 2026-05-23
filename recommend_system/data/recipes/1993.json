@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Sandwich Nướng Thịt Băm",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì sandwich: 4 lát",
+        "Thịt băm: 50g",
+        "Khoai lang: 100g",
+        "Húng quế: 2 cây",
+        "Hành tây: 1/4 củ",
+        "Đậu phộng rang: 2M",
+        "Hành tím băm: 1M"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt băm ướp với 1 ít hạt nêm Aji-ngon®, 1M hành tím băm, để thấm.",
+        "Khoai lang gọt vỏ, cắt miếng nhỏ, cho vào lò vi ba 7 phút để luộc chín, tán nhuyễn. Hành tây băm nhỏ. Rau húng quế cắt nhỏ.",
+        "Phi thơm hành tây, cho thịt băm vào xào chín, trút ra để nguội."
+    ],
+    "cook": [
+        "Trộn đều khoai lang, thịt băm với húng quế và 2M xốt Mayonnaise Aji-Mayo®, cho thêm đậu phộng rang.",
+        "Sandwich nướng cho cứng, phết hỗn hợp thịt trộn lên, cho thêm xốt Mayonnaise lên trên, cho vào lò nướng vàng."
+    ],
+    "usage": [
+        "Lấy sandwich nướng ra khỏi lò, cắt thành miếng nhỏ, dùng nóng."
+    ],
+    "tips": [
+        "Sử dụng lò microwave để luộc khoai sẽ giữ được vị ngọt và giúp tiết kiệm thời gian.",
+        "Nên nướng sandwich trước để tạo độ giòn."
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Miến Trộn Kiểu Thái",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Miến luộc 300g",
+        "Thịt xay 100g",
+        "Tôm sú 4 con",
+        "Tôm khô 1 chén xốt",
+        "Cần tàu 50g",
+        "Cà chua bi 7 quả",
+        "Hành tím, tỏi mỗi loại 10 củ",
+        "Ớt hiểm 5 quả",
+        "Chanh, đậu phộng rang giã, bánh đa nướng",
+        "Húng lũi, ngò rí",
+        "Dầu salad, đường, nước mắm"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Hành tím cắt lát, ngâm nước lạnh. Ớt hiểm cắt nhỏ. Tỏi bóc vỏ, cắt mỏng 2cm. Ngò rí và húng lũi cắt nhỏ.",
+        "Pha nước trộn: giã giập nhẹ ớt và 1/2 lượng tỏi, thêm 1M đường, 2m Aji-Quick® Gia vị nêm sẵn Lẩu Thái, 1M nước, 1/2M nước mắm, 1M nước cốt chanh."
+    ],
+    "cook": [
+        "Cho tôm khô lên chảo, rang sơ, không cho dầu, sau đó trút ra để riêng.",
+        "Phi thơm phần tỏi còn lại, cho thịt và tôm vào xào chín, nêm 2m Aji-Quick® Gia vị nêm sẵn Lẩu Thái, tắt lửa, cho miến vào đảo đều, để nguội.",
+        "Trộn miến, tôm thịt, rau cần tàu, hành tím, cà chua với nước trộn, nếm vị chua nhẹ vừa ăn, thêm húng lủi, ngò rí cắt nhỏ trộn đều."
+    ],
+    "usage": [],
+    "tips": [
+        "Rang tôm khô giã không cần dầu để tôm khô thơm và tơi.",
+        "Giã giập tỏi ớt để nước trộn thơm và khi ăn vẫn còn cảm nhận được nguyên liệu."
+    ]
+}

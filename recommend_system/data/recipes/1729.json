@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Gà Nấu Đậu Ngự",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đùi gà: 6 cái",
+        "Đậu ngự tươi: 300g",
+        "Hành tây bi: 100g",
+        "Xốt cà chua hộp: 100g",
+        "Đậu bi Hà Lan: 100g",
+        "Hành tím: 50g",
+        "Ngò rí",
+        "Dừa xiêm: 1 trái",
+        "Muối, tiêu, đường",
+        "Dầu ăn, bột năng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Đậu ngự bóc vỏ, chần sơ với ít nước, giữ lại nước này để nấu.",
+        "Đậu bi luộc chín, vớt ra ngâm vào nước lạnh. Hành tím băm nhỏ, vắt lấy nước.",
+        "Đùi gà rửa sạch, ướp với 1M nước hành tím, 1m muối, 1m hạt nêm Aji-ngon®, 1/2m tiêu. Dùng tăm xăm cho thịt gà dễ thấm gia vị.",
+        "Cà rốt gọt vỏ, tỉa hoa, cắt lát dày 3mm. Hành tây bi bóc vỏ, để nguyên củ."
+    ],
+    "cook": [
+        "Đun nóng dầu, cho gà vào chiên sơ rồi cho xốt cà chua vào, để lửa nhỏ cho thấm gia vị. Thêm nước dừa, nước luộc đậu ngự và cà rốt vào nấu chín. Cho đậu bi, đậu ngự và hành tây vào, nêm 1/2m muối, 1m hạt nêm Aji-ngon®, 1m đường và 4M nước bột năng nấu cho nước sánh lại rồi tắt bếp."
+    ],
+    "usage": [
+        "Múc gà ra tô, rắc tiêu và ngò rí lên trên, ăn kèm bánh mì và chấm muối tiêu chanh."
+    ],
+    "tips": [
+        "Đậu ngự có mùi rất thơm nhưng khi chín dễ bị nát, nên chần qua trước khi nấu và sử dụng nước luộc để nấu sẽ ngon hơn. Nếu dùng đậu ngự khô phải ngâm nở trước khi nấu"
+    ]
+}

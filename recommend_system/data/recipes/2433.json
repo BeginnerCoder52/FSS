@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Bánh Mì Kẹp Thịt Gà Khìa",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì: 2 ổ",
+        "Đùi gà góc tư: 1 miếng",
+        "Dừa xiêm: 1 trái",
+        "Dưa leo: 1 trái",
+        "Cà chua: 1 trái",
+        "Hành tây: 1 củ",
+        "Ớt sừng: 1 trái",
+        "Tiêu, ngũ vị hương, dầu ăn",
+        "Ngò rí, xà lách"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Thịt gà rửa sạch, lạn lấy thịt, giữ lại phần xương, cắt miếng vừa ăn. Ướp với 1m hạt nêm Aji-ngon®, ngũ vị hương, chút nước tương Phú Sĩ.",
+        "Hành tây cắt hạt lựu. Dưa leo cắt miếng dọc. Cà chua, ớt sừng cắt lát."
+    ],
+    "cook": [
+        "Đun nóng 2M dầu ăn, cho hành tây vào xào với lửa vừa. Cho thịt gà và phần xương gà vào xào săn. Cho nước dừa xiêm vào, nấu đến khi nước xốt sệt lại.",
+        "Cắt đôi ổ bánh mì, quết đều vào mặt trong một lớp xốt Mayonnaise Aji-mayo®, cho lần lượt dưa leo, xà lách, cà chua, ngò rí, thịt gà và ớt cắt lát. Sau cùng chan nước xốt vào hành tây, cho thịt gà vào xào vàng, thêm ít nước dừa xiêm vào xăm xắp mặt thịt, khìa với lửa vừa đến khi nước cạn sệt thì tắt bếp."
+    ],
+    "usage": [
+        "Cách bánh mì thành miếng nhỏ, ăn kèm với rau xà lách.",
+        "Tận dụng xương gà để nước khìa được ngọt hơn."
+    ],
+    "tips": [
+        "Bánh mì truyền thống thường bị khô, thêm nhiều rau cải và nước xốt món bánh mì sẽ ngon và dễ ăn hơn."
+    ]
+}

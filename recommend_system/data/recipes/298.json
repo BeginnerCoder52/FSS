@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Bánh Cuốn Chay",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột bánh cuốn: 220g",
+        "Chả lụa chay: 300g",
+        "Củ sắn: 70g",
+        "Nấm mèo: 3M",
+        "Nấm hương: 2M",
+        "Nước dừa tươi: 1 chén",
+        "Cà rốt: 50g",
+        "Boa rô (còn lá xanh): 1 cây",
+        "Ớt hiểm băm, kiệu chua, chanh, ngò rí",
+        "Muối, đường, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm",
+        "Nước tương \"Phú Sĩ\"",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Pha bột theo công thức hướng dẫn trên bao bì.",
+        "Cắt hạt lựu 100gr chả lụa chay, 200gr còn lại xắt miếng, củ sắn, cà rốt, để riêng từng thứ. Nấm hương, nấm mèo cắt nhỏ, để riêng.",
+        "Boa-ro cắt lát, phần đầu trắng để riêng. Phần lá xanh cho vào chén, thêm 1/4m muối, 1/4m đường, 1/4m Bột ngọt AJI-NO-MOTO®, đun sôi 1/2 chén dầu ăn rồi đổ vào chén."
+    ],
+    "cook": [
+        "Xào nhân, phi thơm 2M dầu với boa rô cắt lát, xào củ sắn, cà rốt, nấm hương, chả lụa, nêm 1m đường, 1m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1m tiêu, 1m cọng ngò rí băm và 1M nước tương, 1M nước lã và cho phần nấm mèo vào.",
+        "Pha nước tương: 1/3m đường, 1/3m Bột ngọt AJI-NO-MOTO®, 1/2 chén nước tương “Phú Sĩ”, 1/2 chén nước dừa tươi đun sôi để nguội, trộn đều, nêm thêm 1M ớt băm, kiệu, đồ chua.",
+        "Tráng bánh trên chảo không dính, khi bánh se mặt lại thì xịt thêm chút nước, đậy nắp thêm 1 phút, gỡ bánh ra.",
+        "Cho nhân vào bên trong bánh, cuốn thành cuốn dài 8cm, đường kính 2,5cm."
+    ],
+    "usage": [
+        "Bày ra đĩa với giá chần, rau thơm, dưa leo băm, xà lách cắt nhỏ. Dọn kèm nước tương pha, đồ chua."
+    ],
+    "tips": [
+        "Pha bột tráng bánh trước để có thời gian bột nở, dai, tráng bánh sẽ dễ dàng hơn.",
+        "Nước dừa tươi nên đun sôi để nguội để bảo quản nước chấm tốt hơn."
+    ]
+}

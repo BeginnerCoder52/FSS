@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bánh Rôti Cuốn Thịt Bò",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh rô ti: 1 gói",
+        "Thịt bò xay: 150g",
+        "Bắp cải: 50g",
+        "Cà rốt: 30g",
+        "Cần tây: 30g",
+        "Ớt sợi, ớt băm, olive đen, tỏi băm",
+        "Gia vị: tiêu, đường"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt bò ướp với 1M tỏi băm, 1m hạt nêm Aji-ngon®, 1/2m tiêu, 1 ít muối và 1 ít đường, để thấm.",
+        "Bắp cải, cà rốt, cần tây, hành tây cắt sợi nhỏ. Olive cắt khoanh."
+    ],
+    "cook": [
+        "Phi thơm tỏi, xào nhanh thịt bò vừa chín, trút ra. Xào tiếp bắp cải, cà rốt, hành tây và cần tây, nêm 1/4m hạt nêm Aji-ngon®, tắt bếp.",
+        "Trộn thịt bò với rau củ xào, 1M ớt sợi, 2M xốt Mayonnaise Aji-Mayo®, 1M olive và 1/2m ớt băm.",
+        "Bánh rô ti áp chảo vàng đều 2 mặt. Trải bánh rô ti ra, cho nhân và ngò rí lên, cuốn chặt lại."
+    ],
+    "usage": [
+        "Xếp bánh ra dĩa, dùng nóng."
+    ],
+    "tips": [
+        "Dùng chảo không dính để áp chảo bánh sẽ không cần dầu ăn.",
+        "Không dùng dầu khi xào rau, rau sẽ xém cạnh và thơm hơn."
+    ]
+}

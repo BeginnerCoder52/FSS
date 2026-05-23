@@ -1,0 +1,30 @@
+{
+    "recipe_name": "Salad Bắp Trộn Tôm",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 150g",
+        "Đậu bắp: 4 trái",
+        "Bắp Mỹ: 1/2 trái",
+        "Hành tây: 1/2 củ",
+        "Tía tô: 5 lá",
+        "Muối, tiêu, nước mắm"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Đậu bắp luộc trong nước sôi khoảng 3 phút, vớt ra ngâm qua nước đá rồi cắt lát mỏng. Tôm luộc chín trong nước có ít muối và củ hànht ím, sau đó bóc bỏ vỏ, cắt hạt lựu rồi ướp với 1 ít nước mắm và tiêu.",
+        "Bắp Mỹ hấp chín, gỡ lấy hạt. Hành tây cắt nhỏ bỏ vào rây để xả sạch, vắt ráo. Lá tía tô rửa sạch, cắt nhuyễn."
+    ],
+    "cook": [
+        "Cho đậu bắp, bắp Mỹ, tôm, hành tây và lá tía tô vào trộn đều với 1/2m nước mắm và 3M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "usage": [
+        "Cho salad đậu bắp ra dĩa, dùng thêm với xốt Mayonnaise Aji-Mayo® tùy khẩu vị."
+    ],
+    "tips": [
+        "Sử dụng bắp Mỹ sẽ giòn và có màu đẹp hơn bắp nếp."
+    ]
+}

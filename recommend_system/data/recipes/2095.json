@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Bánh Crepe Xếp Tầng",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Kem sữa tươi (topping): 150g",
+        "Xốt socola: 2M",
+        "Trứng gà: 1 quả",
+        "Nước cốt dừa: 70g",
+        "Bột năng: 25g",
+        "Gia vị: bơ lạt"
+    ],
+    "spices": [
+        "Bột bánh rán pha sẵn vị Sô-Cô-La"
+    ],
+    "process": [
+        "Kem sữa tươi: đánh bông.",
+        "Trứng gà: Lấy lòng đỏ.",
+        "Pha hỗn hợp bánh: Trộn đều 1 gói bột bánh rán và 25g bột năng, rây mịn. Trộn đều nước cốt dừa, 200g nước, 1 lòng đỏ trứng gà, bột, rây vài lần cho mịn."
+    ],
+    "cook": [
+        "Làm nóng chảo, dùng chổi phết ít bơ lên mặt chảo, cho bột vào tráng bánh mỏng, đợi bánh se lại thì lấy ra để nguội, lần lượt làm đến hết bột"
+    ],
+    "usage": [
+        "Đặt mặt bánh mịn lên trên, cho kem lên trên, tiếp tục cho bánh, làm lần lượt đến khi hết bánh và kem, cuối cùng trang trí kem, xốt socola lên trên, trang trí thêm kẹo đường hoặc lá húng lủi tùy thích.",
+        "Dùng lạnh sẽ ngon hơn"
+    ],
+    "tips": [
+        "Xếp bánh và kem các lớp mỏng đều nhau sẽ giúp bánh ngon và đẹp mắt hơn.",
+        "Làm xong bánh nên để lạnh khoảng 30 phút khi dùng sẽ ngon hơn.",
+        "Nếu muốn bánh đẹp mắt hơn có thể pha kem với các loại mùi vị khác nhau như dâu, matcha,…"
+    ]
+}

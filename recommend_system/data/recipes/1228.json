@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Chân Gà Chiên Chấm Mắm Mè",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Chân gà : 500g (loại chân gà công nghiệp lớn)",
+        "Sả non : 5 cây (3 cây đập dập xé sợi, 2 cây vắt lấy nước)",
+        "Nước cốt gừng : 1M",
+        "Nước hành tím : 2M",
+        "Mè trắng rang giã nhỏ : 2M",
+        "Ớt băm : 1M",
+        "Nước cốt chanh : 1M",
+        "Dầu ăn, nước mắm,đường",
+        "Trang trí: Xà lách, cà chua bi"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Chân gà chẻ đôi theo chiều dọc nhưng không đứt, ướp chân gà với nước gừng, nước sả, nước hành tím, 1m hạt nêm Aji-ngon®, để thấm 10 phút.",
+        "Pha nước mắm mè: Khuấy đều 1M nước mắm, 2M đường, 1M chanh, 1M ớt băm và 2M mè rang."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, tẩm sơ sả xé sợi với một ít Aji-Quick® Bột Tẩm Kho Chiên Giòn, chiên vàng sả, vớt ra để riêng, tiếp tục tẩm chân gà với phần Aji-Quick® Bột Tẩm Kho Chiên Giòn còn lại, chiên chân gà đến khi chín vàng, giòn."
+    ],
+    "usage": [
+        "Xếp xà lách, cà chua bi vào dĩa, xếp sả chiên lên và xếp chân gà chiên trên cùng. Khi ăn chấm nước mắm mè."
+    ],
+    "tips": [
+        "Cho mè rang vào nước mắm tạo vị béo nhẹ và mùi thơm đặc trưng cho nước chấm.",
+        "Tẩm sơ sả xé sợi với Aji-Quick® Bột Tẩm Kho Chiên Giòn để sả được giòn và thấm vị."
+    ]
+}

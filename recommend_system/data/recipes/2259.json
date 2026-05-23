@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Cơm Thập Cẩm Kiểu Nhật",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gạo dẻo thơm: 400g",
+        "Tôm khô: 10g",
+        "Thịt nạc dăm: 150g",
+        "Củ sen: 50g",
+        "Nấm đông cô: 3 tai",
+        "Hành lá: 5 cây",
+        "Cà rốt: 50g",
+        "Dầu ăn, đường, tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Gạo rửa sạch, để ráo. Cho tôm khô và thịt nạc dăm vào nồi với 800ml nước, 1/2m hạt nêm Aji-ngon® và đầu hành lá đập dập, đun sôi, giảm nhỏ lửa. Thịt luộc chín, vớt ra, cắt sợi, ướp với 1m nước tương Phú Sĩ.",
+        "Cà rốt cắt sợi. Củ sen cắt lát mỏng. Nấm đông cô ngâm nước vo gạo, cắt gốc, làm sạch, chần qua nước đun sôi rồi cắt sợi. Hành lá cắt nhỏ.",
+        "Nước luộc thịt đong lấy 550ml, lấy cả tôm khô, nêm 5M nước tương Phú Sĩ, 1m đường và 1/2m hạt nêm Aji-ngon®, 1m đường, khuấy tan đường rồi đổ vào nồi cơm điện, đảo đều. Cắm điện nấu cơm chín, cho thịt heo vào trộn đều."
+    ],
+    "cook": [
+        "Đun nóng 2M dầu ăn, cho gạo vào xào sơ, cho cà rốt, củ sen và nấm đông cô vào xào đến khi hạt gạo săn lại, cho tất cả vào nồi cơm điện.",
+        "Nước luộc thịt đong lấy 550ml, lấy cả tôm khô, nêm 5M nước tương Phú Sĩ, 1m đường và 1/2m hạt nêm Aji-ngon®, khuấy tan đường rồi đổ vào nồi cơm điện, đảo đều. Cắm điện nấu cơm chín, cho thịt heo vào trộn đều."
+    ],
+    "usage": [
+        "Lấy cơm ra dĩa, rắc tiêu và hành lá lên trên, dùng nóng."
+    ],
+    "tips": [
+        "Có thể thay thế gạo dẻo thơm Nhật bằng gạo Nàng Thơm chợ Đào, gạo Tám thơm,… và pha thêm 1 ít nếp.",
+        "Củ sen gọt vỏ, ngâm nước pha 1 chút giấm gạo lên men LISA, cắt lát mỏng, cho và nước khuấy để rửa sạch phần nhựa và sợi tơ.",
+        "Xào gạo trước khi nấu sẽ làm cho hạt gạo săn lại, cơm sẽ chín vừa mà không bị nát."
+    ]
+}

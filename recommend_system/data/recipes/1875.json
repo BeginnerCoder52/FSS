@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Bánh Cuốn Lòng Vịt",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột bánh cuốn 200g",
+        "Lòng vịt 200g",
+        "Hành tây 100g",
+        "Cà rốt 100g",
+        "Hành lá 3 cây",
+        "Đậu phộng rang 50g",
+        "Gừng băm 2m",
+        "Ớt băm 1m",
+        "Màu nước dành dành 2M",
+        "Ăn kèm: Xà lách, húng quế, ngò rí",
+        "Gia vị: Đường, tiêu, bột cà ri, dầu ăn, hành phi"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Lòng vịt cắt nhỏ ướp 2m hành tỏi băm, 1/4m tiêu, 1m hạt nêm Aji-ngon®, 1/2m bột cà ri, để thấm.",
+        "Hành tây, cà rốt cắt hạt lựu nhỏ. Hành lá cắt nhỏ. Đậu phộng rang giã nhỏ.",
+        "Làm dầu hành: cho 2M hành lá vào chén, thêm vào ít muối, đun nóng 2M dầu ăn, đổ vào chén hành."
+    ],
+    "cook": [
+        "Pha bột bánh cuốn: 200g bột pha với 1/2m hạt nêm Aji-ngon® và 500ml nước ấm, hòa tan đều rồi cho vào 1M dầu ăn. Chia hỗn hợp bột làm đôi, 1 phần thêm 2M nước dành dành, 1 phần giữ nguyên .",
+        "Pha nước chấm: 3M nước tương “Phú Sĩ”, 1M đường, 1M nước cốt chanh, 2m gừng băm, 1m ớt băm.",
+        "Xào nhân: Cho 1m dầu ăn vào chảo, cho lòng vịt vào xào săn, cho hành tây, cà rốt vào xào với lửa nhỏ cho chín đều, thêm hành lá vào trộn đều.",
+        "Làm bánh: Dùng chảo chống dính, để lửa vừa cho chảo nóng, phết một lớp dầu ăn mỏng lên mặt chảo. Múc bột đổ vào chảo, nghiêng chảo để tráng bánh thật mỏng, đợi bột trong. Cho 1M nhân vào, cuốn tròn lại."
+    ],
+    "usage": [],
+    "tips": [
+        "Ướp lòng vịt với bột cà ri sẽ thơm hơn.",
+        "Cho dầu ăn vào bột để bánh có độ mướt."
+    ]
+}

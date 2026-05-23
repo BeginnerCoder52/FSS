@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Bún Cá Hộp",
+    "serving": "2 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá hộp: 2 hộp (Cá ngừ/ cá nục / cá mồi)",
+        "Hành tây: 1/4 củ",
+        "Thơm: 1/4 trái",
+        "Cà chua: 1 trái nhỏ",
+        "Xà lách: 2 tép",
+        "Tỏi: 2 củ",
+        "Bún: 200g",
+        "RAU NÊM: Hành lá, ngò gai",
+        "ĂN KÈM: Xà lách cắt nhỏ, giá, rau thơm, nước mắm ớt xắt",
+        "Gia vị: Nước mắm, dầu ăn, muối, tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Hành tây, thơm, cà chua, xà lách băm nhuyễn.",
+        "Tỏi  cắt lát mỏng theo chiều dọc.",
+        "Bún chần qua nước nóng.",
+        "Cho 1M dầu ăn, phi hành tím đến khi giòn, có màu vàng nâu, cho ra chén.",
+        "Cá hộp trút ra để riêng cá, nước."
+    ],
+    "cook": [
+        "Phi thơm tỏi, cho hành tây xào vàng nâu, thêm cà chua, thơm xào cho dậy mùi thơm. Thêm 800ml nước lạnh nấu thêm 10 phút. Thêm 1/2m Aji heo, 1/5m muối, phần nước cá trong hộp, nấu thêm 5 phút.",
+        "Phi thơm tỏi tắt lửa cho phần thịt cá, 1/2m Aji heo vào trộn đều."
+    ],
+    "usage": [],
+    "tips": [
+        "Phi thơm tỏi rồi tắt lửa trộn cá để cá thơm thăm vị mà không bị nát.",
+        "Thêm hành tây, thơm, cà băm nhỏ để nước dùng được ngọt chua tự nhiên."
+    ]
+}

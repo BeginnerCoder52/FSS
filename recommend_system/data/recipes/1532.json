@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Tôm Viên Tuyết Hoa",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm tươi lột vỏ : 100g",
+        "Giò sống : 100g",
+        "Ruột bánh mì sandwich cắt hạt lựu (3 li) : 2 chén",
+        "Trứng cút luộc chín, bóc vỏ : 8 quả",
+        "Ớt sừng băm : 1M",
+        "Đầu hành lá băm nhỏ : 1M",
+        "Cọng ngò rí cắt nhỏ : 1M",
+        "Tiêu, dầu ăn, tương ớt"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Ngọt Dịu"
+    ],
+    "process": [
+        "Ruột bánh mì cắt hạt lựu, rang sơ trên chảo với lửa nhẹ khoảng 2 phút.",
+        "Tôm đập dập, băm sơ, cho vào tô quết dai với 1M đầu hành lá, 1/2m hạt nêm Aji-ngon®, 1/2m tiêu. Trộn thật đều với giò sống, 2M ruột bánh mì, 1M ớt sừng băm, 1m cọng ngò cho dai.",
+        "Chia tôm làm 8 phần, bọc xung quanh trứng cút, tạo hình cho các viên tôm có kích cỡ đều nhau. Lăn qua bánh mì."
+    ],
+    "cook": [
+        "Đun nóng dầu, chiên các viên tôm trong dầu cho chín vàng đều. Vớt ra để lên giấy thấm ráo dầu.",
+        "Pha xốt: khuấy đều 2M xốt Mayonnaise Aji-Mayo® Ngọt Dịu, 1M tương ớt, 1m cọng ngò rí băm."
+    ],
+    "usage": [
+        "Cho viên tôm ra đĩa, chấm kèm xốt đã pha."
+    ],
+    "tips": [
+        "Chọn tôm sú tươi để có độ dai, giòn và giúp món ăn có màu hồng nhạt tự nhiên.",
+        "Nếu làm với số lượng lớn có thể làm chín viên tôm trước trong lò vi ba."
+    ]
+}

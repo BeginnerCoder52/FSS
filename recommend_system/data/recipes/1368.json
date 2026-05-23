@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Salad Tôm Thanh Mát",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bắp Mỹ: 1/2 trái",
+        "Tôm sú TO: 400g",
+        "Dưa leo: 1 trái",
+        "Cần tây: 50g",
+        "Táo đỏ: 1 trái nhỏ",
+        "Hành tây: 1/4 củ",
+        "Nước chanh: 2M",
+        "Trứng cá hồi đen: 2M",
+        "Vỏ chanh mài: 1/2 M",
+        "RAU NÊM: Ngò tây, húng lủi cắt khúc.",
+        "Gia vị: mật ong, muối, tiêu, tương cà heinz, sữa đặc"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Bắp mỹ: Tách hạt luộc chín.",
+        "Tôm sú TO: Bỏ đầu lấy chỉ lưng.",
+        "Dưa leo bào vỏ bỏ hạt cắt hạt lựu, táo đỏ cắt hạt lựu, cần tây cắt hạt lựu nhỏ, hành tây cắt hạt lựu, sau đó cho bắp Mỹ vào cùng tô cho vào tủ lạnh."
+    ],
+    "cook": [
+        "Luộc tôm: cho 1 ít nước vào nồi cho nước sôi sau đó cho thêm ít muối vào luộc tôm chín, sau đó cho vào tô nước đá lạnh rồi bóc vỏ tôm, tiếp theo cắt tôm hạt lựu chừa lại 4 con trang trí.",
+        "Pha sốt: cho 3M Xốt Mayonnaise Aji-mayo®, 2M sữa đặc có đường, 2M nước chanh, 1M tương cà Heinz, 1M mật ong, 1/4m muối, 1/2M vỏ chanh mài sau đó trộn đều.",
+        "Trộn salad: Cho tất cả nguyên liệu vào tô và húng lủi cùng với lượng sốt đã pha và tôm cắt hạt lựu vào trộn đều. Tiếp theo cho vào ly coctail trang trí lên trên là trứng cá hồi đen và ngò tay và tôm nguyên con."
+    ],
+    "usage": [],
+    "tips": [
+        "Nguyên liệu tươi mát và có độ giòn, ngọt tự nhiên của từng nguyên liệu.",
+        "Màu vàng của bắp cùng với màu đỏ của tôm và màu xanh của các nguyên liệu rau.",
+        "Vị béo của phần nước sốt cùng với vị ngọt của bắp xen lẫn là độ giòn của các nguyên liệu.",
+        "Có thể cho thêm một xíu rượu cam thì món ăn sẽ thơm ngon, dậy vị hơn nữa."
+    ]
+}

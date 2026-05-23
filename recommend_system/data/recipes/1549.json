@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Canh Tôm Chua Cay",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú (size 50 con/kg ): 300g",
+        "Thơm: 1/4 trái",
+        "Cà chua chín đỏ: 2 quả",
+        "Bắp chuối bào: 200g",
+        "Hành tây: 1/2 củ",
+        "Lá rau quế: 20g",
+        "Tỏi băm: 2M",
+        "Gia vị: Dầu ăn, rau om, ngò gai, nước mắm",
+        "ĂN KÈM: Cơm hoặc bún"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Tôm bỏ đầu, lột vỏ, chừa đuôi, giữ lại phần đầu và vỏ tôm để nấu nước dùng.",
+        "Nấu nước dùng: cho phần đầu và vỏ tôm vào nồi, rang khô, đổ vào 1.6L nước, nấu sôi với lửa nhỏ trong 5 phút, sau đó lọc lại lấy nước dùng tôm.",
+        "Thơm cắt rẻ quạt. Cà chua, hành tây cắt múi cau. Rau quế, rau om, ngò gai cắt nhỏ."
+    ],
+    "cook": [
+        "Đun nóng 2M dầu ăn, cho tỏi vào phi vàng, tắt lửa, vớt tỏi ra để riêng, cho tiếp cà chua và thơm vào xào mềm rồi cho phần nước dùng tôm vào, nêm 1 gói Gia vị nêm sẵn Aji-Quick® Lẩu Thái, khuấy đều.",
+        "Trước khi ăn cho hành tây và tôm vào nấu chín, nhúng hoa chuối bào vừa chín, thêm rau quế, rau om, ngò gai và tỏi phi vào."
+    ],
+    "usage": [],
+    "tips": []
+}

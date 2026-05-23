@@ -1,0 +1,30 @@
+{
+    "recipe_name": "Mì Ý Cá Hồi Xốt Caesar",
+    "serving": "0 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì Ý 150g",
+        "Cá hồi 150g",
+        "Cà chua 100g",
+        "Xà lách romaine 50g",
+        "Bắp hạt 50g",
+        "Trứng gà 2 quả",
+        "Bơ lạt 20g"
+    ],
+    "spices": [
+        "Xốt phô mai Caesar “Aji-Xốt”"
+    ],
+    "process": [
+        "Cà chua cắt đôi. Xà lách cắt ngắn 1.5cm.",
+        "Cá hồi ướp 1g tiêu, 2g Hạt nêm Aji-ngon®, áp chảo với 20g bơ lạt.",
+        "Trứng ốp la lòng đào."
+    ],
+    "cook": [
+        "Cá hồi ướp 1g tiêu, 2g Hạt nêm Aji-ngon®, áp chảo với 20g bơ lạt. Sau đó tiếp tục áp chảo cà chua và bắp hạt."
+    ],
+    "usage": [
+        "Xếp xà lách đã cắt, cho mì Ý lên trên, thê, cá hồi, trứng, cà chua, bắp hạt, rưới xốt lên (50g), khi ăn trộn đều."
+    ],
+    "tips": []
+}

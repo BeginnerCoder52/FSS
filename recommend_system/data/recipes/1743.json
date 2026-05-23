@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Cua Rang Sốt Tắc",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cua biển: 2 con (khoảng 1kg)",
+        "Ớt sừng: 1 quả",
+        "Hành lá: 2 cây",
+        "Tỏi tép: 10 tép",
+        "Tắc: 7 trái",
+        "Ớt băm: 1/2 m",
+        "Gia vị: Bột mì, dầu ăn, đường, rau răm, tương ớt"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Bột canh"
+    ],
+    "process": [
+        "Sơ chế cua: Cua chà rửa sạch, bóc mai ra, cắt cua làm 2 (nếu cua nhỏ) rồi dùng đồ đập bể phần càng cua.",
+        "Ớt sừng bỏ hạt, cắt miếng hình thoi. Hành lá cắt khúc 2cm. Tỏi đập dập. Tắc vắt lấy nước cốt, lấy vỏ 2 quả tắc cắt sợi."
+    ],
+    "cook": [
+        "Chiên cua: tẩm cua qua bột mì rồi cho cua và mai cua vào chảo dầu chiên vàng, vớt ra để ráo dầu.",
+        "Làm xốt: phi thơm tỏi, cho vào chảo 1/2 chén nước lọc, 1/2m bột ngọt AJINOMOTO®, 1m bột canh Ajinomoto, 2.5M đường, 3M nước cốt tắc, 1M vỏ tắc cắt sợi, 1/4m muối, 1m tương ớt nấu cho tan gia vị, nếm vị chua ngọt vừa rồi cho cua vào, rim đến khi xốt cạn, cuối cùng cho ớt sừng và hành lá vào đảo đều.",
+        "Làm muối tắc: cho 20g rau răm cắt nhỏ, 1.5M bột canh của Ajinomoto, 2M nước cốt tắc, 1m vỏ tắc sắc sợi nhuyễn, đổ ra chén, cắt thêm ớt băm vào."
+    ],
+    "usage": [],
+    "tips": [
+        "Rắc bột mì lên cua và chiên lửa lớn để cua vừa chín tới, thịt không khô và không bị văng dầu.",
+        "Đập bể phần càng cua để cua dễ chín và thấm vị."
+    ]
+}

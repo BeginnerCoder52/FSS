@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Canh Cà Chua Thịt Bò",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt nạc dăm xay 50g",
+        "Thịt bò xay 100g",
+        "Cà chua 3 trái",
+        "Khoai tây 1 củ",
+        "Ngò gai băm 2 nhánh",
+        "Hành lá, ngò rí",
+        "Hành tím băm",
+        "Muối, tiêu, đường, nước mắm, dầu ăn."
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Ngò gai băn nhỏ, hành lá và ngò rí cắt nhỏ, cà chua cắt múi cau, khoai tây cắt khối vuông nhỏ.",
+        "Trộn đều thịt bò và thịt heo. Ướp với 1m hành tím băm, ngò gai băm, 1/3m muối, 1/3m tiêu, 1/2m đường, 1/2m bột ngọt AJI-NO-MOTO®,  trộn đều. Vo viên tròn."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, cho hành vào phi thơm, rồi cho cà chua vào xào với 1/3m muối, 1/3m đường. Trút ra tô.",
+        "Thêm 1 lít nước vào nồi, cho khoai tây vào, nêm thêm 1/2m muối, 1/2m bột ngọt AJI-NO-MOTO®, đậy nắp lại chờ khoai tây chín. Nước sôi khoảng 5 phút, thả thịt viên vào, nấu chín mềm. Tiếp tục cho cà chua đã xào vào, nấu sôi lại, thêm 1M nước mắm, hành lá, ngò rí, tắt lửa."
+    ],
+    "usage": [],
+    "tips": [
+        "Trộn thịt bò và thịt heo giúp viên thịt thơm ngon mà mềm mại.",
+        "Xào trước cà chua giúp món canh có màu hấp dẫn."
+    ]
+}

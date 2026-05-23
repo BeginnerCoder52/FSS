@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Cá Cuộn Rong Biển",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Phi lê cá basa : 200g",
+        "Tía tô: 12 lá",
+        "Rong biển: 2 lá",
+        "Trứng gà: 1 quả",
+        "Bột chiên giòn: 1 gói",
+        "Rau xà lách, dưa leo, cà chua",
+        "Nước mắm, tiêu, wasabi",
+        "Xốt Mayonnaise LISA"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Cá thấm khô, cắt miếng vuông 1cm, dài 6cm, ướp với 1m hạt nêm Aji-ngon®, 1/2m nước mắm và 1/4m tiêu, để thấm.",
+        "Lá tía tô rửa sạch, để ráo. Lá rong biển cắt miếng vuông 6cm. Trứng gà lấy lòng đỏ, đánh tan. Xà lách rửa sạch, để ráo. Dưa leo, cà chua cắt lát.",
+        "Cuộn: đặt lên miếng rong biển 1 lá tía tô và 1 miếng cá, cuộn tròn lại.",
+        "Pha bột chiên giòn với lòng đỏ trứng và nước lạnh thành hỗn hợp sệt."
+    ],
+    "cook": [
+        "Đun nóng dầu, nhúng cuộn cá qua hỗn hợp bột chiên giòn rồi chiên chín vàng, vớt ra để ráo dầu.",
+        "Trộn xốt: trộn đều 2M xốt Mayonnaise LISA với 1/4m wasabi."
+    ],
+    "usage": [
+        "Xếp xà lách, dưa leo, cà chua ra dĩa, xếp cá chiên lên trên, khi ăn chấm với xốt Mayonnaise LISA trộn wasabi."
+    ],
+    "tips": [
+        "Lau cá thật khô trước khi ướp để cá không ra nước.Pha bột chiên giòn không quá sệt để bột chỉ áo 1 lớp bên ngoài."
+    ]
+}

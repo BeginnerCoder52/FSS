@@ -1,0 +1,45 @@
+{
+    "recipe_name": "Bánh Bao Chiên",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột bánh bao: 500g",
+        "Sữa tươi: 240g",
+        "Thịt nạc vai xay: 100g",
+        "Giò sống: 100g",
+        "Củ sắn: 150g",
+        "Hành tây: 100g",
+        "Mỡ băm: 1M",
+        "Hành tím băm: 2M",
+        "Đầu hành lá băm: 1M",
+        "Nấm đông cô khô: 10g",
+        "Thịt xá xíu: 50g",
+        "Lạp xưởng: 1 cây",
+        "Trứng cút: 12 quả",
+        "Trứng muối: 3 quả",
+        "Hành lá, ngò rí",
+        "Đường, tiêu, bột năng, dầu mè, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Cho 500g bột bánh bao, 240g sữa tươi vào tô. Pha men khô với 1 ít nước ấm rồi cho vào tô bột, khuấy đều rồi nhồi bột đến khi bột dẻo và mịn. Để bột nghỉ 30 phút.",
+        "Lạp xưởng, xá xíu cắt hột lựu. Củ sắn cắt sợi, vắt hết nước. Hành tây cắt thật nhuyễn, vắt bỏ nước. Nấm đông cô ngâm mềm, cắt nhỏ.",
+        "Trứng muối, trứng cút luộc chín, bóc vỏ, lòng đỏ trứng muối tán nhuyễn."
+    ],
+    "cook": [
+        "Trộn nhân bánh bao: lạp xưởng, xá xíu, củ sắn, hành tây, hành tím, nấm, 1M mỡ băm, 1M hành tím băm, 1M đầu hành trắng băm. Cho thịt xay, giò sống, 3 lòng đỏ trứng muối, nêm tiếp 1M dầu mè, 1/2m muối, 1/3m tiêu, 2m đường, 2m hạt nêm Aji-ngon®, 1m bột ngọt AJI-NO-MOTO® rồi trộn đều, chia thành các phần vừa ăn, cho trứng cút đã tẩm qua bột năng vào giữa, vo tròn lại.",
+        "Chia bột thành từng phần nhỏ rồi cho nhân vào trong, gói lại, mang đi hấp lửa lớn 10 phút. Khi bánh bao chín, tẩm qua Aji-Quick® Bột Chiên Gà Giòn, chiên cho bánh chín vàng, vớt ra ráo dầu."
+    ],
+    "usage": [
+        "Cho bánh bánh bao chiên ra dĩa, dùng nóng."
+    ],
+    "tips": [
+        "Hấp bánh trước khi chiên để bánh chín đều và định hình tốt hơn.",
+        "Có thể thay xá xíu, lạp xưởng bằng thịt gà quay, vịt quay."
+    ]
+}

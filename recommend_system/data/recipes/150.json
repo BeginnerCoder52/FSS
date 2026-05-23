@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Gà Xào Tiêu Đen",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đùi gà góc 400g (2 cái)",
+        "Hành tây 40g (1/2 quả)",
+        "Cà chua 100g (1 quả)",
+        "Dưa leo Nhật 100g (1 quả)",
+        "Tiêu đen 1Mg (Cà bể 1/2)",
+        "Tỏi băm 1M",
+        "Bơ lạt 10g",
+        "Gừng băm 1M",
+        "Rượu nếp 1M",
+        "Đường 8g (2m)",
+        "Dầu ăn 8g (1.5M)",
+        "Tương cà 8g (2m)",
+        "Tương ớt 8g (2m)"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt gà cắt khối 2,5cm. Hành tây, cà chua, dưa bỏ hạt: cắt vuông 2cm.",
+        "Ướp thịt gà với: 1m Hạt nêm Aji-ngon gà, 1m đường, 1M nước tương Phú Sĩ, 1M dầu ăn trong 15′.",
+        "Pha nước gia vị: Hòa tan 1m Hạt nêm Aji-ngon gà, 1m đường, 1m rượu trắng, 2m tương cà, 2m tương ớt, 1M nước, 1M nước tương Phú Sĩ."
+    ],
+    "cook": [
+        "Phi 1/2M dầu ăn thơm tỏi, gừng, tiêu cho thịt gà vào xào, thêm 1/2 nước gia vị vào xào thấm, rút hết nước. Thêm các loại rau củ và phần nước gia vị còn lại vào xào đều đến khi chín. Tắt bếp cho bơ vào xốc tan đều."
+    ],
+    "usage": [
+        "Cho thịt gà ra đĩa dùng nóng với cơm."
+    ],
+    "tips": [
+        "Ướp thịt gà với dầu ăn để giữ trọn hương vị ướp và khi xào thì không bị khô.",
+        "Chỉ cà bể tiêu đen để cảm nhận được mùi vị đặc trưng của tiêu."
+    ]
+}

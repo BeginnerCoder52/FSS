@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Chả Lui",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ba chỉ xay 200g",
+        "Tôm đất nhỏ 200g",
+        "Bánh tráng mỏng 1 xấp",
+        "Xoài keo 1 quả",
+        "Dưa leo 1 quả",
+        "Rau xà lách xoăn 2 cây",
+        "Cà chua chín 300g",
+        "Que xiên tre 1 bó",
+        "Rau thơm, rau răm",
+        "Hành tím băm, tỏi băm, ớt băm",
+        "Đậu phộng rang giã nhuyễn, nước cốt me",
+        "Đường, nước mắm, dầu ăn, dầu điều"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Xoài keo, dưa leo bào mỏng. Xà lách, rau thơm, rau răm rửa sạch, để ráo. Cà chua bỏ vỏ, bỏ hạt, xay nhuyễn.",
+        "Tôm đất để vỏ đập sơ, ướp với 1m hành tím băm, 1m tỏi băm, 1/2m tiêu, để thấm 15 phút.",
+        "Thịt xay ướp với 1m hành tím băm, 1/4m tiêu, 1/2m đường, 1/2m nước mắm, 1/2m bột ngọt AJI-NO-MOTO®, 1m dầu điều, trộn đều, để thấm."
+    ],
+    "cook": [
+        "Gói chả: bánh tráng mỏng cắt làm tư, dùng muỗng múc thịt băm cho lên bánh tráng, xếp lên 1 con tôm rồi gói lại thành hình vuông. Dùng que, xiên chả vào, 1 xiên khoảng 4 cái.  –",
+        "Nướng chả: nướng chả trong lò khoảng 30 phút ở 200◦C, đến khi chả chín vàng.",
+        "Nấu xốt chấm: Phi thơm tỏi và ớt, cho cà chua xay vào, thêm 3M đường, 2M nước mắm và nước me vào, nấu đến khi xốt sánh lại, tắt lửa, cho đậu phộng vào."
+    ],
+    "usage": [],
+    "tips": [
+        "Ngâm xiên que qua nước trước 30 phút, để khi nướng que không bị cháy.",
+        "Ướp nguyên liệu với vị vừa phải để sau khi nướng món ăn không bị mặn."
+    ]
+}

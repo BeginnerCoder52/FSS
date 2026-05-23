@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Gà Nấu Nấm",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt gà: 800g",
+        "Nấm hương: 20g",
+        "Nấm rơm: 100g",
+        "Hành tây bi: 4 củ",
+        "Cà rốt: 1 củ",
+        "Dừa xiêm: 1 trái",
+        "Bánh mì, bột mì",
+        "Dầu ăn, hành tím băm",
+        "Muối, tiêu, đường"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Đùi gà rửa sạch, chặt miếng vừa ăn, ướp với 1M hành tím băm, 2m hạt nêm Aji-ngon®, 1m muối, 1m đường và 1/2m tiêu, trộn đều, để thấm ít nhất 20 phút.",
+        "Nấm hương ngâm nở, cắt bỏ chân, trụng sơ trong nước có nêm 1/2m hạt nêm Aji-ngon®, rồi ép ráo. Nấm rơm rửa sạch, chẻ đầu. Cà rốt tỉa hoa, cắt mỏng 3mm. Hành tây bi cắt đôi."
+    ],
+    "cook": [
+        "Phi thơm hành, rồi cho nấm rơm và hành tây vào xào, nêm 1/2m hạt nêm Aji-ngon®, 1/2m đường và 1/3m tiêu, đảo đều cho thấm gia vị.",
+        "Lăn sơ thịt gà qua bột mì rồi chiên chín vàng. Nấu sôi nước dừa rồi cho gà vừa chiên vào, cho tiếp nấm hương và cà rốt vào nấu chín, nêm 1m hạt nêm Aji-ngon®, 1m đường, nấu khoảng 15 phút rồi cho hành tây và nấm rơm vào, nấu thêm 5 phút thì tắt bếp."
+    ],
+    "usage": [
+        "Múc gà ra dĩa sâu lòng, dùng nóng với bánh mì."
+    ],
+    "tips": [
+        "Tẩm gà qua bột mì rồi đem chiên, thịt gà sẽ không bị bể, khi nấu nước sẽ có độ sánh vừa."
+    ]
+}

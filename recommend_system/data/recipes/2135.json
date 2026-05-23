@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Gan Bò Xào Thơm Cà",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gan bò 200g",
+        "Thơm chín 1/4 quả",
+        "Cà chua 1 trái to",
+        "Bông hành 50g",
+        "Tỏi tép đập dập 2M",
+        "Ớt sừng băm 1m",
+        "Sữa tươi không đường 1 gói (để ngâm gan)",
+        "Bột năng 1m",
+        "Gia vị: Tiêu, dầu hào, dầu ăn, tương ớt"
+    ],
+    "spices": [
+        "Bột canh"
+    ],
+    "process": [
+        "Gan bò rửa sạch với muối, cắt lát mỏng, ngâm với sữa tươi không đường 30 phút rồi rửa sạch.",
+        "Thơm chín cắt rẽ quạt 1cm. Cà chua cắt múi cau. Bông hành cắt khúc 4cm."
+    ],
+    "cook": [
+        "Chần gan: Đun 0,5l nước với 1m bột năng, 1/2M bột canh, cho gan bò vào chần nhanh, vớt ra để ráo.",
+        "Ướp: Ướp gan với 1/2m BỘT CANH, 1/2m đường, 1M dầu hào, 1M tương ớt.",
+        "Xào: Phi thơm tỏi tép đập dập và ớt sừng băm, cho gan bò vào xào săn, thêm thơm cà và bông hành vào, xốc nhanh vừa chín thì tắt lửa."
+    ],
+    "usage": [
+        "cho gan xào thơm cà ra dĩa, rắc thêm tiêu, dùng nóng."
+    ],
+    "tips": [
+        "Ngâm gan bò với sữa để loại bỏ tạp chất.",
+        "Cho bột năng vào nước chần gan giúp gan săn hơn."
+    ]
+}

@@ -1,0 +1,43 @@
+{
+    "recipe_name": "Bánh Tôm",
+    "serving": "4 người",
+    "times": "60 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột mì: 200g",
+        "Bột gạo: 1M",
+        "Bột nổi: 1m",
+        "Khoai lang vàng: 150g",
+        "Tôm đất: 200g",
+        "Đu đủ: 50g",
+        "Cà rốt: 50g",
+        "Su hào: 50g",
+        "Nước vôi trong: 1 tô",
+        "Bột nghệ, ớt sừng",
+        "Xà lách, rau thơm, ngò rí, tỏi, ớt băm",
+        "Muối, đường, nước mắm, bột nghệ"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Trộn 200g bột mì, 1M bột gạo và bột nổi với 1 chén nước ấm, 1/3m bột nghệ, 1/3m muối, 1/2m hạt nêm Aji-ngon® và 1M dầu ăn cho sền sệt, trộn thêm hành lá, để 30 phút cho bột nở.",
+        "Khoai lang cắt sợi, ngâm nước vôi trong 5 phút, rửa sạch, để ráo, ướp thêm 1/2m hạt nêm Aji-ngon®.",
+        "Tôm cắt bỏ râu ướp với 1/2m hạt nêm Aji-ngon®.",
+        "Đu đủ, cà rốt, su hào cắt miếng mỏng, ngâm giấm đường.",
+        "Pha nước mắm chấm: trộn đều 1/2M Giấm gạo lên men LISA® với 5M nước lọc, 2/3M đường, 1M nước mắm, 1/3m bột ngọt AJI-NO-MOTO® và 1M tỏi, ớt băm."
+    ],
+    "cook": [
+        "Đun nóng dầu trong chảo, đặt khuôn bánh vào cho nóng, lấy khuôn ra, cho bột, khoai và tôm lên, thả khuôn vào chảo dầu chiên chín vàng giòn."
+    ],
+    "usage": [
+        "Xếp bánh tôm ra dĩa, mỗi bánh cắt đôi, cắt tư tùy ý. Ăn kèm xà lách, rau thơm, ngò rí, đồ chua, chấm nước mắm pha."
+    ],
+    "tips": [
+        "Nếu làm lượng nhiều và thường xuyên, có thể sử dụng bột cái để làm xốp bánh: trộn 50g bột mì, 1m men bánh mì và 3M nước ấm để trong 3h.",
+        "Chọn khoai lang vàng để món ăn được đẹp mắt và có độ ngọt.",
+        "Nên làm nóng khuôn trước khi cho bột để bánh không dính vào khuôn."
+    ]
+}

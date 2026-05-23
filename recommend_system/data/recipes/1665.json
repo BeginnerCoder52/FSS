@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Canh Bóng Thập Cẩm",
+    "serving": "6 người",
+    "times": "50 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Xương gà: 500g",
+        "Thịt gà: 100g",
+        "Thịt heo thăn: 100g",
+        "Tôm đất: 100g",
+        "Bóng bì: 50g",
+        "Nấm hương: 10g",
+        "Đậu Hà Lan: 50g",
+        "Su hào: 60g",
+        "Bông cải: 150g",
+        "Cà rốt: 60g",
+        "Hành tây: 50g",
+        "Gừng tươi: 20g",
+        "Tôm khô nhỏ: 1M",
+        "Cần tây, boaro, ngò rí, rễ ngò Hành tím, gừng",
+        "Muối, tiêu, nước mắm, rượu trắng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Bắc nồi nước, bỏ 1m hạt nêm Aji-ngon® và 1m muối để luộc tôm đất, luộc sơ qua xương gà. Xương gà rửa sạch, cho vào nồi nấu kĩ cùng tôm khô, hành tím nướng, gừng nướng, cần tây, boaro và rễ ngò, lọc lấy 1 lít nước dùng.",
+        "Bóng bì ngâm nước vo gạo cho vừa mềm, cắt hình quả tram, cho rượu và gừng vào bóp nhẹ để khử mùi hôi, rửa sạch, vắt ráo.",
+        "Thịt gà luộc chín, xé to bản. Thịt heo luộc chín, cắt miếng. Ướp thịt gà và thịt heo với 1m hạt nêm Aji-ngon®.",
+        "Tôm luộc chín, bóc vỏ, bỏ đầu. Rau củ làm sạch, cắt miếng dày khoảng 2mm, chần sơ.",
+        "Nấm hương ngâm nước vo gạo, rửa sạch, chần sơ. Hành tây cắt múi, rễ ngò đập dập."
+    ],
+    "cook": [
+        "Đun sôi nước dùng, cho bóng bì, nấm và các loại rau củ vào nấu chín, cuối cùng cho hành tây vào, nêm 1/2m muối, 1m bột ngọt AJI-NO-MOTO®, 1/2M nước mắm và 1/2m hạt nêm Aji-ngon®, tắt bếp."
+    ],
+    "usage": [
+        "Múc canh ra tô, xếp thịt gà, thịt heo và tôm lên trên, rắc thêm tiêu và hành ngò. Dọn kèm nước mắm ngon và ớt cắt lát, ăn với cơm nóng."
+    ],
+    "tips": []
+}

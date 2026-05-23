@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Cuốn Diếp Chay",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Chả lụa chay",
+        "Tôm chay: 10 con",
+        "Cải bẹ xanh : 200g",
+        "Bún tươi : 100g",
+        "Mì căn : 100g",
+        "Nước dừa tươi : 1 trái",
+        "Cái bỗng rượu : 1M",
+        "Mật ong : 1M",
+        "Bông hẹ : 20 cọng",
+        "Dưa leo, rau sống, ớt sừng băm, hành poa rô, đồ chua",
+        "Bột ngũ vị hương, đậu phộng rang, thính, dầu ăn, tiêu, đường"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Tôm chần sơ, cắt đôi. Chả lụa, dưa leo cắt que. Bông hẹ chần sơ. Hành poaro cắt nhỏ.",
+        "Mì căn cắt dày 7mm, ướp 1/2M nước tương “Phú Sĩ”, 1/2M tiêu, 1M hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1M đường, 1 chút ngũ vị hương."
+    ],
+    "cook": [
+        "Bắc chảo dầu phi poa rô cho thơm, cho mì căn vào chiên sơ, cho tiếp phần nước ướp mì vào, thêm 1/2 chén nước dừa, rim cho mì căn thấm gia vị, đem ra cắt sợi cỡ đầu đũa.",
+        "Bỗng rượu trộn đều với mật ong, sên nhẹ cho ráo.",
+        "Pha nước chấm: 4M nước tương “Phú Sĩ”, 4M nước dừa,1M đường, nấu sôi, để nguội, nêm thêm 1M ớt băm, 1M đồ chua.",
+        "Cuốn: trải lá cải bẹ xanh, đặt dưa leo, rau, bún, mì căn, chả lụa, đậu phộng rang, cái bỗng rượu, thính, cuốn lại, đặt bên ngoài thêm 1 con tôm, cột lại bằng bông hẹ. Cắt 2 đầu cho gọn lại."
+    ],
+    "usage": [
+        "Dùng cuốn diếp với nước chấm."
+    ],
+    "tips": [
+        "Cách chọn mì căn ngon: mì căn trắng đục, không vàng, không nhớt, ấn tay vào có độ đàn hồi",
+        "Dùng bỗng rượu giúp món ăn có hương vị đặc trưng của cuốn diếp"
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Nui Nấu Bò Cay",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Ba chỉ bò (loại lát) nhập 200g",
+        "Nui ống cọng ngắn 100g",
+        "Cà rốt 1/3 củ",
+        "Nấm đông cô tươi 50g",
+        "Cải thảo 50g",
+        "Bông cải xanh 50g",
+        "RAU NÊM: Ngò gai",
+        "Gia vị: Dầu ăn, hành tỏi băm, đường, rượu trắng"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Kim Chi"
+    ],
+    "process": [
+        "Luộc nui mềm, chần nước lạnh, vớt ra để ráo.",
+        "Cà rốt tỉa hoa, cắt lát. Nấm đông cô cắt lát. Cải thảo cắt khúc xéo 2cm. Bông cải xanh tách miếng vừa ăn.",
+        "Áp chảo bò và nêm 1 ít đường và khử với rượu trắng để tăng độ thơm ngon."
+    ],
+    "cook": [
+        "Phi thơm 1M hành tỏi băm, cho 1.5 lít nước vào nấu sôi và cho vào 1 gói Gia vị nêm sẵn Aji-Quick® Lẩu Kim Chi. Thêm các loại rau củ vào nấu, cuối cùng cho nui vào nấu tiếp trong nước súp đến chín mềm để nui thấm vị, cho thịt bò vào đảo đều. Tắt lửa. Thêm rau nêm."
+    ],
+    "usage": [
+        "Dùng nóng"
+    ],
+    "tips": [
+        "Không nấu nui quá lâu nui sẽ bị bở, không ngon.",
+        "Chọn thịt bò ba chỉ có độ béo và mềm vừa phải, giúp món ăn ngon hơn.",
+        "Áp chảo bò và nêm 1 ít đường và khử với rượu trắng để tăng độ thơm ngon cho món ăn."
+    ]
+}

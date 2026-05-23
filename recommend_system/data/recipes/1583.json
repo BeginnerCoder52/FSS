@@ -1,0 +1,30 @@
+{
+    "recipe_name": "Lẩu Cá Rô Phi",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá rô phi: 1 con (khoảng 600g)",
+        "Cà chua: 100g",
+        "Thơm: 100g",
+        "Bún Rau ăn kèm: kèo nèo, cọng súng, hoa hẹ",
+        "Sả cây, hành tỏi băm",
+        "Rau om, ngò gai, ớt trái",
+        "Dầu ăn, nước mắm, muối"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Cá rô phi làm sạch, cắt đôi, ướp với 1/3m muối, chiên sơ cá.",
+        "Các loại rau rửa sạch, để ráo, xếp ra dĩa.",
+        "Sả cây đập dập. Rau thơm cắt khúc. Cà chua cắt múi cau. Thơm cắt lát."
+    ],
+    "cook": [],
+    "usage": [],
+    "tips": [
+        "Có thể chiên sơ cá để thịt cá dai và thơm hơn.",
+        "Làm sạch màng đen bên trong ruột cá để cá không bị tanh"
+    ]
+}

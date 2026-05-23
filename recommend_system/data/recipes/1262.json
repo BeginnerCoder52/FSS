@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Salad Bưởi Trộn Bơ",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bưởi: 150g",
+        "Bơ trái: 100g",
+        "Tôm đông lạnh: 150g",
+        "Trứng cút: 5 quả",
+        "Mè rang, chanh vàng",
+        "Tỏi băm, rau húng lủi",
+        "Gia vị: muối, tiêu"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm trụng sơ, cắt hạt lựu, ướp với ít muối.",
+        "Bơ lột vỏ, cắt miếng vuông 1cm, Bưởi tách thành múi nhỏ.",
+        "Chanh vắt lấy nước cốt, húng lủi cắt nhỏ, trứng cút luộc chín, cắt đôi"
+    ],
+    "cook": [
+        "Pha xốt: trộn đều 1.5M mayonnaise “Aji-mayo” với 2m nước cốt chanh, 1/2m tỏi băm và 1 ít tiêu.",
+        "Trộn đều bưởi với bơ, tôm và sốt mayonnaise đã pha"
+    ],
+    "usage": [
+        "Xếp món salad ra đĩa, cho trứng cút lên mặt, rắc mè rang và rau húng lủi lên trên."
+    ],
+    "tips": [
+        "Dùng tôm đông lạnh sẽ giòn, ngon và phù hợp với món ăn hơn.",
+        "Dùng chanh vàng sẽ có vị chua dịu và mùi thơm đặc biệt."
+    ]
+}
