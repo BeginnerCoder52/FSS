@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Mì Quảng",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì quảng : 600g",
+        "Nước dùng : 800ml",
+        "Cánh gà : 2 cái",
+        "Tôm đất : 150g",
+        "Trứng cút : 8 quả",
+        "Nghệ tươi băm : 1 m",
+        "Hành tỏi băm : 1M",
+        "Củ nén : 20g",
+        "Đậu phộng rang : 70g",
+        "Ăn kèm: Rau cải con, bắp chuối bào, rau húng lũi, giá, bánh tráng nướng Hành lá, ớt xanh, tỏi củ lột vỏ, chanh",
+        "Muối, đường, bột nghệ, nước mắm, tương ớt Dầu ăn, dầu điều"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Cánh gà chặt khúc 4cm . Tôm cắt bỏ đầu đuôi. Trứng cút luộc chín, bóc vỏ.",
+        "Pha hỗn hợp gia vị gồm: 1m nghệ tươi, 1M hành tỏi băm, 1/2m tiêu, 1m bột nghệ, 1/2m muối, 1m đường, 1m bột ngọt AJI-NO-MOTO®, 2m hạt nêm Aji-ngon®, 1M dầu điều.",
+        "Trộn đều tôm với 1/2 hỗn hợp gia vị. Cho gà vào phần hỗn hợp gia vị còn lại, thêm 2M nước mắm, ít nước dùng vào, để thấm.",
+        "Củ nén đập dập, hành lá cắt nhỏ. Mì trụng qua nước sôi, để ráo."
+    ],
+    "cook": [
+        "Đun nóng dầu, cho củ nén vào phi cho thơm, sau đó cho vào tôm xào chín, trút ra đĩa. Tiếp tục cho gà vào xào săn, cho nước dùng và trứng cút vào nấu khoảng 10 phút, nêm thêm 1m bột ngọt AJI-NO-MOTO®, 1M hạt nêm Aji-ngon®,  nếm vị hơi đậm, đun sôi, tắt lửa."
+    ],
+    "usage": [
+        "Cho Mì Quảng ra tô, xếp tôm, gà, trứng cút lên trên, chan phần nước dùng vào, rắc đậu phộng rang. Ăn kèm với rau sống, bánh đa nướng, nước mắm mặn, ớt xanh, tỏi củ, chanh và tương ớt (Hội An)."
+    ],
+    "tips": [
+        "Nêm gia vị vào tôm và thịt gà hơi đậm để nước dùng của mì có vị đậm đà ngon hơn.",
+        "Không ướp nước mắm vào tôm để tôm không bị khai."
+    ]
+}

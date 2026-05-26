@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Cuốn Gà Xào Xốt Mè",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Ức gà 200g",
+        "Rong biển Nori 3 miếng",
+        "Trứng gà 1 quả",
+        "Bánh đa nem 3 cái",
+        "Dưa leo 2 trái",
+        "Cà rốt 1 củ",
+        "Rau sống các loại",
+        "Hành tỏi băm, ớt sừng băm, nước cốt chanh",
+        "Lá chanh cắt nhuyễn, sả xay, mè trắng rang giã dập",
+        "Đường, tương cà, dầu ăn"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Ức gà cắt sợi, ướp với 1m hạt nêm Aji-ngon®, 1m đường, 1M hành tỏi băm, 1M sả xay, 1 lòng trắng trứng, 1m ớt sừng băm, để thấm.",
+        "Dưa leo cắt que. Cà rốt cắt cọng ngâm chua ngọt."
+    ],
+    "cook": [
+        "Đun nóng 2M dầu ăn, cho gà vào xào chín, trút ra, để nguội, trộn đều với lá chanh thái chỉ, 3M xốt Mayonnaise Aji-mayo®, 2M mè rang.",
+        "Đặt 1 miếng rong biển lên dĩa, thoa ướt một mặt bánh tráng, đặt úp lên lá rong biển. Xếp rau thơm, cà rốt, dưa leo, thịt gà xào lên. Cuốn chặt tay. Dùng nước dán mí lại.",
+        "Xốt chấm: khuấy đều 3M xốt Mayonnaise Aji-mayo®, 1M tương cà, 1m nước cốt chanh, 1m ớt băm, 1m mè rang."
+    ],
+    "usage": [],
+    "tips": [
+        "Ướp lòng trắng trứng giúp thịt gà không bị ra nước khi xào và giữ được vị ngọt của thịt gà.",
+        "Trộn lá chanh khi thịt gà còn ấm giúp tăng mùi thơm và giữ được màu."
+    ]
+}

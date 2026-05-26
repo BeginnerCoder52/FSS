@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Chả Giò Spaghetti",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì spaghetti: 15g",
+        "Nấm đông cô tươi: 4 tai",
+        "Cải thảo: 2 lá",
+        "Thịt nguội: 1 lát",
+        "Hành lá: 2 cây",
+        "Ớt sừng: 1/2 trái",
+        "Bánh tráng bò bía tươi: 1/2 gói",
+        "Hành, tỏi băm, mè trắng, bột năng",
+        "Tiêu, tương ớt, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Mì Ý luộc chín, vớt ra xả qua nước lạnh cho nguội, để ráo. Nấm đông cô cắt bỏ chân, rửa sạch, cắt sợi. Cải thảo cắt sợi dày 0,4cm. Thịt nguội cắt sợi nhỏ. Hành lá cắt nhỏ. Ớt bỏ hạt và cắt sợi.",
+        "Hòa tan 1M bột năng với 3M nước lọc, nấu cho sệt lại. Mè rang cho thơm."
+    ],
+    "cook": [
+        "Phi thơm hành, tỏi băm, cho nấm, cải thảo, thịt nguội, ớt và hành lá vào xào, nêm 1/3m hạt nêm Aji-ngon® và 1/2m tiêu, xào cho ráo nước, để nguội.",
+        "Làm nhân: cho mì ý và hỗn hợp rau xào vào tô, trộn đều với 1m mè rang và 2M xốt Mayonnaise Aji-mayo®.",
+        "Làm chả giò: trải bánh bía ra, cho 1M nhân lên, gấp 2 mép vào rồi cuộn tròn lại, dùng ít hồ bột năng dán kín mép bánh, cho vào chiên chín vàng, vớt ra để ráo dầu.",
+        "Làm xốt: trộn 2M xốt Mayonnaise Aji-mayo® và 1M tương ớt."
+    ],
+    "usage": [
+        "Xếp chả giò ra dĩa, khi ăn chấm với xốt Mayonnaise Aji-mayo® trộn tương ớt."
+    ],
+    "tips": [
+        "Làm chín nhân và để nguội trước khi trộn Mayonnaise.",
+        "Đợi dầu nóng mới chiên chả giò để xốt Mayonnaise Aji-mayo® không bị chảy."
+    ]
+}

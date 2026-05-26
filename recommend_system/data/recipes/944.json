@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cà Tím Nhồi Thịt Kho",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cà tím : 2 trái",
+        "Thịt nạc dăm xay : 150g",
+        "Giò sống : 50g",
+        "Hành lá : 3 nhánh",
+        "Ớt hiểm : 2 trái",
+        "Gừng cắt lát, gừng băm",
+        "Hành, tỏi băm",
+        "Tiêu, đường, dầu ăn, muối",
+        "Dầu điều, tương cà"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt xay ướp với 1M hành tỏi băm, 1/2m gừng băm, giò sống, 1/2m hạt nêm Aji-ngon®, 1/3m bột ngọt AJ-INO-MOTO®, 1/4m đường và 1 ít tiêu, để thấm.",
+        "Cà tím cắt khúc 5cm, chẻ làm 6, chừa lại khoảng 2cm. Ngâm cà vào nước muối loãng, để 10 phút, vớt ra để ráo. Nhồi thịt xay vào cà tím.",
+        "Hành lá cắt khúc."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, chiên vàng mặt cà tím. Vớt ra để ráo dầu.",
+        "Pha hỗn hợp kho: Hòa tan 1m đường, 1m bột ngọt AJI-NO-MOTO® với 1/2 chén nước tương “Phú Sĩ”, 1/2 chén nước và 1M tương cà.",
+        "Cho cà tím vào nồi với 2 trái ớt hiểm. Cho hỗn hợp đã pha vào, nấu sôi cho cạn còn một nửa, thêm 1M dầu điều cho hành lá và gừng cắt lát vào đảo đều. Tắt lửa."
+    ],
+    "usage": [
+        "Cho cà tím kho ra dĩa, ăn kèm với cơm."
+    ],
+    "tips": [
+        "Ngâm cà tím vào nước muối loãng để loại bỏ bớt chát đắng trong cà và giúp cà không bị đen.",
+        "Trộn gừng vào nhân để tạo mùi thơm."
+    ]
+}

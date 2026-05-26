@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Lẩu Cua Lá Me",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lá me non: 150g",
+        "Cua thịt: 2 con",
+        "Cà chua chín đỏ: 2 trái",
+        "Nước dùng: 2 lít",
+        "Tỏi băm: 1M",
+        "Tỏi phi: 1M",
+        "Ớt băm: 1m",
+        "Sả băm: 1m",
+        "Sả cây: 4 khúc",
+        "Rau om, ngò gai",
+        "Dùng kèm: rau nhút, rau muống, bạc hà, bún tươi",
+        "Muối, đường, nước mắm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Cua làm sạch, chặt làm 4, bỏ phần yếm.",
+        "Cà chua cắt múi cau. Sả đập dập. Rau om, ngò gai cắt nhỏ. Vò sơ lá me."
+    ],
+    "cook": [
+        "Phi thơm tỏi, ớt, sả băm, cho cà chua vào xào thơm trước để tạo màu, sau đó cho cua vào, thêm 2 lít nước dùng nấu khoảng 5 phút cho cua vừa chín, vớt cua ra trước khi nêm gia vị.",
+        "Nêm 2M nước mắm, 2m muối, 2.5M đường, 2M Bột ngọt AJI-NO-MOTO®, 3M Giấm gạo lên men LISA®, thêm lá me vào rồi tắt lửa.",
+        "Cho nước dùng vào nồi lẩu, thêm sả cây, tỏi phi, rau om và ngò gai lên trên."
+    ],
+    "usage": [
+        "Vớt cua ra dĩa riêng ăn kèm với bún, rau và nước mắm mặn. Đã xong món lẩu cực hấp dẫn cùng nhâm nhi thôi nào!"
+    ],
+    "tips": [
+        "Không nấu cua lâu trong nồi lẩu vì chất chua trong lá me sẽ làm thịt cua bị bở.",
+        "Vò lá me để lá me ra nước chua và giúp nước lẩu không bị chát."
+    ]
+}

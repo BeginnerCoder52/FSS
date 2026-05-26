@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Xôi Gà Nướng",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gạo nếp Bắc: 2 chén",
+        "Đậu xanh cà: 100g",
+        "Mỡ gà: 200g",
+        "Bột nghệ: 1m",
+        "Hành tím: 100g",
+        "Thịt gà ta: 1/2 con",
+        "Hành tỏi băm nhuyễn: 2M",
+        "Gia vị: Mật ong, dầu điều, muối, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Gạo nếp vo sạch, ngâm 4h hoặc ngâm qua đêm với 1/2m muối và 1/2m bột nghệ. Đậu xanh cà vo thật sạch, ngâm 3h.",
+        "Mỡ gà cắt nhỏ. Hành tím cắt lát mỏng."
+    ],
+    "cook": [
+        "Làm mỡ gà: Cho mỡ gà vào chảo, nấu đến khi mỡ tan ra hết, để nguội.",
+        "Làm hành phi: Dùng mỡ gà cho vào chảo, cho hành cắt lát vào phi đến khi vàng thơm.",
+        "Ướp gà: Ướp thịt gà với 2m Hạt nêm Aji-ngon® (Gà), 1/2m tiêu, 1M mật ong, 1/2m muối, 4M Nước tương “Phú Sĩ”, 2M hành tỏi băm và 1M dầu điều, 1/2m để thấm 30 phút.",
+        "Hấp đậu xanh: Đậu xanh sau khi ngâm, vo sạch, trộn với 1/2m muối, cho vào xửng hấp chín, lấy ra tán nhuyễn rồi cho vào tấm vải mùng bó chặt lại.",
+        "Hấp Xôi: Gạo sau khi ngâm, vo sạch, rồi cho vào xửng hấp, hấp 15 phút thì mở nắp, rưới mỡ gà vào trộn đều, hấp thêm khoảng 20 phút thì nếm thử xem xôi chín thì tắt lửa.",
+        "Nướng gà: Bật lò nóng 250 độ, cho gà lên vỉ nướng, nướng trong lò 20′ đến khi gà chín vàng thơm, lấy ra, để nguội bớt rồi xé miếng vừa ăn."
+    ],
+    "usage": [
+        "Lấy xôi ra dĩa, cắt đậu xanh lên mặt, rắc hành phi, xếp thịt gà quay lên, rưới thêm mỡ gà."
+    ],
+    "tips": [
+        "Gạo và đậu xanh phải vo sạch trước và ngâm trước khi nấu giúp chín đều.",
+        "Soi lỗ khi hấp xôi để hơi nước thoát lên trên giúp xôi chín nhanh và đều hơn"
+    ]
+}

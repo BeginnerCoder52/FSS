@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Cá Nướng Chấm Muối Ớt Xanh",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá điêu hồng (1 con): 500g",
+        "Ớt sừng: 1 trái",
+        "Ớt hiểm xanh: 2M",
+        "Ớt chuông xanh: 150g",
+        "Cà rốt ngâm chua: 50g",
+        "Tỏi tép: 5 tép",
+        "Cải bẹ xanh: 600g",
+        "Hành tây: 1/2 củ",
+        "Đường, muối, nước cốt chanh"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Cá khứa vài đường xéo song song trên cá. Ớt chuông xanh lạng lấy phần vỏ xanh của ớt, còn khoảng 2M.",
+        "Cải xanh rửa sạch, dùng dao cắt bỏ cọng. Hành tây cắt mỏng, ngâm nước đá, vớt ráo.",
+        "Giã 3 trái ớt xanh với ớt sừng , 1M hạt nêm Aji-ngon®, 1/3M bột ngọt AJI-NO-MOTO®, tỏi tép ướp vào thịt cá để thấm 10 phút.",
+        "Pha xốt muối ớt xanh: 4M đường, 2M muối, phần ớt hiểm xanh còn lại, 2M ớt chuông xanh, 2M bột ngọt AJI-NO-MOTO®, 4M nước cốt chanh, xay mịn bằng máy xay sinh tố."
+    ],
+    "cook": [
+        "Cho cá vào lò nướng 220 độ, nướng 20 phút cho cá chín."
+    ],
+    "usage": [
+        "Cho cá ra đĩa, trải lá cải xanh ra, cho thịt cá, hành tây, cà rốt ngâm chua vào, cuộn lại, chấm với xốt muối ớt xanh."
+    ],
+    "tips": [
+        "Sử dụng ớt chuông xanh để tăng màu sắc cho muối ớt và giảm độ cay của ớt hiểm.",
+        "Nên nướng bằng lò than, cá sẽ thơm hơn."
+    ]
+}

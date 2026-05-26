@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Súp Vịt Quay",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Ức vịt quay: 300g",
+        "Măng luộc sẵn: 50g",
+        "Cà rốt: 50g",
+        "Đậu hũ non: 1 miếng",
+        "Bột năng pha loãng: 3M",
+        "Nước dùng: 1 lít",
+        "Ngò rí",
+        "Đường, tiêu, dầu mè",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà",
+        "Nước tương \"Phú Sĩ\"",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Lóc xương vịt để riêng, lạng bớt phần mỡ dưới ức, thịt vịt xé mỏng sau đó cắt sợi 5cm.",
+        "Luộc sơ đậu hũ non. Măng, cà rốt, đậu hũ cắt sợi mỏng dài 5cm."
+    ],
+    "cook": [
+        "Đun sôi 1 lít nước dùng cho măng, cà rốt, thịt vịt vào nấu 5 phút, nêm 1M hạt nêm Aji-ngon®, 1/2m đường, 1m Giấm gạo lên men LISA®. Cho đậu hũ vào rồi giảm lửa, khuấy nước bột năng vào từ từ đến khi nước súp vừa sánh lại, tắt bếp, cho 1/2m dầu mè."
+    ],
+    "usage": [
+        "Múc súp ra chén, rắc ngò rí, dầu mè và tiêu, dùng nóng."
+    ],
+    "tips": [
+        "Luộc sơ đậu hũ để đậu hũ dai hơn và cắt không bị nát.",
+        "Để súp được ngon, vặn lửa nhỏ, cho bột năng vào từ từ và khuấy đều."
+    ]
+}

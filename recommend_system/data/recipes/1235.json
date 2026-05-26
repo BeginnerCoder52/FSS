@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Mì Gói Xào Bò",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì gói : 2 gói",
+        "Thịt bò : 150g",
+        "Nấm linh chi : 50g",
+        "Cà rốt : 30g",
+        "Cải ngọt : 60g",
+        "Hành tây : 1/2 củ",
+        "Tỏi băm, tiêu, dầu ăn, đường, bột năng"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt bò ướp 1m tỏi băm, 1m nước tương “Phú Sĩ”, 1/3m bột ngọt AJI-NO-MOTO®, ít tiêu và ít bột năng để thấm.",
+        "Mì gói trụng sơ, vớt ra để ráo, trộn với ít dầu ăn. Nấm linh chi rửa sạch. Cà rốt cắt sợi. Cải ngọt cắt khúc 5cm. Hành tây cắt múi cau. Bột năng pha loãng.",
+        "Pha hỗn hợp nước xốt gồm: 1M nước tương “Phú Sĩ”, 1/2m bột ngọt AJI-NO-MOTO®, 1/2m hạt nêm Aji-ngon®, 1/2m đường và 1/2 chén nước."
+    ],
+    "cook": [
+        "Đun thật nóng ít dầu ăn trong chảo, cho mì vào áp chảo, trút ra dĩa để riêng.",
+        "Phi thơm tỏi, xào sơ thịt bò, trút ra dĩa, tiếp tục phi thơm tỏi, xào cà rốt, nấm, hành tây và cải ngọt, thêm nước xào rồi cho thịt bò vào trở lại, cho nước bột năng vào tạo độ sánh, tắt lửa, rắc thêm tiêu."
+    ],
+    "usage": [
+        "Cho thịt bò xào lên dĩa mì, trang trí ngò rí. Khi ăn chấm kèm nước tương “Phú Sĩ” và ớt cắt lát."
+    ],
+    "tips": [
+        "Để chảo thật nóng áp chảo mì sẽ giòn và ngon hơn.",
+        "Cho ít nước bột năng vào nước xào để xốt sánh lại, món ăn hấp dẫn hơn."
+    ]
+}

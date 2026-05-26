@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Canh Nấm Rong Biển",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 150g",
+        "Giò sống: 100g",
+        "Nấm kim châm: 100g",
+        "Nấm hương: 100g",
+        "Nấm rơm: 50g",
+        "Cà rốt: 50g",
+        "Rong biển: 1 lá",
+        "Tần ô: 4 cây",
+        "Nước dùng gà: 1 lít",
+        "Hành lá, ngò rí, bột bắp, ớt, muối, tiêu"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Tôm chẻ lưng, rút bỏ chỉ lưng, chần qua nước sôi sau đó bóc vỏ, lấy 3 con cắt hạt lựu.",
+        "Nấm hương, nấm rơm ngâm nước gạo. Nấm hương cắt chân, rửa sạch, ép nhẹ cho ráo, rắc ít hạt nêm Aji-ngon®, tiêu và bột bắp vào nấm. Quết giò sống lên nấm hương, cho 1 miếng tôm vào giữa rồi thoa 1 ít bột bắp lên mặt nấm. Nấm kim châm cắt bỏ phần chân, tách ra, cắt đôi.",
+        "Rong biển cắt sợi. Hành lá, ngò rí cắt nhỏ. Cà rốt tỉa hoa, cắt lát mỏng. Rau tần ô cắt khúc ngắn. Ớt cắt lát."
+    ],
+    "cook": [
+        "Đun sôi nước dùng, cho cà rốt, nấm hương, nấm rơm, nấm kim châm và phần tôm còn lại vào, nêm 1m muối và 1/2m bột ngọt AJI-NO-MOTO®, tắt bếp. Cho rong biển và rau tần ô, hành lá, ngò rí vào, rắc thêm tiêu."
+    ],
+    "usage": [
+        "Múc canh ra tô, ăn kèm nước tương “Phú Sĩ” và ớt cắt lát, dùng nóng."
+    ],
+    "tips": [
+        "Rắc bột bắp 2 lần để giữ được nước ngọt của nấm và giò.",
+        "Cho rau và rong biển vào sau cùng để giữ được màu xanh tươi và mùi thơm."
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Cánh Gà Chiên Sa Tế Tôm",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cánh gà: 3 cái",
+        "Sa tế tôm: 2M",
+        "Tôm khô ngâm, giã nhuyễn: 20g",
+        "Hành lá: 5 cọng",
+        "Tỏi băm",
+        "Ớt sừng cắt lát",
+        "Dầu ăn, đường, tiêu"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Dùng mũi dao xăm đều cánh gà cho nhanh thấm gia vị. Cánh gà chặt đôi, ướp 1M nước tương “Phú Sĩ”, 1/3m tiêu, 1/2M sa tếtôm.  Để khoảng 20 phút để thấm gia vị.",
+        "Hành lá cắt khúc khoảng 2 cm.",
+        "Pha hỗn hợp làm xốt: 1.5M sa tế tôm, 2M nước, 1M đường và 1M nước tương “Phú Sĩ”."
+    ],
+    "cook": [
+        "Đặt chảo lên bếp, cho cánh gà vào chiên ngập dầu, vớt ra để ráo dầu.",
+        "Phi thơm tỏi băm, cho tôm khô vào xào thơm, thêm hỗn hợp làm xốt vào đảo đều, cho cánh gà vào xốc đều với cọng hành lá. Tắt lửa."
+    ],
+    "usage": [
+        "Xếp cánh gà ra dĩa, dùng nóng với cơm, chấm nước tương “Phú Sĩ” và ớt cắt lát."
+    ],
+    "tips": [
+        "Xăm cánh gà giúp nhanh thấm gia vị.",
+        "Xào tôm khô với tỏi phi giúp tăng hương thơm đồng thời khử tanh của tôm."
+    ]
+}

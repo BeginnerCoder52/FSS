@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Bánh Cua",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt cua: 200g",
+        "Hành tây băm: 1/2 củ",
+        "Cà rốt băm: 1/4 củ",
+        "Poaro băm: 1/2 cây",
+        "Trứng gà: 2 quả",
+        "Trứng gà luộc băm: 1 quả",
+        "Dưa chuột ngâm chua: 2 trái",
+        "Bột mì, bột xù",
+        "Nụ bạch hoa ngâm chua: 1M",
+        "Muối, tiêu, bơ, dầu ăn",
+        "Rượu vang trắng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Trụng sơ thịt cua qua nước với ít rượu trắng. Cà rốt cũng trụng sơ, vớt ra ngâm nước đá. trứng gà đánh tan.",
+        "Phi thơm hành tây với bơ, thêm cà rốt, hành boaro và thịt cua vào xào, nêm 1/2m tiêu, 1M rượu trắng và 1/2m hạt nêm Aji-ngon®, trút ra để nguội"
+    ],
+    "cook": [
+        "Trộn hỗn hợp trên với 1/2 quả trứng gà, 2M bột xù và 2M xốt Mayonnaise Aji-mayo®, để vài phút cho bột xù thấm nước nở hết tạo độ dẻo. Viên thành từng viên tròn nhỏ, ấn nhẹ cho dẹp xuống thành miếng tròn dẹp đường kính 5cm, dày 1cm.",
+        "Tẩm từng miếng bánh cua qua bột mì, nhúng qua trứng rồi lăn qua bột xù, giữ trong ngăn đá tủ lạnh 30 phút.",
+        "Chiên bánh cua ngập dầu đến khi chín vàng, vớt ra để ráo dầu.",
+        "Trộn xốt nụ bạch hoa: trộn đều 5M xốt Mayonnaise Aji-mayo® với 1M trứng luộc cắt nhỏ, 1/2M dưa chuột ngâm chua và 1m nụ bạch hoa."
+    ],
+    "usage": [
+        "Xếp bánh cua ra dĩa, khi ăn chấm với xốt nụ bạch hoa."
+    ],
+    "tips": [
+        "Trộn bột xù vào hỗn hớp thịt cua để bột xù nở hết tạo độ dẻo cho món ăn.",
+        "Giữ bánh lạnh trong 30 phút để khi chiên bánh không bị bể."
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bún Xào Chay",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bún gạo khô: 200g",
+        "Cà rốt: 50g",
+        "Nấm linh chi: 50g",
+        "Cần tây: 1 cọng",
+        "Hành boaro: 1/2 cây",
+        "Đậu hũ chiên: 1 miếng",
+        "Tàu hũ ki: 1 lá",
+        "Ớt hiểm, sa tế, muối, đường, tiêu"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Bún gạo ngâm mềm, để ráo.",
+        "Cà rốt, cần tây cắt sợi, hành poaro băm nhỏ. Đậu hũ chiên cắt lát, chiên lại và cắt sợi. Tàu hũ ki chiên giòn, bóp vụn.",
+        "Pha xốt 1,5M Bột ngọt AJI-NO-MOTO®, 1M Nước tương “Phú Sĩ”, 1/2M muối, 1/2M đường."
+    ],
+    "cook": [
+        "Cho 2M dầu ăn vào chảo, phi thơm boaro, cho tàu hũ ki, nấm, cần tây, cà rốt vào xào, tiếp tục cho đậu hũ chiên, hỗn hợp xốt pha vào và 1m sa tế rồi cho bún gạo vào xào với lửa lớn, cho thêm đậu hũ chiên đảo đều."
+    ],
+    "usage": [
+        "Cho bún xào ra dĩa, rắc tiêu, tàu hũ ki, dùng kèm nước tương “Phú Sĩ” và ớt."
+    ],
+    "tips": [
+        "Bún gạo chỉ nâm mềm, không nên trụng nước sôi nếu không sẽ bị nát.",
+        "Chiên tàu hũ ki với lửa vừa, nếu to quá sẽ cháy khét, nhỏ quá sẽ bị dai.",
+        "Cho bún gạo và xào nhanh tay với lửa lớn để bún không bị bết lại."
+    ]
+}

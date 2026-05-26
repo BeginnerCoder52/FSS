@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Súp Nghêu Rau Củ",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nghêu: 700g",
+        "Thịt ba rọi xông khói: 70g",
+        "Cà chua: 2 trái",
+        "Cà rốt: 120g",
+        "Ngò tây: 2 nhánh",
+        "Cần tây: 80g",
+        "Hành tây: ½ củ",
+        "Khoai tây nhỏ: 1 củ",
+        "Hành boaro: 80g",
+        "Ớt chuông xanh: 80g",
+        "Lá thơm, tỏi, xốt cà hộp",
+        "Tiêu sọ rang",
+        "Muối, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Hành tây, khoai tây, cà rốt, ớt chuông xanh, thịt ba rọi xông khói, cần tây, hành boaro và cà chua cắt hạt lựu, để riêng từng thứ.",
+        "Luộc nghêu với 1,5 lít nước, gỡ lấy thịt, bỏ túi đen rồi để ráo. Lọc lại nước luộc, cho khoai tây vào nấu vừa chín, vớt khoai ra để riêng, giữ lại nước luộc nghêu.",
+        "Ngò tây lấy lá băm nhỏ, cọng cắt khúc ngắn, để riêng. Cho lá thơm, cọng ngò tây và tiêu sọ vào 1 túi vải mùng, cột chặt lại."
+    ],
+    "cook": [
+        "Xào thịt ba rọi xông khói với 1m dầu và tỏi băm cho ra bớt mỡ. Cho hành tây, cà rốt, cần tây, hành boaro và ớt chuông xanh vào xào thơm.",
+        "Thêm 1M xốt cà hộp vào cho lên màu, rồi cho nước luộc nghêu và túi gia vị vào. Nấu nhỏ lửa, vớt bọt đến khi rau củ chín mềm.",
+        "Vớt bỏ túi gia vị, thêm khoai tây, nghêu và cà chua vào, nêm 1/2m muối và 1/2M hạt nêm Aji-ngon®."
+    ],
+    "usage": [
+        "Múc súp ra chén, rắc lá ngò tây bằm lên trên, dùng với bánh mì."
+    ],
+    "tips": [
+        "Ngâm nghêu vào nước vo gạo hoặc nước muối để nghêu nhanh nhả cát.",
+        "Nên lựa nghêu khoảng 45-50 con/1 kg sẽ cho thịt nhiều nhất."
+    ]
+}

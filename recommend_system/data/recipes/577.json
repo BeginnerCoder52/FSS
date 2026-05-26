@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Mì Lạnh",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì trứng tươi: 5 vắt",
+        "Ức gà: 1/2 cái 1 miếng",
+        "Dưa leo: 1/2 trái",
+        "Thịt nguội: 1 lát",
+        "Nấm mèo: 2 tai",
+        "Cua giả: 4 thanh",
+        "Trứng gà ta: 2 quả",
+        "Cần tây, rau mầm, mè trắng rang, ớt sợi",
+        "Dầu mè, bột năng,",
+        "Đường, tiêu, muối",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Thịt gà luộc chín, xé sợi nhỏ, ướp 1m nước tương LISA, giữ lại 1/2 chén nước luộc gà.",
+        "Dưa leo bỏ ruột, cắt sợi 6-7cm. Thịt nguội, nấm mèo trụng nước sôi, cắt sợi nhỏ, ướp với ít tiêu.",
+        "Thanh cua xé sợi nhỏ. Rau mầm cắt bỏ rễ. Cần tây cắt sợi.",
+        "Trứng đánh tan, nêm 1/2m muối, đem tráng mỏng rồi cắt sợi nhỏ.",
+        "Mì luộc nước sôi nêm 1/2m muối rồi ngâm vào nước đá, vớt ra trộn đều với 2m dầu mè."
+    ],
+    "cook": [
+        "Pha xốt: trộn đều 1/2 chén nước luộc gà, 3M nước tương LISA, 1,5M giấm gạo lên men của Ajinomoto, 1M đường, 1m dầu mè, 1/3m tiêu, 1/3m muối.",
+        "Xếp mì ra dĩa, trên mặt xếp thịt gà, dưa leo, thịt nguội, nấm mèo, cần tây, thanh cua, rau mầm, trứng chiên, 2m mè trắng rang. Trang trí thêm ớt sợi."
+    ],
+    "usage": [
+        "Khi ăn chấm nước xốt lên mặt dĩa mì sau đó trộn đều."
+    ],
+    "tips": [
+        "Không nên trụng mì quá lâu, mì sẽ bị bở và không ngon.",
+        "Nên ngâm nấm mèo với nước vo gạo hoặc nước có pha ít bột năng, nấm sẽ sạch và giảm mùi hăng."
+    ]
+}

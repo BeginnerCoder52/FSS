@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Salad Tôm Lạnh",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 300g (40 con/kg)",
+        "Trứng gà luộc chín: 2 quả",
+        "Khoai tây: 1 củ",
+        "Cà rốt: 50g",
+        "Đậu que nhật: 50g",
+        "Hành tây: 1/2 củ",
+        "Củ radish: 50g",
+        "Ớt cắt nhuyễn: 2M",
+        "RAU NÊM: Rau húng lủi, mè trắng rang",
+        "Gia vị: Dầu ăn, muối, tiêu"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Tôm luộc chín, bóc vỏ, 2/3 phần cắt hạt lựu, 1/3 giữ nguyên để trang trí. Trứng luộc chín bóc vỏ, cắt lát mỏng.",
+        "Cà rốt, khoai tây, đậu que cắt hạt lựu, luộc chín tới, vớt ra xả qua nước lạnh.",
+        "Hành tây cất quân cờ, ngâm nước đá. Củ radish cắt lát mỏng."
+    ],
+    "cook": [
+        "Làm xốt: Khuấy đều 1/2m muối, 1M mè trắng rang giã bể, 2M ớt cắt nhuyễn, 1/2M Giấm gạo lên men LISA®, 3M Xốt Mayonnaise Aji-mayo®.",
+        "Trộn salad: Trộn đều tất cả sốt, tôm sú, khoai tây, cà rốt, đậu que, hành tây cho vào tủ lạnh 15 phút."
+    ],
+    "usage": [
+        "Xếp củ radish xung quanh dĩa, cho salad đã trộn vào giữa, trang trí tôm nguyên con, rau húng lủi, mè rang và trứng lên trên."
+    ],
+    "tips": [
+        "Rau củ cắt hạt lựu đều nhau cho đẹp mắt và thấm sốt.",
+        "Cho salad đã trộn vào tủ lạnh khi ăn sẽ ngon hơn."
+    ]
+}

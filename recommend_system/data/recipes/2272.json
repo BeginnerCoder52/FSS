@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Tôm Xào Bông Cải",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú tươi: 250g",
+        "Tôm viên: 100g",
+        "Bông cải trắng: 100g",
+        "Bông cải xanh: 100g",
+        "Cà rốt: 100g",
+        "Hạt điều rang: 50g",
+        "Hành tây: 1 củ",
+        "Nước dừa tươi: 1/2 chén",
+        "Tỏi băm, muối, tiêu, bột năng",
+        "Hành lá, ngò rí, ớt, hành tím băm"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Bông cải ngâm nước có pha chút muối, cắt miếng vừa ăn. Cà rốt tỉa hoa, cắt lát.",
+        "Hành tây cắt múi cau. Ớt cắt lát. Hành là phần đầu trắng băm nhuyễn, phần lá cắt khúc.",
+        "Ngò rí rửa sạch, cắt nhỏ. Hạt điều giã nhỏ.",
+        "Chần rau củ qua nước sôi có thêm 1 ít bột năng, vớt ra ngâm vào nước lạnh cho nguội, để ráo. Tôm viên chần qua nước sôi, để ráo.",
+        "Tôm sú bóc vỏ, chừa đuôi, ướp với 1m hạt nêm Aji-ngon®, 1/3m tiêu, 1m đầu hành băm và 1m bột năng, để thấm."
+    ],
+    "cook": [
+        "Phi thơm 1m hành tím và tỏi băm, xào tôm sú với lửa lớn và nhanh tay quẩy đều, nêm 1M nước dừa cho tôm thấm đều gia vị, xào vừa chín, trút ra dĩa.",
+        "Phi thơm hành tỏi, cho bông cải và cà rốt vào xào, nêm 1,5m hạt nêm Aji-ngon®, 1/2m đường, 1/2m tiêu và 2M nước dừa tươi.",
+        "Rau củ vừa chín tới cho hành tây, tôm viên và tôm sú vào, thêm 1 ít nước bột năng vào cho sốt hơi sánh lại, tắt lửa, rác hành lá vào đảo đều."
+    ],
+    "usage": [
+        "Cho rau xào ra dĩa, rắc thêm tiêu, hạt điều và ngò rí lên trên, chấm kèm nước tương “Phú Sĩ” và ớt cắt lát."
+    ],
+    "tips": [
+        "Ngâm tôm trong nước đá khoảng 10 phút sẽ dễ lột vỏ hơn.",
+        "Ướp vào tôm 1 ít bột năng sẽ nhanh chín và giữ được độ ngọt của tôm."
+    ]
+}

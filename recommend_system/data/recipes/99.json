@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Pizza Hải Sản",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đế bánh pizza 24cm 1 cái",
+        "Phô mai Mozarella khối 200g",
+        "Tôm sú bóc vỏ 150g",
+        "Mực ống 150g",
+        "Thơm chín 100g",
+        "Ớt chuông xanh 100g",
+        "Hành tây 1/2 củ",
+        "Olive đen 10 trái",
+        "Húng quế tây 1 ít",
+        "Hành tím băm 1M",
+        "Xốt cà 3M",
+        "Hỗn hợp gia vị thơm 2m",
+        "Gia vị: dầu olive, bơ lạt, rượu vang trắng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Phô mai Mozarella bào sợi. Tôm sú cắt đôi. Mực ống cắt khoanh tròn.",
+        "Thơm chín cắt miếng mỏng. Ớt chuông xanh cắt sợi ngắn 3cm. Hành tây cắt lát mỏng. Olive đen cắt khoanh tròn. Húng quế tây lấy ngọn trang trí, lá cắt nhỏ."
+    ],
+    "cook": [
+        "Xào hải sản: Phi thơm hành tím băm với dầu olive, cho tôm mực vào xào săn, nêm 1m Hạt nêm Aji-ngon® (Heo), 1m gia vị thơm. Xào hải sản vừa chín thì thêm 1M rượu vang trắng, xóc đều rồi tắt lửa.",
+        "Nướng: Nướng đế bánh pizza chín tới trong lò rồi lấy ra. Cho 3M xốt cà phết đều lên đế bánh pizza, rải thơm, ớt chuông, hành tây và hải sản xào lên trên, rắc thêm 1 ít hỗn hợp gia vị thơm, quế tây cắt nhỏ, thêm olive đen và bào phô mai Mozarella phủ kín bánh. Mở lò nóng 250 độ chế độ nướng 2 lửa, cho pizza vào nướng khoảng 15-20 phút đến khi phô mai tan chảy đều. Lấy bánh ra khỏi lò."
+    ],
+    "usage": [
+        "Cho pizza lên dĩa, cắt pizza thành 8-10 phần tam giác, thêm Xốt Mayonnaise Aji-mayo® lên trên cùng, trang trí với ngọn quế tây."
+    ],
+    "tips": [
+        "Nướng đế pizza vừa chín tới để có độ giòn xốp và không bị khô.",
+        "Sử dụng phô mai Mozarella nguyên khối và bào sợi phô mai để giữ được hương vị đặc trưng giúp món pizza ngon hơn."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Gà Xào Hạnh Nhân",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Ức gà, hành lá, củ sắn",
+        "Nấm hương, cần tây, hạnh nhân",
+        "Cà rốt, su hào, đậu cove Nhật",
+        "Gừng, hành tây, hành tím, tỏi",
+        "Bột năng pha loãng, rượu trắng",
+        "Muối, tiêu, đường, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt gà cắt hạt lựu, ướp với hành tỏi băm, 1/2m tiêu, 1m nước tương “Phú Sĩ”, 1/2m hạt nêm Aji-ngon® để thấm.",
+        "Hạnh nhân cắt lát mỏng, rang vàng. Cà rốt, su hào, củ sắn, cần tây cắt hạt lựu.",
+        "Đậu cove Nhật cắt nhỏ. Nấm hương ngâm nở rồi luộc mềm với nước có ít rượu, 1/2m hạt nêm Aji-ngon®, hành lá và gừng đập dập.",
+        "Pha hỗn hợp gia vị để xào: trộn đều 1/2 chén nước với 2m hạt nêm Aji-ngon®, 1m muối và 1m đường."
+    ],
+    "cook": [
+        "Phi thơm tỏi, cho cà rốt, su hào, củ sắn, vào xào gần chín, thêm cần tây, nấm, và đậu cove vào, nêm 1m rượu trắng và 1M hỗn hợp gia vị vào rồi xào chín, trút ra dĩa.",
+        "Phi thơm hành tỏi, rồi cho thịt gà vào xào, thêm hỗn hợp nước gia vị còn lại vào, xào đến khi thịt gà chín thì thêm nước bột năng. Sau đó cho hạnh nhân và rau củ vào đảo đều."
+    ],
+    "usage": [
+        "Múc gà xào ra dĩa, trang trí ngò và rắc tí tiêu lên trên. Ăn kèm với cơm, chấm nước tương “Phú Sĩ” và ớt cắt lát."
+    ],
+    "tips": [
+        "Ngâm nấm hương bằng nước vo gạo cho nấm trắng, sạch và mất đi mùi gỗ.",
+        "Nếu không có hạnh nhân có thể thay thế bằng hạt điều hoặc đậu phộng."
+    ]
+}

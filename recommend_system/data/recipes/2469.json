@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Đùi Ếch Xé Phay",
+    "serving": "0 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đùi ếch to 300g",
+        "Thịt ba rọi 100g",
+        "Hành tây 1/2 củ",
+        "Ớt sừng cắt sợi 2 trái",
+        "Bắp chuối bào 100g",
+        "Khế chua 2 trái",
+        "Chuối chát 2 trái",
+        "Ớt hiểm băm, tỏi băm, sả băm",
+        "Dưa kiệu cắt sợi, lá chanh băm",
+        "Hành tím phi, mè trắng rang",
+        "Muối, đường, bột nghệ, nước mắm, dầu điều"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Khế chua: cắt sợi, ướp với 1m đường. Sau đó, vắt bớt nước, giữ lại phần nước khế.",
+        "Đùi ếch ướp với gia vị gồm: 1M hành tím phi có dầu, 1M sả băm, 1/3m bột nghệ, 1/2m hạt nêm Aji-ngon®, 1/2m đường, 1M nước khế, 1M dầu điều, 1m lá chanh băm, ớt băm. Nướng đùi ếch vừa chín, gỡ lấy thịt ếch.",
+        "Thịt heo luộc chín trong nước có muối, vớt ra để nguội, cắt sợi.",
+        "Khế cắt sợi, ướp với đường. Chuối chát bào mỏng, ngâm vào hỗn hợp nước pha giấm và đường, vắt ráo cho giảm độ chát của chuối. Hành tây cắt lát ngang củ, ngâm nước đá lạnh."
+    ],
+    "cook": [
+        "Pha nước trộn: 2M đường, 1M nước mắm, 1/2m muối, 3M Giấm gạo lên men LISA®, 1M tỏi ớt băm. Trộn ếch và thịt với 1M nước trộn cho thấm.",
+        "Trộn chung hành tây, bắp chuối bào, chuối chát, khế, dưa kiệu với nước trộn. Thêm thịt và ếch vào cùng với phân nửa gia vị gồm: mè trắng rang, lá chanh, hành phi, ớt sừng cắt sợi."
+    ],
+    "usage": [
+        "Trình bày ra đĩa, rắc phần rau thơm còn lại lên trên."
+    ],
+    "tips": [
+        "Nướng đùi ếch vừa chín để thịt không bị khô."
+    ]
+}

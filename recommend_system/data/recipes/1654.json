@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Thịt Bò Nướng Mè Kiểu Hàn Quốc",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt thăn bò 600g",
+        "Gốc hành lá 10 gốc",
+        "Gừng 30g",
+        "Tỏi tép 50g",
+        "Mè trắng rang 50g",
+        "Cà rốt baby 50g",
+        "Bí đỏ hạt đậu 300g",
+        "Đậu bắp 200g",
+        "ĂN KÈM: Lá mè, xà lách",
+        "Gia vị: đường, dầu ôliu, dầu ăn, dầu hào, dầu mè, tương ớt Hàn Quốc (Gojujang), ớt hiểm băm"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Cắt thịt bò thành hai lát dính bìa, miếng dầy 3mm, bản to, dần cho thịt mềm.",
+        "Mè trắng rang chừa lại 1M, phần còn lại xay nhuyễn. Cà rốt làm sạch vỏ, chừa phần cuống. Bí đỏ làm sạch vỏ, cắt miếng dầy 3mm. Đậu bắp cắt xéo. Tỏi tép lột vỏ."
+    ],
+    "cook": [
+        "Xay nhuyễn tỏi, đầu hành, gừng, 2/3 lượng mè rang, với 1M nước tương “Phú Sĩ”, 2m Hạt nêm Aji-ngon® Gà, 1.5M đường, 1M dầu hào, 1M tương ớt Hàn Quốc, 1 trái ớt hiểm băm. Ướp hỗn hợp này vào thịt bò cùng với 2M dầu ăn, 1m dầu mè. Để thấm 10 phút.",
+        "Ướp bí đỏ, cà rốt và đậu bắp với 3M dầu oliu, một ít tiêu và muối.",
+        "Cho ít dầu ăn vào chảo, áp chảo cà rốt, đậu bắp và bí. Tiếp tục áp chảo thịt bò vừa chín tới, rắc mè lên trên."
+    ],
+    "usage": [
+        "Bày thịt ra dĩa, rắc mè rang. Ăn kèm với củ quả áp chảo, lá mè, xà lách."
+    ],
+    "tips": [
+        "Cắt thịt bò thành hai lát dính bìa và dần để sau khi nướng thịt mềm.",
+        "Xay gia vị để nhanh thấm và thấm đều khi ướp, tiết kiệm thời gian.",
+        "Không nên ướp nhiều đường vào món nướng, áp chảo vì sẽ dễ bi cháy, khét.",
+        "Bí đỏ hạt đậu là loại bí quả dài, có ruột rất đặc, ít hạt, ăn dẻo và ngọt."
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Salad Bắp Tôm",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 150g",
+        "Bắp hạt (lon): 100g",
+        "Dưa leo: 1/2 trái",
+        "Bông cải xanh: 50g",
+        "Cà chua bi: 40g",
+        "Húng lủi: 10g",
+        "Xà lách romain: 2 cây",
+        "Nước cốt chanh: 1,5M",
+        "Sữa đặc có đường, tương cà"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Tôm sú luộc chín, bóc vỏ, chừa đuôi, lấy chỉ lưng.",
+        "Bắp hạt để ráo. Dưa leo chẻ đôi, bỏ hạt, cắt miếng dày 0.5cm. Bông cải xanh cắt miếng vừa ăn, luộc chín. Xà lách cắt miếng vừa ăn. Cà chua rửa sạch, để ráo."
+    ],
+    "cook": [
+        "Pha xốt: trộn đều 3M xốt Mayonnaise Aji-Mayo®, 1.5M sữa đặc, 1M tương cà, 1.5M nước cốt chanh.",
+        "Trộn tất cả các nguyên liệu với xốt, trang trí húng lủi và bắp hạt lên trên."
+    ],
+    "usage": [
+        "Dùng làm món khai vị."
+    ],
+    "tips": [
+        "Chọn xà lách còn cứng, khi trộn salad sẽ giữ được độ giòn.",
+        "Màu sắc và vị ngọt của bắp sẽ giúp món ăn ngon hơn."
+    ]
+}

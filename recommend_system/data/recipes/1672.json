@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Gỏi Trái Cóc",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cóc xanh: 600g",
+        "Tôm khô: 100g",
+        "Cần tàu: 50g",
+        "Ớt sừng: 2 trái",
+        "Ớt hiểm: 1 trái",
+        "Hành tây: 1/2 củ",
+        "Hành tỏi băm, hành phi, rau răm",
+        "Mè trắng rang",
+        "Đường, nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Cóc gọt vỏ, ngâm nước có pha muối, xắn sợi răng cưa, rửa sạch, để ráo cho bớt chua, ướp 2m đường trong 5 phút cho thấm.",
+        "Tôm khô rửa sạch, ngâm nước ấm khoảng 2 giờ cho mềm, giã dập, rang sơ với ít hành tím băm cho thơm.",
+        "Cần tàu lấy cọng, cắt khúc dài 5cm. Rau răm xắc nhuyễn. Ớt sừng cắt sợi. Ớt hiểm băm nhỏ. Hành tây cắt mỏng, ướp với đá cho bớt hăng."
+    ],
+    "cook": [
+        "Pha nước trộn gỏi: trộn đều 2M đường, 2M nước mắm, 1/2M Giấm gạo lên men LISA®, 1m bột ngọt AJI-NO-MOTO®, 2m tỏi ớt băm, cho cả 2 loại ớt sừng và ớt hiểm.",
+        "Rang tôm, không lâu quá vì tôm sẽ bị cứng, cho hành tím vào khử mùi tôm. Trút tôm ra, cho ít dầu vào chảo, phi thơm tỏi, cho tôm khô vào xào săn, thêm ít đường, bột ngọt AJI-NO-MOTO®, trút ra để nguội.",
+        "Trộn chung các nguyên liệu: cóc, tôm khô, cần tàu, hành tây, ớt sợi, ớt hiểm băm với nước trộn gỏi, thêm rau răm, hành phi, mè rang."
+    ],
+    "usage": [
+        "Cho gỏi trái cóc ra dĩa, dùng như món khai vị."
+    ],
+    "tips": [
+        "Cóc ngâm nước và ướp đường sẽ giúp cóc được giòn và giảm bớt độ chua.Nên ngâm tôm khô, sau đó rửa sạch cát rồi rang với hành tím sẽ thơm ngon hơn."
+    ]
+}

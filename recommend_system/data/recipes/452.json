@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Salad Nui Cá Hồi",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nui khô: 50g",
+        "Cá hồi xông khói: 60g",
+        "Hành tây: 30g",
+        "Thì là: 1 cây",
+        "Dưa leo: 25g",
+        "Muối, tiêu"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Nui luộc chín, vớt ra xả nước lạnh, để ráo.",
+        "Cá hồi xông khói cắt sợi mỏng 0,5cm. Hành tây cắt nhỏ, ướp với 1/2m muối, để 5 phút rồi xả sạch, vắt ráo.",
+        "Dưa leo rửa sạch, bỏ ruột, cắt sợi. Thì là rửa sạch, cắt nhỏ."
+    ],
+    "cook": [
+        "Cho nui, cá hồi xông khói, dưa leo, hành tây và thì là vào tô, trộn đều với 1m tiêu và 3M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "usage": [
+        "Cho salad nui ra dĩa, thêm xốt Mayonnaise Aji-Mayo® lên trên, trước khi ăn trộn đều."
+    ],
+    "tips": [
+        "Ngâm nui vào nước đá sau khi luộc để nui giòn và ngon hơn.",
+        "Dưa leo bỏ hạt để không bị chảy nước."
+    ]
+}

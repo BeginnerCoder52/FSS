@@ -1,0 +1,24 @@
+{
+    "recipe_name": "Bánh Đồng Xu Phô Mai",
+    "serving": "5 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Phô mai mozzarella : 100gr",
+        "Bơ lạt: 25 gr",
+        "Nước: 140gr"
+    ],
+    "spices": [
+        "Bột bánh rán pha sẵn vị truyền thống"
+    ],
+    "process": [
+        "Pha bột: trộn đều 1 gói bột bánh rán với 140gr nước.",
+        "Phô mai: cắt miếng vuông (5cmx5cmx0.8cm), mỗi miếng ~20gr."
+    ],
+    "cook": [
+        "Lớp bánh thứ 1: làm nóng chảo -> hạ nhiệt chảo bằng khăn ướt -> phết 1 lớp bơ mỏng lên chảo -> cho 1 vá bột vào chảo (dùng vá dàn mỏng bột, tạo hình tròn đường kính ~10cm), rán bánh khoảng 1 phút, bánh se mặt thì lấy ra dĩa.",
+        "Lớp bánh thứ 2: Tiếp tục hạ nhiệt chảo -> phết 1 lớp bơ mỏng lên chảo -> cho 2/3 vá bột vào chảo, đặt phô mai vào giữa mặt bánh, tiếp tục xếp lớp bánh thứ nhất đã rán trước đó lên trên -> đậy nắp chảo, rán trong vòng 1 phút, đến khi bánh chín."
+    ],
+    "usage": [],
+    "tips": []
+}

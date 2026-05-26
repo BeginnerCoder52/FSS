@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Cá Điêu Hồng Cuộn Dưa Kiệu",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Phi lê cá điêu hồng 300g",
+        "Bacon hun khói 30g",
+        "Dưa kiệu 50g",
+        "Gừng 50g",
+        "Que xiên 6 cây",
+        "Giò sống 100g",
+        "ĂN KÈM: Rau mầm",
+        "Gia vị: ớt hiểm, hương thảo tươi, tương ớt, dầu ăn"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Cá diêu hồng cắt dày 2-3mm, kích thước 4x5cm. lấy 8 miếng cá, phần còn lại băm nhỏ.",
+        "Chiên giòn bacon, cắt nhỏ. Cắt sợi dưa kiệu và gừng. Cắt nhỏ hương thảo. Ớt hiểm băm nhỏ.",
+        "Trộn giò sống với dưa kiệu băm, 1M hương thảo cắt nhỏ, 1 trái ớt hiểm băm, cá băm, bacon đã chiên cắt nhỏ."
+    ],
+    "cook": [
+        "Cá phi lê phết một lớp mỏng hỗn hợp giò sống, thêm miếng kiệu, gừng cuộn tròn lại. Lần lượt dùng 2 que xiên, xiên qua 2 cuộn cá sao cho hai phần rìa miếng cá áp vào nhau. Lăn qua bột Gia vị nêm sẵn Aji-Quick® Bột tẩm khô chiên giòn.",
+        "Pha xốt chấm: trộn đều 3M Xốt Mayonnaise Aji-mayo® và 1M tương ớt.",
+        "Đun nóng chảo dầu. Chiên cuốn cá ngập dầu đến chín vàng giòn."
+    ],
+    "usage": [
+        "Trình bày que cá ra dĩa, thêm xốt chấm. Ăn nóng kèm rau mầm."
+    ],
+    "tips": [
+        "Chiên cuốn cá vàng vừa là được, không chiên lâu cá sẽ bị khô.",
+        "Khi xiên cá vào que, áp 2 phần rìa miếng cá vào nhau để cuốn cá không bị bung ra."
+    ]
+}

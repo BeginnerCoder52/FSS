@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Phở Chiên Phồng Chua Ngọt",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh phở (còn nguyên miếng) : 200g",
+        "Cá hồi : 200g",
+        "Bông hẹ : 100g",
+        "Cà rốt : 50g",
+        "Nấm hương khô : 5 tai",
+        "Ngò rí : 2 cây",
+        "Ớt sừng : 1 trái",
+        "Ớt hiểm băm : 1m",
+        "Hành tây : 1/2 củ",
+        "Hành tỏi băm : 1M",
+        "Muối, tiêu, tương cà, tương ớt, dầu hào"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Cá hồi ướp với ít muối, tiêu, để thấm.",
+        "Bông hẹ cắt khúc 3cm. Cà rốt cắt sợi 3cm. Nấm hương ngâm mềm, cắt sợi.",
+        "Hành tây cắt múi cau. Ngò rí cắt nhỏ. Ớt sừng bỏ hạt, cắt sợi."
+    ],
+    "cook": [
+        "Bánh phở cắt miếng vuông 3cm, chiên ngập dầu đến khi vàng và phồng. Cá hồi chiên áp chảo vừa chín tới, xé miếng vừa ăn.",
+        "Pha xốt xào: 1/2M dầu hào, 1/2M tương ớt, 1M tương cà, 1/4m hạt nêm Aji-ngon®, 1/2m bột ngọt AJI-NO-MOTO® và 3M nước.",
+        "Phi thơm hành tỏi và ớt băm, cho nấm hương, cà rốt và bông hẹ vào đảo đều, thêm hỗn hợp xốt xào vào đảo đều, nếm vị vừa ăn, cho hành tây vào, tắt lửa, cho ngò rí và ớt sợi vào trộn đều."
+    ],
+    "usage": [
+        "Cho phở chiên phồng ra dĩa, cho cá hồi và rau củ xào lên trên, rắc ít tiêu lên, dùng nóng. Chấm kèm nước tương tùy khẩu vị."
+    ],
+    "tips": [
+        "Chập 3 miếng bánh phở lên nhau rồi cắt, khi chiên sẽ phồng đẹp hơn.Áp chảo cá hồi vừa chín tới để giữ độ ngọt và dinh dưỡng của cá."
+    ]
+}

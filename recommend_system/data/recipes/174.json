@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Cá Trê Chiên Giòn",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá trê 2 con",
+        "Khoai lang nhật 100g",
+        "Khoai tây 100g",
+        "Rau húng lủi 100g",
+        "Chanh vàng 1 trái",
+        "Gừng băm 1m",
+        "Gừng sợi 2M",
+        "Dầu ăn, ớt hiểm băm nhỏ"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Chanh vàng mài lấy 1m vỏ chanh, còn lại vắt lấy nước.",
+        "Cá trê khứa carô trên thân cá, ướp với 1m nước cốt chanh và 1 ít tiêu.",
+        "Khoai lang, khoai tây bào mỏng, rửa qua nước rồi để ráo. Rau húng lủi rửa sạch, lấy đọt non."
+    ],
+    "cook": [
+        "Chiên cá: đun nóng dầu ăn, tẩm khoai lang, khoai tây qua Aji-Quick® Bột tẩm khô chiên giòn, chiên vàng, vớt ra để ráo dầu.",
+        "Tiếp tục tẩm cá trê qua Aji-Quick® Bột tẩm khô chiên giòn, cho vào chiên chín vàng, vớt ra để ráo dầu.",
+        "Pha xốt chấm: 3M xốt mayonnaise Aji-mayo, 1M nước chanh, 1m ớt băm, 1m gừng băm, 1m vỏ chanh mài trộn đều."
+    ],
+    "usage": [],
+    "tips": []
+}

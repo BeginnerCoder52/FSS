@@ -1,0 +1,48 @@
+{
+    "recipe_name": "Súp Mộc Nhĩ Thịt Cua",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mộc nhĩ 50g",
+        "Nấm hải sản trắng 150g",
+        "Trứng gà 1 quả",
+        "Nước dùng 1 lít",
+        "Gừng băm nhỏ 10g (1m)",
+        "Thịt cua 200g",
+        "Bột năng 50g (3M)",
+        "Đậu hủ trắng 1/2 miếng",
+        "Thanh cua 4 cây",
+        "Trứng cút 4 trứng",
+        "Hạt nêm Aji-ngon Heo 12g (1M + 1/3m)",
+        "Dầu hào 2g (1/2M )",
+        "Dầu màu điều 2g (1/2 M)",
+        "Bột ngọt Ajinomoto 4g (1.5m)",
+        "Đường phèn 1/2m",
+        "RAU NÊM: Ngò rí",
+        "Bữa tối: Ăn kèm Vụn bánh mì chiên giòn, Tráng miệng: Bánh Rán Trái Cây",
+        "Gia vị: Dầu hào, dầu mè, đường phèn, muối, dầu màu điều, tiêu trắng"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Mộc nhĩ ggâm nở, thái chỉ.",
+        "Nấm hải sản trắng cắt khúc",
+        "Gừng băm nhỏ.",
+        "Đậu hũ trắng cắt khối vuông.",
+        "Thanh cua cắt xéo",
+        "Trứng cút luộc chín bóc vỏ."
+    ],
+    "cook": [
+        "Cho nước dùng vào nồi, lần lượt cho thanh cua, nấm hải sản trắng và mộc nhĩ vào, nêm thêm 1/2m đường phèn, 1.5m bột ngọt AJI-NO-MOTO®, 1M hạt nêm Aji-ngon Heo và 1/2 M dầu hào, sau đó đun sôi vớt bọt.",
+        "Hòa 3M bột năng cùng với 1/2 chén nước sau đó cho vào nồi súp khuấy liền tay, tiếp theo là cho trứng gà đã đánh tan vào sau cùng là đậu hủ và trứng cút.",
+        "Trình bày súp ra tô sau đó cho thịt cua đã xào lên cùng với ít ngò trang trí."
+    ],
+    "usage": [],
+    "tips": [
+        "Xào thịt cua cùng với gừng và dầu màu điều giúp thịt cua thơm ngon và có màu sắc hấp dẫn.",
+        "Trụng nấm giúp làm giảm mùi hăng của nấm."
+    ]
+}

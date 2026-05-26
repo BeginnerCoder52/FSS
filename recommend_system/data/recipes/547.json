@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Tàu Hủ Ky Cuộn Mực Chiên",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tàu hủ ky tươi : 20 miếng (cắt vuông cạnh 12cm)",
+        "Mực lá xay sơ : 200g",
+        "Giò sống : 50g",
+        "Khoai môn cắt sợi nhỏ : 50g",
+        "Khoai lang cắt sợi nhỏ : 50g",
+        "Cọng cần tàu cắt nhỏ : 2M",
+        "Tỏi phi : 2M",
+        "Ớt sừng băm : 2M",
+        "Bột năng : 2M",
+        "Dầu ăn, tiêu, xốt mè",
+        "Trang trí: Xà lách"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Làm nhân mực: Mực xay trộn chung với giò sống, khoai lang, khoai môn, cọng cần tàu, tỏi phi. Nêm 1m tiêu, 1/2m bột ngọt AJI-NO-MOTO®, 1m hạt nêm Aji-ngon®, để 15 phút cho thấm gia vị.",
+        "Pha bột năng: Cho 4M nước lọc vào bột năng khuấy đều cho tan bột, sau đó khuấy tiếp với lửa nhỏ đến khi bột năng chín trong và sệt lại, tắt lửa để nguội.",
+        "Đặt miếng tàu hủ ky lên dĩa, cho nhân mực vào chính giữa, gấp thành hình vuông cạnh 5cm.",
+        "Dùng bột năng dán mí cuộn tàu hủ ky để không bung ra.",
+        "Pha xốt: Trộn đều 3M xốt Mayonnaise Aji-Mayo®, 1M ớt băm và 2M xốt mè."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, cho bánh vào chiên đến khi bánh chín vàng vớt ra, để ráo dầu."
+    ],
+    "usage": [
+        "Xếp bánh ra dĩa, khi ăn chấm kèm xốt pha."
+    ],
+    "tips": [
+        "Cuốn 1 lớp tàu hũ ky để khi chiên tàu hũ ky giòn và không bị dai.",
+        "Dùng bột năng làm hồ dán để khi chiên bánh không bung ra."
+    ]
+}

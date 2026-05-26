@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Cá Cơm, Bắp Chiên Phô Mai",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bắp hạt 200g",
+        "Phô mai bột 50g",
+        "Trứng gà 2 cái",
+        "Cá cơm 100g",
+        "Hành lá, ngò rí",
+        "Dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Đun nước sôi, luộc sơ bắp, vớt ra để ráo.",
+        "Cá cơm ướp với 1/2m hạt nêm Aji-ngon®."
+    ],
+    "cook": [
+        "Đập trứng ra tô, đánh đều lên, nhúng bắp vào trứng, lọc qua rây sau đó tẩm bắp qua Aji-Quick® Bột Tẩm Khô Chiên Giòn. Rây lại bắp để loại bỏ bột dư.",
+        "Đun nóng dầu, thả bắp vào chiên ngập dầu. Vớt bắp ra, để ráo dầu.",
+        "Thực hiện tương tự với cá cơm."
+    ],
+    "usage": [],
+    "tips": [
+        "Cho bắp và cá qua rây để loại hết phần trứng dư, giúp bắp ráo, không bám nhiều bột và bị bết dính vào nhau.",
+        "Cá cơm và bắp vớt ra còn nóng rắc ngay phô mai vào giúp phô mai bám dính vào nguyên liệu."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Canh Gà Lá Me Non",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gà ta 1/2 con 500g",
+        "Lá me non 100g",
+        "Nước dùng 1,5 lít",
+        "Cà chua bi 50g",
+        "Ngó sen 100g",
+        "Sả cây 3 cây",
+        "RAU NÊM: Ngò gai, rau om, ớt sừng, ớt hiểm",
+        "Gia vị: Đường, nước mắm, dầu ăn, tỏi phi dầu."
+    ],
+    "spices": [
+        "Bột canh"
+    ],
+    "process": [
+        "Ướp gà với gia vị: 1M bột canh Ajinomoto, 1/2M đường trong 5′.",
+        "Cà chua bi cắt đôi, Ngó sen cắt khúc 5cm, Sả cây cắt khúc dài đập dập."
+    ],
+    "cook": [
+        "Bắc nồi cho 1M dầu ăn, cho sả, gà vào xào săn, cho 1.5 lít nước dùng nóng nấu chín gà.",
+        "Tiếp tục, vò sơ lá me non rồi cho lá me non vào nấu, rồi cho cà bi, ngó sen.",
+        "Tắt lửa nêm thêm 1/2M nước mắm."
+    ],
+    "usage": [
+        "Múc canh ra tô, Rắc rau nêm, ớt sừng cắt lát, tỏi phi. Món canh này dùng nóng với cơm và nước mắm ớt hiểm cắt lát."
+    ],
+    "tips": [
+        "Xào kỹ thịt gà trước để thịt gà thấm vị, thịt săn chắc sau khi nấu.",
+        "Lá me non để nguyên cành, rửa sạch rồi mới tuốt lấy lá."
+    ]
+}

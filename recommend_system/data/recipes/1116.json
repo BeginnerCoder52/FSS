@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Miến Xào Đậu Ngự",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Miến đậu xanh : 200g",
+        "Đậu ngự tươi : 100g (đã bóc vỏ, hấp chín)",
+        "Đậu hũ chiên cắt sợi : 1 miếng nhỏ",
+        "Chả lụa chay cắt sợi : 50g",
+        "Giá, bông hẹ, cà rốt cắt sợi : 50g",
+        "Nấm mèo cắt sợi : 3 tai",
+        "Nấm bào ngư : 100g",
+        "Boaro",
+        "Ớt sừng cắt sợi",
+        "Ngò rí",
+        "Gia vị: Tiêu, dầu hào chay, dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Miến cắt khúc, ngâm nước 10 phút cho mềm, trụng chín, ướp 1m hạt nêm Aji-ngon® từ nấm hương và hạt sen và 2m nước tương “Phú Sĩ”.",
+        "Boaro cắt lát. Nấm bào ngư xé vừa ăn. Bông hẹ cắt khúc 4cm."
+    ],
+    "cook": [
+        "Phi thơm boaro, lấy ra 1/2 để riêng, trộn với miến, tiếp tục cho tất cả các nguyên liệu vào xào thêm 1m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1m dầu hào xốc đều thật nhanh tay cho các rau củ chín tới, cho miến vào đảo nhanh tay. Tắt lửa."
+    ],
+    "usage": [
+        "Cho miến xào ra dĩa rắc thêm tiêu, trang trí ngò rí."
+    ],
+    "tips": [
+        "Trộn miến với gia vị trước khi xào để gia vị thấm đều vào miến.",
+        "Đậu ngự tươi rất mau chín nên khi hấp thấy đậu trong là được. Nếu dùng đậu ngự khô phải ngâm bằng nước ấm và chút soda rồi mới bóc vỏ."
+    ]
+}

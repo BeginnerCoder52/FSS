@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Lẩu Tôm Chua",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú (size 35/kg) : 500g",
+        "Nước cốt dừa : 1 chén",
+        "Nước dảo dừa : 1 chén",
+        "Cary dầu : 1 hũ",
+        "Đậu bắp : 5 trái",
+        "Hành tây : 1 củ",
+        "Cà chua : 1 trái",
+        "Rau nhút nhặt sạch : 200g",
+        "Sả cây : 2 cây",
+        "Nước dùng : 1 lít",
+        "Ớt sừng cắt lát : 1 trái",
+        "Hành tỏi băm",
+        "Đường, nước mắm, dầu điều"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Sả cây đập dập, cắt làm 4.",
+        "Tôm bóc vỏ, ướp với 1M hành tỏi băm, 1m hạt nêm Aji-ngon®, 2m đường, 1/2m bột ngọt AJI-NO-MOTO®, 2m cà-ri dầu."
+    ],
+    "cook": [
+        "Đun nóng dầu điều, phi thơm sả cây và hành tỏi băm, cho tôm vào xào săn. Cho tiếp nước dùng và nước dão dừa vào đun sôi, rồi nêm 6M Giấm gạo lên men LISA®, 1M hạt nêm Aji-ngon®, 1m đường và ớt cắt lát, cuối cùng cho nước cốt dừa vào đảo đều, tắt lửa."
+    ],
+    "usage": [
+        "Múc lẩu ra. Bày đậu bắp, hành tây, cà chua, rau nhút ra dĩa. Dùng chung với bún, nước mắm và ớt cắt lát."
+    ],
+    "tips": [
+        "Cho tôm vào nấu trước để nước lẩu có vị ngọt từ tôm",
+        "Cho nước cốt dừa vào sau cùng để giữ hương thơm của nước cốt dừa."
+    ]
+}

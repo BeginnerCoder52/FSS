@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Bê Thấu",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bê thui: 300g",
+        "Khế chua: 2 trái",
+        "Chuối chát: 2 trái",
+        "Kiệu chua: 100g",
+        "Ớt sừng: 1 trái",
+        "Rau răm, mè trắng rang",
+        "Tỏi ớt băm 1M, nước cốt chanh 1M",
+        "Muối, đường, bánh tráng nướng",
+        "Nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Bê thui cắt miếng 2x5cm dày 2mm, kiệu chua cắt mỏng 2mm.",
+        "Chuối chát bào bỏ vỏ xanh cắt lát xéo 1/2 cạnh 5cm dày 2 mm ngâm nước pha cốt chanh cho trắng xong vớt ra để ráo. Khế cũng cắt lát xéo bỏ hạt cạnh 2x5cm dày 2mm dùng khăn sạch vắt nhẹ bớt nước chua. Kiệu cắt miếng dày 2mm.",
+        "Phi thơm tỏi vào dầu cho vàng và cho bê vào, nêm 1m Bột ngọt AJI-NO-MOTO®, 1/2m muối. Trộn đều.",
+        "Pha nước trộn : hòa tan 2M đường, 3M Giấm gạo lên men LISA®, 2m muối, 1m Bột ngọt AJI-NO-MOTO®, 1M tỏi ớt băm, 1m nước mắm, 1M nước cốt chanh."
+    ],
+    "cook": [
+        "Trộn đều và nhẹ tay tất cả các nguyên liệu với nước trộn và rau răm cắt nhỏ và 1M nước cốt chanh, 1m nước mắm."
+    ],
+    "usage": [
+        "Cho bê thấu ra đĩa, rắc mè rang lên trên trang trí với khế cắt lát và ớt sợi ăn kèm với bánh tráng nướng."
+    ],
+    "tips": [
+        "Vắt bớt nước chua của khế để món gỏi có vị chua ngọt hài hòa.",
+        "Trộn bê với tỏi phi khi còn nóng giúp bê thấm gia vị và không bị ra nước."
+    ]
+}

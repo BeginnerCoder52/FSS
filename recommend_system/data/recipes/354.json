@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Cá Rô Kho Tộ",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá rô: 400g",
+        "Thịt ba chỉ: 100g",
+        "Đường, muối, tiêu",
+        "Nước mắm",
+        "Nước màu",
+        "Hành lá, ớt hiểm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Cá làm sạch, cắt cá khoảng giữa bụng từ trên xuống dưới khoảng 2/3. Thịt ba chỉ cắt miếng mỏng vừa ăn.",
+        "Đầu hành đập dập, băm nhuyễn, ớp hiểm đập dập.",
+        "Ướp cá và thịt với 1M đường, 2M nước mắm, 1m nước màu, 1M đầu hành lá băm, 1m muối, 1m bột ngọt AJI-NO-MOTO® và 1 trái ớt, để thấm 30 phút."
+    ],
+    "cook": [
+        "Cho cá vào nồi đất, kho đến khi thịt cá săn lại thì đảo cá nhẹ tay, thêm ít nước nóng rồi kho nhỏ lửa cho cá chín và thấm gia vị. Khi thịt cá săn, nước sánh lại thì tắt lửa, rắc thêm tiêu và hành lá."
+    ],
+    "usage": [
+        "Dùng với cơm trắng.",
+        "Món cá kho ăn chung với dưa giá, gồm cà rốt, giá, hẹ pha với đường, giấm gạo lên men LISA."
+    ],
+    "tips": [
+        "Cách lựa cá rô: lựa cá còn sống thì khi kho sẽ ngọt thịt.",
+        "Kho cá rô có trứng thì nên cắt dọc theo bụng cá 1 đoạn để giúp trứng cá chín đều.",
+        "Kho cá với lửa cao cho cá săn, sau đó trở bề, rồi để nhỏ lửa từ 20 đến 30 phút cho cá thấm gia vị."
+    ]
+}

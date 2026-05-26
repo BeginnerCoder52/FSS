@@ -1,0 +1,42 @@
+{
+    "recipe_name": "Chả Giò Chay",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nấm rơm, chả lụa chay : 30g",
+        "Đậu xanh, khoai lang : 30g",
+        "Nấm mèo, nấm hương : 5g",
+        "Củ sắn : 30g",
+        "Giá : 20g",
+        "Bún tàu : 5g",
+        "Tàu hũ ky : 1/2 lá",
+        "Boaro : 1 cọng",
+        "Bánh tráng gạo : 1 gói",
+        "Đậu hũ trắng : 3 miếng",
+        "Bột gạo, muối, tiêu, đường, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Đậu hũ trụng qua nước sôi, vắt ráo, quết dẻo. Nấm rơm, nấm hương, nấm mèo ngâm nước gạo, rửa sạch, cắt sợi. Đậu xanh ngâm nở, để ráo. Bún tàu, tàu hũ ky ngâm mềm ,cắt sợi.",
+        "Giá rửa sạch. Khoai lang, củ sắn cắt sợi, vắt bớt nước. Chả lụa cắt hạt lựu. Củ kiệu cắt sợi. Ớt băm nhuyễn. Boaro cắt nhuyễn, phi vàng. Ngò rí cắt nhỏ. Pha 1M bột gạo với ½ chén nước."
+    ],
+    "cook": [
+        "Trộn nhân: trộn tất cả các nguyên liệu đã sơ chế, nêm 2m đường, 2m Bột ngọt AJI-NO-MOTO®,1m muối, 1/2m tiêu và 1M ngò rí.",
+        "Cuốn chả giò: Thoa ướt bánh tráng bằng nước bột gạo, cho 1/2M nhân lên, cuốn lại.",
+        "Đun nóng dầu, cho chả giò vào chiên vàng, vớt ra để ráo.",
+        "Pha nước chấm : trộn đều 3M nước tương Phú Sĩ với 1M đường, 3M nước, 1M giấm gạo lên men LISA®, đồ chua, củ kiệu và ớt băm."
+    ],
+    "usage": [
+        "Xếp chả giò ra dĩa kèm rau thơm, xà lách, ớt băm, khi ăn chấm nước tương pha."
+    ],
+    "tips": [
+        "Nên vắt khô nước đậu hũ để nhân chả giò được ráo và ngon hơn.",
+        "Thoa bánh tráng bằng nước bột gạo sẽ làm cho chả giò chiên giòn và ngon hơn.",
+        "Chiên chả giò 2 lần để giữ được độ giòn lâu hơn."
+    ]
+}

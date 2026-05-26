@@ -1,0 +1,30 @@
+{
+    "recipe_name": "Bánh Cốm Patê Chả Lụa",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Patê: 100g",
+        "Chả lụa: 80g",
+        "Cốm xanh: 100g",
+        "Sandwich: 8 miếng",
+        "Trứng gà: 2 quả",
+        "Tương ớt",
+        "Xốt Mayonnaise LISA"
+    ],
+    "spices": [],
+    "process": [
+        "Chả lụa cắt lát mỏng. Trứng gà đánh tan.",
+        "Phết xốt Mayonnaise LISA lên miếng sandwich thứ nhất, cho chả lụa lên trên, phết patê lên miếng thứ 2, kẹp 2 miếng sandwich lại với nhau, cắt bỏ rìa xung quanh rồi cắt làm 8 phần nhỏ."
+    ],
+    "cook": [
+        "Nhúng miếng sandwich qua trứng rối tẩm qua cốm xanh. Đun nóng dầu, cho miếng sandwich vào chiên ngập dầu với lửa lớn đến khi chín vàng đều, vớt ra để ráo dầu.",
+        "Trộn xốt: trộn đều 3M xốt Mayonnaise LISA với 1m tương ớt."
+    ],
+    "usage": [
+        "Xếp bánh cốm pa tê chả lụa ra dĩa, khi ăn chấm với xốt Mayonnaise LISA trộn tương ớt."
+    ],
+    "tips": [
+        "Nên chiên ngập dầu với lửa lớn để sandwich không bị rút dầu. Có thể thay nhân chả lụa bằng jambon hay 1 loại thịt nguội nào khác tùy ý. Khi chiên nhấn bánh mì ngập dầu để cốm nở bung."
+    ]
+}

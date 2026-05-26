@@ -1,0 +1,44 @@
+{
+    "recipe_name": "Bánh Xếp",
+    "serving": "4 người",
+    "times": "60 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Vỏ bánh :",
+        "Bột mì 170g",
+        "Mỡ nước 5M",
+        "Bột năng 6M",
+        "Trứng gà 1 quả",
+        "Nước 25g",
+        "Nhân bánh :",
+        "Thịt ba rọi xay 100g",
+        "Nấm hương ngâm nở cắt nhỏ 2M",
+        "Củ sắn cắt hạt lựu nhỏ 2M",
+        "Cà rốt cắt hạt lựu nhỏ 2M",
+        "Hành tây cắt hạt lựu nhỏ 2M",
+        "Hành tím băm 2M",
+        "Trứng cút luộc chín, bóc vỏ, cắt đôi 5 quả",
+        "Muối, đường, nước mắm, dầu hào",
+        "Tiêu xanh đập dập, dầu mè, tương ớt, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Đánh đều 1 quả trứng gà với 25g nước và 2M mỡ nước, 1/2m hạt nêm Aji-ngon® và 1/2m đường, sau đó trộn đều với 120g bột mì, nhồi bột cho mịn, để bột nghỉ 30 phút.",
+        "Trộn đều 3M mỡ nước với 6M bột năng, cho vào ngăn mát tủ lạnh khoảng 5 phút cho bột sệt lại.",
+        "Dùng 50g bột mì còn lại làm bột áo. Cán bột mì đã nghỉ mỏng đều dày 2 ly, dùng cọ nhỏ phết hỗn hợp mỡ bột đã giữ lạnh lên trên mặt sao cho đều, cuộn tròn vỏ bánh, đặt ngược chiều lại, cán mỏng đều thêm lần nữa dày còn 3 ly, dùng khuôn tròn có đường kính 10cm cắt bột thành 10 vỏ bánh hình tròn."
+    ],
+    "cook": [
+        "Ướp thịt xay: 1/2m đường, 1/2m bột ngọt AJI-NO-MOTO®, 1m nước mắm, 1m dầu mè, 1m dầu hào, 1m bột năng, trộn đều.",
+        "Xào nhân: phi hành tím băm với 1M dầu ăn, xào thơm nấm hương, cho củ sắn, cà rốt, hành tây và 1m tiêu xanh đập dập vào xào, tắt lửa, cho thịt xay vào trộn đều.",
+        "Tạo hình bánh: Chia nhân làm 10 phần, cho trứng cút vào giữa, bọc lại, vo thành hình ovan. Đặt 1 viên nhân vào giữa vỏ bánh, gấp mí, dùng nước dán vào mép bánh và xếp viền cho đẹp.",
+        "Chiên bánh: Đun nóng dầu ăn, cho bánh vào chiên ngập dầu, khi bánh vàng, giòn, vớt ra cho ráo dầu."
+    ],
+    "usage": [],
+    "tips": [
+        "Phết nước ở rìa bánh để khi chiên không bị bung.",
+        "Cho bột năng vào thịt để tạo độ kết dính cho nhân và dễ tạo hình."
+    ]
+}

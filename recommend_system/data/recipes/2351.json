@@ -1,0 +1,43 @@
+{
+    "recipe_name": "Cuốn Chả Tôm",
+    "serving": "0 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm bóc vỏ : 200g",
+        "Tôm khô : 40g",
+        "Đậu que : 4 cọng",
+        "Bắp Mỹ : 40g",
+        "Bánh hỏi : 300g",
+        "Bánh tráng vuông : 1 gói",
+        "Tỏi phi : 1M",
+        "Hành tím băm : 1M",
+        "Ngó sen ngâm chua : 3 cọng",
+        "Nước cốt chanh : 1M",
+        "Ớt ngâm chua : 3 trái",
+        "Rau cuốn: Rau cải con : 100g",
+        "Cải mầm : 50g",
+        "Cà rốt 1 củ, dưa leo 1 trái, húng lủi",
+        "Đường, nước mắm, dầu ăn",
+        "Dụng cụ: mành tre để cuốn, giấy thấm dầu"
+    ],
+    "spices": [
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Tôm khô ngâm mềm, giã nhuyễn, cho vào chảo với 1M hành tím băm, rang khô. Tôm đất bóc vỏ, cắt hạt lựu. Đậu que cắt mỏng 2 li, bắp Mỹ bào mỏng.",
+        "Rau cuốn rửa sạch, để ráo. Cà rốt bào lát mỏng, 1/2 cắt sợi, dưa leo cắt lát xéo mỏng. Ớt ngâm chua băm nhỏ, ngó sen chẻ sợi nhỏ."
+    ],
+    "cook": [
+        "Pha Aji-Quick® Bột Chiên Giòn Hải Sản theo bao bì, thêm tôm cắt hạt lựu, tôm khô, đậu que, bắp mỹ, húng lủi và tỏi phi vào trộn đều. Đun nóng dầu, múc hỗn hộp rau củ và bột chiên giòn cho vào chiên thành từng bánh tròn nhỏ, chiên chín vàng, vớt ra để ráo dầu, cắt lát dày 0.5cm.",
+        "Pha nước mắm chấm: 2M đường, 2M nước mắm, 2M nước lọc, 1M nước cốt chanh, cho ớt chua, ngó sen chua và cà rốt cắt sợi vào.",
+        "Trải vỉ cuốn lên thớt, cho bánh tráng lên, dùng nước lọc phết nhẹ cho bánh hơi mềm, xếp rau cải con, rau mầm, húng lủi, bánh hỏi, xếp cà rốt, dưa leo và bánh tôm vào giữa, lật vỉ cuốn cuốn tròn lại."
+    ],
+    "usage": [
+        "Cắt cuốn bánh thành từng miếng dài 2-3cm, xếp lên dĩa, chấm kèm nước mắm pha."
+    ],
+    "tips": [
+        "Rang tôm khô với hành tím trước để tôm thơm ngon hơn.",
+        "Nhúng vá vào dầu nóng trước."
+    ]
+}

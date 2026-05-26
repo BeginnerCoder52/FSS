@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Sushi",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm tươi: 100g",
+        "Cơm nấu từ gạo dẻo của Nhật: 3 chén",
+        "Cá ngừ ngâm dầu: 1 hộp",
+        "Dưa leo: 1 trái",
+        "Xà lách: 1 cây",
+        "Mè trắng rang: 1 ít",
+        "Cà rốt: 1 củ",
+        "Lá rong biển, đường, muối"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Dưa leo rửa sạch, cắt que dài. Cà rốt bào vỏ, cắt que dài, cạnh 1cm, luộc chín.",
+        "Cá ngừ gạn bỏ dầu, dằm nhỏ, trộn đều với 1/2m tiêu, 1M xốt Mayonnaise Aji-mayo®.",
+        "Tôm luộc chín, bóc hết vỏ. Cắt hạt lựu, trộn đều với 1/2m tiêu và 1M xốt Mayonnaise Aji-mayo®."
+    ],
+    "cook": [
+        "Pha nước giấm: nấu tan 3M Giấm gạo lên men LISA®, 1M đường, 1/2m muối, để nguội.",
+        "Cho cơm đã nấu chín ra khay, trộn đều cơm với nước giấm đã pha.",
+        "Sushi nhân cá ngừ: đặt miếng rong biển lên vỉ cuốn, xếp đều cơm lên 3/4 lá rong biển, rắc mè lên cơm rồi xếp xà lách, dưa leo, cà rốt, cho cá ngừ lên trên rồi cuốn lại.",
+        "Sushi nhân tôm: đặt miếng rong biển lên vỉ cuốn, xếp đều cơm lên 3/4 lá rong biển, rắc mè lên cơm rồi xếp xà lách, dưa leo, tôm lên trên rồi cuốn tròn lại."
+    ],
+    "usage": [
+        "Cắt sushi thành từng miếng dày khoảng 1,5cm, xếp ra dĩa. Khi ăn chấm kèm nước tương Phú Sĩ."
+    ],
+    "tips": [
+        "Có thể thay gạo Nhật bằng gạo dẻo, trước khi nấu ngâm gạo dẻo 30 phút để cơm dẻo mềm hơn.",
+        "Có thể làm sushi nhân cua hay nhân cá ngừ đều rất ngon.",
+        "Khi trải cơm lên lá rong biển nên dùng tay tán cho cơm trải đều và nén chặt"
+    ]
+}

@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Bún Cua Lưỡi Heo",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lưỡi heo 500g",
+        "Cua xay 500g",
+        "Cà chua 2 trái",
+        "Đậu hũ 2 miếng",
+        "Huyết heo 100g",
+        "Hành lá, ngò gai",
+        "Hành tím củ, ớt xay",
+        "Tóp mỡ, mỡ nước, hành phi",
+        "Muối, đường, nước mắm, mắm tôm, dầu điều, dầu ăn",
+        "Ăn kèm: bún tươi, rau sống, kinh giới, hoa chuối, tía tô, rau muống bào"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Lưỡi heo luộc chín, cắt lát mỏng.",
+        "Lọc cua xay với 1 lít nước.",
+        "Cà chua cắt múi cau. Đậu hũ cắt miếng vuông, chiên vàng. Huyết cắt miếng vừa ăn. Hành tím củ cắt lát. Hành lá, ngò gai cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm hành tím với 2M dầu điều, cho cà chua vào xào mềm, tắt lửa.",
+        "Đun sôi nước cua với lửa nhỏ, đến khi thịt cua nổi lên mặt, vớt ra để riêng. Cho tiếp cà chua đã xào, đậu hũ chiên và huyết vào, nêm 2m bột ngọt AJI-NO-MOTO®, 1m muối, 1m hạt nêm Aji-ngon®, 2m đường, 1M nước mắm và 1m mắm tôm vào khuấy đều, nếm vị vừa ăn."
+    ],
+    "usage": [],
+    "tips": []
+}

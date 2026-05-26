@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Gà Nướng Lá Húng Lủi",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gà ta 1 con (1,4 kg)",
+        "Hành tỏi băm 2M",
+        "Gừng băm nhuyễn 2M",
+        "Cọng cần tàu cắt nhuyễn 2M",
+        "Cọng ngò cắt nhuyễn 2M",
+        "Ớt bột 2M",
+        "Màu gạch tôm 1/4m",
+        "Nước tắc 1M",
+        "Lá húng lủi cắt nhuyễn 1 chén súp",
+        "Dầu màu điều, mật ong, sữa đặc, bột cumin"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Gà cắt bỏ đầu, chân, cắt đôi phần ức gà, phần lưng giữ nguyên, dùng nĩa xăm đều lên phần ức và đùi gà.",
+        "Ướp gà: cho vào tô hành tím băm, tỏi băm, 2M gừng băm, 2M cọng cần tàu cắt nhuyễn, 1M cọng ngò rí cắt nhuyễn, 1/4m màu gạch tôm với 2m bột cumin, 1M ớt bột , 1M hạt nêm Aji-ngon®, 2M mật ong, 2M nước tương “Phú Sĩ”, 2M màu dầu điều, 2M xốt Mayonnaise Aji-Mayo®, rắc lá húng lủi cắt nhuyễn lên gà (chừa lại 1m để pha xốt), cho gà vào ướp 20 phút cho thấm gia vị.",
+        "Pha xốt chấm: 1M lá húng lủi cắt nhuyễn, 1M cọng ngò rí cắt nhuyễn, 1M nước tắc, 1m ớt bột, 1M sữa đặc, 3M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "cook": [
+        "Dùng giấy bạc lót vào khay nướng, cho gà vào khay, đưa vào lò nướng nhiệt độ 185 độ C, thời gian 35 phút."
+    ],
+    "usage": [
+        "Dùng kéo cắt gà ra thành miếng vừa ăn, xếp ra dĩa, chấm kèm với xốt chấm như ở trên."
+    ],
+    "tips": [
+        "Dùng nĩa xăm đều lên phần đùi và ức gà để gia vị thấm đều vào thịt gà.",
+        "Cắt đôi phần ức gà khi nướng giúp gà mau chín và không bị khô."
+    ]
+}

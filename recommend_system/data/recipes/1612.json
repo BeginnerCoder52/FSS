@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Bánh Ruốc Chiên Giòn",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Ruốc tươi : 100g",
+        "Bắp hạt đông lạnh : 50g",
+        "Đồ chua : 100g",
+        "Hẹ lá : 20g",
+        "Tỏi băm, ớt băm",
+        "Tiêu, đường",
+        "Nước mắm, dầu ăn, nước cốt chanh"
+    ],
+    "spices": [
+        "Aji-Quick® Bột Chiên Giòn"
+    ],
+    "process": [
+        "Ruốc rửa sạch để ráo, hẹ lá cắt khúc 0,5cm.",
+        "Pha bột Aji-Quick® Bột Chiên Giòn Hải Sản với nước theo tỉ lệ hướng dẫn sau đó cho ruốc, hẹ lá, bắp hạt, 1 ít tiêu vào trộn đều."
+    ],
+    "cook": [
+        "Đun nóng dầu, nhúng vá vào trong dầu cho nóng, đổ bột lên vá và nhúng vá bột vào dầu chiên vàng, vớt ra để ráo dầu.",
+        "Pha nước mắm:  khuấy đều 1M đường, 1M nước mắm, 2/3M nước cốt chanh, 3M nước lọc, 1/2M tỏi băm, 1/3M ớt băm, cho thêm đồ chua."
+    ],
+    "usage": [
+        "Cho bánh ruốc ra đĩa ăn kèm với đồ chua, rau sống và nước mắm chua ngọt."
+    ],
+    "tips": [
+        "Nên chọn ruốc tươi, trong, bóng, thịt chắc là ruốc ngon.",
+        "Có thể cho thêm khoai lang hoặc khoai môn xắt sợi vào bột cũng rất ngon.",
+        "Không nên dùng bắp nếp."
+    ]
+}

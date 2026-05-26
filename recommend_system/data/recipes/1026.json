@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Gỏi Rau Mầm Tôm",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Rau mầm : 200 g",
+        "Thịt đùi heo : 100 g",
+        "Tôm tươi : 100 g",
+        "Rau răm : 50 g",
+        "Bánh phồng tôm : 1 gói",
+        "3 tép tỏi, 2 trái ớt",
+        "Đường cát trắng : 4,5M",
+        "Nước mắm ngon : 4M",
+        "Hành tím : 1 củ",
+        "Dầu ăn"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Rau mầm rửa sạch, để ráo nước. Rau răm rửa sạch, cắt nhỏ.",
+        "Tỏi, ớt băm nhuyễn.",
+        "Tôm tươi rửa sạch, luộc chín, bóc bỏ đầu và vỏ.",
+        "Bánh phồng tôm chiên vàng."
+    ],
+    "cook": [
+        "Thịt luộc trong nước có thêm 1 ít muối, hành tím, hạt nêm Aji-ngon®. Thịt chín cắt lát mỏng vừa ăn.",
+        "Pha nước trộn gỏi: cho 5M Giấm gạo lên men LISA® và 4,5M đường vào tô, sau đó thêm 4M nước mắm, tỏi, ớt.",
+        "Cho rau mầm, tôm, thịt, rau răm vào tô, cho nước mắm đã pha vào trộn đều."
+    ],
+    "usage": [
+        "Xếp gỏi rau mầm ra đĩa, ăn kèm cùng bánh phồng tôm."
+    ],
+    "tips": [
+        "Luộc thịt từ nước lạnh thịt sẽ trắng, ngâm vào nước lạnh sau khi luộc thịt sẽ giòn.",
+        "Luộc tôm từ nước sôi giúp tôm chín nhanh, tôm săn và giữ nước ngọt bên trong."
+    ]
+}

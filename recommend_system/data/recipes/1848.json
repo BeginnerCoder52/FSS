@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Gỏi Tôm Rau Câu",
+    "serving": "0 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú 300g (đã rút chỉ lưng)",
+        "Rau câu sợi ngâm nở 100g",
+        "Hành tây 1/2 củ",
+        "Cà rốt cắt răng cưa 1/2 củ",
+        "Dưa leo cắt răng cưa 1 quả",
+        "Cần tàu (bỏ bớt lá) 1 cây",
+        "Ớt sừng cắt sợi 1 quả",
+        "Lá húng lủi 10g",
+        "Củ kiệu chua cắt sợi 20g",
+        "Mè trắng rang (giã sơ) 2M",
+        "Nước cốt chanh 1M",
+        "Ớt băm 2M",
+        "Đường, nước mắm"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Luộc chín tôm với nước sôi pha chút giấm, đường, làm lạnh, bóc vỏ, bỏ đầu chừa đuôi.",
+        "Hành tây cắt ngang dày 2mm, cần tàu cắt xéo 5cm. Rau câu ngâm với ít cốt chanh cho nở xả 2 lần nước, để thật ráo, cắt ngắn 7cm. Húng lủi cắt nhỏ.",
+        "Ướp hành tây, cà rốt, dưa leo với 1M đường để 15 phút, vắt ráo nước."
+    ],
+    "cook": [
+        "Nước trộn gỏi: Khuấy đều 3M nước mắm, 5M đường, 2M Giấm gạo lên men LISA®, 1M nước cốt chanh, cho 1M ớt sừng băm và 2M dưa kiệu cắt nhỏ vào.",
+        "Trộn gỏi: Trộn tất cả nguyên liệu với 1/2 nước trộn gỏi để 10′ cho thấm."
+    ],
+    "usage": [],
+    "tips": [
+        "Dùng rau câu sợi ngâm với nước pha cốt chanh và xả nhiều lần để rau câu sạch và không còn mùi tanh.",
+        "Vắt rau câu thật ráo và cho nước trộn gỏi sau cùng để rau câu dễ thấm vị."
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Salad Ngũ Sắc",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đậu cô ve Nhật : 100g",
+        "Khoai tây: 1 củ",
+        "Cà chua: 2 quả",
+        "Xà lách carol : 50g",
+        "Cá ngừ ngâm dầu : 1 hộp",
+        "Trứng : 1 quả",
+        "Hành tím : 3 củ",
+        "Ngò rí : 1 cây",
+        "Muối, đường"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Đậu cô ve tước bỏ xơ, trụng qua nước sôi, vớt ra ngâm vào nước lạnh, đập dập, cắt khúc xéo. Khoai tây rửa sạch, luộc chín, bóc vỏ, cắt lát dày 0,5cm.",
+        "Xà lách rửa sạch, cắt khúc 3cm. Cà chua bỏ hạt cắt khoanh. Trứng gà luộc chín, bóc vỏ, cắt lát. Ngò rí rửa sạch, để ráo. Hành tím cắt lát."
+    ],
+    "cook": [
+        "Làm nước xốt trộn salad: cho 1/2 lượng cá ngừ và 1/2 nước dầu ngâm cá , thêm 1/2M Giấm gạo lên men LISA®, 1/2m muối, 1/2m đường, 1M nước và 2M xốt Mayonnaise Aji-mayo®, cho vào máy xay sinh tố, xay nhuyễn.",
+        "Trộn salad: cho xà lách, khoai tây, đậu cô ve, trứng và cà chua vào trộn đều với nước xốt."
+    ],
+    "usage": [
+        "Xếp salad trộn ra dĩa, cho phần cá ngừ còn lại và trứng cắt lát lên trên, trang trí với ngò rí và hành tím cắt lát."
+    ],
+    "tips": [
+        "Nên luộc đậu trước khi cắt để giữ được nhiều vitamin.",
+        "Nếu không dùng máy xay thì dùng cây đánh trứng để tán nhuyễn xốt."
+    ]
+}

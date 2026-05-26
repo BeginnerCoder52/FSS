@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Bánh Qui Mè Đen",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Giò sống chay 150g",
+        "Bột nếp lọc 250g",
+        "Nấm mèo trắng 5 tai",
+        "Củ năng 50g",
+        "Cà rốt 30g",
+        "Nấm hương 3 tai",
+        "Mè đen rang 2M",
+        "Boa rô phi 2M",
+        "Cọng ngò rí 1M",
+        "Lá chuối",
+        "ĂN KÈM: đậu phộng rang, nước nắm chay, đồ chua",
+        "Gia vị: Dầu ăn, đường, tiêu sọ bể, dầu mè, dầu hẹ, nước mắm chay"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Nấm mèo, nấm hương ngâm nở, cắt nhỏ. Củ năng, cà rốt cắt hạt lựu.",
+        "Boa rô phi băm nhỏ. Cọng ngò cắt nhuyễn. Lá chuối lau sạch, cắt miếng tròn."
+    ],
+    "cook": [
+        "Làm nhân: Xào boaro với nấm mèo, nấm hương, củ năng, cà rốt, nêm 1m tiêu sọ bể, 1m đường, 1/2M Hạt nêm Aji-ngon® (Nấm hương & Hạt sen), 1/2m dầu mè, 1M cọng ngò, sau đó trộn với giò sống chay. Chia nhân thành các viên cỡ trái chanh nhỏ.",
+        "Nhồi bột: Nhồi bột với 100ml nước nguội trước, 130ml nước sôi sau, thêm 1/2m Hạt nêm Aji-ngon® (Nấm hương & Hạt sen), 2M dầu ăn và mè đen, nhồi bột cho dẻo, để 5 phút cho bột nở rồi chia bột thành viên bằng nhân.",
+        "Tạo hình bánh qui: Nắn bột thành miếng mỏng 5 ly, rìa mỏng cho nhân vào túm lại vo tròn, thoa dầu trên tay và lá chuối, cho viên bột đã bọc nhân vào khuôn, ấn khuôn để tạo hình sắc nét. Đặt bánh qui lên miếng lá chuối.",
+        "Hấp: Đặt bánh vào nồi hấp 10 phút. Sau đó lấy ra, phết dầu hẹ và rắc thêm đậu phộng rang.",
+        "Pha nước nắm chay: pha nước chấm theo tỉ lệ 1 đường : 1 mắm : 2 nước. Sau đó thêm đồ chua vào."
+    ],
+    "usage": [],
+    "tips": [
+        "Rang mè đen trước giúp bột bánh thơm ngon.",
+        "Trong khi hấp thỉnh thoảng xả hơi nước để giữ định hình cho bánh.",
+        "Làm chín các thành phần nhân trước rồi mới tạo hình giúp rút ngắn thời gian hấp bánh."
+    ]
+}

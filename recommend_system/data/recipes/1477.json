@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Thịt Vịt Xào Bầu",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ức vịt: 200g",
+        "Bầu sao: 600g",
+        "Hành lá, ngò rí",
+        "Hành tỏi băm",
+        "Gừng, dầu ăn",
+        "Đường, muối, tiêu, dầu ăn",
+        "Rượu trắng"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Ức vịt làm sạch, đập giập 1 củ gừng, 2M rượu trắng xoa kĩ vào da vịt, để 3 phút, rửa sạch để ráo, cắt miếng mỏng bản to dày cỡ 0,2cm. Ướp thịt vịt với 1/2m tỏi, 1/2m tiêu, 1/2m muối, 1m hạt nêm Aji-ngon®, 1m đường khoảng 4 phút.",
+        "Bầu bào vỏ, chẻ làm 4, bỏ ruột, cắt miếng dày 0,5cm.",
+        "Hành tím cắt lát dày. Hành ngò cắt khúc ngắn."
+    ],
+    "cook": [
+        "Phi thơm tỏi, xào thịt vịt với lửa to cho thịt săn, cho rượu trắng vào để khử mùi, tiếp đến cho bầu và hành tím vào xào nhanh tay, nêm 1m bột ngọt  AJI-NO-MOTO®, 1/2m muối."
+    ],
+    "usage": [
+        "Múc thịt vịt xào bầu ra dĩa, rắc thêm tiêu, hành ngò cắt khúc lên mặt. Món này dùng với cơm nóng."
+    ],
+    "tips": [
+        "Nên chọn bầu sao vỏ xanh, đốm trắng, loại bầu này giòn và ngọt.",
+        "Khử mùi hôi lông vịt bằng cách xát hỗn hợp gừng rượu hoặc gừng muối vài phút vào da vịt, sau đó rửa sạch trước khi cắt tẩm ướp.",
+        "Xào bầu với lửa to để bầu không bị ra nước."
+    ]
+}

@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Vịt Nướng Chao",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Vịt : 1 con",
+        "Chao môn trắng : 4 viên",
+        "Hành tím băm : 5 củ",
+        "Nước cốt chanh : 1M",
+        "Tiêu, muối, đường, dầu điều, sa tế"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Vịt rửa với gừng và rượu để khử bớt mùi, sau đó xả lại bằng nước lạnh. Lọc bỏ phần xương. Khứa vài đường trên miếng vịt.",
+        "Trộn đều hỗn hợp gồm: 4 viên chao trắng, 1 ít hành tím, 1M hạt nêm Aji-ngon®, 1m đường, 1M dầu điều, 1M sa tế, 1/2m bột ngọt AJI-NO-MOTO®, 1m nước cốt chanh. Ướp với thịt vịt với hỗn hợp đã pha trong khoảng 1 giờ cho ngấm gia vị."
+    ],
+    "cook": [
+        "Đun nóng lò, cho vịt vào  nướng khoảng 30 phút đến khi vịt chín vàng, trong lúc nướng trở hai mặt để thịt vịt chín đều, xém cạnh."
+    ],
+    "usage": [
+        "Cắt vịt thành miếng vừa ăn, cho ra dĩa, ăn kèm với đồ chua, rau sống."
+    ],
+    "tips": [
+        "Chọn chao đã ngấu, phần chao nổi trên phần nước là chao ngon.",
+        "Ướp vịt với nước cốt chanh để sau khi nướng thịt vịt mềm."
+    ]
+}

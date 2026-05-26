@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Pancake Sushi",
+    "serving": "2 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Xúc xích tiệt trùng 6 cây",
+        "Phô mai lát 6 miếng",
+        "Chà bông 50g",
+        "Gia vị: Tương cà"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Bột bánh rán pha sẵn vị phô mai"
+    ],
+    "process": [
+        "Chà bông cắt nhuyễn.",
+        "Cho 1 gói Bột bánh rán pha sẵn – Bữa sáng dinh dưỡng vào tô, pha với nước theo tỷ lệ hướng dẫn trên bao bì."
+    ],
+    "cook": [
+        "Đặt chảo không dính lên bếp đun nóng chảo, sau đó hạ nhiệt chảo trên khăn ướt. Tiếp theo đổ bánh vào giữa chảo. Khi bánh se mặt, lật bánh lại để bánh chín.",
+        "Lấy bánh ra đĩa, xếp phô mai, xúc xích, chà bông lên trên rồi cuộn tròn bánh lại. Lần lượt đổ bánh cho hết bột."
+    ],
+    "usage": [
+        "1)."
+    ],
+    "tips": [
+        "Đổ bánh mỏng sẽ giúp bánh mau chín và dễ cuộn xúc xích hơn.",
+        "Cuộn bánh khi bánh còn nóng giúp bánh kết dính và tạo hình chặt chẽ, đẹp hơn.",
+        "Dùng phô mai lát sẽ hấp dẫn và phù hợp với bữa ăn."
+    ]
+}

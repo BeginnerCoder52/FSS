@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Lẩu Kim Chi Chân Gà",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Chân gà công nghiệp: 700g",
+        "Cà chua bi: 12 trái",
+        "Ớt hiểm xanh đỏ: 6 trái",
+        "Sả cây: 3 cây",
+        "Giá sống: 150g",
+        "Nấm rơm: 100g",
+        "ĂN KÈM: Bún tươi, rau húng quế, ngò gai, cần tàu, nước mắm ớt cắt lát",
+        "Gia vị: Muối, tỏi băm, tỏi phi dầu, dầu ăn, nước mắm, đường"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Kim Chi"
+    ],
+    "process": [
+        "Sơ chế chân gà: Chân gà rửa sạch, chặt làm 2 để ráo. Đun sôi 1L nước, cho 2M giấm, 1M muối, cho chân gà vào chần 2 phút vớt ra để ráo.",
+        "Cà chua bi cắt đôi.",
+        "Ớt hiểm xanh đỏ đập dập.",
+        "Sả cây đập dập, cắt khúc 5mm.",
+        "Sơ chế rau nêm, giá, nấm."
+    ],
+    "cook": [],
+    "usage": [],
+    "tips": [
+        "Chần chân gà qua nước sôi có pha giấm để khử mùi, giúp chân gà trắng và ngon hơn.",
+        "Nước dùng để chan bún cần nêm đậm đà, để khi chan vào bún có thêm rau giúp vị vừa ăn.",
+        "Tùy theo ý thích, có thể thêm rau, nấm ăn kèm lẩu."
+    ]
+}
