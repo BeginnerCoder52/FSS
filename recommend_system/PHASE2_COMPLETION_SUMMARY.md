@@ -1,7 +1,7 @@
 # Phase 2 Implementation - NLP Pipeline Setup
 ## Fridge Supervisor System (FSS) - Recommendation System
 
-**Status**: ✅ **COMPLETE**  
+**Status**: ✅ **COMPLETE** (Last verified: 2026-05-24)  
 **Date**: 2026-05-23  
 **Phase**: 2 of 5  
 **Focus**: NLP Recipe Analysis Module - Vietnamese CRF-based Ingredient Extraction
@@ -156,14 +156,15 @@ normalize_unicode(text: str) -> str
 
 ### 3. Unit Tests
 **File**: `tests/test_recipe_analyzer.py`  
-**Total Test Cases**: 21  
-**Coverage**: 500+ lines of test code
+**Total Test Cases**: 20  
+**Coverage**: 565 lines of test code
 
 #### Test Categories
 
-**A. RecipeAnalyzerEngine Initialization Tests** (2 tests)
+**A. RecipeAnalyzerEngine Initialization Tests** (3 tests)
 - `test_engine_initialization_success`: Validates engine loads model and recipes
-- `test_engine_initialization_invalid_paths`: Error handling for missing files
+- `test_engine_initialization_invalid_model_path`: Error handling for missing model file
+- `test_engine_initialization_invalid_recipe_path`: Empty recipe db for invalid path
 
 **B. RecipeProcessor Utility Tests** (11 tests)
 - Text normalization: trademark/brand name removal
@@ -176,9 +177,10 @@ normalize_unicode(text: str) -> str
 **C. BIO Tagging Schema Tests** (1 test)
 - Verifies all BIO tag constants defined correctly
 
-**D. Integration Tests** (2 tests)
-- End-to-end FSS-Request generation
-- Recipe fuzzy matching and suggestions
+**D. Integration Tests** (3 tests)
+- `test_fss_request_generation_with_real_data`: End-to-end with production dataset (2470 recipes)
+- `test_fss_request_generation_with_temp_data`: End-to-end with synthetic test recipes
+- `test_recipe_suggestion`: Fuzzy recipe matching for misspellings
 
 **Test Utilities**:
 - `TestRecipeDatabase`: Creates temporary test recipe JSON files
@@ -196,14 +198,28 @@ python3 tests/test_recipe_analyzer.py
 
 **Expected Output**:
 ```
-test_normalize_ingredient_text_removes_trademarks ... ok
-test_extract_features_valid_input ... ok
+test_engine_initialization_invalid_model_path ... ok
+test_engine_initialization_invalid_recipe_path ... ok
+test_engine_initialization_success ... ok
+test_fss_request_generation_with_real_data ... ok
+test_fss_request_generation_with_temp_data ... ok
+test_recipe_suggestion ... ok
+test_detect_quantity_unit_no_pattern ... ok
+test_detect_quantity_unit_with_pattern ... ok
 test_extract_features_beginning_of_sentence ... ok
+test_extract_features_end_of_sentence ... ok
+test_extract_features_out_of_bounds ... ok
+test_extract_features_valid_input ... ok
+test_normalize_ingredient_text_empty_input ... ok
+test_normalize_ingredient_text_removes_brand_names ... ok
+test_normalize_ingredient_text_removes_trademarks ... ok
 test_normalize_quantity_default_value ... ok
+test_normalize_quantity_unit_normalization ... ok
 test_normalize_quantity_vietnamese_numbers ... ok
-... (21 total)
+test_remove_special_characters ... ok
+test_bio_tag_schema_constants ... ok
 
-Ran 21 tests in X.XXXs
+Ran 20 tests in 0.325s
 OK
 ```
 
@@ -311,11 +327,12 @@ recommend_system/
    - Module-level docstring with usage examples
    - Version tracking (1.0.0)
 
-4. **tests/test_recipe_analyzer.py** (NEW IMPLEMENTATION)
-   - 21 comprehensive unit test cases
+4. **tests/test_recipe_analyzer.py** (NEW IMPLEMENTATION, UPDATED 2026-05-24)
+   - 20 comprehensive unit test cases (removed dead/orphaned test stubs)
+   - `MODEL_PATH` and `RECIPE_DB_PATH` constants pointing to production paths
    - TestRecipeDatabase fixture for recipe generation
    - ASPICE-compliant test documentation
-   - Integration tests with real model (if available)
+   - Integration tests with real model AND production dataset (2470 recipes)
 
 ---
 
@@ -499,7 +516,7 @@ Phase 3 (DBDaemon API Extensions) will:
 **Author**: FSS AI Team  
 **Version**: 1.0.0  
 **Status**: Complete  
-**Last Updated**: 2026-05-23  
+**Last Updated**: 2026-05-24  
 **Phase**: 2 of 5  
 
 For issues, enhancements, or clarifications:
@@ -515,10 +532,10 @@ For issues, enhancements, or clarifications:
 |------|-------|---------------|---------|
 | src/RecipeAnalyzerAPI.py | 456 | 15 KB | Core NLP engine |
 | src/RecipeProcessor.py | 312 | 12 KB | Text utilities |
-| tests/test_recipe_analyzer.py | 500+ | 18 KB | Unit tests |
+| tests/test_recipe_analyzer.py | 565 | 18 KB | Unit tests |
 | models/fss_ner_crf_optimized.joblib | - | 0.09 MB | CRF model |
 | data/recipes/*.json | - | ~50 MB | 2470 recipe files |
-| **Total Phase 2** | **~1,300** | **~95 MB** | Complete NLP system |
+| **Total Phase 2** | **~1,333** | **~95 MB** | Complete NLP system |
 
 ---
 
