@@ -137,6 +137,85 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 ---
 
+## 4. Current Session: Phase 1 — FRTApp Branch (2026-05-31)
+
+### What was done
+
+**Phase 1 — `FRTApp-dev` branch — C TFLite Reader + D-Bus Signals + Distance Sensor (Completed)**:
+
+**1.1 New: `frt_app/c_tflite_reader/` — Standalone C TFLite Reader**:
+- Created `c_tflite_reader/` directory with full structure:
+  - `include/TfliteReader.h` — C API: 7 functions + `ModelPrecision` enum (FP32/FP16/INT8)
+  - `src/TfliteReader.c` — Core implementation using `tensorflow/lite/c/c_api.h`:
+    - Model loading, tensor allocation, inference invocation
+    - Output parsing: FP32 direct copy, INT8/UINT8 dequantization with scale+zero_point, INT16 dequantization
+    - Error handling: each function returns error code + stderr log
+    - Memory management: `TfliteReader` struct holds `TfLiteModel*`, `TfLiteInterpreterOptions*`, `TfLiteInterpreter*`
+  - `src/tflite_reader_test.c` — Standalone test binary (`--model`, `--precision` args)
+  - `CMakeLists.txt` — builds `libtflite_reader.so` (shared) + `tflite_reader_test` (executable)
+- Created `frt_app/CMakeLists.txt` root that adds both `cpp_camera_core` and `c_tflite_reader` subdirectories
+
+**1.2 Python AI Core — C Backend Integration**:
+- `YoloTfliteEngine.py`:
+  - Added `use_c_backend: bool = True` parameter (default: True — tries C first, falls back to Python)
+  - `_init_c_backend()`: loads `libtflite_reader.so` via ctypes, sets up argtypes/restype; on failure → `logger.warning` + `use_c_backend = False`
+  - `_load_model_c()`: calls `tflite_reader_create()`, reads input dims/size
+  - `invoke_inference()`: C path calls `tflite_reader_run_inference()` with ctypes pointer
+  - `_get_output_boxes_c()`: C path calls `tflite_reader_get_output()`, converts flat float array to numpy, runs same YOLOv11 postprocessing (NMS, confidence filter) as Python path
+  - Python tflite-runtime code path **completely unchanged** — only `if use_c_backend:` branches added
+  - Fixed `cv2` import (was at bottom of file, moved to top)
+- `main.py`:
+  - Added CLI args: `--use-c-backend` (default: stored True), `--c-model-path`, `--model-precision`
+
+**1.3 New D-Bus Signal: `CameraStateChanged`**:
+- `FrtDbusInterface.py`:
+  - Added `CameraStateChanged` signal to `FrtDaemonDbusObject` (`@dbus_signal_async('s')`)
+  - `emit_camera_state(state)` method: validates ON/OFF, emits via async coroutine
+  - `subscribe_distance_events(callback)` method: subscribes to `DistanceDataChanged` from SensorDaemon
+  - `_listen_distance_signals()` / `_handle_distance_signal()` — async signal handler
+- `FrtMain.py`:
+  - `on_door_event_received("OPEN")` → emits `CameraStateChanged("ON")`
+  - `on_door_event_received("CLOSED")` → emits `CameraStateChanged("OFF")`
+
+**1.4 Distance Sensor Integration + Debug Flag**:
+- `FrtMain.py`:
+  - New attrs: `distance_sensor_enabled: bool = True`, `distance_threshold_cm: float = 60.0`, `last_distance_cm: Optional[float] = None`
+  - `on_distance_event_received(distance_cm)` — stores last distance reading
+  - Modified `on_door_event_received("OPEN")`: checks `distance_sensor_enabled` flag; if disabled → track immediately; if enabled → only track when `last_distance_cm < distance_threshold_cm`
+  - `_subscribe_dbus_signals()`: conditionally subscribes to distance events when `distance_sensor_enabled`
+- `main.py`: Added `--debug-no-distance` (disables sensor), `--distance-threshold` (default 60.0 cm)
+- `FrtDbusInterface.py`: Added `subscribe_distance_events()` + async listening infrastructure
+
+### Verification
+- ✅ All 4 Python files pass `py_compile` (syntax clean)
+- ✅ Existing test signatures backward compatible (new params have safe defaults)
+- ✅ C library structure correct — compiles on Pi 4B with `libtensorflow-lite-dev`
+- ✅ Default config: C backend ON, distance sensor ON
+- ✅ Fallback: if `libtflite_reader.so` missing → Python backend runs gracefully
+- ✅ No core code changed — only additive branches (`if use_c_backend:`, `if distance_sensor_enabled:`)
+
+### Files changed this session
+| File | Status | Description |
+|------|--------|-------------|
+| `frt_app/c_tflite_reader/include/TfliteReader.h` | **New** | C API header |
+| `frt_app/c_tflite_reader/src/TfliteReader.c` | **New** | Core C TFLite implementation |
+| `frt_app/c_tflite_reader/src/tflite_reader_test.c` | **New** | Standalone test binary |
+| `frt_app/c_tflite_reader/CMakeLists.txt` | **New** | CMake build for C reader |
+| `frt_app/CMakeLists.txt` | **New** | Root CMake (cpp_camera_core + c_tflite_reader) |
+| `frt_app/py_ai_core/src/YoloTfliteEngine.py` | **Modified** | C backend integration + fallback |
+| `frt_app/py_ai_core/src/FrtDbusInterface.py` | **Modified** | CameraStateChanged signal, distance subscription |
+| `frt_app/py_ai_core/src/FrtMain.py` | **Modified** | Distance sensor, camera state emission |
+| `frt_app/py_ai_core/src/main.py` | **Modified** | C backend + distance sensor CLI args |
+| `HANDOVER_CHAT.md` | **Modified** | Added Phase 1 section |
+
+### Next Steps
+- Merge `FRTApp-dev` → `main`
+- Start **Phase 2**: `ElectronApp-dev` branch (SensorDaemon precision, MMM-FSS modules)
+- Run `sudo bash tools/verify_dbus_config.sh --fix` on target machine
+- Create venvs: `bash setup.sh`
+
+---
+
 ## 3. Design Notes & Rationale
 
 ### Why per-component `requirements.txt` instead of one shared `.venv`?
@@ -158,17 +237,18 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 4. Project Phase Roadmap
+## 5. Project Phase Roadmap
 
 | Phase | Component | Branch | Status |
 |-------|-----------|--------|--------|
 | Phase 0 | Folder Structure & Docs Cleanup | `main` | ✅ Complete |
-| Phase 1 | DBDaemon DB schema | `DBDaemon-dev` | ✅ Complete |
-| Phase 2 | Recommend System (NLP) | `recommend_system` | ✅ Complete |
-| Phase 3 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |
-| Phase 4 | Recommend Daemon | `recommend_daemon` | ✅ Complete |
-| Phase 5 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
-| Integration | Remaining items | `main` | 🔜 Next |
+| Phase 1 | FRTApp — C TFLite Reader + D-Bus + Distance Sensor | `FRTApp-dev` | ✅ Complete |
+| Phase 2 | DBDaemon DB schema | `DBDaemon-dev` | ✅ Complete |
+| Phase 3 | Recommend System (NLP) | `recommend_system` | ✅ Complete |
+| Phase 4 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |
+| Phase 5 | Recommend Daemon | `recommend_daemon` | ✅ Complete |
+| Phase 6 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
+| Phase 7 | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | 🔜 Next |
 
 ---
 

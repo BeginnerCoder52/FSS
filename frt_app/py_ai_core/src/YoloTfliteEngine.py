@@ -18,9 +18,11 @@ Author: FSS Project Team
 License: Proprietary
 """
 
+import cv2
 import numpy as np
 import os
 import time
+import ctypes
 from typing import List, Dict, Optional, Tuple
 from loguru import logger
 
@@ -36,7 +38,8 @@ class YoloTfliteEngine:
     CONFIDENCE_THRESHOLD = 0.25      # Minimum confidence for detection
     IOU_THRESHOLD = 0.45             # NMS IoU threshold
     
-    def __init__(self, model_path: str = DEFAULT_MODEL_PATH):
+    def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
+                 c_precision: int = 2):
         """
         Initialize YOLO TFLite engine.
         """
@@ -45,17 +48,68 @@ class YoloTfliteEngine:
         self.input_details = None
         self.output_details = None
         self.is_initialized = False
+        self.use_c_backend = use_c_backend
+        self._c_lib = None
+        self._c_reader = None
+        self._c_input_size = 0
+        self._input_tensor = None
         
         # Class names (example for food items)
         self.classes = ["food_item"] # To be updated with actual model classes
         
+        if self.use_c_backend:
+            self._init_c_backend()
+        
         logger.info("YoloTfliteEngine initialized (model={})".format(model_path))
     
+    def _init_c_backend(self) -> None:
+        """
+        Initialize C backend via ctypes (optional, fallback to Python on failure).
+        """
+        try:
+            self._c_lib = ctypes.CDLL("libtflite_reader.so")
+
+            self._c_lib.tflite_reader_create.argtypes = [ctypes.c_char_p, ctypes.c_int]
+            self._c_lib.tflite_reader_create.restype = ctypes.c_void_p
+
+            self._c_lib.tflite_reader_get_input_dims.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_int), ctypes.c_int
+            ]
+            self._c_lib.tflite_reader_get_input_dims.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_get_input_size.argtypes = [ctypes.c_void_p]
+            self._c_lib.tflite_reader_get_input_size.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_run_inference.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_size_t
+            ]
+            self._c_lib.tflite_reader_run_inference.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_get_output.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_int)
+            ]
+            self._c_lib.tflite_reader_get_output.restype = ctypes.POINTER(ctypes.c_float)
+
+            self._c_lib.tflite_reader_get_precision.argtypes = [ctypes.c_void_p]
+            self._c_lib.tflite_reader_get_precision.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_destroy.argtypes = [ctypes.c_void_p]
+            self._c_lib.tflite_reader_destroy.restype = None
+
+            logger.info("C TFLite backend library loaded successfully")
+        except Exception as e:
+            logger.warning("C backend unavailable ({}), falling back to Python".format(e))
+            self.use_c_backend = False
+            self._c_lib = None
+
     def load_model_mmap(self) -> bool:
         """
         Load TFLite model using memory mapping.
         """
         logger.info("Loading YOLOv11 model: {}".format(self.model_path))
+        
+        if self.use_c_backend and self._c_lib:
+            return self._load_model_c()
         
         try:
             # Check file exists
@@ -91,6 +145,42 @@ class YoloTfliteEngine:
             logger.exception("Error loading model: {}".format(e))
             return False
     
+    def _load_model_c(self) -> bool:
+        """
+        Load model using C TFLite reader backend.
+        """
+        try:
+            precision_enum = 2
+            model_path_bytes = self.model_path.encode('utf-8')
+            self._c_reader = self._c_lib.tflite_reader_create(model_path_bytes, precision_enum)
+            if not self._c_reader:
+                logger.error("C reader returned NULL, falling back to Python")
+                self.use_c_backend = False
+                return False
+
+            dims_arr = (ctypes.c_int * 4)()
+            num_dims = self._c_lib.tflite_reader_get_input_dims(
+                self._c_reader, dims_arr, 4
+            )
+            if num_dims < 0:
+                logger.error("C reader failed to get input dims")
+                self.use_c_backend = False
+                return False
+
+            self._c_input_size = self._c_lib.tflite_reader_get_input_size(self._c_reader)
+            if self._c_input_size < 0:
+                logger.error("C reader failed to get input size")
+                self.use_c_backend = False
+                return False
+
+            self.is_initialized = True
+            logger.info("Model loaded via C backend ({} bytes input)".format(self._c_input_size))
+            return True
+        except Exception as e:
+            logger.warning("C backend load failed ({}), falling back to Python".format(e))
+            self.use_c_backend = False
+            return False
+
     def allocate_tensors(self) -> None:
         """
         Allocate tensor buffers.
@@ -110,8 +200,12 @@ class YoloTfliteEngine:
         try:
             if not self.is_initialized:
                 return
-            
-            # Set input data
+
+            self._input_tensor = tensor_data
+
+            if self.use_c_backend and self._c_lib and self._c_reader:
+                return
+
             self.interpreter.set_tensor(self.input_details[0]['index'], tensor_data)
         except Exception as e:
             logger.exception("Error setting input tensor: {}".format(e))
@@ -123,6 +217,19 @@ class YoloTfliteEngine:
         try:
             if not self.is_initialized:
                 return
+
+            if self.use_c_backend and self._c_lib and self._c_reader:
+                start_time = time.time()
+                input_data = self._input_tensor.ctypes.data_as(ctypes.c_void_p)
+                ret = self._c_lib.tflite_reader_run_inference(
+                    self._c_reader, input_data, self._c_input_size
+                )
+                inference_time = (time.time() - start_time) * 1000
+                if ret != 0:
+                    logger.error("C backend inference failed with code {}".format(ret))
+                    return
+                logger.debug("C inference completed in {:.1f}ms".format(inference_time))
+                return
             
             start_time = time.time()
             self.interpreter.invoke()
@@ -133,6 +240,82 @@ class YoloTfliteEngine:
             logger.exception("Error during inference: {}".format(e))
             self.handle_tensor_allocation_error()
     
+    def _get_output_boxes_c(self) -> List[Dict]:
+        """
+        Extract detection boxes from C backend output.
+        """
+        try:
+            num_out = ctypes.c_int(0)
+            out_ptr = self._c_lib.tflite_reader_get_output(self._c_reader, ctypes.byref(num_out))
+            if not out_ptr or num_out.value <= 0:
+                logger.warning("C backend returned no output")
+                return []
+
+            num_elements = num_out.value
+            out_array = np.ctypeslib.as_array(out_ptr, shape=(num_elements,)).copy()
+
+            num_classes = 80
+            num_detections = 8400
+            expected_per_det = num_classes + 4
+
+            if num_elements == expected_per_det * num_detections:
+                output_data = out_array.reshape(1, expected_per_det, num_detections)
+                output_data = output_data.transpose(0, 2, 1)
+            elif num_elements == num_detections * expected_per_det:
+                output_data = out_array.reshape(1, num_detections, expected_per_det)
+            else:
+                logger.warning("Unexpected C output size: {}".format(num_elements))
+                return []
+
+            predictions = output_data[0]
+
+            boxes = predictions[:, :4]
+            scores = predictions[:, 4:]
+
+            class_ids = np.argmax(scores, axis=1)
+            max_scores = np.max(scores, axis=1)
+
+            mask = max_scores > self.CONFIDENCE_THRESHOLD
+            boxes = boxes[mask]
+            max_scores = max_scores[mask]
+            class_ids = class_ids[mask]
+
+            if len(boxes) == 0:
+                return []
+
+            results = []
+            for i in range(len(boxes)):
+                x, y, w, h = boxes[i]
+                x1 = x - w/2
+                y1 = y - h/2
+                x2 = x + w/2
+                y2 = y + h/2
+
+                results.append({
+                    "class_id": int(class_ids[i]),
+                    "confidence": float(max_scores[i]),
+                    "bbox": [float(x1), float(y1), float(w), float(h)],
+                    "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
+                })
+
+            indices = cv2.dnn.NMSBoxes(
+                [r["bbox"] for r in results],
+                [r["confidence"] for r in results],
+                self.CONFIDENCE_THRESHOLD,
+                self.IOU_THRESHOLD
+            )
+
+            final_results = []
+            if len(indices) > 0:
+                for i in indices.flatten():
+                    final_results.append(results[i])
+
+            return final_results
+
+        except Exception as e:
+            logger.exception("Error extracting C backend output boxes: {}".format(e))
+            return []
+
     def get_output_boxes(self) -> List[Dict]:
         """
         Extract detection boxes from YOLO output.
@@ -140,8 +323,10 @@ class YoloTfliteEngine:
         try:
             if not self.is_initialized:
                 return []
-            
-            # Get output tensor
+
+            if self.use_c_backend and self._c_lib and self._c_reader:
+                return self._get_output_boxes_c()
+
             output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
             
             # YOLOv11 output is typically (1, 84, 8400) or (1, 8400, 84)
@@ -214,8 +399,6 @@ class YoloTfliteEngine:
         self.interpreter = None
         # Attempt to reload model
         self.load_model_mmap()
-
-import cv2 # Required for NMSBoxes
 
 if __name__ == "__main__":
     logger.info("YoloTfliteEngine - Test Entry Point")

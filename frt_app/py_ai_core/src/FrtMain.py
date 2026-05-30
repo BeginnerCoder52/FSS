@@ -33,7 +33,7 @@ License: Proprietary
 import time
 import threading
 from enum import Enum
-from typing import Optional
+from typing import Optional, Callable
 from loguru import logger
 
 # Import all required modules
@@ -106,6 +106,16 @@ class FrtMain:
         self.ai_engine = None
         self.dbus_interface = None
         self.tracker = None
+
+        # C backend configuration (Phase 1 upgrade)
+        self.use_c_backend: bool = True
+        self.c_model_path: str = "/opt/fss/models/yolov11n.tflite"
+        self.model_precision: str = "int8"
+
+        # Distance sensor configuration (Phase 1 upgrade)
+        self.distance_sensor_enabled: bool = True
+        self.distance_threshold_cm: float = 60.0
+        self.last_distance_cm: Optional[float] = None
 
         # State management
         self.recovery_count: int = 0
@@ -281,14 +291,29 @@ class FrtMain:
                     self.is_running = False
                     self.current_state = AppState.ERROR.value
 
+    def on_distance_event_received(self, distance_cm: float) -> None:
+        """
+        Handle distance sensor data from SensorDaemon.
+        """
+        self.last_distance_cm = distance_cm
+        logger.debug("Distance updated: {:.1f}cm".format(distance_cm))
+
     def on_door_event_received(self, door_state: str) -> None:
         """Handle door open/close events from SensorDaemon."""
         logger.info("Door event received: {}".format(door_state))
 
         if door_state.upper() == "OPEN":
-            if self.current_state != AppState.TRACKING.value:
+            can_track = False
+            if not self.distance_sensor_enabled:
+                can_track = True
+            elif self.last_distance_cm is not None and self.last_distance_cm < self.distance_threshold_cm:
+                can_track = True
+
+            if can_track and self.current_state != AppState.TRACKING.value:
                 logger.info("Transitioning to TRACKING state")
                 self.current_state = AppState.TRACKING.value
+                if self.dbus_interface:
+                    self.dbus_interface.emit_camera_state("ON")
                 if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:
                     self.camera_driver.open_camera_stream()
 
@@ -296,6 +321,8 @@ class FrtMain:
             if self.current_state == AppState.TRACKING.value:
                 logger.info("Transitioning to IDLE state")
                 self.current_state = AppState.IDLE.value
+                if self.dbus_interface:
+                    self.dbus_interface.emit_camera_state("OFF")
 
                 if self.tracker and self.dbus_interface:
                     changes = self.tracker.get_quantity_change()
@@ -365,8 +392,14 @@ class FrtMain:
     def _init_ai_engine(self) -> bool:
         """Initialize YOLOv11 TFLite inference engine."""
         try:
+            precision_map = {"fp32": 0, "fp16": 1, "int8": 2}
+            c_precision = precision_map.get(self.model_precision, 2)
             from YoloTfliteEngine import YoloTfliteEngine
-            self.ai_engine = YoloTfliteEngine(self.MODEL_PATH)
+            self.ai_engine = YoloTfliteEngine(
+                self.MODEL_PATH,
+                use_c_backend=self.use_c_backend,
+                c_precision=c_precision
+            )
             return self.ai_engine.load_model_mmap()
         except Exception as e:
             logger.exception("AI engine initialization failed: {}".format(e))
@@ -425,6 +458,8 @@ class FrtMain:
         try:
             if self.dbus_interface:
                 self.dbus_interface.subscribe_door_events(self.on_door_event_received)
+                if self.distance_sensor_enabled:
+                    self.dbus_interface.subscribe_distance_events(self.on_distance_event_received)
             return True
         except Exception as e:
             logger.exception("D-Bus subscription failed: {}".format(e))
