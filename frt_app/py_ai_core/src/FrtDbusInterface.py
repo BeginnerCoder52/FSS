@@ -278,7 +278,87 @@ class FrtDbusInterface:
 
     async def _async_emit_food_detected(self, json_data: str):
         self.bus_connection.FoodDetected(json_data)
-    
+
+    def emit_camera_state(self, state: str) -> None:
+        """
+        Emit CameraStateChanged signal ('ON' | 'OFF').
+        """
+        if not self.is_connected or not self.bus_connection:
+            logger.warning("D-Bus not connected, cannot emit camera state")
+            return
+
+        if state not in ("ON", "OFF"):
+            logger.error("Invalid camera state: {}".format(state))
+            return
+
+        try:
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_camera_state(state), self._loop
+            )
+            logger.info("Camera state emitted: {}".format(state))
+        except Exception as e:
+            logger.exception("Failed to emit camera state: {}".format(e))
+
+    async def _async_emit_camera_state(self, state: str):
+        self.bus_connection.CameraStateChanged(state)
+
+    def subscribe_distance_events(self, callback: Callable) -> None:
+        """
+        Subscribe to DistanceDataChanged from SensorDaemon.
+        """
+        logger.info("Subscribing to distance events")
+
+        if not self.is_connected:
+            logger.warning("D-Bus not connected, cannot subscribe to distance events")
+            return
+
+        if callback is None:
+            logger.error("Callback function is None, subscription rejected")
+            return
+
+        try:
+            self.distance_callback = callback
+            asyncio.run_coroutine_threadsafe(
+                self._subscribe_to_distance_async(), self._loop
+            )
+            logger.debug("Distance callback registered: {}".format(callback.__name__))
+        except Exception as e:
+            logger.exception("Failed to subscribe to distance events: {}".format(e))
+
+    async def _subscribe_to_distance_async(self) -> None:
+        """Asynchronously subscribe to SensorDaemon distance signals."""
+        try:
+            class SensorInterface(DbusInterfaceCommonAsync, interface_name=self.SENSOR_INTERFACE):
+                @dbus_signal_async('d')
+                def DistanceDataChanged(self, distance_cm: float): pass
+
+            proxy = SensorInterface.new_proxy(None, self.SENSOR_OBJECT_PATH)
+
+            task = asyncio.create_task(self._listen_distance_signals(proxy))
+            self._signal_tasks.append(task)
+
+            logger.info("Subscribed to distance events asynchronously")
+        except Exception as e:
+            logger.error("Failed to subscribe to distance events: {}".format(e))
+
+    async def _listen_distance_signals(self, proxy):
+        async for distance_cm in proxy.DistanceDataChanged:
+            self._handle_distance_signal(distance_cm)
+
+    def _handle_distance_signal(self, distance_cm: float) -> None:
+        """
+        Internal handler for distance data signal from SensorDaemon.
+        """
+        logger.debug("Distance signal received: {:.1f}cm".format(distance_cm))
+
+        if hasattr(self, 'distance_callback') and self.distance_callback:
+            try:
+                self.distance_callback(distance_cm)
+            except Exception as e:
+                logger.exception("Error in distance callback: {}".format(e))
+
+        self.last_ping_time = time.time()
+
     def handle_dbus_timeout(self) -> None:
         """
         Handle D-Bus communication timeout.
@@ -365,6 +445,11 @@ if SDBUS_AVAILABLE:
         @dbus_signal_async('s')
         def FoodDetected(self, json_data: str) -> None:
             """Signal: Food detection results."""
+            pass
+
+        @dbus_signal_async('s')
+        def CameraStateChanged(self, state: str) -> None:
+            """Signal: Camera on/off state. Payload: 'ON' | 'OFF'."""
             pass
 
 # ============================================================================

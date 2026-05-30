@@ -100,6 +100,16 @@ def main():
     parser.add_argument("--log-level", default="INFO",
                        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                        help="Logging level (default: INFO)")
+    parser.add_argument("--use-c-backend", action="store_true",
+                       help="Use C TFLite reader for inference (faster on Pi 4B)")
+    parser.add_argument("--c-model-path", default="/opt/fss/models/yolov11n.tflite",
+                       help="Model path for C reader (default: /opt/fss/models/yolov11n.tflite)")
+    parser.add_argument("--model-precision", choices=["fp32", "fp16", "int8"], default="int8",
+                       help="Model quantization precision (default: int8)")
+    parser.add_argument("--debug-no-distance", action="store_true",
+                       help="Disable distance sensor dependency - camera activates on door open alone")
+    parser.add_argument("--distance-threshold", type=float, default=60.0,
+                       help="Distance threshold in cm (default: 60.0)")
     
     args = parser.parse_args()
     
@@ -145,6 +155,9 @@ def main():
     logger.info("Model path: {}".format(args.model))
     logger.info("Log level: {}".format(log_level))
     logger.info("Debug mode: {}".format("ON" if args.debug else "OFF"))
+    logger.info("C backend: {}".format("ON" if args.use_c_backend else "OFF"))
+    logger.info("Distance sensor: {}".format("OFF (debug)" if args.debug_no_distance else "ON"))
+    logger.info("Distance threshold: {} cm".format(args.distance_threshold))
     
     # ========================================================================
     # SIGNAL HANDLERS
@@ -167,6 +180,11 @@ def main():
         # Override camera device if provided
         app_instance.CAMERA_DEVICE = args.camera
         app_instance.MODEL_PATH = args.model
+        app_instance.use_c_backend = args.use_c_backend
+        app_instance.c_model_path = args.c_model_path
+        app_instance.model_precision = args.model_precision
+        app_instance.distance_sensor_enabled = not args.debug_no_distance
+        app_instance.distance_threshold_cm = args.distance_threshold
         
         # Initialize pipeline
         logger.info("Initializing pipeline...")
