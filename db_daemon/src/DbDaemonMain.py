@@ -596,14 +596,20 @@ class DbDaemonMain:
         """Register callbacks for incoming D-Bus events."""
         try:
             if self.dbus_interface:
-                # Register callbacks
+                # Register sensor and FRT event callbacks
                 self.dbus_interface.listen_sensor_dbus_events(self._handle_sensor_event)
                 self.dbus_interface.listen_frt_pipeline_events(self._handle_frt_event)
                 
                 # Register comparison callback for GetMissingIngredients D-Bus method
                 self.dbus_interface.set_comparison_callback(self.get_missing_ingredients)
                 
-                self.logger.debug("Event handlers and comparison callback registered")
+                # Register pure database operation callbacks
+                self.dbus_interface.set_inventory_callback(self._handle_get_inventory)
+                self.dbus_interface.set_requests_callback(self._handle_get_requests)
+                self.dbus_interface.set_insert_request_callback(self._handle_insert_request)
+                self.dbus_interface.set_clear_request_callback(self._handle_clear_request)
+                
+                self.logger.debug("Event handlers and DB operation callbacks registered")
                 
         except Exception as e:
             self.logger.error(f"Failed to register event handlers: {e}")
@@ -654,6 +660,77 @@ class DbDaemonMain:
         except Exception as e:
             self.logger.error(f"Error handling FRT event: {e}")
     
+    # -------------------------------------------------------------------------
+    # Pure Database D-Bus Method Handlers (Phase 3)
+    # -------------------------------------------------------------------------
+
+    def _handle_get_inventory(self) -> list:
+        """Handle GetInventory D-Bus method call.
+        
+        Returns:
+            List of all current inventory items, or empty list on error.
+        """
+        if not self.db_manager:
+            return []
+        try:
+            return self.db_manager.get_all_inventory()
+        except Exception as e:
+            self.logger.error(f"Error handling GetInventory: {e}")
+            return []
+
+    def _handle_get_requests(self) -> list:
+        """Handle GetRequests D-Bus method call.
+        
+        Returns:
+            List of all recipe request items, or empty list on error.
+        """
+        if not self.db_manager:
+            return []
+        try:
+            return self.db_manager.get_all_requests()
+        except Exception as e:
+            self.logger.error(f"Error handling GetRequests: {e}")
+            return []
+
+    def _handle_insert_request(self, recipe_name: str, ingredients: list,
+                                batch_id: str) -> bool:
+        """Handle InsertRequest D-Bus method call.
+        
+        Args:
+            recipe_name: Vietnamese recipe name
+            ingredients: List of {"food_id","quantity","unit"} dicts
+            batch_id: UUID to group ingredients from the same recipe
+
+        Returns:
+            True if insertion successful.
+        """
+        if not self.db_manager:
+            return False
+        try:
+            return self.db_manager.insert_request_batch(
+                recipe_name, ingredients, batch_id
+            )
+        except Exception as e:
+            self.logger.error(f"Error handling InsertRequest: {e}")
+            return False
+
+    def _handle_clear_request(self, batch_id: str) -> bool:
+        """Handle ClearRequest D-Bus method call.
+        
+        Args:
+            batch_id: request_batch_id to delete
+
+        Returns:
+            True if deletion successful.
+        """
+        if not self.db_manager:
+            return False
+        try:
+            return self.db_manager.clear_request_batch(batch_id)
+        except Exception as e:
+            self.logger.error(f"Error handling ClearRequest: {e}")
+            return False
+
     def _handle_signal(self, signum, frame) -> None:
         """Handle system signals for graceful shutdown."""
         self.logger.info(f"Received signal {signum}, initiating graceful shutdown...")

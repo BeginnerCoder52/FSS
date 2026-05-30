@@ -15,13 +15,14 @@
 | **SensorDaemon** | C++ | Hardware I/O layer | I2C/GPIO polling (SHT3x temp/humidity, MC-38 door, VL53L0x distance). Kernel ioctl via libgpiod. Broadcasts via D-Bus. |
 | **FRTApp** | C++ (camera) + Python (AI) | Food recognition | V4L2 video frame capture → POSIX SHM; NumPy preprocessing; tflite-runtime inference (INT8/FP32/FP16); ByteTrack persistence. |
 | **DBDaemon** | Python | Data controller | SQLite (3 DBs: data, inventory, requests). D-Bus listener & state machine. File I/O to `/opt/fss/`. POSIX SHM reader for FRTApp video. |
-| **Recommend System** | Python | NLP/Recipe Analysis | CRF-based NER (BIO-tagged ingredients/quantities). Loads 250 recipes. Outputs FSS-Request JSON for DBDaemon. |
+| **Recommend System** | Python | NLP/Recipe Analysis (library) | CRF-based NER (BIO-tagged ingredients/quantities). Loads 250 recipes. Imported by RecommendDaemon. |
+| **RecommendDaemon** | Python | Business logic orchestrator | Calls Recommend System NLP, compares against inventory via DBDaemon D-Bus (Bù Trừ method), persists shopping list to FSS-Recommend.db. Own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`. |
 | **MagicMirror UI** | Node.js (Electron) + Python | User interface | Electron + HTML/CSS/JS rendering. Python bridge processes listen D-Bus events, format JSON for UI. |
 
 ### IPC Architecture
 
 - **D-Bus** (primary): Service bus for daemon-to-daemon communication
-  - Service names: `vn.edu.uit.FSS.{SensorDaemon,DBDaemon,FRTApp}`
+  - Service names: `vn.edu.uit.FSS.{SensorDaemon,DBDaemon,FRTApp,RecommendDaemon}`
   - Signals: Async broadcasts (async data flow)
   - Methods: Sync D-Bus calls (request/response)
   - Watch for: sdbus-python errors (Python); sdbus-c++ lifecycle (C++)
@@ -119,6 +120,10 @@ python db_daemon/src/main.py
 # FRTApp AI core
 source frt_app/py_ai_core/venv/bin/activate
 python frt_app/py_ai_core/src/main.py
+
+# RecommendDaemon
+source recommend_daemon/venv/bin/activate
+python recommend_daemon/src/main.py
 ```
 
 ---
@@ -244,7 +249,9 @@ component_name/
 **Database Schema**:
 - `fss_data.db`: `environment_log`, `door_event_log`
 - `FSS_Inventory.db`: `current_inventory`, `food_history`
-- `FSS_Request.db`: `recipe_requests` (output from Recommend System)
+- `FSS_Request.db`: `recipe_requests` (ingested by RecommendDaemon)
+
+**Role**: Pure data controller + IPC broker. No business logic (orchestration lives in RecommendDaemon).
 
 **Key Files**:
 - [db_daemon/src/DbDaemonMain.py](db_daemon/src/DbDaemonMain.py)
@@ -277,7 +284,7 @@ component_name/
 **Main Class**: `RecipeAnalyzerEngine`
 - Loads model at startup
 - Normalizes ingredient quantities (default "1" unit)
-- Returns JSON FSS-Request for DBDaemon comparison
+- Returns JSON FSS-Request for RecommendDaemon consumption
 
 **Performance**: F1-Score 95.03%, latency ~3.2ms (Pi 4B)
 
@@ -285,6 +292,34 @@ component_name/
 - [recommend_system/src/RecipeAnalyzerAPI.py](recommend_system/src/RecipeAnalyzerAPI.py)
 - [recommend_system/src/RecipeProcessor.py](recommend_system/src/RecipeProcessor.py)
 - Full inventory: [/memories/repo/recommend_system_inventory.md](/memories/repo/recommend_system_inventory.md)
+
+### RecommendDaemon (Python)
+
+**Main Class**: `RecommendDaemonMain` (orchestrator, own D-Bus service)
+
+**Algorithm**: Bù Trừ (Comparison) — `FSS-Request - FSS-Inventory = FSS-Recommend`
+
+**Data Flow**:
+1. User enters recipe in UI → D-Bus call to `RecommendDaemon.GenerateShoppingList(recipe)`
+2. Calls `RecipeAnalyzerEngine` from `recommend_system/` to extract ingredients (NLP)
+3. Queries DBDaemon `GetInventory()` via D-Bus for current stock
+4. Runs Bù Trừ comparison: each ingredient → available/in-stock/missing
+5. Persists result to `FSS-Recommend.db` (own database)
+6. Emits `RecommendationUpdated` signal for UI consumption
+
+**Database Schema** (`FSS-Recommend.db`):
+- `recommendation_log`: Per-recipe analysis snapshots (recipe_name, batch_id, counts, status, result_json)
+- `shopping_list`: Individual items to buy (food_id, shortfall quantity, purchase tracking)
+
+**D-Bus**:
+- Service: `vn.edu.uit.FSS.RecommendDaemon`
+- Methods: `GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased`
+
+**Key Files**:
+- [recommend_daemon/src/main.py](recommend_daemon/src/main.py) (planned)
+- [recommend_daemon/src/RecommendEngine.py](recommend_daemon/src/RecommendEngine.py) (planned)
+- [recommend_daemon/src/DbusInterface.py](recommend_daemon/src/DbusInterface.py) (planned)
+- [recommend_daemon/src/RecommendDbManager.py](recommend_daemon/src/RecommendDbManager.py) (planned)
 
 ### MagicMirror UI (Node.js + Python)
 
@@ -309,7 +344,7 @@ component_name/
 | tflite model inference timeout | Model too large or thread count wrong | Try INT8 model; reduce input image size; tune `tflite_runtime` thread count |
 | Python venv activation fails | Module import after source fails | Run `pip install --upgrade setuptools` before `pip install -r requirements.txt` |
 | systemd service fails to start | Missing venv or permission error | Check service ExecStart path; ensure User=fss has correct permissions |
-| D-Bus signal not received | Listener registered after sender broadcasts | Start all daemons in order (SensorDaemon → FRTApp → DBDaemon); add async retry logic |
+| D-Bus signal not received | Listener registered after sender broadcasts | Start all daemons in order (SensorDaemon → FRTApp → DBDaemon → RecommendDaemon); add async retry logic |
 
 ### Debug Commands
 ```bash
@@ -342,6 +377,7 @@ python -c "import sdbus; print(sdbus.__file__)"
 - **Test Reports**: [tests/PHASE1_TEST_REPORT.md](tests/PHASE1_TEST_REPORT.md)
 - **Sensor Pinouts**: [drivers/sensor/README_PINOUT.md](drivers/sensor/README_PINOUT.md)
 - **Recommend System Details**: [/memories/repo/recommend_system_inventory.md](/memories/repo/recommend_system_inventory.md)
+- **Handover Notes**: [HANDOVER_CHAT.md](HANDOVER_CHAT.md)
 
 ---
 
@@ -364,6 +400,13 @@ python -c "import sdbus; print(sdbus.__file__)"
 2. Update `SqliteManager.init_databases()` with new table schema
 3. Run `tests/run_phase1_tests.py` to validate schema
 4. Update FRT callback to populate new fields
+
+**Add recommendation logic to RecommendDaemon**:
+1. Implement Bù Trừ algorithm in `recommend_daemon/src/RecommendEngine.py`
+2. Register D-Bus methods in `recommend_daemon/src/DbusInterface.py` (`GenerateShoppingList`, `GetAvailableRecipes`, etc.)
+3. Add `FSS-Recommend.db` schema in `recommend_daemon/src/RecommendDbManager.py`
+4. Wire in `recommend_daemon/src/main.py` with lazy NLP engine loading from `recommend_system/`
+5. Test: `pytest recommend_daemon/tests/test_recommend_engine.py -v`
 
 ---
 

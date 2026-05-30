@@ -64,6 +64,12 @@ class DbDbusInterface:
         
         # External comparison function callback
         self._compare_callback: Optional[Callable] = None
+
+        # Pure database operation callbacks
+        self._inventory_callback: Optional[Callable] = None
+        self._requests_callback: Optional[Callable] = None
+        self._insert_request_callback: Optional[Callable] = None
+        self._clear_request_callback: Optional[Callable] = None
         
         # Setup logging
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -148,6 +154,22 @@ class DbDbusInterface:
     def set_comparison_callback(self, callback: Callable) -> None:
         """Set the callback for GetMissingIngredients method."""
         self._compare_callback = callback
+
+    def set_inventory_callback(self, callback: Callable) -> None:
+        """Set the callback for GetInventory method."""
+        self._inventory_callback = callback
+
+    def set_requests_callback(self, callback: Callable) -> None:
+        """Set the callback for GetRequests method."""
+        self._requests_callback = callback
+
+    def set_insert_request_callback(self, callback: Callable) -> None:
+        """Set the callback for InsertRequest method."""
+        self._insert_request_callback = callback
+
+    def set_clear_request_callback(self, callback: Callable) -> None:
+        """Set the callback for ClearRequest method."""
+        self._clear_request_callback = callback
 
     def listen_frt_pipeline_events(self, callback: Callable) -> None:
         """
@@ -304,7 +326,7 @@ class DbDbusInterface:
 
     async def _async_emit_user_presence_update(self, detected: bool):
         self.dbus_object.UserPresenceUpdate(detected)
-    
+
     def poll_bus_events(self) -> None:
         """Starts polling. In async mode, the loop is already running."""
         self.logger.info("D-Bus event polling active (asyncio loop)")
@@ -485,12 +507,83 @@ if SDBUS_AVAILABLE:
             if self._interface_instance and self._interface_instance._compare_callback:
                 try:
                     shortage_list = self._interface_instance._compare_callback()
-                    # Format: ["Food: Qty", ...]
                     return [f"{item['food_id']}: {item['shortage']}" for item in shortage_list]
                 except Exception as e:
                     logging.error(f"Error in GetMissingIngredients D-Bus method: {e}")
                     return ["Error: Internal server error"]
             return ["Error: Comparison callback not set"]
+
+        # ---------------------------------------------------------------------
+        # Phase 3: Pure Database D-Bus Methods
+        # ---------------------------------------------------------------------
+
+        @dbus_method_async('', 's')
+        async def GetInventory(self) -> str:
+            """
+            D-Bus Method: Get all current inventory items.
+            Returns JSON string of inventory array.
+            """
+            if self._interface_instance and self._interface_instance._inventory_callback:
+                try:
+                    result = self._interface_instance._inventory_callback()
+                    return json.dumps(result, ensure_ascii=False)
+                except Exception as e:
+                    logging.error(f"Error in GetInventory D-Bus method: {e}")
+                    return json.dumps({"status": "error", "message": str(e)})
+            return json.dumps({"status": "error", "message": "Inventory callback not set"})
+
+        @dbus_method_async('', 's')
+        async def GetRequests(self) -> str:
+            """
+            D-Bus Method: Get all recipe requests.
+            Returns JSON string of requests array.
+            """
+            if self._interface_instance and self._interface_instance._requests_callback:
+                try:
+                    result = self._interface_instance._requests_callback()
+                    return json.dumps(result, ensure_ascii=False)
+                except Exception as e:
+                    logging.error(f"Error in GetRequests D-Bus method: {e}")
+                    return json.dumps({"status": "error", "message": str(e)})
+            return json.dumps({"status": "error", "message": "Requests callback not set"})
+
+        @dbus_method_async('sss', 'b')
+        async def InsertRequest(self, recipe_name: str, ingredients_json: str,
+                                 batch_id: str) -> bool:
+            """
+            D-Bus Method: Insert a batch of recipe ingredients as a request.
+            Args:
+                recipe_name: Vietnamese recipe name
+                ingredients_json: JSON array of {"food_id","quantity","unit"} objects
+                batch_id: UUID to group ingredients from the same recipe
+            Returns: True if successful.
+            """
+            if self._interface_instance and self._interface_instance._insert_request_callback:
+                try:
+                    ingredients = json.loads(ingredients_json)
+                    return self._interface_instance._insert_request_callback(
+                        recipe_name, ingredients, batch_id
+                    )
+                except Exception as e:
+                    logging.error(f"Error in InsertRequest D-Bus method: {e}")
+                    return False
+            return False
+
+        @dbus_method_async('s', 'b')
+        async def ClearRequest(self, batch_id: str) -> bool:
+            """
+            D-Bus Method: Clear all ingredients from a recipe request batch.
+            Args:
+                batch_id: request_batch_id to delete
+            Returns: True if successful.
+            """
+            if self._interface_instance and self._interface_instance._clear_request_callback:
+                try:
+                    return self._interface_instance._clear_request_callback(batch_id)
+                except Exception as e:
+                    logging.error(f"Error in ClearRequest D-Bus method: {e}")
+                    return False
+            return False
 
         @dbus_signal_async('sis')
         def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
@@ -526,8 +619,14 @@ else:
         """Placeholder D-Bus object implementation."""
         def UIUpdateRequired(self, *args, **kwargs): pass
         def EnvironmentUpdateRequired(self, *args, **kwargs): pass
+        def SecondaryEnvironmentUpdateRequired(self, *args, **kwargs): pass
         def DoorStateUpdate(self, *args, **kwargs): pass
         def DistanceAlert(self, *args, **kwargs): pass
+        def UserPresenceUpdate(self, *args, **kwargs): pass
+        def GetInventory(self, *args, **kwargs): pass
+        def GetRequests(self, *args, **kwargs): pass
+        def InsertRequest(self, *args, **kwargs): pass
+        def ClearRequest(self, *args, **kwargs): pass
         def export_to_dbus(self, *args, **kwargs): pass
         def unexport(self, *args, **kwargs): pass
         def set_interface_instance(self, *args, **kwargs): pass

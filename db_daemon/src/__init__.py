@@ -23,7 +23,7 @@ Feature Flags:
     - FRT_APP_ENABLED: Enable/disable FRTApp integration (see PosixShmReader)
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "FSS Development Team"
 __all__ = [
     "SqliteManager",
