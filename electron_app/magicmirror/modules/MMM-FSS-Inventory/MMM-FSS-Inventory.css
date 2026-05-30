@@ -136,17 +136,19 @@
 }
 
 /**
- * Inventory Grid
+ * Inventory Grid - Compact for bottom_right
  */
 .mmm-fss-inventory-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-	gap: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+	gap: 8px;
 	padding: 12px;
 	background: rgba(40, 40, 55, 0.6);
 	border-radius: 8px;
 	border: 1px solid rgba(100, 150, 200, 0.2);
 	min-height: 120px;
+	max-height: 320px;
+	overflow-y: auto;
 	transition: all 0.3s ease;
 }
 
@@ -162,8 +164,8 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 8px;
-	padding: 10px;
+	gap: 4px;
+	padding: 8px;
 	background: rgba(50, 50, 70, 0.8);
 	border-radius: 8px;
 	border: 1px solid rgba(77, 184, 255, 0.2);
@@ -178,38 +180,24 @@
 }
 
 .mmm-fss-inventory-item img {
-	width: 80px;
-	height: 80px;
+	width: 60px;
+	height: 60px;
 	object-fit: cover;
-	border-radius: 4px;
+	border-radius: 8px;
 	background: rgba(0, 0, 0, 0.3);
 	border: 1px solid rgba(77, 184, 255, 0.2);
 }
 
-.mmm-fss-inventory-item-info {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
-	width: 100%;
-	text-align: center;
-}
-
-.mmm-fss-inventory-item-name {
-	font-size: 12px;
-	font-weight: 600;
-	color: #ffffff;
-	word-break: break-word;
-	max-width: 90px;
-}
-
-.mmm-fss-inventory-item-quantity {
+.mmm-fss-inventory-item .item-name {
 	font-size: 11px;
-	color: #4db8ff;
-	font-weight: 700;
-	background: rgba(77, 184, 255, 0.1);
-	padding: 2px 6px;
-	border-radius: 3px;
+	text-align: center;
+	margin-top: 4px;
+}
+
+.mmm-fss-inventory-item .item-qty {
+	font-size: 10px;
+	color: #95a5a6;
+	text-align: center;
 }
 
 /**
@@ -272,18 +260,18 @@
 	}
 
 	.mmm-fss-inventory-grid {
-		grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-		gap: 8px;
+		grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+		gap: 6px;
 		padding: 8px;
 	}
 
 	.mmm-fss-inventory-item {
-		padding: 8px;
+		padding: 6px;
 	}
 
 	.mmm-fss-inventory-item img {
-		width: 70px;
-		height: 70px;
+		width: 50px;
+		height: 50px;
 	}
 
 	.mmm-fss-inventory-title {

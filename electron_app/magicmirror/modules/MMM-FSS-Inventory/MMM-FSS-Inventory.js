@@ -27,8 +27,8 @@ Module.register("MMM-FSS-Inventory", {
 		notificationQueueMax: 10,    // max notifications to queue
 		updateInterval: 1000,        // ms between UI refresh
 		staleDataTimeout: 15000,     // ms before inventory data considered stale
-		frtAppEnabled: false,        // whether FRTApp is available
-		showPlaceholder: true,       // show "FRTApp not available" when disabled
+		frtAppEnabled: true,         // whether FRTApp is available
+		showPlaceholder: false,      // show "FRTApp not available" when disabled
 	},
 
 	/**
@@ -167,20 +167,25 @@ Module.register("MMM-FSS-Inventory", {
 		grid.classList.add("stale");
 		}
 
-		if (Object.keys(this.inventoryData.foods).length === 0) {
+		const foodKeys = Object.keys(this.inventoryData.foods);
+		if (foodKeys.length === 0) {
 			// No foods in inventory
 			const emptyMsg = document.createElement("div");
 			emptyMsg.classList.add("mmm-fss-inventory-empty");
 			emptyMsg.textContent = "No foods detected";
 			grid.appendChild(emptyMsg);
 		} else {
+			// Sort items by last_updated descending
+			const sorted = foodKeys
+				.map(k => ({ key: k, food: this.inventoryData.foods[k] }))
+				.sort((a, b) => (b.food.timestamp || 0) - (a.food.timestamp || 0));
+
 			// Display each food item
-			for (const foodId in this.inventoryData.foods) {
-				const food = this.inventoryData.foods[foodId];
+			for (const { key: foodId, food } of sorted) {
 				const foodItem = document.createElement("div");
 				foodItem.classList.add("mmm-fss-inventory-item");
 
-				// Food image
+				// Food thumbnail
 				if (food.imagePath) {
 					const img = document.createElement("img");
 					img.src = food.imagePath;
@@ -188,21 +193,18 @@ Module.register("MMM-FSS-Inventory", {
 					foodItem.appendChild(img);
 				}
 
-				// Food name and quantity
-				const info = document.createElement("div");
-				info.classList.add("mmm-fss-inventory-item-info");
-
+				// Food name
 				const name = document.createElement("div");
-				name.classList.add("mmm-fss-inventory-item-name");
+				name.classList.add("item-name");
 				name.textContent = food.name;
-				info.appendChild(name);
+				foodItem.appendChild(name);
 
-				const quantity = document.createElement("div");
-				quantity.classList.add("mmm-fss-inventory-item-quantity");
-				quantity.textContent = `x${food.quantity}`;
-				info.appendChild(quantity);
+				// Food quantity
+				const qty = document.createElement("div");
+				qty.classList.add("item-qty");
+				qty.textContent = `x${food.quantity}`;
+				foodItem.appendChild(qty);
 
-				foodItem.appendChild(info);
 				grid.appendChild(foodItem);
 			}
 		}

@@ -122,6 +122,12 @@ module.exports = NodeHelper.create({
 					action: data.action || "detected",
 					timestamp: data.timestamp || Date.now(),
 				});
+				// Relay to MMM-FSS-Notification
+				const actionLabel = data.action === "added" ? "to" : "from";
+				this.sendSocketNotification("FSS_NOTIFICATION", {
+					type: "food",
+					message: `📦 ${data.action} ${data.quantity} ${data.className} ${actionLabel} the fridge`
+				});
 			} else if (data.type === "FRT_APP_ENABLED") {
 				// FRT app enabled/disabled flag
 				this.frtAppEnabled = data.enabled;

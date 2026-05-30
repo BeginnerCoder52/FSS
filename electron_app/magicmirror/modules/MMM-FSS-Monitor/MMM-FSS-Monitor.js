@@ -75,6 +75,22 @@ Module.register("MMM-FSS-Monitor", {
 		}
 		wrapper.appendChild(overlay);
 
+		// Door state indicator (always visible)
+		const doorIndicator = document.createElement("div");
+		doorIndicator.id = "fss-door-indicator";
+		doorIndicator.classList.add("fss-door-indicator");
+
+		if (this.state.doorState) {
+			const isOpen = this.state.doorState === "OPEN";
+			doorIndicator.textContent = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
+			doorIndicator.classList.toggle("door-open", isOpen);
+			doorIndicator.classList.toggle("door-closed", !isOpen);
+		} else {
+			doorIndicator.textContent = "🚪 --";
+			doorIndicator.classList.add("door-unknown");
+		}
+		wrapper.appendChild(doorIndicator);
+
 		// Debug info (optional)
 		if (this.config.showDebugInfo) {
 			const debugInfo = document.createElement("div");
@@ -136,6 +152,16 @@ Module.register("MMM-FSS-Monitor", {
 			this.state.lastDoorUpdate = payload.timestamp || Date.now();
 
 			Log.info(`MMM-FSS-Monitor: Door state - ${payload.state}`);
+
+			// Update door indicator element
+			const doorIndicator = document.getElementById("fss-door-indicator");
+			if (doorIndicator) {
+				const isOpen = payload.state === "OPEN";
+				doorIndicator.textContent = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
+				doorIndicator.classList.remove("door-open", "door-closed", "door-unknown");
+				doorIndicator.classList.toggle("door-open", isOpen);
+				doorIndicator.classList.toggle("door-closed", !isOpen);
+			}
 
 			// Clear stale timer
 			if (this.staleDoorTimer) {

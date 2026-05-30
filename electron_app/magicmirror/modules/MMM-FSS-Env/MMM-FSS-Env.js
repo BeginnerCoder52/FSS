@@ -22,8 +22,8 @@ Module.register("MMM-FSS-Env", {
 		updateInterval: 2000,        // ms between expected sensor updates
 		staleDataTimeout: 10000,     // ms before data is considered stale
 		temperatureFormat: "C",      // C for Celsius, F for Fahrenheit
-		roundTemperature: true,      // round temperature to integer
-		roundHumidity: true,         // round humidity to integer
+		roundTemperature: false,      // show temperature with 2 decimals
+		roundHumidity: false,         // show humidity with 2 decimals
 		displayUnits: true,          // show °C or °F and % symbols
 	},
 
@@ -134,7 +134,7 @@ Module.register("MMM-FSS-Env", {
 		const tempValue = document.createElement("span");
 		tempValue.classList.add("mmm-fss-env-value");
 		if (data.temperature !== null) {
-			const tempDisplay = this.config.roundTemperature ? Math.round(data.temperature) : data.temperature.toFixed(1);
+			const tempDisplay = this.config.roundTemperature ? Math.round(data.temperature) : data.temperature.toFixed(2);
 			const unit = this.config.displayUnits ? `°${this.config.temperatureFormat}` : "";
 			tempValue.textContent = `${tempDisplay}${unit}`;
 		} else {
@@ -156,7 +156,7 @@ Module.register("MMM-FSS-Env", {
 		const humidValue = document.createElement("span");
 		humidValue.classList.add("mmm-fss-env-value");
 		if (data.humidity !== null) {
-			const humidDisplay = this.config.roundHumidity ? Math.round(data.humidity) : data.humidity.toFixed(1);
+			const humidDisplay = this.config.roundHumidity ? Math.round(data.humidity) : data.humidity.toFixed(2);
 			humidValue.textContent = this.config.displayUnits ? `${humidDisplay}%` : humidDisplay;
 		} else {
 			humidValue.textContent = "--%";

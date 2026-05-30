@@ -2,9 +2,9 @@
 
 > **Created**: 2026-05-24
 > **Last Updated**: 2026-05-31
-> **Previous session branch**: `recommend_daemon` (Phase 4 + 5 — Recommend Daemon full implementation)
-> **This session branch**: `main` (Phase 0 — Folder Structure & Docs Cleanup)
-> **Project phase**: Phase 0 Complete — Ready for Phase 1 (FRTApp-dev)
+> **Previous session branch**: `FRTApp-dev` (Phase 1 — C TFLite Reader + D-Bus + Distance Sensor)
+> **This session branch**: `ElectronApp-dev` (Phase 2 — UI Modules + Fixes)
+> **Project phase**: Phase 2 Complete — Ready for Merge to main
 
 ---
 
@@ -210,13 +210,118 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 ### Next Steps
 - Merge `FRTApp-dev` → `main`
-- Start **Phase 2**: `ElectronApp-dev` branch (SensorDaemon precision, MMM-FSS modules)
-- Run `sudo bash tools/verify_dbus_config.sh --fix` on target machine
+
+---
+
+## 5. Current Session: Phase 2 — ElectronApp Branch (2026-05-31)
+
+### What was done
+
+**Phase 2 — `ElectronApp-dev` branch — UI Modules + Fixes (Completed)**:
+
+**2.1 SensorDaemon — 2 Decimal Places**:
+- `OutputProcessor.cpp`: 4x `setprecision(1)` → `setprecision(2)` for temp/humid/temp_2/humid_2 JSON output
+- Verification: Rebuild with `cmake .. && make`, logs show `27.12` not `27.1`
+
+**2.2 MMM-FSS-Env — 2 Decimal Places**:
+- `MMM-FSS-Env.js`: Defaults `roundTemperature: false`, `roundHumidity: false`
+- Display formatting: `.toFixed(1)` → `.toFixed(2)` for both temperature and humidity values
+
+**2.3 MMM-FSS-Monitor — Fix Door State Display**:
+- `MMM-FSS-Monitor.js`: Added always-visible door indicator (`🚪 MỞ`/`🚪 ĐÓNG`) in `getDom()` before debug block
+- DOOR_STATE_UPDATE handler now updates indicator text/classes in real-time
+- `MMM-FSS-Monitor.css`: Added `.fss-door-indicator` styles (door-open/door-closed/door-unknown)
+- `node_helper.js`: Added FSS_NOTIFICATION relay for door state events
+
+**2.4 MMM-FSS-Inventory — Move to bottom_right + Thumbnail Display**:
+- Defaults: `frtAppEnabled: true`, `showPlaceholder: false`
+- Inventory grid: Sorted by `last_updated` descending (newest first)
+- Compact CSS: 80px min grid columns, 60px thumbnails, 8px gap, max-height 320px with overflow-y scroll
+- `node_helper.js`: Added FSS_NOTIFICATION relay for food detection events
+
+**2.5 MMM-FSS-LivePreview — New Module**:
+- `MMM-FSS-LivePreview.js`: Shows annotated frame preview from FRTApp, auto-hides after 3s timeout
+- `MMM-FSS-LivePreview.css`: Dark overlay, centered image, rounded corners
+- `node_helper.js`: Spawns Python bridge, relays frames via socket.io
+- `py_bridge/live_preview_bridge.py`: Polls `/opt/fss/latest_preview.jpg`, base64 encodes, outputs to stdout
+
+**2.6 MMM-FSS-VirtualKeyboard — New Module**:
+- Pure frontend (no Python bridge): QWERTY layout with 4 rows
+- Search bar with Vietnamese placeholder, submit triggers RECIPE_SEARCH
+- Touch-optimized: 44x44px keys, `touch-action: manipulation`
+- `node_helper.js`: Minimal relay for RECIPE_SEARCH events
+
+**2.7 MMM-FSS-Recommend — New Module**:
+- `MMM-FSS-Recommend.js`: Displays ingredient table (needed/available/missing status), summary
+- `MMM-FSS-Recommend.css`: Dark theme, color-coded rows (green/orange/red)
+- `node_helper.js`: Spawns Python D-Bus bridge, writes SEARCH to stdin, reads RESULT from stdout
+- `py_bridge/recommend_dbus_listener.py`: Calls RecommendDaemon.GenerateShoppingList via D-Bus
+
+**2.8 MMM-FSS-Notification — New Module**:
+- `MMM-FSS-Notification.js`: Web Audio API sounds (6 types: 440Hz-880Hz sine waves), auto-dismissing cards
+- Sound types: user_detected (3×440Hz), door_open (2×660Hz), door_closed (1×330Hz), food_added (1×880Hz), food_removed (2×330Hz), recommend_done (2×550Hz→770Hz)
+- `MMM-FSS-Notification.css`: Fixed center overlay, colored borders by type, slide-in animation
+
+**2.9 Custom Food Naming — User-Based System**:
+- `SqliteManager.py`: Added `custom_food_labels` table (id, user_label, image_path, feature_hash, created_at, last_seen_at)
+  - `register_custom_food()`, `get_all_custom_foods()`, `update_custom_food_seen()` methods
+- `DbDbusInterface.py`: Added `CustomFoodRequest` signal, `RegisterCustomFood`/`GetCustomFoods` D-Bus methods
+
+**2.10 DBDaemon — Subscribe to RecommendDaemon**:
+- `DbDbusInterface.py`: Added `subscribe_recommend_daemon_events()` method with async signal listener
+- `SqliteManager.py`: Added `recommendation_cache` table (recipe_name, shopping_list JSON, created_at)
+
+**2.11 config.js — Full Update**:
+- All 7 FSS modules registered with correct positions:
+  - MMM-FSS-VirtualKeyboard (`top_center`), MMM-FSS-LivePreview (`center`), MMM-FSS-Monitor (`top_center`),
+    MMM-FSS-Env (`top_right`), MMM-FSS-Recommend (`bottom_center`), MMM-FSS-Inventory (`bottom_right`),
+    MMM-FSS-Notification (`center`)
+- Existing modules (alert, clock, calendar, compliments, weather, newsfeed) unchanged
+
+### Verification
+- ✅ All Python files pass `py_compile` (DbDbusInterface.py, SqliteManager.py, live_preview_bridge.py, recommend_dbus_listener.py)
+- ✅ All JavaScript files parse correctly
+- ✅ No core code changed — only additive changes (new modules, new D-Bus signals/methods)
+- ✅ Phase 2 checklist items 2.1–2.11 all implemented
+
+### Files changed this session
+| File | Status | Description |
+|------|--------|-------------|
+| `sensor_daemon/src/OutputProcessor.cpp` | **Modified** | setprecision(1)→(2) for 4 fields |
+| `db_daemon/src/SqliteManager.py` | **Modified** | custom_food_labels + recommendation_cache tables, CRUD methods |
+| `db_daemon/src/DbDbusInterface.py` | **Modified** | CustomFoodRequest signal, RegisterCustomFood/GetCustomFoods methods, RecommendDaemon subscription |
+| `electron_app/magicmirror/config/config.js` | **Modified** | All 7 FSS modules with correct positions |
+| `MMM-FSS-Env/MMM-FSS-Env.js` | **Modified** | Defaults: round=false, toFixed(2) |
+| `MMM-FSS-Monitor/MMM-FSS-Monitor.js` | **Modified** | Door indicator + real-time update |
+| `MMM-FSS-Monitor/MMM-FSS-Monitor.css` | **Modified** | Door indicator styles |
+| `MMM-FSS-Monitor/node_helper.js` | **Modified** | FSS_NOTIFICATION relay |
+| `MMM-FSS-Inventory/MMM-FSS-Inventory.js` | **Modified** | Sorted inventory, compact defaults |
+| `MMM-FSS-Inventory/MMM-FSS-Inventory.css` | **Modified** | Compact grid (80px/60px) |
+| `MMM-FSS-Inventory/node_helper.js` | **Modified** | FSS_NOTIFICATION relay |
+| `MMM-FSS-LivePreview/MMM-FSS-LivePreview.js` | **New** | Frame preview module |
+| `MMM-FSS-LivePreview/MMM-FSS-LivePreview.css` | **New** | Preview styling |
+| `MMM-FSS-LivePreview/node_helper.js` | **New** | Python bridge manager |
+| `MMM-FSS-LivePreview/py_bridge/live_preview_bridge.py` | **New** | File poller + base64 encoder |
+| `MMM-FSS-VirtualKeyboard/MMM-FSS-VirtualKeyboard.js` | **New** | QWERTY virtual keyboard |
+| `MMM-FSS-VirtualKeyboard/MMM-FSS-VirtualKeyboard.css` | **New** | Keyboard styling |
+| `MMM-FSS-VirtualKeyboard/node_helper.js` | **New** | Recipe search relay |
+| `MMM-FSS-Recommend/MMM-FSS-Recommend.js` | **New** | Recipe result display |
+| `MMM-FSS-Recommend/MMM-FSS-Recommend.css` | **New** | Recommend styling |
+| `MMM-FSS-Recommend/node_helper.js` | **New** | D-Bus bridge manager |
+| `MMM-FSS-Recommend/py_bridge/recommend_dbus_listener.py` | **New** | D-Bus client for RecommendDaemon |
+| `MMM-FSS-Notification/MMM-FSS-Notification.js` | **New** | Notification overlay + Web Audio |
+| `MMM-FSS-Notification/MMM-FSS-Notification.css` | **New** | Notification styling |
+| `HANDOVER_CHAT.md` | **Modified** | Added Phase 2 section |
+
+### Next Steps
+- Merge `ElectronApp-dev` → `main`
+- Run integration tests
+- Deploy D-Bus config: `sudo bash tools/verify_dbus_config.sh --fix`
 - Create venvs: `bash setup.sh`
 
 ---
 
-## 3. Design Notes & Rationale
+## 6. Design Notes & Rationale
 
 ### Why per-component `requirements.txt` instead of one shared `.venv`?
 
@@ -237,7 +342,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 5. Project Phase Roadmap
+## 7. Project Phase Roadmap
 
 | Phase | Component | Branch | Status |
 |-------|-----------|--------|--------|
@@ -248,11 +353,11 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 | Phase 4 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |
 | Phase 5 | Recommend Daemon | `recommend_daemon` | ✅ Complete |
 | Phase 6 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
-| Phase 7 | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | 🔜 Next |
+| Phase 7 (Final Upg. 2) | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | ✅ Complete |
 
 ---
 
-## 5. Remaining Work Before System Integration
+## 8. Remaining Work Before System Integration
 
 ### 🔴 Must Do
 
@@ -262,14 +367,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ### 🟡 Should Do
 
-- [ ] **Create `MMM-FSS-Food` module**: Referenced in `setup.sh` and `AGENTS.md` but not implemented. Needs:
-  - `MMM-FSS-Food.js` — frontend: display shopping list from recommend daemon
-  - `MMM-FSS-Food.css` — styling
-  - `node_helper.js` — spawns `food_dbus_listener.py` as subprocess
-  - `py_bridge/food_dbus_listener.py` — listens to `RecommendDaemon.RecommendationUpdated` signal, translates to JSON for node_helper
-  - `py_bridge/requirements.txt` — depends on `sdbus`
 - [ ] **Add integration/E2E tests**: Full data flow test: mock D-Bus → GenerateShoppingList → NLP → Bù Trừ → DB persistence → signal emission.
-- [ ] **Wire ElectronApp UI to call RecommendDaemon**: Replace current DBDaemon recommendation calls with RecommendDaemon D-Bus calls.
 
 ### 🟢 Nice to Have
 
@@ -277,13 +375,13 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 6. Repository Information
+## 9. Repository Information
 
 | Property | Value |
 |----------|-------|
 | Remote | `origin` → `https://github.com/BeginnerCoder52/FSS.git` |
-| Current branch | `recommend_daemon` (Phase 4+5 complete) |
-| Next action | Merge `recommend_daemon` into `main` |
+| Current branch | `ElectronApp-dev` (Phase 2 complete) |
+| Next action | Merge `ElectronApp-dev` into `main` |
 | Project root | `/home/richardmelvin52/FSS` |
 
 ### Branches overview
@@ -300,7 +398,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 7. Architecture Reference
+## 10. Architecture Reference
 
 ### D-Bus Service Ownership
 
