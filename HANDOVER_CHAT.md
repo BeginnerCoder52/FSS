@@ -3,8 +3,8 @@
 > **Created**: 2026-05-24
 > **Last Updated**: 2026-05-30
 > **Previous session branch**: `DBDaemon-dev` (Phase 3 — DBDaemon cleanup)
-> **Next session branch**: `recommend_daemon` (Phase 4 — Recommend Daemon)
-> **Project phase**: Phase 4 of 5 — Re-planned
+> **This session branch**: `recommend_daemon` (Phase 4 + 5 — Recommend Daemon full implementation)
+> **Project phase**: Phase 4 + 5 Complete — Integration remaining
 
 ---
 
@@ -35,341 +35,148 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 | Component | Role | D-Bus Service | Data |
 |-----------|------|---------------|------|
 | **DBDaemon** | Data persistence + IPC broker | `vn.edu.uit.FSS.DBDaemon` | `fss_data.db`, `FSS_Inventory.db`, `FSS_Request.db` |
-| **RecommendDaemon** | Business logic: NLP + comparison + shopping list | `vn.edu.uit.FSS.RecommendDaemon` | `FSS_Recommend.db` (NEW) |
+| **RecommendDaemon** | Business logic: NLP + comparison + shopping list | `vn.edu.uit.FSS.RecommendDaemon` | `FSS_Recommend.db` |
 
 ---
 
-## 2. Session Summary (2026-05-30)
+## 2. Session Summary (2026-05-30) — Current Session: Phase 4 + 5
 
-### What was done (Previous Session — Phase 3 Re-planning)
+### What was done this session
 
-**Phase 3 Re-planning**:
-- Made architectural decision to extract RecommendationEngine from DBDaemon
-- Created `recommend_daemon/` folder structure (planned, not yet implemented)
-- Defined `FSS-Recommend.db` schema for Bù Trừ (delta/comparison) method
-- Wired up D-Bus method placeholders in `DbDbusInterface.py` (may be migrated later)
+**Phase 4 — RecommendDaemon implementation (Completed)**:
+- Created `recommend_daemon/` folder structure with all source files
+- Implemented `RecommendDbManager.py` — FSS-Recommend.db with `recommendation_log` + `shopping_list` tables, full CRUD
+- Implemented `RecommendEngine.py` — Bù Trừ algorithm (`FSS-Request - FSS-Inventory = FSS-Recommend`), NLP integration via `RecipeAnalyzerEngine`, inventory fetch from DBDaemon D-Bus
+- Implemented `DbusInterface.py` — D-Bus service `vn.edu.uit.FSS.RecommendDaemon` with 4 methods (`GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased`) and 1 signal (`RecommendationUpdated`)
+- Implemented `main.py` — entry point with lazy NLP engine loading, logging setup, graceful shutdown
 
-### Files changed (Previous Session)
-- `HANDOVER_CHAT.md` — Updated roadmap, added ADR-001, re-planned phases
-- `AGENTS.md` — Added RecommendDaemon to architecture table, D-Bus services, startup
+**Phase 5 — FSS-Recommend DB (Completed)**:
+- `recommendation_log` table: per-recipe analysis snapshots (recipe_name, batch_id, NLP status, available/needed/missing counts, result_json)
+- `shopping_list` table: individual purchase items with FK to recommendation_log, shortage calculation, purchase tracking
+- Bù Trừ algorithm fully implemented with 3 categories: available, needed (partial), missing (zero stock)
 
----
+**Integration Script Updates**:
+- `startup_fss_system.sh` — Rewritten to start all 3 daemons (Sensor + DB + Recommend). Uses `$FSS_ROOT` from script location instead of hardcoded path. Uses component-specific venvs instead of broken shared `.venv`. Cleaner monitor loop with array-based process management.
+- `setup.sh` — Added `recommend_daemon` venv creation + pip install. Fixed MagicMirror module loop (gracefully skips unimplemented `MMM-FSS-Food` with note). Removed unnecessary apt comments.
+- `fss_env_setup.sh` — Added 5th systemd service `fss-recommend.service` (`After=fss-db.service`). Added `systemctl enable` for all 5 services.
+- `verify_dbus_fix.sh` — Expanded to validate RecommendDaemon source files (4 files), signal/method patterns, and Bù Trừ algorithm presence.
 
-### What was done (Current Session — Phase 3 Implementation)
+**New utility scripts**:
+- `tools/verify_dbus_config.sh` — Validates `/etc/dbus-1/system.d/vn.edu.uit.FSS.conf` existence, checks all 4 service ownership policies, send/receive policies, XML structure, runtime D-Bus registration, and Python sdbus availability. Supports `--fix` and `--force` flags.
 
-**Phase 3 — DBDaemon Cleanup (Completed)**:
-1. **Removed** `db_daemon/src/RecommendationEngine.py` — business logic extracted to future `recommend_daemon/`
-2. **Refactored** `DbDbusInterface.py` — removed all recommendation-specific callbacks (`_shopping_list_callback`, `_inventory_update_callback`, `_recipes_callback`). Removed D-Bus methods `GenerateShoppingList`, `GetCurrentInventory`, `GetAvailableRecipes`, `UpdateInventoryFromNotification`. Removed `RecommendationUpdated` signal.
-3. **Added** pure database D-Bus methods:
-   - `GetInventory()` → JSON of `FSS_Inventory.db` contents
-   - `GetRequests()` → JSON of `FSS_Request.db` contents
-   - `InsertRequest(recipe_name, ingredients_json, batch_id)` → bool
-   - `ClearRequest(batch_id)` → bool
-4. **Simplified** `DbDaemonMain.py` — removed `RecommendationEngine` import/init, `NLP_MODEL_PATH`/`NLP_RECIPE_DB_PATH` constants, `_initialize_nlp_engine()`, and all 4 recommendation event handlers. Wired new DB handlers directly to `SqliteManager`.
-5. **Updated** `__init__.py` — removed `RecommendationEngine` from exports (v1.1.0)
-6. **Created** `db_daemon/tests/test_phase3_cleanup.py` — 34 tests across 6 test classes
-7. **Fixed** outdated unit tests in `tests/unit/db_daemon/test_db_dbus_interface.py`
+**Configuration Updates**:
+- `electron_app/config.json` — Added `recommend_service`, `recommend_interface`, `recommend_path` entries for RecommendDaemon.
 
-### Files changed (Current Session)
-- `db_daemon/src/RecommendationEngine.py` — **Deleted**
-- `db_daemon/src/DbDbusInterface.py` — Removed recommend logic, added pure DB methods
-- `db_daemon/src/DbDaemonMain.py` — Simplified, removed NLP/recommend engine dependencies
-- `db_daemon/src/__init__.py` — Removed `RecommendationEngine` from exports (v1.1.0)
-- `db_daemon/tests/test_phase3_cleanup.py` — **Created** (34 tests)
-- `tests/unit/db_daemon/test_db_dbus_interface.py` — Fixed signatures for new API
+**Tests**:
+- Created `recommend_daemon/tests/test_recommend_engine.py` — 41 unit tests across 3 test classes:
+  - `TestRecommendDbManager` (22 tests): DB schema, CRUD operations, edge cases
+  - `TestRecommendEngine` (17 tests): Bù Trừ algorithm, inventory comparison, NLP error handling, purchase tracking
+  - `TestDbDbusInteraction` (2 tests): Inventory integration with engine
 
 ### Verification Results
 - Phase 1 backward compatibility: ✅ **16/16 tests pass**
 - Phase 3 cleanup tests: ✅ **34/34 tests pass**
+- Phase 4+5 Recommend tests: ✅ **41/41 tests pass**
+
+### Files changed this session
+
+**New files**:
+| File | Description |
+|------|-------------|
+| `recommend_daemon/__init__.py` | Package marker |
+| `recommend_daemon/requirements.txt` | Dependencies: sdbus, sklearn-crfsuite, pyvi, joblib |
+| `recommend_daemon/src/__init__.py` | Package exports |
+| `recommend_daemon/src/RecommendDbManager.py` | FSS-Recommend.db CRUD (Phase 5 schema) |
+| `recommend_daemon/src/RecommendEngine.py` | Bù Trừ algorithm + NLP orchestration |
+| `recommend_daemon/src/DbusInterface.py` | D-Bus service `vn.edu.uit.FSS.RecommendDaemon` |
+| `recommend_daemon/src/main.py` | Entry point with lazy NLP loading |
+| `recommend_daemon/tests/__init__.py` | Test package marker |
+| `recommend_daemon/tests/test_recommend_engine.py` | 41 unit tests |
+| `recommend_daemon/systemd/recommend_daemon.service` | Systemd service unit |
+| `tools/verify_dbus_config.sh` | D-Bus config validation + generation |
+
+**Modified files**:
+| File | Changes |
+|------|---------|
+| `startup_fss_system.sh` | Full rewrite: 3 daemons, dynamic FSS_ROOT, component venvs |
+| `setup.sh` | Added recommend_daemon venv, fixed magicmirror module loop |
+| `fss_env_setup.sh` | Added fss-recommend.service (5th service) |
+| `verify_dbus_fix.sh` | Added RecommendDaemon source/signal/method validation |
+| `electron_app/config.json` | Added RecommendDaemon D-Bus entries |
+| `HANDOVER_CHAT.md` | Updated with this session's work |
 
 ---
 
-## 3. Project Phase Roadmap (Revised)
+## 3. Design Notes & Rationale
+
+### Why per-component `requirements.txt` instead of one shared `.venv`?
+
+Each component has different dependencies:
+- `db_daemon` needs only `sdbus`
+- `recommend_daemon` needs `sdbus` + `sklearn-crfsuite` + `joblib` + `pyvi`
+- `frt_app/py_ai_core` needs `tflite-runtime` + `opencv`
+
+The old `startup_fss_system.sh` tried a shared `.venv` approach, which cannot satisfy all
+components simultaneously (dependency conflicts, missing packages). The per-component venv
+pattern (`component/venv/`) matches the existing `fss_env_setup.sh` systemd service design
+and gives proper isolation.
+
+### Why `FSS_ROOT` should be dynamic
+
+The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
+`$(dirname "$(readlink -f "$0")")` so they work regardless of clone location.
+
+---
+
+## 4. Project Phase Roadmap
 
 | Phase | Component | Branch | Status |
 |-------|-----------|--------|--------|
 | Phase 1 | DBDaemon DB schema | `DBDaemon-dev` | ✅ Complete |
 | Phase 2 | Recommend System (NLP) | `recommend_system` | ✅ Complete |
-| Phase 3 | **DBDaemon cleanup** — Remove RecommendationEngine, expose DB-only D-Bus | `DBDaemon-dev` | ✅ Complete |
-| Phase 4 | **Recommend Daemon** — New component `recommend_daemon/` with D-Bus service | `recommend_daemon` | 🔜 Next |
-| Phase 5 | **FSS-Recommend DB** — Bù Trừ method + shopping list persistence | `recommend_daemon` | ❌ Not started |
+| Phase 3 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |
+| Phase 4 | Recommend Daemon | `recommend_daemon` | ✅ Complete |
+| Phase 5 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
+| Integration | Remaining items | `main` | 🔜 Next |
 
 ---
 
-## 4. Phase 3 — DBDaemon Cleanup (Completed ✅)
+## 5. Remaining Work Before System Integration
 
-### What was done
-1. ✅ **Removed** `db_daemon/src/RecommendationEngine.py`
-2. ✅ **Removed** recommendation D-Bus methods from `DbDbusInterface.py`
-3. ✅ **Simplified** `DbDaemonMain.py` — no RecommendationEngine init/handlers
-4. ✅ **Exposed** pure database D-Bus methods: `GetInventory`, `GetRequests`, `InsertRequest`, `ClearRequest`
-5. ✅ **Tests**: 34 tests in `db_daemon/tests/test_phase3_cleanup.py`
+### 🔴 Must Do
 
-### Delivers
-- DBDaemon is now a pure **data controller + IPC broker**
-- Any future business logic component reads/writes through DBDaemon's D-Bus interface
+- [ ] **Deploy D-Bus config**: Run `sudo bash tools/verify_dbus_config.sh --fix` on the target machine to create `/etc/dbus-1/system.d/vn.edu.uit.FSS.conf`. Without this, all daemons will fail to register on the system bus.
+- [ ] **Create `venv/` for each component**: Run `bash setup.sh` (updated) to create all venvs and install dependencies. Or manually: `python3 -m venv recommend_daemon/venv && recommend_daemon/venv/bin/pip install -r recommend_daemon/requirements.txt`
+- [ ] **Update `tests/run_phase1_tests.py`**: Add `recommend_daemon` module validation to the Phase 1 test runner.
 
----
+### 🟡 Should Do
 
-## 4b. Phase 4 — Recommend Daemon (Next)
+- [ ] **Create `MMM-FSS-Food` module**: Referenced in `setup.sh` and `AGENTS.md` but not implemented. Needs:
+  - `MMM-FSS-Food.js` — frontend: display shopping list from recommend daemon
+  - `MMM-FSS-Food.css` — styling
+  - `node_helper.js` — spawns `food_dbus_listener.py` as subprocess
+  - `py_bridge/food_dbus_listener.py` — listens to `RecommendDaemon.RecommendationUpdated` signal, translates to JSON for node_helper
+  - `py_bridge/requirements.txt` — depends on `sdbus`
+- [ ] **Add integration/E2E tests**: Full data flow test: mock D-Bus → GenerateShoppingList → NLP → Bù Trừ → DB persistence → signal emission.
+- [ ] **Wire ElectronApp UI to call RecommendDaemon**: Replace current DBDaemon recommendation calls with RecommendDaemon D-Bus calls.
 
-### Folder Structure
-```
-recommend_daemon/
-├── src/
-│   ├── __init__.py
-│   ├── main.py                      # Entry point, D-Bus service registration
-│   ├── RecommendEngine.py           # Orchestration: NLP → compare → format
-│   ├── DbusInterface.py             # D-Bus service vn.edu.uit.FSS.RecommendDaemon
-│   └── RecommendDbManager.py        # FSS-Recommend.db CRUD
-├── tests/
-│   ├── __init__.py
-│   └── test_recommend_engine.py
-├── requirements.txt
-└── systemd/
-    └── recommend_daemon.service
-```
+### 🟢 Nice to Have
 
-### What to implement
-
-1. **recommend_daemon/ folder + requirements.txt**:
-   - Create directory structure and `requirements.txt` (sdbus, joblib, recommend_system dep)
-   - Dependencies: `recommend_system` (local), `sdbus`, `scikit-crfsuite`, `joblib`
-
-2. **RecommendDbManager.py**:
-   - Database: `FSS-Recommend.db` in `/opt/fss/data/`
-   - Schema: `recommendation_log` table + `shopping_list` table (see Phase 5 schema below)
-   - CRUD: `insert_recommendation()`, `get_shopping_list(batch_id)`, `mark_item_purchased(item_id)`, `clear_shopping_list(batch_id)`
-
-3. **RecommendEngine.py**:
-   - `generate_shopping_list(recipe_name, batch_id)` → NLP + Bu Tru comparison
-   - `get_available_recipes()` → from NLP engine
-   - `get_shopping_list(batch_id)` → from FSS-Recommend.db
-   - `mark_item_purchased(item_id)` → update shopping_list table
-   - Calls `recommend_system.RecipeAnalyzerEngine.generate_fss_request()` for NLP
-   - Calls `DBDaemon.GetInventory()` via D-Bus for current stock
-   - Runs Bu Tru: `FSS-Request - FSS-Inventory = FSS-Recommend`
-
-4. **DbusInterface.py**:
-   - Service: `vn.edu.uit.FSS.RecommendDaemon`
-   - Methods:
-     - `GenerateShoppingList(recipe_name, batch_id)` → JSON result
-     - `GetAvailableRecipes()` → JSON recipe list
-     - `GetShoppingList(batch_id)` → JSON shopping list
-     - `MarkItemPurchased(item_id)` → bool
-   - Signals:
-     - `RecommendationUpdated(recipe_name, shopping_list_json)`
-
-5. **main.py**:
-   - Entry point with logging setup (similar to DBDaemon)
-   - Initializes D-Bus interface, RecommendEngine, RecommendDbManager
-   - Lazy-loads NLP engine from `recommend_system/` on first recipe analysis
-
-### Key Dependencies
-- `recommend_system` (local package) — `from recommend_system.src.RecipeAnalyzerAPI import RecipeAnalyzerEngine`
-- `db_daemon` (via D-Bus) — reads `FSS_Inventory.db` and `FSS_Request.db` through DBDaemon's D-Bus interface
-
-### Data Flow
-```
-User enters recipe in UI
-    → D-Bus call to RecommendDaemon.GenerateShoppingList(recipe_name)
-    → RecommendDaemon calls RecipeAnalyzerEngine (from recommend_system/)
-    → RecommendDaemon calls DBDaemon.GetInventory() via D-Bus
-    → RecommendDaemon runs Bu Tru comparison
-    → RecommendDaemon stores result in FSS-Recommend.db
-    → RecommendDaemon emits RecommendationUpdated signal
-    → UI receives signal, displays shopping list
-```
+- [ ] **`verify_dbus_fix.sh`**: Could be merged with `tools/verify_dbus_config.sh` into a single `tools/verify_all.sh` that validates everything at once.
 
 ---
 
-## 5. Phase 4 — Recommend Daemon (recommend_daemon/)
-
-### Folder Structure
-```
-recommend_daemon/
-├── src/
-│   ├── __init__.py
-│   ├── main.py                      # Entry point, D-Bus service registration
-│   ├── RecommendEngine.py           # Orchestration: NLP → compare → format
-│   ├── DbusInterface.py             # D-Bus service vn.edu.uit.FSS.RecommendDaemon
-│   └── RecommendDbManager.py        # FSS-Recommend.db CRUD
-├── tests/
-│   └── test_recommend_engine.py
-├── requirements.txt
-└── systemd/
-    └── recommend_daemon.service
-```
-
-### What to implement
-1. **RecommendEngine.py** (moved from `db_daemon/src/`):
-   - `generate_shopping_list(recipe_name, batch_id)` → NLP + comparison
-   - `get_available_recipes()` → from NLP engine
-   - `get_shopping_list(batch_id)` → from FSS-Recommend.db
-   - `mark_item_purchased(item_id)` → update shopping_list table
-
-2. **DbusInterface.py**:
-   - Service: `vn.edu.uit.FSS.RecommendDaemon`
-   - Methods:
-     - `GenerateShoppingList(recipe_name, batch_id)` → JSON result
-     - `GetAvailableRecipes()` → JSON recipe list
-     - `GetShoppingList(batch_id)` → JSON shopping list
-     - `MarkItemPurchased(item_id)` → bool
-   - Signals:
-     - `RecommendationUpdated(recipe_name, shopping_list_json)`
-
-3. **RecommendDbManager.py**:
-   - Database: `FSS-Recommend.db`
-   - See Phase 5 for schema
-
-### Key Dependencies
-- `recommend_system` (local package) — `from recommend_system.src.RecipeAnalyzerAPI import RecipeAnalyzerEngine`
-- `db_daemon` (via D-Bus) — reads `FSS_Inventory.db` and `FSS_Request.db` through DBDaemon's D-Bus interface
-
----
-
-## 6. Phase 5 — FSS-Recommend DB (Bù Trừ Method)
-
-### Formula
-```
-FSS-Request - FSS-Inventory = FSS-Recommend
-(what recipe needs) - (what we have) = (shopping list / what to buy)
-```
-
-### Database Schema — `FSS-Recommend.db`
-
-#### Table: `recommendation_log`
-Stores each recipe analysis result as a persistent snapshot.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | INTEGER PK AUTOINCREMENT | Unique ID |
-| `recipe_name` | TEXT NOT NULL | Vietnamese recipe name |
-| `batch_id` | TEXT NOT NULL | UUID linking to `FSS_Request.request_batch_id` |
-| `nlp_status` | TEXT | NLP result status (SUCCESS/NOT_FOUND/ERROR) |
-| `total_items` | INTEGER | Total ingredient count from recipe |
-| `available_count` | INTEGER | Items fully available in inventory |
-| `needed_count` | INTEGER | Items partially available (need more) |
-| `missing_count` | INTEGER | Items completely missing |
-| `status` | TEXT DEFAULT 'pending' | Lifecycle: `pending` / `fulfilled` / `cancelled` |
-| `result_json` | TEXT | Full comparison snapshot as JSON |
-| `created_at` | TIMESTAMP | When analysis ran |
-| `completed_at` | TIMESTAMP | When shopping was completed |
-
-Index: `idx_recommendation_batch_id` on `batch_id`
-
-#### Table: `shopping_list`
-Individual items the user needs to buy.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | INTEGER PK AUTOINCREMENT | Unique ID |
-| `recommendation_id` | INTEGER FK | → `recommendation_log.id` |
-| `food_id` | TEXT NOT NULL | Ingredient name |
-| `required_qty` | INTEGER | Quantity needed by recipe |
-| `available_qty` | INTEGER | Quantity in inventory at comparison time |
-| `shortage` | INTEGER | `required_qty - available_qty` (what to buy) |
-| `unit` | TEXT | Measurement unit |
-| `purchased` | BOOLEAN DEFAULT 0 | Whether user bought this item |
-| `purchased_at` | TIMESTAMP | When user marked it bought |
-| `created_at` | TIMESTAMP | Default CURRENT_TIMESTAMP |
-
-Indexes: `idx_shopping_recommendation` on `recommendation_id`, `idx_shopping_purchased` on `purchased`
-
-### Bù Trừ Algorithm (pseudocode)
-```
-def bu_tru(recipe_ingredients, current_inventory):
-    result = {
-        "available": [],   # have enough
-        "needed": [],      # have some, need more
-        "missing": []      # have none
-    }
-    for ingredient in recipe_ingredients:
-        inv_qty = lookup_inventory(ingredient.food_id)
-        req_qty = ingredient.quantity
-        shortage = req_qty - inv_qty
-
-        if inv_qty >= req_qty:
-            result.available.append(ingredient)
-        elif inv_qty > 0:
-            result.needed.append({...shortage...})
-        else:
-            result.missing.append({...req_qty...})
-
-    persist_to_FSS_Recommend_db(result)
-    return result
-```
-
----
-
-## 7. Key Architecture Decisions (Revised)
-
-### D-Bus service ownership
-| Component | D-Bus Service | Purpose |
-|-----------|---------------|---------|
-| SensorDaemon | `vn.edu.uit.FSS.SensorDaemon` | Sensor data broadcast |
-| FRTApp | `vn.edu.uit.FSS.FRTApp` | Food detection events |
-| DBDaemon | `vn.edu.uit.FSS.DBDaemon` | Data persistence + query |
-| RecommendDaemon | `vn.edu.uit.FSS.RecommendDaemon` | Business logic: NLP + comparison + shopping |
-| MagicMirror UI | (listener only) | Consumes signals from all daemons |
-
-### Data flow (revised)
-```
-User enters recipe in UI
-    → D-Bus call to RecommendDaemon.GenerateShoppingList(recipe_name)
-    → RecommendDaemon calls RecipeAnalyzerEngine (from recommend_system/)
-    → RecommendDaemon calls DBDaemon.GetInventory() via D-Bus
-    → RecommendDaemon runs Bù Trừ comparison
-    → RecommendDaemon stores result in FSS-Recommend.db
-    → RecommendDaemon emits RecommendationUpdated signal
-    → UI receives signal, displays shopping list
-```
-
-### Database ownership
-- `DBDaemon` owns: `fss_data.db`, `FSS_Inventory.db`, `FSS_Request.db`
-- `RecommendDaemon` owns: `FSS-Recommend.db`
-
----
-
-## 8. Pending Items / Known Issues
-
-### Phase 3 — Completed ✅
-- [x] Remove `RecommendationEngine.py` from `db_daemon/src/`
-- [x] Simplify DBDaemon D-Bus interface to pure CRUD methods
-- [x] Expose `GetInventory()`, `GetRequests()`, `InsertRequest()`, `ClearRequest()` on DBDaemon
-- [x] Tests: 34 integration tests for DB-only operations
-
-### Phase 4 — Recommend Daemon (Next)
-- [ ] Create `recommend_daemon/` folder structure and files
-- [ ] Implement `RecommendDbManager.py` with FSS-Recommend.db schema
-- [ ] Implement `RecommendEngine.py` with Bù Trừ algorithm (re-implement from deleted `RecommendationEngine.py`)
-- [ ] Implement `DbusInterface.py` — D-Bus service `vn.edu.uit.FSS.RecommendDaemon`
-- [ ] Implement `main.py` — entry point with lazy NLP engine loading
-- [ ] Create `tests/test_recommend_engine.py` — unit tests
-- [ ] Create `requirements.txt` and `systemd/recommend_daemon.service`
-
-### Phase 5 — FSS-Recommend DB (Follows Phase 4)
-- [ ] `shopping_list` table CRUD and `mark_item_purchased()`
-- [ ] `recommendation_log` table with full snapshot persistence
-- [ ] Bù Trừ delta comparison edge cases
-
-### Integration (After Phase 4+5)
-- [ ] Wire ElectronApp UI to call RecommendDaemon instead of DBDaemon
-- [ ] Update `startup_fss_system.sh` to include `recommend_daemon`
-- [ ] Create `systemd/recommend_daemon.service`
-
----
-
-## 9. Repository Information
+## 6. Repository Information
 
 | Property | Value |
 |----------|-------|
 | Remote | `origin` → `https://github.com/BeginnerCoder52/FSS.git` |
-| Current branch | `DBDaemon-dev` (Phase 3 complete) |
-| Next branch | `recommend_daemon` (create new from `main` for Phase 4) |
+| Current branch | `recommend_daemon` (Phase 4+5 complete) |
+| Next action | Merge `recommend_daemon` into `main` |
 | Project root | `/home/richardmelvin52/FSS` |
 
 ### Branches overview
+
 | Branch | Phase | Component |
 |--------|-------|-----------|
 | `main` | — | Integration/stable |
@@ -378,8 +185,39 @@ User enters recipe in UI
 | `FRTApp-dev` | — | Food recognition (C++ + Python) |
 | `SensorDaemon-dev` | — | Hardware I/O |
 | `ElectronApp-dev` | — | MagicMirror UI |
-| `recommend_daemon` (NEW) | 4, 5 | Business logic daemon |
+| `recommend_daemon` | 4, 5 | Business logic daemon |
 
 ---
 
-*End of handover. Next session should create branch `recommend_daemon` from `main` and implement Phase 4 (Recommend Daemon), followed by Phase 5 (FSS-Recommend DB).*
+## 7. Architecture Reference
+
+### D-Bus Service Ownership
+
+| Component | D-Bus Service | Methods | Signals |
+|-----------|---------------|---------|---------|
+| SensorDaemon | `vn.edu.uit.FSS.SensorDaemon` | — | `EnvironmentDataUpdated`, `DoorStateChanged`, `UserPresenceDetected`, `DistanceDataChanged` |
+| FRTApp | `vn.edu.uit.FSS.FRTApp` | — | `FoodDetected`/`FRTDetectionResult` |
+| DBDaemon | `vn.edu.uit.FSS.DBDaemon` | `GetInventory`, `GetRequests`, `InsertRequest`, `ClearRequest` | `UIUpdateRequired`, `EnvironmentUpdateRequired`, `SecondaryEnvironmentUpdateRequired`, `DoorStateUpdate`, `DistanceAlert`, `UserPresenceUpdate` |
+| RecommendDaemon | `vn.edu.uit.FSS.RecommendDaemon` | `GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased` | `RecommendationUpdated` |
+
+### Data Flow (Post-Phase 5)
+
+```
+User enters recipe in UI
+    → D-Bus: RecommendDaemon.GenerateShoppingList(recipe_name)
+    → RecommendDaemon.RecommendEngine calls RecipeAnalyzerEngine (from recommend_system/)
+    → RecommendDaemon calls DBDaemon.GetInventory() via D-Bus
+    → RecommendDaemon runs Bù Trừ comparison
+    → RecommendDaemon stores result in FSS-Recommend.db
+    → RecommendDaemon emits RecommendationUpdated signal
+    → UI receives signal, displays shopping list
+```
+
+### Database Ownership
+
+- `DBDaemon` owns: `fss_data.db`, `FSS_Inventory.db`, `FSS_Request.db`
+- `RecommendDaemon` owns: `FSS-Recommend.db`
+
+---
+
+*End of handover. Next session should merge `recommend_daemon` into `main` and tackle the Integration remaining items (Section 5).*

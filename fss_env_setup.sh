@@ -1,29 +1,24 @@
 #!/bin/bash
 # ==============================================================================
-# Thiết lập Runtime Environment & Systemd Services cho FSS trên Raspberry Pi
+# Runtime Environment & Systemd Services setup for FSS on Raspberry Pi
 # ==============================================================================
 
-set -e
+set -euo pipefail
 
-echo "[*] Thiết lập quyền truy cập phần cứng (I2C, Video) cho user hiện tại..."
-sudo usermod -aG i2c,video,gpio $USER
+echo "[*] Setting up hardware access (I2C, Video, GPIO)..."
+sudo usermod -aG i2c,video,gpio "$USER"
 
-echo "[*] Kiểm tra và tạo cấu trúc thư mục Data (/opt/fss)..."
-sudo mkdir -p /opt/fss/images
-sudo mkdir -p /opt/fss/logs
-sudo chown -R $USER:$USER /opt/fss
+echo "[*] Creating data directories..."
+sudo mkdir -p /opt/fss/images /opt/fss/logs
+sudo chown -R "$USER:$USER" /opt/fss
 sudo chmod -R 755 /opt/fss
 
-# Lưu ý: /dev/shm (POSIX Shared Memory) đã được Linux tự động mount vào RAM (tmpfs).
-# App C++ của bạn gọi shm_open("/fss_video_frame") sẽ tự lưu vào /dev/shm/fss_video_frame.
-# Không cần mount thủ công!
-
-echo "[*] Tạo Systemd Service cho các Daemon..."
+echo "[*] Creating systemd service files..."
 SERVICE_DIR="/etc/systemd/system"
 PROJECT_DIR=$(pwd)
 
-# 1. Sensor Daemon (C++ - Có Systemd Watchdog)
-cat <<EOF | sudo tee $SERVICE_DIR/fss-sensor.service
+# 1. Sensor Daemon (C++)
+sudo tee "$SERVICE_DIR/fss-sensor.service" > /dev/null <<EOF
 [Unit]
 Description=FSS Sensor Daemon (C++)
 After=network.target
@@ -32,7 +27,6 @@ After=network.target
 ExecStart=$PROJECT_DIR/sensor_daemon/build/sensor_daemon_exec
 WorkingDirectory=$PROJECT_DIR/sensor_daemon
 Restart=always
-# Watchdog kích hoạt, nếu app C++ không gọi sd_notify() trong 10s, OS sẽ kill & restart
 WatchdogSec=10s
 User=$USER
 
@@ -41,7 +35,7 @@ WantedBy=multi-user.target
 EOF
 
 # 2. Camera Core (C++)
-cat <<EOF | sudo tee $SERVICE_DIR/fss-camera.service
+sudo tee "$SERVICE_DIR/fss-camera.service" > /dev/null <<EOF
 [Unit]
 Description=FSS Camera Core (C++)
 After=fss-sensor.service
@@ -57,7 +51,7 @@ WantedBy=multi-user.target
 EOF
 
 # 3. FRT AI Core (Python)
-cat <<EOF | sudo tee $SERVICE_DIR/fss-ai.service
+sudo tee "$SERVICE_DIR/fss-ai.service" > /dev/null <<EOF
 [Unit]
 Description=FSS AI Core (Python YOLO)
 After=fss-camera.service
@@ -73,7 +67,7 @@ WantedBy=multi-user.target
 EOF
 
 # 4. DB Daemon (Python)
-cat <<EOF | sudo tee $SERVICE_DIR/fss-db.service
+sudo tee "$SERVICE_DIR/fss-db.service" > /dev/null <<EOF
 [Unit]
 Description=FSS Database Daemon (Python)
 After=fss-sensor.service
@@ -88,30 +82,36 @@ User=$USER
 WantedBy=multi-user.target
 EOF
 
-echo "[*] Nạp lại Systemd và kích hoạt khởi động cùng hệ thống..."
+# 5. Recommend Daemon (Python) - NEW
+sudo tee "$SERVICE_DIR/fss-recommend.service" > /dev/null <<EOF
+[Unit]
+Description=FSS Recommend Daemon (Python) - Business Logic Orchestrator
+After=fss-db.service
+
+[Service]
+ExecStart=$PROJECT_DIR/recommend_daemon/venv/bin/python $PROJECT_DIR/recommend_daemon/src/main.py
+WorkingDirectory=$PROJECT_DIR/recommend_daemon
+Restart=always
+User=$USER
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+echo "[*] Reloading systemd and enabling services..."
 sudo systemctl daemon-reload
 sudo systemctl enable fss-sensor.service
 sudo systemctl enable fss-camera.service
 sudo systemctl enable fss-ai.service
 sudo systemctl enable fss-db.service
+sudo systemctl enable fss-recommend.service
 
-echo "[*] Cấu hình PM2 để khởi chạy MagicMirror UI..."
-# Di chuyển vào thư mục UI
-cd $PROJECT_DIR/magicmirror
-
-# Khởi tạo tiến trình MagicMirror qua pm2
-pm2 start npm --name "MagicMirror" -- run start
-
-# Lưu danh sách tiến trình hiện tại của pm2
+echo "[*] Configuring PM2 for MagicMirror UI..."
+cd "$PROJECT_DIR/electron_app/magicmirror"
+pm2 start npm --name "MagicMirror" -- run start 2>/dev/null || true
 pm2 save
+sudo env PATH="$PATH:/usr/bin" /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u "$USER" --hp "/home/$USER" 2>/dev/null || true
 
-# Tạo script để pm2 tự khởi động cùng OS khi Pi bật nguồn
-# Lệnh này sinh ra một command, ta thực thi command đó ngay lập tức
-sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp /home/$USER
-# -----------------------------------
-
-echo "[+] Hoàn tất! Hệ thống Backend dùng Systemd, Frontend dùng PM2."
-
-echo "[+] Hoàn tất! Bạn có thể khởi động toàn hệ thống bằng lệnh:"
-echo "    sudo systemctl start fss-sensor fss-camera fss-ai fss-db"
-echo "    Để xem log: journalctl -u fss-sensor -f"
+echo "[+] Done! Start all daemons with:"
+echo "    sudo systemctl start fss-sensor fss-camera fss-ai fss-db fss-recommend"
+echo "    or: journalctl -u fss-sensor -f"

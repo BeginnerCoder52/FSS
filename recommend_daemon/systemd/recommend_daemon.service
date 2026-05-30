@@ -1,0 +1,25 @@
+[Unit]
+Description=FSS Recommend Daemon - Business Logic Orchestrator
+Documentation=https://github.com/BeginnerCoder52/FSS
+Requires=dbus-daemon.service
+After=network.target dbus-daemon.service db_daemon.service
+
+[Service]
+Type=simple
+User=fss
+WorkingDirectory=/opt/fss/recommend_daemon
+Environment="PYTHONPATH=/opt/fss"
+ExecStart=/opt/fss/recommend_daemon/venv/bin/python /opt/fss/recommend_daemon/src/main.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
