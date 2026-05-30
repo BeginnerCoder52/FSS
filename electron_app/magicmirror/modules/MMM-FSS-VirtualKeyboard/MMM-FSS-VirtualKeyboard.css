@@ -1,0 +1,53 @@
+#fss-vk-container {
+    background: rgba(30,30,30,0.95);
+    border-radius: 16px;
+    padding: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+#fss-vk-search-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+#fss-vk-input {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 24px;
+    border: 1px solid #555;
+    background: #222;
+    color: white;
+    font-size: 18px;
+    outline: none;
+}
+#fss-vk-search-btn {
+    padding: 8px 16px;
+    border-radius: 24px;
+    border: none;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+}
+.fss-vk-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin: 2px 0;
+}
+.fss-vk-key {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #333;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.1s;
+}
+.fss-vk-key:active { background: #555; }
+.fss-vk-space { width: 180px; }
+.fss-vk-enter { background: #27ae60; width: 88px; }
+.fss-vk-backspace { color: #e74c3c; }

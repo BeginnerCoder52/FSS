@@ -1,0 +1,50 @@
+#fss-recommend-container {
+    background: rgba(20,20,30,0.95);
+    border-radius: 12px;
+    padding: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+    color: #e0e0e0;
+}
+.fss-recommend-loading,
+.fss-recommend-empty {
+    text-align: center;
+    padding: 20px;
+    color: #95a5a6;
+    font-size: 14px;
+}
+.fss-recommend-header {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+}
+.fss-recommend-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.fss-recommend-table th {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #81d4fa;
+    font-weight: 600;
+}
+.fss-recommend-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.fss-recommend-available td { color: #2ecc71; }
+.fss-recommend-needed td { color: #f39c12; }
+.fss-recommend-missing td { color: #e74c3c; }
+.fss-recommend-summary {
+    text-align: center;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}

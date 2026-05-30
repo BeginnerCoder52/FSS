@@ -22,3 +22,24 @@
     opacity: 1;
     pointer-events: all; /* Optional: Block clicks while blacked out */
 }
+
+.fss-door-indicator {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.fss-door-indicator.door-open {
+    background: #e74c3c;
+    color: white;
+}
+.fss-door-indicator.door-closed {
+    background: #2ecc71;
+    color: white;
+}
+.fss-door-indicator.door-unknown {
+    background: #95a5a6;
+    color: white;
+}

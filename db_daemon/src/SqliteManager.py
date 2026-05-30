@@ -56,9 +56,11 @@ class SqliteManager:
     # Table names for inventory database
     INVENTORY_TABLE_NAME = "current_inventory"
     INVENTORY_HISTORY_TABLE_NAME = "inventory_history"
+    CUSTOM_FOOD_LABELS_TABLE_NAME = "custom_food_labels"
     
     # Table names for request database
     REQUEST_TABLE_NAME = "request"
+    RECOMMENDATION_CACHE_TABLE_NAME = "recommendation_cache"
 
     def __init__(self, db_dir: str = DEFAULT_DB_DIR, 
                  transaction_timeout_ms: int = DEFAULT_TRANSACTION_TIMEOUT_MS):
@@ -349,6 +351,22 @@ class SqliteManager:
                 ON {self.INVENTORY_HISTORY_TABLE_NAME}(changed_at)
             """)
             
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.CUSTOM_FOOD_LABELS_TABLE_NAME} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_label TEXT NOT NULL,
+                    image_path TEXT,
+                    feature_hash TEXT,
+                    created_at TEXT DEFAULT (datetime('now')),
+                    last_seen_at TEXT DEFAULT (datetime('now'))
+                )
+            """)
+
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_custom_food_labels_label
+                ON {self.CUSTOM_FOOD_LABELS_TABLE_NAME}(user_label)
+            """)
+
             connection.commit()
             self.logger.info("Inventory tables initialized successfully")
             
@@ -399,6 +417,15 @@ class SqliteManager:
                 ON {self.REQUEST_TABLE_NAME}(food_id)
             """)
             
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.RECOMMENDATION_CACHE_TABLE_NAME} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    recipe_name TEXT NOT NULL,
+                    shopping_list TEXT NOT NULL,
+                    created_at TEXT DEFAULT (datetime('now'))
+                )
+            """)
+
             connection.commit()
             self.logger.info("Request tables initialized successfully")
             
@@ -879,6 +906,67 @@ class SqliteManager:
         except sqlite3.Error as e:
             self.logger.error(f"Error closing database connection: {e}")
      
+    def register_custom_food(self, user_label: str, image_path: str,
+                               feature_hash: str = "") -> bool:
+        """Register a user-named custom food label."""
+        if not self._connections[DatabaseType.INVENTORY]:
+            return False
+        connection = self._connections[DatabaseType.INVENTORY]
+        cursor = self._cursors[DatabaseType.INVENTORY]
+        try:
+            cursor.execute(f"""
+                INSERT OR REPLACE INTO {self.CUSTOM_FOOD_LABELS_TABLE_NAME}
+                (user_label, image_path, feature_hash, last_seen_at)
+                VALUES (?, ?, ?, datetime('now'))
+            """, (user_label, image_path, feature_hash))
+            connection.commit()
+            self.logger.info(f"Registered custom food: {user_label}")
+            return True
+        except sqlite3.DatabaseError as e:
+            self.logger.error(f"Database error registering custom food: {e}")
+            return False
+
+    def get_all_custom_foods(self) -> list:
+        """Get all registered custom food labels."""
+        if not self._cursors[DatabaseType.INVENTORY]:
+            return []
+        try:
+            self._cursors[DatabaseType.INVENTORY].execute(f"""
+                SELECT id, user_label, image_path, feature_hash, created_at, last_seen_at
+                FROM {self.CUSTOM_FOOD_LABELS_TABLE_NAME}
+                ORDER BY last_seen_at DESC
+            """)
+            rows = self._cursors[DatabaseType.INVENTORY].fetchall()
+            return [{
+                'id': row[0],
+                'user_label': row[1],
+                'image_path': row[2],
+                'feature_hash': row[3],
+                'created_at': row[4],
+                'last_seen_at': row[5]
+            } for row in rows]
+        except sqlite3.Error as e:
+            self.logger.error(f"Error retrieving custom foods: {e}")
+            return []
+
+    def update_custom_food_seen(self, user_label: str) -> bool:
+        """Update last_seen_at for a custom food label."""
+        if not self._connections[DatabaseType.INVENTORY]:
+            return False
+        connection = self._connections[DatabaseType.INVENTORY]
+        cursor = self._cursors[DatabaseType.INVENTORY]
+        try:
+            cursor.execute(f"""
+                UPDATE {self.CUSTOM_FOOD_LABELS_TABLE_NAME}
+                SET last_seen_at = datetime('now')
+                WHERE user_label = ?
+            """, (user_label,))
+            connection.commit()
+            return True
+        except sqlite3.Error as e:
+            self.logger.error(f"Error updating custom food seen: {e}")
+            return False
+
     @property
     def db_connection(self) -> Optional[sqlite3.Connection]:
         """Backward-compatible property returning sensors database connection."""

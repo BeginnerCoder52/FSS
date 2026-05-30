@@ -65,11 +65,18 @@ class DbDbusInterface:
         # External comparison function callback
         self._compare_callback: Optional[Callable] = None
 
+        # RecommendDaemon callback
+        self._recommend_callback: Optional[Callable] = None
+
         # Pure database operation callbacks
         self._inventory_callback: Optional[Callable] = None
         self._requests_callback: Optional[Callable] = None
         self._insert_request_callback: Optional[Callable] = None
         self._clear_request_callback: Optional[Callable] = None
+
+        # Custom food callbacks
+        self._register_custom_food_callback: Optional[Callable] = None
+        self._get_custom_foods_callback: Optional[Callable] = None
         
         # Setup logging
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -211,6 +218,29 @@ class DbDbusInterface:
                 self._subscribe_to_sensor_signals_async(), self._loop
             )
     
+    def set_register_custom_food_callback(self, callback: Callable) -> None:
+        """Set the callback for RegisterCustomFood method."""
+        self._register_custom_food_callback = callback
+
+    def set_get_custom_foods_callback(self, callback: Callable) -> None:
+        """Set the callback for GetCustomFoods method."""
+        self._get_custom_foods_callback = callback
+
+    def emit_custom_food_request(self, temp_image_path: str, frame_crop_b64: str) -> None:
+        """Emit signal asking user to name an unknown food."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                return
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_custom_food_request(temp_image_path, frame_crop_b64),
+                self._loop
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to emit custom food request: {e}")
+
+    async def _async_emit_custom_food_request(self, temp_image_path: str, frame_crop_b64: str):
+        self.dbus_object.CustomFoodRequest(temp_image_path, frame_crop_b64)
+
     def emit_ui_update_signal(self, food_id: str, quantity: int, 
                                image_path: str) -> None:
         """Emit signal to update UI with inventory changes."""
@@ -326,6 +356,48 @@ class DbDbusInterface:
 
     async def _async_emit_user_presence_update(self, detected: bool):
         self.dbus_object.UserPresenceUpdate(detected)
+
+    def subscribe_recommend_daemon_events(self, callback: Callable) -> None:
+        """Subscribe to RecommendationUpdated from RecommendDaemon."""
+        if not callback:
+            self.logger.warning("Received None callback for RecommendDaemon events")
+            return
+
+        self._recommend_callback = callback
+        self.logger.debug("Registered RecommendDaemon event callback")
+
+        if self.is_connected:
+            asyncio.run_coroutine_threadsafe(
+                self._subscribe_to_recommend_signals_async(), self._loop
+            )
+
+    async def _subscribe_to_recommend_signals_async(self) -> None:
+        """Asynchronously subscribe to RecommendDaemon signals."""
+        try:
+            REC_SERVICE = "vn.edu.uit.FSS.RecommendDaemon"
+            REC_PATH = "/vn/edu/uit/FSS/RecommendDaemon"
+            REC_INTERFACE = "vn.edu.uit.FSS.RecommendDaemon"
+
+            class RecInterface(DbusInterfaceCommonAsync,
+                               interface_name=REC_INTERFACE):
+                @dbus_signal_async('ss')
+                def RecommendationUpdated(self, recipe_name: str, shopping_list: str):
+                    pass
+
+            proxy = RecInterface.new_proxy(REC_SERVICE, REC_PATH)
+            task = asyncio.create_task(self._listen_recommendations(proxy))
+            self._signal_tasks.append(task)
+            self.logger.info("Subscribed to RecommendDaemon signals")
+        except Exception as e:
+            self.logger.error(f"Failed to subscribe to RecommendDaemon: {e}")
+
+    async def _listen_recommendations(self, proxy):
+        async for recipe_name, shopping_list in proxy.RecommendationUpdated:
+            try:
+                if self._recommend_callback:
+                    self._recommend_callback(recipe_name, shopping_list)
+            except Exception as e:
+                self.logger.error(f"Error in recommend callback: {e}")
 
     def poll_bus_events(self) -> None:
         """Starts polling. In async mode, the loop is already running."""
@@ -614,6 +686,34 @@ if SDBUS_AVAILABLE:
         def UserPresenceUpdate(self, detected: bool) -> None:
             """Signal: UI update for user presence detection."""
             pass
+
+        @dbus_signal_async('ss')
+        def CustomFoodRequest(self, temp_image_path: str, frame_crop_b64: str) -> None:
+            """Signal: Unknown food detected, ask user to name it."""
+            pass
+
+        @dbus_method_async('ss', 'b')
+        async def RegisterCustomFood(self, food_name: str, image_path: str) -> bool:
+            """Method: Register a user-named custom food."""
+            if self._interface_instance and self._interface_instance._register_custom_food_callback:
+                try:
+                    return self._interface_instance._register_custom_food_callback(food_name, image_path)
+                except Exception as e:
+                    logging.error(f"Error in RegisterCustomFood: {e}")
+                    return False
+            return False
+
+        @dbus_method_async('', 's')
+        async def GetCustomFoods(self) -> str:
+            """Method: Get all previously registered custom foods (JSON)."""
+            if self._interface_instance and self._interface_instance._get_custom_foods_callback:
+                try:
+                    result = self._interface_instance._get_custom_foods_callback()
+                    return json.dumps(result, ensure_ascii=False)
+                except Exception as e:
+                    logging.error(f"Error in GetCustomFoods: {e}")
+                    return json.dumps([])
+            return json.dumps([])
 else:
     class DbDaemonDbusObject(ABC):
         """Placeholder D-Bus object implementation."""
@@ -623,6 +723,9 @@ else:
         def DoorStateUpdate(self, *args, **kwargs): pass
         def DistanceAlert(self, *args, **kwargs): pass
         def UserPresenceUpdate(self, *args, **kwargs): pass
+        def CustomFoodRequest(self, *args, **kwargs): pass
+        def RegisterCustomFood(self, *args, **kwargs): pass
+        def GetCustomFoods(self, *args, **kwargs): pass
         def GetInventory(self, *args, **kwargs): pass
         def GetRequests(self, *args, **kwargs): pass
         def InsertRequest(self, *args, **kwargs): pass

@@ -118,6 +118,11 @@ module.exports = NodeHelper.create({
 					state: data.state,
 					timestamp: data.timestamp || Date.now(),
 				});
+				// Relay to MMM-FSS-Notification
+				this.sendSocketNotification("FSS_NOTIFICATION", {
+					type: "monitor",
+					message: `🚪 DOOR ${data.state} - Opening/Turning off USB Camera…`
+				});
 			} else if (data.type === "STATUS") {
 				console.log(`${this.name}: Status - ${data.message}`);
 			} else {

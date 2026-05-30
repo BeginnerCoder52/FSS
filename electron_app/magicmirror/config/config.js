@@ -122,11 +122,20 @@ let config = {
 		},
 		
 		{
+            module: "MMM-FSS-VirtualKeyboard",
+            position: "top_center"
+        },
+        {
+            module: "MMM-FSS-LivePreview",
+            position: "center",
+            config: { previewFps: 10, timeoutAfterStable: 3000 }
+        },
+        {
             module: "MMM-FSS-Monitor",
-            position: "top_center", // Invisible module, position doesn't strictly matter
+            position: "top_center",
             config: {
-                distanceThreshold: 0.6, // 60cm threshold from SDD
-                showDebugInfo: true    // Set to true if you want to see raw distance on screen
+                distanceThreshold: 0.6,
+                showDebugInfo: false
             }
         },
         {
@@ -134,18 +143,27 @@ let config = {
             position: "top_right",
             config: {
                 updateInterval: 2000,
-                temperatureFormat: "C",
+                roundTemperature: false,
+                roundHumidity: false,
                 displayUnits: true
             }
         },
         {
+            module: "MMM-FSS-Recommend",
+            position: "bottom_center"
+        },
+        {
             module: "MMM-FSS-Inventory",
-            position: "bottom_center",
+            position: "bottom_right",
             config: {
                 notificationDuration: 3000,
-                frtAppEnabled: false, // Set to true once FRTApp (YOLOv11) is integrated
-                showPlaceholder: true
+                frtAppEnabled: true,
+                showPlaceholder: false
             }
+        },
+        {
+            module: "MMM-FSS-Notification",
+            position: "center"
         },
 	]
 };
