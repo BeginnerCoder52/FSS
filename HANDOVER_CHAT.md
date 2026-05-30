@@ -1,10 +1,10 @@
 # HANDOVER CHAT — FSS Project
 
 > **Created**: 2026-05-24
-> **Last Updated**: 2026-05-30
-> **Previous session branch**: `DBDaemon-dev` (Phase 3 — DBDaemon cleanup)
-> **This session branch**: `recommend_daemon` (Phase 4 + 5 — Recommend Daemon full implementation)
-> **Project phase**: Phase 4 + 5 Complete — Integration remaining
+> **Last Updated**: 2026-05-31
+> **Previous session branch**: `recommend_daemon` (Phase 4 + 5 — Recommend Daemon full implementation)
+> **This session branch**: `main` (Phase 0 — Folder Structure & Docs Cleanup)
+> **Project phase**: Phase 0 Complete — Ready for Phase 1 (FRTApp-dev)
 
 ---
 
@@ -39,7 +39,7 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 ---
 
-## 2. Session Summary (2026-05-30) — Current Session: Phase 4 + 5
+## 2. Session Summary (2026-05-30) — Previous Session: Phase 4 + 5
 
 ### What was done this session
 
@@ -78,7 +78,7 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 - Phase 3 cleanup tests: ✅ **34/34 tests pass**
 - Phase 4+5 Recommend tests: ✅ **41/41 tests pass**
 
-### Files changed this session
+### Files changed in previous session
 
 **New files**:
 | File | Description |
@@ -107,6 +107,36 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 ---
 
+## 3. Current Session: Phase 0 — Folder Structure & Docs Cleanup (2026-05-31)
+
+### What was done
+
+**Phase 0 — Main branch folder structure & docs cleanup (Completed)**:
+- **0.1 Updated README.md**: Completely rewrote directory tree to reflect actual project structure:
+  - Added `recommend_daemon/` with full sub-tree (src/, systemd/, tests/)
+  - Added `recommend_system/` with sub-tree (data/recipes, models/, src/)
+  - Updated `frt_app/` to show `c_tflite_reader/` (C TF Lite reader sub-tree)
+  - Updated `electron_app/magicmirror/` path (was `magicmirror/`)
+  - Listed all 7 Electron modules: MMM-FSS-Env, Monitor, Inventory, LivePreview, VirtualKeyboard, Recommend, Notification
+  - Added `fss-test/`, `tests/`, `tools/` directories to tree
+  - Updated launch instructions with 6th terminal for RecommendDaemon
+- **0.2 Verified AGENTS.md**: Already up-to-date — RecommendDaemon marked as "Fully implemented", all 6 new sections (Python venv, Node.js debugging, SQLite migration, MagicMirror development, C TFLite reader, Frame transport) already present
+- **0.3 Removed leftover stub**: Deleted `recommend_system/recommend_daemon/` stub (empty `__init__.py` only); verified real `recommend_daemon/` at top level has full implementation
+
+### Verification
+- ✅ Stub directory deleted: `recommend_system/recommend_daemon/` removed
+- ✅ Real `recommend_daemon/` intact: src/, systemd/, tests/ all present
+- ✅ README.md tree accurate — reflects actual project layout
+- ✅ AGENTS.md up-to-date — no changes needed
+
+### Files changed this session
+| File | Changes |
+|------|---------|
+| `README.md` | Full directory tree rewrite + launch instructions |
+| `HANDOVER_CHAT.md` | Added Phase 0 section, updated project phase table |
+
+---
+
 ## 3. Design Notes & Rationale
 
 ### Why per-component `requirements.txt` instead of one shared `.venv`?
@@ -132,6 +162,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 | Phase | Component | Branch | Status |
 |-------|-----------|--------|--------|
+| Phase 0 | Folder Structure & Docs Cleanup | `main` | ✅ Complete |
 | Phase 1 | DBDaemon DB schema | `DBDaemon-dev` | ✅ Complete |
 | Phase 2 | Recommend System (NLP) | `recommend_system` | ✅ Complete |
 | Phase 3 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |

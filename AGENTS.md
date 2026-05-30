@@ -16,7 +16,8 @@
 | **FRTApp** | C++ (camera) + Python (AI) | Food recognition | V4L2 video frame capture → POSIX SHM; NumPy preprocessing; tflite-runtime inference (INT8/FP32/FP16); ByteTrack persistence. |
 | **DBDaemon** | Python | Data controller | SQLite (3 DBs: data, inventory, requests). D-Bus listener & state machine. File I/O to `/opt/fss/`. POSIX SHM reader for FRTApp video. |
 | **Recommend System** | Python | NLP/Recipe Analysis (library) | CRF-based NER (BIO-tagged ingredients/quantities). Loads 250 recipes. Imported by RecommendDaemon. |
-| **RecommendDaemon** | Python | Business logic orchestrator | Calls Recommend System NLP, compares against inventory via DBDaemon D-Bus (Bù Trừ method), persists shopping list to FSS-Recommend.db. Own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`. |
+| **RecommendDaemon** | Python | Business logic orchestrator | Calls Recommend System NLP, compares against inventory via DBDaemon D-Bus (Bù Trừ method), persists shopping list to FSS-Recommend.db. Own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`. Fully implemented with 4 D-Bus methods + 1 signal. |
+| **FRTApp C Reader** | C | Performance layer | Standalone C library (`c_tflite_reader/`) using TensorFlow Lite C API for FP32/FP16/INT8 inference. Optional backend; Python tflite-runtime is fallback. |
 | **MagicMirror UI** | Node.js (Electron) + Python | User interface | Electron + HTML/CSS/JS rendering. Python bridge processes listen D-Bus events, format JSON for UI. |
 
 ### IPC Architecture
@@ -45,16 +46,21 @@ bash setup.sh
 
 ### Component-Specific Build
 
-**C++ Components** (SensorDaemon, FRTApp Camera Core):
+**C++ Components** (SensorDaemon, FRTApp Camera Core, C TFLite Reader):
 ```bash
 cd sensor_daemon && mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j4
 ./sensor_daemon_exec
 
-# OR for FRTApp camera core
-cd frt_app/cpp_camera_core && mkdir -p build && cd build
-cmake .. && make -j4
+# OR for FRTApp camera core + C tflite reader (both built together)
+cd frt_app && mkdir -p build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j4
+
+# Verify C tflite reader library
+ls libtflite_reader.so
+./c_tflite_reader/tflite_reader_test --model ../models/yolov11n.tflite --precision int8
 ```
 
 **Python Components** (DBDaemon, FRTApp AI, Recommend System):
@@ -316,20 +322,25 @@ component_name/
 - Methods: `GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased`
 
 **Key Files**:
-- [recommend_daemon/src/main.py](recommend_daemon/src/main.py) (planned)
-- [recommend_daemon/src/RecommendEngine.py](recommend_daemon/src/RecommendEngine.py) (planned)
-- [recommend_daemon/src/DbusInterface.py](recommend_daemon/src/DbusInterface.py) (planned)
-- [recommend_daemon/src/RecommendDbManager.py](recommend_daemon/src/RecommendDbManager.py) (planned)
+- [recommend_daemon/src/main.py](recommend_daemon/src/main.py)
+- [recommend_daemon/src/RecommendEngine.py](recommend_daemon/src/RecommendEngine.py)
+- [recommend_daemon/src/DbusInterface.py](recommend_daemon/src/DbusInterface.py)
+- [recommend_daemon/src/RecommendDbManager.py](recommend_daemon/src/RecommendDbManager.py)
 
 ### MagicMirror UI (Node.js + Python)
 
 **Node.js** (Electron):
-- Modules: `MMM-FSS-Food`, `MMM-FSS-Env`
+- Modules: `MMM-FSS-Env`, `MMM-FSS-Monitor`, `MMM-FSS-Inventory`,
+  `MMM-FSS-LivePreview`, `MMM-FSS-VirtualKeyboard`, `MMM-FSS-Recommend`,
+  `MMM-FSS-Notification`
 - HTML/CSS rendering, JS event handling
 
 **Python Bridges** (py_bridge/):
-- `food_dbus_listener.py`: Translates D-Bus signals → JSON → stdout (consumed by node_helper.js)
-- `env_zmq_client.py`: (Alternative: ZMQ listener for env sensor data)
+- `env_dbus_listener.py`: D-Bus → JSON → stdout for environment sensor data
+- `monitor_dbus_listener.py`: D-Bus → JSON → stdout for distance/door sensors
+- `inventory_dbus_listener.py`: D-Bus → JSON → stdout for food inventory
+- `live_preview_bridge.py`: Polls `/opt/fss/latest_preview.jpg` → base64 → stdout
+- `recommend_dbus_listener.py`: Sends recipe search to RecommendDaemon via D-Bus
 - node_helper.js spawns Python subprocess and handles lifecycle
 
 ---
@@ -407,6 +418,331 @@ python -c "import sdbus; print(sdbus.__file__)"
 3. Add `FSS-Recommend.db` schema in `recommend_daemon/src/RecommendDbManager.py`
 4. Wire in `recommend_daemon/src/main.py` with lazy NLP engine loading from `recommend_system/`
 5. Test: `pytest recommend_daemon/tests/test_recommend_engine.py -v`
+
+---
+
+## 🐍 Python venv Management
+
+### Standard Setup Per Component
+```bash
+cd COMPONENT_NAME
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade setuptools pip
+pip install -r requirements.txt
+```
+
+### Cross-Component Imports
+When one component needs to import another (e.g., RecommendDaemon imports recommend_system):
+```python
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../recommend_system/src'))
+```
+Or install as editable:
+```bash
+pip install -e ../../recommend_system/
+```
+
+### Common Issues
+- `ModuleNotFoundError`: Check `sys.path`, venv activation, and that `pip install` ran
+- `pip install sdbus` fails: Need system deps — `sudo apt install libsystemd-dev pkg-config`
+- After adding new deps: `pip freeze | grep -v "^#" > requirements.txt`
+- Freeze full env: `pip freeze -l > requirements.txt` (only local packages)
+
+---
+
+## ⚡ Node.js / Electron Debugging
+
+### Chrome DevTools for Electron Renderer
+```bash
+# Start with dev flags
+cd electron_app/magicmirror
+npm run start:x11:dev
+# Then open chrome://inspect in a Chromium browser
+```
+
+### Node.js Inspector for Main Process
+```bash
+DISPLAY=:0 node_modules/.bin/electron js/electron.js --inspect=9229
+```
+
+### PM2 Process Management
+```bash
+pm2 list              # List all processes
+pm2 logs magicmirror  # View real-time logs
+pm2 restart mm        # Restart MagicMirror
+pm2 save              # Save process list for reboot
+```
+
+### socket.io Debugging
+```javascript
+// In browser DevTools console — enables verbose socket.io logging
+localStorage.debug = 'socket.io:*';
+// Reload the module to see all socket events in console
+```
+
+### Module Lifecycle Hooks (MagicMirror)
+- `start()` — called once on module load (initialize state, send start notification)
+- `getDom()` — called on each `updateDom()`, returns the DOM element to render
+- `socketNotificationReceived(notification, payload)` — receives events from node_helper.js
+- `notificationReceived(notification, payload, sender)` — receives MagicMirror internal notifications
+- `stop()` — called when module is removed (cleanup timers, kill subprocesses)
+
+---
+
+## 🗄️ SQLite Schema Migration Patterns
+
+### Adding a New Column
+```sql
+ALTER TABLE table_name ADD COLUMN new_column TEXT DEFAULT NULL;
+```
+
+### Adding a New Table
+Always use `IF NOT EXISTS` for idempotent migrations:
+```python
+# In SqliteManager.init_tables_if_not_exists()
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS new_table (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        value REAL,
+        created_at TEXT DEFAULT (datetime('now'))
+    )
+""")
+```
+
+### Schema Version Tracking
+```sql
+CREATE TABLE IF NOT EXISTS schema_version (
+    version INTEGER PRIMARY KEY,
+    applied_at TEXT DEFAULT (datetime('now'))
+);
+```
+
+### Rollback Procedure
+```python
+# Step 1: Backup
+cursor.execute("CREATE TABLE backup AS SELECT * FROM table_to_migrate")
+# Step 2: Drop old
+cursor.execute("DROP TABLE table_to_migrate")
+# Step 3: Create new schema
+cursor.execute("CREATE TABLE table_to_migrate (...new schema...)")
+# Step 4: Restore data (with default for new columns)
+cursor.execute("INSERT INTO table_to_migrate SELECT *, NULL FROM backup")
+# Step 5: Cleanup
+cursor.execute("DROP TABLE backup")
+```
+
+### FSS Databases Reference
+| File | Location | Tables |
+|------|----------|--------|
+| `fss_data.db` | `/opt/fss/data/` | `environment_log`, `door_event_log`, `distance_sensor_log`, `presence_sensor_log` |
+| `FSS_Inventory.db` | `/opt/fss/data/` | `current_inventory`, `food_history`, `custom_food_labels` |
+| `FSS_Request.db` | `/opt/fss/data/` | `recipe_requests` |
+| `FSS-Recommend.db` | `/opt/fss/data/` | `recommendation_log`, `shopping_list` |
+
+---
+
+## 🧩 MagicMirror Module Development Workflow
+
+### Module Template (3-File + Optional Bridge)
+```
+MMM-FSS-<Name>/
+├── MMM-FSS-<Name>.js        # Frontend: DOM rendering, socket listeners
+├── MMM-FSS-<Name>.css       # Styling (dark theme, touch-friendly)
+├── node_helper.js            # Backend: spawns subprocess, relays socket.io
+└── py_bridge/                # (optional) Python D-Bus listener
+    ├── requirements.txt
+    └── <name>_listener.py    # Reads D-Bus, outputs JSON to stdout
+```
+
+### Data Flow
+```
+Python bridge → stdout JSON → node_helper.js → socket.io → Frontend JS → DOM
+```
+
+### JSON Protocol (stdout line-delimited)
+All Python bridges output one JSON object per line:
+```json
+{"type": "EVENT_NAME", "key1": "value1", "key2": 123}
+```
+
+### node_helper.js Pattern
+```javascript
+const NodeHelper = require('node_helper');
+const { spawn } = require('child_process');
+
+module.exports = NodeHelper.create({
+    start() {
+        this.process = null;
+    },
+    socketNotificationReceived(notification, payload) {
+        if (notification === "START") {
+            this.startBridge();
+        }
+    },
+    startBridge() {
+        const script = __dirname + '/py_bridge/listener.py';
+        this.process = spawn('python3', [script]);
+        let buffer = '';
+        this.process.stdout.on('data', (data) => {
+            buffer += data.toString();
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // keep incomplete line
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                try {
+                    const msg = JSON.parse(line);
+                    this.sendSocketNotification(msg.type, msg);
+                } catch (e) {}
+            }
+        });
+        this.process.stderr.on('data', (data) => {
+            console.error(`[${this.name}] ${data.toString().trim()}`);
+        });
+    },
+    stop() {
+        if (this.process) this.process.kill();
+    }
+});
+```
+
+### MagicMirror Position Reference
+| Position | CSS Mapping | Best For |
+|----------|-------------|----------|
+| `top_bar` | `.region.top.bar` | Status bar items |
+| `top_left` | `.region.top.left` | Clock, calendar |
+| `top_center` | `.region.top.center` | Search bars, virtual keyboard |
+| `top_right` | `.region.top.right` | Sensor data (env, monitor) |
+| `center` | `.region.middle.center` | Video preview, notifications |
+| `bottom_center` | `.region.bottom.center` | Recommendations |
+| `bottom_right` | `.region.bottom.right` | Compact inventory |
+
+### Touchscreen Optimization Tips
+- Buttons: min 44×44px tap target
+- Use `:active` (not `:hover`) for press feedback
+- CSS: `touch-action: manipulation` prevents double-tap zoom
+- Avoid right-click, drag, or hover-only interactions
+- Use `pointer-events: none` on overlays that shouldn't block touches
+
+---
+
+## ⚙️ C TFLite Reader Development
+
+### API Reference
+```c
+#include "tensorflow/lite/c/c_api.h"
+```
+
+### Core Usage Pattern
+```c
+// Load model
+TfLiteModel* model = TfLiteModelCreateFromFile(model_path);
+TfLiteInterpreterOptions* options = TfLiteInterpreterOptionsCreate();
+TfLiteInterpreter* interpreter = TfLiteInterpreterCreate(model, options);
+
+// Get input tensor
+TfLiteTensor* input = TfLiteInterpreterGetInputTensor(interpreter, 0);
+TfLiteTensorCopyFromBuffer(input, input_data, input_size);
+
+// Run inference
+TfLiteInterpreterInvoke(interpreter);
+
+// Get output
+const TfLiteTensor* output = TfLiteInterpreterGetOutputTensor(interpreter, 0);
+TfLiteTensorCopyToBuffer(output, output_buffer, output_size);
+
+// Cleanup
+TfLiteInterpreterDelete(interpreter);
+TfLiteInterpreterOptionsDelete(options);
+TfLiteModelDelete(model);
+```
+
+### Building for ARM64 (Raspberry Pi 4B)
+```bash
+# Native build on Pi
+sudo apt install libtensorflow-lite-dev
+```
+
+### ctypes Integration (Python → C)
+```python
+import ctypes
+lib = ctypes.CDLL("./libtflite_reader.so")
+
+lib.tflite_reader_create.argtypes = [ctypes.c_char_p, ctypes.c_int]
+lib.tflite_reader_create.restype = ctypes.c_void_p
+
+reader = lib.tflite_reader_create(b"/opt/fss/models/yolov11n.tflite", 2)  # 2=INT8
+```
+
+### FP32 / FP16 / INT8 Handling
+| Enum Value | Precision | Input Type | Output Handling |
+|-----------|-----------|------------|-----------------|
+| `0` (`TFLITE_FP32`) | 32-bit float | `float` | Direct float output |
+| `1` (`TFLITE_FP16`) | 16-bit float | `float` (converted) | Cast to float |
+| `2` (`TFLITE_INT8`) | 8-bit integer | `uint8_t` (quantized) | Dequantize with scale + zero point |
+
+### Error Handling Pattern
+```c
+TfliteReader* reader = tflite_reader_create(path, precision);
+if (!reader) {
+    fprintf(stderr, "TfliteReader: failed to create from %s\n", path);
+    return NULL;
+}
+if (tflite_reader_get_input_dims(reader, dims, 4) < 0) {
+    fprintf(stderr, "TfliteReader: invalid input dims\n");
+    tflite_reader_destroy(reader);
+    return NULL;
+}
+```
+
+### FSS C TFLite Reader API
+```c
+TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precision);
+int tflite_reader_get_input_dims(TfliteReader* reader, int* dims_out, int max_dims);
+int tflite_reader_get_input_size(TfliteReader* reader);
+int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, size_t input_size);
+const float* tflite_reader_get_output(TfliteReader* reader, int* num_detections_out);
+ModelPrecision tflite_reader_get_precision(TfliteReader* reader);
+void tflite_reader_destroy(TfliteReader* reader);
+```
+
+---
+
+## 📹 Frame Transport Mechanisms
+
+### POSIX Shared Memory (`/fss_video_frame`)
+- **Writer** (C++ camera core): `shm_open()` → `ftruncate()` → `mmap()` → `memcpy()` JPEG frames
+- **Reader** (Python): `PosixShmReader` class in DBDaemon — `mmap` SHM, read JPEG, `munmap`
+- **Buffer size**: 2 MB (fixed-size circular buffer)
+- **Permission fix**: `chmod 666 /dev/shm/fss_video_frame` or set `umask 0` in FRTApp
+- **Debug**: `ls -la /dev/shm/ | grep fss`
+
+### File-Based Polling (`/opt/fss/latest_preview.jpg`)
+- **Writer** (FRTApp Python AI): `cv2.imwrite(path, frame, [cv2.IMWRITE_JPEG_QUALITY, 70])`
+- **Reader** (LivePreview bridge): Poll using `os.path.getmtime()`, read when file changes
+- **Use case**: Low-FPS preview for UI (no 2nd inference needed)
+- **RAM**: Single ~50KB JPEG on tmpfs — negligible overhead
+
+### Frame Rate Control
+```python
+# Writer side — only write every Nth frame
+if frame_count % 3 == 0:   # ~10 FPS from 30 FPS source
+    cv2.imwrite("/opt/fss/latest_preview.jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, 70])
+
+# Reader side — poll at matching interval
+while True:
+    if os.path.getmtime(PATH) != last_mtime:
+        send_frame()
+    time.sleep(0.1)  # 10 FPS polling
+```
+
+### JPEG Quality vs Bandwidth Tradeoff
+| Quality | ~Size | Use Case |
+|---------|-------|----------|
+| 95 | 150KB | Archival / high-quality capture |
+| 70 | 40-60KB | Live preview (good balance) |
+| 50 | 20-30KB | Low-RAM / bandwidth constrained |
 
 ---
 

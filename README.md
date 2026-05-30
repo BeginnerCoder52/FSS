@@ -19,6 +19,8 @@ Dựa trên sơ đồ SAD và SDD mới nhất, hệ thống được tối ưu 
 FSS/
 ├── setup.sh                    # Script tự động cấu hình môi trường, build C++ và cài Python/Node
 ├── fss_env_setup.sh            # Script cấu hình systemd service và mount /opt/fss vào RAM (tmpfs)
+├── startup_fss_system.sh       # Integrated startup (all daemons + systemd watchdog)
+├── verify_dbus_fix.sh          # D-Bus fix verification script
 ├── docs/                       # Chứa tài liệu SAD, SDD, Class Diagram
 │
 ├── drivers/                    # Hardware Abstraction Layer (HAL)
@@ -29,76 +31,123 @@ FSS/
 │   └── usb_web_camera/         # Driver bọc các hàm V4L2 cho Camera
 │
 ├── sensor_daemon/              # [C/C++] Core giao tiếp phần cứng tốc độ cao
-│   ├── CMakeLists.txt          # File cấu hình build CMake
-│   ├── include/                # Header files (*.h, *.hpp)
+│   ├── CMakeLists.txt
+│   ├── include/
 │   │   ├── SensorDaemonApp.hpp
-│   │   ├── InputProcessor.hpp  # Đọc I2C SHT3x, GPIO Door/Distance Sensor
-│   │   ├── OutputProcessor.hpp # Bắn ZMQ IPC
+│   │   ├── InputProcessor.hpp
+│   │   ├── OutputProcessor.hpp
 │   │   ├── SystemdWatchdog.hpp
-│   │   └── SdbusInterface.hpp  # Giao tiếp D-Bus C++ (sdbus-c++)
-│   └── src/                    # Source files (*.cpp)
-│       ├── main.cpp
-│       ├── SensorDaemonApp.cpp
-│       └── ...                 # (các file implement tương ứng)
+│   │   └── SdbusInterface.hpp
+│   ├── src/
+│   │   ├── main.cpp
+│   │   ├── SensorDaemonApp.cpp
+│   │   └── ...
+│   └── tests/
 │
 ├── frt_app/                    # [C/C++ & Python] Hybrid AI Vision Core
-│   ├── cpp_camera_core/        # [C/C++] Xử lý V4L2 và ghi Shared Memory siêu tốc
+│   ├── CMakeLists.txt          # Root build: builds cpp_camera_core + c_tflite_reader
+│   ├── cpp_camera_core/        # [C/C++] V4L2 capture + POSIX SHM writer
 │   │   ├── CMakeLists.txt
 │   │   ├── include/
 │   │   └── src/
 │   │       ├── main.cpp
-│   │       ├── VideoCapture.cpp # Đọc USB Camera qua V4L2 API
-│   │       └── ShmWriter.cpp    # Ghi mảng byte frame vào /fss_video_frame
-│   │
-│   └── py_ai_core/             # [Python] Chạy suy luận YOLOv11
-│       ├── requirements.txt    # ultralytics, numpy, zmq, sdbus-python
-│       ├── models/             # Chứa weights YOLO (.pt)
+│   │       ├── VideoCapture.cpp
+│   │       └── ShmWriter.cpp
+│   ├── c_tflite_reader/        # [C] Standalone TF Lite C API inference engine
+│   │   ├── CMakeLists.txt
+│   │   ├── include/
+│   │   │   └── TfliteReader.h
+│   │   └── src/
+│   │       ├── TfliteReader.c
+│   │       └── tflite_reader_test.c
+│   └── py_ai_core/             # [Python] YOLOv11 inference + ByteTrack
+│       ├── requirements.txt
+│       ├── models/
 │       └── src/
 │           ├── __init__.py
 │           ├── main.py
-│           ├── FrtDaemonApp.py
-│           ├── YoloPipeline.py  # Đọc frame từ SHM, chạy model
-│           └── SdbusInterface.py # Bắn tín hiệu FoodDetected qua D-Bus
+│           ├── FrtDaemonApp.py  # (planned: FrtMain.py in Phase 1)
+│           ├── YoloPipeline.py
+│           └── SdbusInterface.py
 │
-├── db_daemon/                  # [Python] Data Controller trung tâm
-│   ├── requirements.txt        # sqlite3, asyncio, zmq, sdbus-python
-│   ├── data/                   # Nơi chứa db fss_core.db
+├── db_daemon/                  # [Python] Data Controller & IPC Broker
+│   ├── requirements.txt
 │   └── src/
 │       ├── __init__.py
 │       ├── main.py
-│       ├── DbDaemonApp.py
-│       ├── SqliteManager.py    # Cập nhật số lượng thực phẩm
-│       ├── PosixShmReader.py   # Lấy ảnh lúc có sự kiện đóng cửa
-│       ├── DiskFileManager.py  # Lưu file vật lý
-│       └── DbDbusInterface.py  # Phát tín hiệu lên UI (UIUpdateRequired)
+│       ├── DbDaemonMain.py
+│       ├── SqliteManager.py
+│       ├── PosixShmReader.py
+│       ├── DiskFileManager.py
+│       └── DbDbusInterface.py
 │
-└── magicmirror/                # [Node.js & Python] UI & Dashboard
-    ├── package.json
-    ├── serveronly/
-    ├── js/
-    ├── config/
-    │   └── config.js
-    └── modules/
-        ├── MMM-FSS-Food/       # UI Quản lý thực phẩm
-        │   ├── MMM-FSS-Food.js # [JS] Render DOM, hiệu ứng Frontend
-        │   ├── MMM-FSS-Food.css
-        │   ├── node_helper.js  # [JS] Quản lý vòng đời module Node.js
-        │   └── py_bridge/      # [Python] Script chạy ngầm để hứng IPC/D-Bus
-        │       ├── requirements.txt
-        │       └── food_dbus_listener.py # Chuyển D-Bus thành JSON bắn qua stdout cho node_helper
-        │
-        └── MMM-FSS-Env/        # UI Giám sát môi trường
-            ├── MMM-FSS-Env.js
-            ├── MMM-FSS-Env.css
-            ├── node_helper.js
-            └── py_bridge/
-                ├── requirements.txt
-                └── env_zmq_client.py # Client Python lắng nghe EnvDataUpdated qua ZMQ
+├── recommend_system/           # [Python] NLP/Recipe Analysis Library (CRF-based NER)
+│   ├── requirements.txt
+│   ├── data/
+│   │   └── recipes/            # ~250 Vietnamese recipes
+│   ├── models/                 # fss_ner_crf_optimized.joblib
+│   └── src/
+│       ├── __init__.py
+│       ├── RecipeAnalyzerAPI.py
+│       ├── RecipeProcessor.py
+│       └── ...
+│
+├── recommend_daemon/           # [Python] Business Logic Orchestrator
+│   ├── requirements.txt
+│   ├── src/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── RecommendEngine.py  # Bù Trừ algorithm
+│   │   ├── RecommendDbManager.py
+│   │   └── DbusInterface.py
+│   ├── systemd/
+│   │   └── recommend_daemon.service
+│   └── tests/
+│       └── test_recommend_engine.py
+│
+├── electron_app/               # [Node.js & Python] UI & Dashboard
+│   ├── config.json
+│   ├── magicmirror/            # Core Electron/MagicMirror app
+│   │   ├── package.json
+│   │   ├── config/
+│   │   │   └── config.js
+│   │   └── modules/
+│   │       ├── MMM-FSS-Env/          # Môi trường (nhiệt độ/độ ẩm)
+│   │       ├── MMM-FSS-Monitor/      # Giám sát cửa & khoảng cách
+│   │       ├── MMM-FSS-Inventory/    # Tồn kho thực phẩm
+│   │       ├── MMM-FSS-LivePreview/  # Xem trước camera trực tiếp
+│   │       ├── MMM-FSS-VirtualKeyboard/ # Bàn phím ảo tìm kiếm
+│   │       ├── MMM-FSS-Recommend/    # Gợi ý mua sắm thông minh
+│   │       └── MMM-FSS-Notification/ # Thông báo trung tâm
+│   └── py_bridge/              # Python D-Bus listeners (relay → socket.io)
+│       ├── requirements.txt
+│       ├── env_dbus_listener.py
+│       ├── monitor_dbus_listener.py
+│       ├── inventory_dbus_listener.py
+│       ├── live_preview_bridge.py
+│       └── recommend_dbus_listener.py
+│
+├── fss-test/                   # Integration & benchmark tests
+│   ├── test-cases.sh
+│   ├── test-inference.py
+│   ├── models/
+│   └── results/
+│
+├── tests/                      # Phase 1 validation suite
+│   ├── run_phase1_tests.py
+│   └── unit/
+│       └── db_daemon/
+│
+├── tools/                      # Utility scripts
+│   ├── verify_dbus_config.sh
+│   └── deploy-model/
+│
+└── docs/                       # Tài liệu thiết kế
 ```
 
 ## ⚙️ Hướng dẫn Khởi chạy (Dành cho Development)
 
-Sau khi chạy thành công `./setup.sh`, bạn cần mở 5 terminal để khởi chạy độc lập các thành phần:
+Sau khi chạy thành công `./setup.sh`, bạn cần mở 6 terminal để khởi chạy độc lập các thành phần:
 
 ```bash
 # Terminal 1: Chạy Core Sensor (C++)
@@ -113,6 +162,12 @@ source frt_app/py_ai_core/venv/bin/activate && python frt_app/py_ai_core/src/mai
 # Terminal 4: Chạy Data Controller (Python)
 source db_daemon/venv/bin/activate && python db_daemon/src/main.py
 
-# Terminal 5: Khởi chạy Giao diện
-cd magicmirror && npm run start
+# Terminal 5: Chạy Recommend Daemon (Python)
+source recommend_daemon/venv/bin/activate && python recommend_daemon/src/main.py
+
+# Terminal 6: Khởi chạy Giao diện
+cd electron_app/magicmirror && npm run start
+
+# --- Hoặc khởi chạy toàn bộ hệ thống tự động ---
+bash startup_fss_system.sh
 ```
