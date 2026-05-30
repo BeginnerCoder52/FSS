@@ -6,7 +6,10 @@
     "dbdaemon_path": "/vn/edu/uit/FSS/DBDaemon",
     "sensor_service": "vn.edu.uit.FSS.Sensor",
     "sensor_interface": "vn.edu.uit.FSS.Sensor",
-    "sensor_path": "/vn/edu/uit/FSS/Sensor"
+    "sensor_path": "/vn/edu/uit/FSS/Sensor",
+    "recommend_service": "vn.edu.uit.FSS.RecommendDaemon",
+    "recommend_interface": "vn.edu.uit.FSS.RecommendDaemon",
+    "recommend_path": "/vn/edu/uit/FSS/RecommendDaemon"
   },
   "system": {
     "distance_threshold_m": 0.60,
