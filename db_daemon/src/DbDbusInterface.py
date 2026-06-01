@@ -77,6 +77,9 @@ class DbDbusInterface:
         # Custom food callbacks
         self._register_custom_food_callback: Optional[Callable] = None
         self._get_custom_foods_callback: Optional[Callable] = None
+
+        # Requests by recipe callback
+        self._requests_by_recipe_callback: Optional[Callable] = None
         
         # Setup logging
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -177,6 +180,10 @@ class DbDbusInterface:
     def set_clear_request_callback(self, callback: Callable) -> None:
         """Set the callback for ClearRequest method."""
         self._clear_request_callback = callback
+
+    def set_requests_by_recipe_callback(self, callback: Callable) -> None:
+        """Set the callback for GetRequestList method."""
+        self._requests_by_recipe_callback = callback
 
     def listen_frt_pipeline_events(self, callback: Callable) -> None:
         """
@@ -657,6 +664,23 @@ if SDBUS_AVAILABLE:
                     return False
             return False
 
+        @dbus_method_async('s', 's')
+        async def GetRequestList(self, recipe_name: str) -> str:
+            """
+            D-Bus Method: Get recipe requests filtered by recipe name.
+            Args:
+                recipe_name: Vietnamese recipe name to filter by
+            Returns: JSON array of matching requests.
+            """
+            if self._interface_instance and self._interface_instance._requests_by_recipe_callback:
+                try:
+                    result = self._interface_instance._requests_by_recipe_callback(recipe_name)
+                    return json.dumps(result, ensure_ascii=False)
+                except Exception as e:
+                    logging.error(f"Error in GetRequestList D-Bus method: {e}")
+                    return json.dumps({"status": "error", "message": str(e)})
+            return json.dumps({"status": "error", "message": "Requests by recipe callback not set"})
+
         @dbus_signal_async('sis')
         def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
             """Signal: UI requires update with new inventory data."""
@@ -730,6 +754,7 @@ else:
         def GetRequests(self, *args, **kwargs): pass
         def InsertRequest(self, *args, **kwargs): pass
         def ClearRequest(self, *args, **kwargs): pass
+        def GetRequestList(self, *args, **kwargs): pass
         def export_to_dbus(self, *args, **kwargs): pass
         def unexport(self, *args, **kwargs): pass
         def set_interface_instance(self, *args, **kwargs): pass

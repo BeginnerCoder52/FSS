@@ -608,6 +608,7 @@ class DbDaemonMain:
                 self.dbus_interface.set_requests_callback(self._handle_get_requests)
                 self.dbus_interface.set_insert_request_callback(self._handle_insert_request)
                 self.dbus_interface.set_clear_request_callback(self._handle_clear_request)
+                self.dbus_interface.set_requests_by_recipe_callback(self._handle_get_requests_by_recipe)
                 
                 self.logger.debug("Event handlers and DB operation callbacks registered")
                 
@@ -730,6 +731,23 @@ class DbDaemonMain:
         except Exception as e:
             self.logger.error(f"Error handling ClearRequest: {e}")
             return False
+
+    def _handle_get_requests_by_recipe(self, recipe_name: str) -> list:
+        """Handle GetRequestList D-Bus method call.
+
+        Args:
+            recipe_name: Vietnamese recipe name to filter by
+
+        Returns:
+            List of matching request items, or empty list on error.
+        """
+        if not self.db_manager:
+            return []
+        try:
+            return self.db_manager.get_requests_by_recipe(recipe_name)
+        except Exception as e:
+            self.logger.error(f"Error handling GetRequestList: {e}")
+            return []
 
     def _handle_signal(self, signum, frame) -> None:
         """Handle system signals for graceful shutdown."""

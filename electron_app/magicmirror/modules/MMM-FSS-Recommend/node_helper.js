@@ -13,6 +13,7 @@ module.exports = NodeHelper.create({
             this.startBridge();
         }
         if (notification === "RECIPE_SEARCH" && this.pythonProcess) {
+            this.sendSocketNotification("RECOMMEND_LOADING", {});
             this.pythonProcess.stdin.write(JSON.stringify({
                 type: "SEARCH",
                 recipe: payload.recipe

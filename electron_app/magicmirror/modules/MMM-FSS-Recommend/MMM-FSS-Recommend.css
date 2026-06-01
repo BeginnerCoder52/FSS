@@ -13,6 +13,32 @@
     color: #95a5a6;
     font-size: 14px;
 }
+.fss-recommend-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+}
+.fss-recommend-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+.fss-recommend-search-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: none;
+    background: #3498db;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.2s;
+}
+.fss-recommend-search-btn:active {
+    background: #2176ae;
+}
 .fss-recommend-header {
     font-size: 16px;
     font-weight: bold;

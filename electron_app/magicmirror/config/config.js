@@ -122,8 +122,13 @@ let config = {
 		},
 		
 		{
-            module: "MMM-FSS-VirtualKeyboard",
-            position: "top_center"
+            module: "MMM-Keyboard",
+            position: "fullscreen_above",
+            config: {
+                startWithNumbers: false,
+                startUppercase: false,
+                debug: false
+            }
         },
         {
             module: "MMM-FSS-LivePreview",

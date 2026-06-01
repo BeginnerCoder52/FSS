@@ -1,10 +1,10 @@
 # HANDOVER CHAT — FSS Project
 
 > **Created**: 2026-05-24
-> **Last Updated**: 2026-06-01
-> **Previous session branch**: `ElectronApp-dev` (Phase 2 — UI Modules + Fixes)
-> **This session branch**: `main` (Phase 8 — Setup & Integration Fixes)
-> **Project phase**: Phase 8 Complete — System Integration Ready
+> **Last Updated**: 2026-06-02
+> **Previous session branch**: `main` (Phase 8 — System Integration Fixes)
+> **This session branch**: `main` (Phase 9 — Tasks A-J UI/DBus Upgrade + Mock Test)
+> **Project phase**: Phase 9 Complete — UI/DBus Upgrade + Recommend System D-Bus Service
 
 ---
 
@@ -419,7 +419,135 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 ---
 
-## 7. Design Notes & Rationale
+## 7. Current Session: Phase 9 — Tasks A-J UI/DBus Upgrade (2026-06-02)
+
+### What was done
+
+**Phase 9 — `main` branch — UI/DBus Upgrade, Recommend System D-Bus Service, MMM-Keyboard (Completed)**:
+
+**A. `format_result_for_ui()` in RecommendEngine**:
+- Added `format_result_for_ui()` method to `RecommendEngine.py` — transforms Bù Trừ comparison result
+  into UI-friendly format with `ingredients[]` array (name, required, available, shortage, status)
+  and `summary` field with status emoji markers
+- Improved `_parse_quantity()` with regex fallback for non-numeric quantity strings
+
+**B. `RECOMMEND_LOADING` Notification**:
+- `MMM-FSS-Recommend/node_helper.js`: Emits `RECOMMEND_LOADING` notification before each SEARCH write
+  to give visual feedback while D-Bus call is in-flight
+
+**C. Standalone Recommend System D-Bus Service** (new files):
+- `recommend_system/src/dbus_service.py` (255 lines): Implements D-Bus service
+  `vn.edu.uit.FSS.RecommendSystem` with method `ExtractAndPersistRecipe(recipe_name) → JSON`.
+  Runs NLP extraction via `RecipeAnalyzerEngine.generate_fss_request()`, then persists
+  via DBDaemon `InsertRequest()` D-Bus proxy. Async event loop with threading.
+  sdbus import guard with dummy fallback.
+- `recommend_system/src/main.py`: Entry point with lazy NLP engine loading,
+  D-Bus lifecycle (init/start/stop), rotating file logging to `/var/log/fss/recommend_system_dbus.log`,
+  graceful SIGTERM/SIGINT handling
+
+**D. `GetRequestList` D-Bus Method**:
+- `DbDbusInterface.py`: Added `GetRequestList(recipe_name)` D-Bus method on DBDaemon service,
+  queries `FSS_Request.db` by recipe name. Full async implementation with dedicated callback.
+- `DbDaemonMain.py`: `_handle_get_requests_by_recipe()` handler wired via `_register_event_handlers()`
+
+**E. MMM-Keyboard Replacement**:
+- `config.js`: Replaced `MMM-FSS-VirtualKeyboard` with `MMM-Keyboard` (3rd party,
+  `github.com/lavolp3/MMM-Keyboard`) at `fullscreen_above` position.
+  Config: `startWithNumbers: false`, `startUppercase: false`, `debug: false`
+
+**F. MMM-Keyboard → MMM-FSS-Recommend Wiring**:
+- `MMM-FSS-Recommend.js`: "Tìm kiếm" button sends `sendNotification("KEYBOARD", ...)` to open keyboard.
+  `notificationReceived("KEYBOARD_INPUT")` splits comma-separated input, processes each recipe
+  via `sendSocketNotification("RECIPE_SEARCH", ...)`. Multiple results accumulated via
+  `accumulatedResults[]`, merged via `mergeResults()`
+
+**G. Self-Contained Notification + Sound**:
+- `MMM-FSS-Recommend.js`: `playNotificationSound()` uses Web Audio API `OscillatorNode`
+  (550Hz→770Hz, 2 beeps, 100ms gap) — no sound files or npm packages
+- `mergeResults(results)`: Joins recipe names, flattens ingredients, recalculates
+  available/needed/missing counts, returns unified result
+
+**H. D-Bus Config Update**:
+- `dbus_config/vn.edu.uit.FSS.conf`: Added `vn.edu.uit.FSS.RecommendSystem` to all 3 policy blocks
+  (`richardmelvin52`, `root`, `default`) with `<allow own>`, `send_destination`, `receive_sender`
+
+**I. AGENTS.md Update**:
+- Added 3 new sections: "Recommend System D-Bus Service", "MMM-Keyboard Integration",
+  "MMM-FSS-Recommend Self-Contained Notification"
+- Updated node_helper.js pattern to include `SessionLog` import
+
+**J. Documentation**:
+- `FINAL_UPGRADE_3005.md`: 1894-line comprehensive upgrade planning + tracking document.
+  Covers Phases 0-2 planning and Tasks A-J (all [x] Done as of 01/06/2026)
+
+### Additional Changes
+
+**DBDaemon — Major Refactoring**:
+- `DbDaemonMain.py` (~755 lines): Complete rewrite with `DaemonState` enum
+  (INIT/IDLE/PROCESSING/ERROR/STOPPED), threading (main loop in `DbDaemonMainLoop`),
+  ASPICE-style docstrings, state tracking (`_processed_events_count`, `_error_count`).
+  New methods: `process_food_tracking_event()`, `process_food_event()`,
+  `process_door_sensor_event()`, `process_distance_sensor_event()`, `process_presence_event()`.
+  Recovery: `recover_from_io_error()`, `reset_on_startup_failure()`, `reset_door_sensor()`,
+  `reset_distance_sensor()`
+- `DbDbusInterface.py` (~760 lines): Complete async rewrite with dedicated event loop thread.
+  All signals implemented with proper async emission. `subscribe_recommend_daemon_events()`
+  with full async listening infrastructure. Proper cleanup via `stop()` method.
+  sdbus import guard with fallback dummy class
+- `SqliteManager.py`: Added `USE_RECOMMEND_SYSTEM_FOLDER = False` flag for future refactoring
+
+**RecommendDaemon — Enhancements**:
+- `main.py`: Signal handlers (SIGTERM/SIGINT), `_ensure_nlp_engine()` lazy loading,
+  `_get_inventory_from_dbd()` inventory fetch from DBDaemon via D-Bus,
+  rotating file logging `/var/log/fss/recommend_daemon.log` (10MB, 5 backups)
+
+**MagicMirror Session Logging**:
+- `electron_app/magicmirror/js/session_logger.js`: New utility — timestamped logs to
+  `logs/session_YYYY-MM-DD.log`, unique `sessionId` per instance, exports info/warn/error/debug
+- `electron_app/magicmirror/js/app.js`: Imports `SessionLog`, logs session start/stop
+
+**Minor**:
+- `recommend_system/requirements.txt`: Added `pytest`
+
+### Verification
+
+- ✅ All Tasks A-J implemented and marked Done in `FINAL_UPGRADE_3005.md`
+- ✅ `recommend_system/src/main.py` and `dbus_service.py` created — D-Bus service registered
+- ✅ `config.js` uses MMM-Keyboard (not deprecated VirtualKeyboard)
+- ✅ `GetRequestList` method added to DBDaemon D-Bus interface
+- ✅ `format_result_for_ui()` available in RecommendEngine
+- ✅ `session_logger.js` integrated into MagicMirror `app.js`
+- ✅ D-Bus config covers all 5 services (incl. RecommendSystem)
+- ✅ AGENTS.md updated with 3 new sections
+- ⚠️ `tools/verify_dbus_config.sh` header still lists only 4 services — needs update
+
+### Files changed this session
+
+| File | Status | Description |
+|------|--------|-------------|
+| `recommend_system/src/dbus_service.py` | **New** | D-Bus service `vn.edu.uit.FSS.RecommendSystem`, `ExtractAndPersistRecipe` method |
+| `recommend_system/src/main.py` | **New** | Standalone D-Bus service entry point for Recommend System NLP |
+| `recommend_system/requirements.txt` | **Modified** | Added `pytest` |
+| `recommend_system/tests/mock_terminal_test.py` | **New** | Mock terminal test (count-based recipe ingredients) |
+| `recommend_daemon/src/main.py` | **Modified** | Signal handlers, lazy NLP, inventory fetch, file logging |
+| `recommend_daemon/src/RecommendEngine.py` | **Modified** | `format_result_for_ui()`, improved `_parse_quantity()` |
+| `db_daemon/src/DbDaemonMain.py` | **Modified** | Major refactor: state machine, threading, recovery methods |
+| `db_daemon/src/DbDbusInterface.py` | **Modified** | Complete async rewrite, `GetRequestList`, recommend subscription |
+| `db_daemon/src/SqliteManager.py` | **Modified** | `USE_RECOMMEND_SYSTEM_FOLDER` flag |
+| `electron_app/magicmirror/config/config.js` | **Modified** | MMM-Keyboard replaces VirtualKeyboard |
+| `electron_app/magicmirror/modules/MMM-FSS-Recommend/MMM-FSS-Recommend.js` | **Modified** | KEYBOARD_INPUT, mergeResults(), playNotificationSound() |
+| `electron_app/magicmirror/modules/MMM-FSS-Recommend/MMM-FSS-Recommend.css` | **Modified** | Search button styles |
+| `electron_app/magicmirror/modules/MMM-FSS-Recommend/node_helper.js` | **Modified** | SessionLog, RECOMMEND_LOADING emission |
+| `electron_app/magicmirror/js/session_logger.js` | **New** | Session logging utility |
+| `electron_app/magicmirror/js/app.js` | **Modified** | SessionLog import and logging |
+| `dbus_config/vn.edu.uit.FSS.conf` | **Modified** | Added RecommendSystem service policies |
+| `FINAL_UPGRADE_3005.md` | **New** | 1894-line upgrade plan + status tracking |
+| `AGENTS.md` | **Modified** | 3 new sections: Recommend System D-Bus, MMM-Keyboard, Notification |
+| `HANDOVER_CHAT.md` | **Modified** | Added Phase 9 section |
+
+---
+
+## 8. Design Notes & Rationale
 
 ### Why per-component `requirements.txt` instead of one shared `.venv`?
 
@@ -440,7 +568,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 8. Project Phase Roadmap
+## 9. Project Phase Roadmap
 
 | Phase | Component | Branch | Status |
 |-------|-----------|--------|--------|
@@ -453,10 +581,11 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 | Phase 6 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
 | Phase 7 | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | ✅ Complete |
 | Phase 8 | System Integration Fixes | `main` | ✅ Complete |
+| Phase 9 | Tasks A-J: UI/DBus Upgrade + Recommend System D-Bus + MMM-Keyboard | `main` | ✅ Complete |
 
 ---
 
-## 9. Remaining Work
+## 10. Remaining Work
 
 ### 🟡 Should Do
 
@@ -466,15 +595,16 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 - [ ] **`verify_dbus_fix.sh`**: Could be merged with `tools/verify_dbus_config.sh` into a single `tools/verify_all.sh` that validates everything at once.
 - [ ] **Phase 1 test runner**: Update `tests/run_phase1_tests.py` to include `recommend_daemon` and `recommend_system` module validation.
+- [ ] **`tools/verify_dbus_config.sh` header**: Update to list 5 services (missing `RecommendSystem`).
 
 ---
 
-## 10. Repository Information
+## 11. Repository Information
 
 | Property | Value |
 |----------|-------|
 | Remote | `origin` → `https://github.com/BeginnerCoder52/FSS.git` |
-| Current branch | `main` (Phase 8 complete — System Integration Ready) |
+| Current branch | `main` (Phase 9 complete — UI/DBus Upgrade + Recommend System D-Bus Service) |
 | Next action | Run full system: `bash startup_fss_system.sh`, then `npm start` for MagicMirror |
 | Project root | `/home/richardmelvin52/FSS` |
 
@@ -492,21 +622,73 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 11. Architecture Reference
+## 12. recommend_system — Mock Terminal Test (2026-06-02)
+
+### What was done
+
+**Created `recommend_system/tests/mock_terminal_test.py`** — Standalone mock test that simulates
+real user input of up to 2 recipe names from the terminal. The output is a structured ingredient
+list quantified by **count-based units only** (trái, quả, cái, con, hộp, gói, củ, muỗng…),
+explicitly dropping mass (g, kg) and volume (lít, ml) ingredients.
+
+### Key Design Decisions
+
+1. **Count-unit filter**: `is_count_unit()` checks against a `COUNT_UNITS` set. Ingredients with
+   units not in the set (e.g., `g`, `kg`, `ml`, `nhúm`) are dropped and displayed separately.
+   The `COUNT_UNITS` set can be extended as needed.
+2. **Fuzzy matching**: If an exact recipe name is not found, `difflib.get_close_matches()` suggests
+   the closest match from the 5 built-in mock recipes.
+3. **Dual recipe merge**: When 2 recipes are given (interactive or `--recipe` flag), each recipe's
+   count-based ingredients are shown individually, then a combined "DANH SÁCH ĐI CHỢ" is displayed
+   with quantities summed and recipes noted.
+
+### Features
+
+| Feature | Description |
+|---------|-------------|
+| **Interactive mode** | Prompts for 1–2 recipes, supports `ls` to list, `q` to quit |
+| **Non-interactive mode** | `--recipe "thịt kho" --recipe "cá kho"` |
+| **Count-only output** | Ingredients with trái/quả/cái/con/hộp/gói/củ/muỗng…; mass/volume dropped |
+| **Combined shopping list** | Merges ingredients from 2 recipes, sums quantities, notes which recipe each is for |
+| **`--list` flag** | Lists all 5 built-in mock recipes and exits |
+
+### Verified behavior
+
+- `--recipe "thịt kho"` → 5 count-based ingredients, drops `thịt ba chỉ 300g`
+- `--recipe "trứng chiên" --recipe "cá kho"` → per-recipe tables + merged shopping list
+- Fuzzy matching: `"cá"` → matches `cá kho`, `"thịt"` → `thịt kho`
+- `--list` shows all 5 recipes: canh chua, cá kho, gỏi trộn khô mực, thịt kho, trứng chiên
+
+### Note on "nhúm" (pinch)
+
+`nhúm` is not in `COUNT_UNITS` so it gets filtered out. Add it to the set if needed.
+
+### Files changed
+
+| File | Status | Description |
+|------|--------|-------------|
+| `recommend_system/tests/mock_terminal_test.py` | **New** | Mock terminal test: up to 2 recipes, count-based only output |
+
+---
+
+## 13. Architecture Reference
 
 ### D-Bus Service Ownership
 
 | Component | D-Bus Service | Methods | Signals |
 |-----------|---------------|---------|---------|
 | SensorDaemon | `vn.edu.uit.FSS.Sensor` | — | `EnvironmentDataChanged`, `DistanceDataChanged`, `DoorStateChanged`, `UserPresenceDetected`, `EnvironmentDataUpdated` |
-| FRTApp | `vn.edu.uit.FSS.FRTApp` | — | `FoodDetected`/`FRTDetectionResult` |
-| DBDaemon | `vn.edu.uit.FSS.DBDaemon` | `GetInventory`, `GetRequests`, `InsertRequest`, `ClearRequest` | `UIUpdateRequired`, `EnvironmentUpdateRequired`, `SecondaryEnvironmentUpdateRequired`, `DoorStateUpdate`, `DistanceAlert`, `UserPresenceUpdate` |
+| FRTApp | `vn.edu.uit.FSS.FRTApp` | — | `FoodDetected`/`FRTDetectionResult`, `CameraStateChanged` |
+| DBDaemon | `vn.edu.uit.FSS.DBDaemon` | `GetInventory`, `GetRequests`, `GetRequestList`, `InsertRequest`, `ClearRequest`, `RegisterCustomFood`, `GetCustomFoods` | `UIUpdateRequired`, `EnvironmentUpdateRequired`, `SecondaryEnvironmentUpdateRequired`, `DoorStateUpdate`, `DistanceAlert`, `UserPresenceUpdate`, `CustomFoodRequest` |
 | RecommendDaemon | `vn.edu.uit.FSS.RecommendDaemon` | `GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased` | `RecommendationUpdated` |
+| RecommendSystem | `vn.edu.uit.FSS.RecommendSystem` | `ExtractAndPersistRecipe` | — |
 
-### Data Flow (Post-Phase 5)
+### Data Flow (Post-Phase 9)
 
 ```
-User enters recipe in UI
+User types recipe(s) in MMM-Keyboard
+    → KEYBOARD_INPUT → MMM-FSS-Recommend.js
+    → node_helper.js → recommend_dbus_listener.py
     → D-Bus: RecommendDaemon.GenerateShoppingList(recipe_name)
     → RecommendDaemon.RecommendEngine calls RecipeAnalyzerEngine (from recommend_system/)
     → RecommendDaemon calls DBDaemon.GetInventory() via D-Bus
@@ -514,6 +696,13 @@ User enters recipe in UI
     → RecommendDaemon stores result in FSS-Recommend.db
     → RecommendDaemon emits RecommendationUpdated signal
     → UI receives signal, displays shopping list
+    → playNotificationSound("recommend_done")
+
+Alternative: Recommend System D-Bus Service
+    → D-Bus: RecommendSystem.ExtractAndPersistRecipe(recipe_name)
+    → NLP extraction via RecipeAnalyzerEngine
+    → D-Bus: DBDaemon.InsertRequest() to persist
+    → Returns JSON with dish, ingredients, batch_id
 ```
 
 ### Database Ownership
@@ -523,4 +712,4 @@ User enters recipe in UI
 
 ---
 
-*End of handover. All phases merged to `main`. Next session: integration/E2E tests and full system startup.*
+*End of handover. Phase 9 complete. Next session: integration/E2E tests and full system startup.*

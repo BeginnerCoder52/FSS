@@ -212,13 +212,18 @@ class RecommendDaemonMain:
             inventory=inventory
         )
 
-        if result.get("status") == "SUCCESS" and self.dbus_interface.is_connected:
-            shopping_list_json = json.dumps(
-                result.get("shopping_list", []), ensure_ascii=False
-            )
-            self.dbus_interface.emit_recommendation_updated(
-                recipe_name, shopping_list_json
-            )
+        if result.get("status") == "SUCCESS":
+            ui_result = self.engine.format_result_for_ui(result)
+
+            if self.dbus_interface.is_connected:
+                shopping_list_json = json.dumps(
+                    ui_result.get("shopping_list", []), ensure_ascii=False
+                )
+                self.dbus_interface.emit_recommendation_updated(
+                    recipe_name, shopping_list_json
+                )
+
+            return ui_result
 
         return result
 

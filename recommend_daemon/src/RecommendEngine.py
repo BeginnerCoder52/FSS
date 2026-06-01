@@ -189,6 +189,52 @@ class RecommendEngine:
             self.logger.error(f"Error marking item purchased: {e}")
             return False
 
+    def format_result_for_ui(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        if result.get("status") != "SUCCESS":
+            return result
+
+        ingredients = []
+        for item in result.get("available", []):
+            entry = {
+                "name": item.get("food_id", ""),
+                "required": item.get("required_qty", 0),
+                "available": item.get("available_qty", 0),
+                "shortage": 0,
+                "status": "available"
+            }
+            ingredients.append(entry)
+
+        for item in result.get("needed", []):
+            entry = {
+                "name": item.get("food_id", ""),
+                "required": item.get("required_qty", 0),
+                "available": item.get("available_qty", 0),
+                "shortage": item.get("shortage", 0),
+                "status": "needed"
+            }
+            ingredients.append(entry)
+
+        for item in result.get("missing", []):
+            entry = {
+                "name": item.get("food_id", ""),
+                "required": item.get("required_qty", 0),
+                "available": 0,
+                "shortage": item.get("required_qty", 0),
+                "status": "missing"
+            }
+            ingredients.append(entry)
+
+        missing_count = result.get("missing_count", 0)
+        if missing_count > 0:
+            summary = f"❌ Còn thiếu {missing_count} nguyên liệu"
+        else:
+            summary = "✅ Đã có đủ nguyên liệu!"
+
+        ui_result = dict(result)
+        ui_result["ingredients"] = ingredients
+        ui_result["summary"] = summary
+        return ui_result
+
     def _parse_quantity(self, quantity_str: str) -> int:
         if not quantity_str:
             return 1

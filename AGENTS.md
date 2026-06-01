@@ -920,6 +920,111 @@ Use this AGENTS.md when:
 
 ---
 
+---
+
+## 🔌 Recommend System D-Bus Service
+
+**Service Name**: `vn.edu.uit.FSS.RecommendSystem`
+**Object Path**: `/vn/edu/uit/FSS/RecommendSystem`
+**Interface**: `vn.edu.uit.FSS.RecommendSystem`
+
+### Files
+- `recommend_system/src/dbus_service.py` — D-Bus service implementation
+- `recommend_system/src/main.py` — Entry point with lazy NLP engine loading
+
+### Method
+| Method | Signature | Returns | Description |
+|--------|-----------|---------|-------------|
+| `ExtractAndPersistRecipe` | `(s)` recipe_name → `s` JSON | JSON string | NLP extract → DbDaemon InsertRequest |
+
+### Data Flow
+```
+[D-Bus Client] → ExtractAndPersistRecipe(recipe_name)
+    ├── RecipeAnalyzerEngine.generate_fss_request() (NLP)
+    ├── DbDaemon.InsertRequest() via D-Bus proxy
+    └── Returns JSON: {"status", "dish", "ingredients", "batch_id"}
+```
+
+### D-Bus Config
+Policy added to `dbus_config/vn.edu.uit.FSS.conf`:
+```xml
+<allow own="vn.edu.uit.FSS.RecommendSystem"/>
+<allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
+<allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+```
+
+---
+
+## ⌨️ MMM-Keyboard Integration
+
+**Module**: [MMM-Keyboard](https://github.com/lavolp3/MMM-Keyboard) (3rd party, replaces MMM-FSS-VirtualKeyboard)
+
+### Setup
+```bash
+cd electron_app/magicmirror/modules
+git clone https://github.com/lavolp3/MMM-Keyboard.git
+cd MMM-Keyboard && npm install
+```
+
+### Config.js Entry
+```js
+{
+    module: "MMM-Keyboard",
+    position: "fullscreen_above",
+    config: { startWithNumbers: false, startUppercase: false, debug: false }
+}
+```
+
+### Protocol (Notification-Based)
+- **Open**: `this.sendNotification("KEYBOARD", {key: "recommendSearch", style: "default", data: {}})`
+- **Receive**: Listen for `KEYBOARD_INPUT` with `{key: "recommendSearch", message: "thịt kho, trứng chiên", data: {}}`
+- **Comma-separated**: Multiple recipes can be typed separated by commas
+
+### Wire to MMM-FSS-Recommend
+- "Tìm kiếm" button in module header opens keyboard via `sendNotification("KEYBOARD", ...)`
+- `notificationReceived("KEYBOARD_INPUT")` splits comma-separated input, sends each recipe via `sendSocketNotification("RECIPE_SEARCH", {recipe: r})`
+- Results accumulated via `accumulatedResults[]`, merged via `mergeResults()`
+
+---
+
+## 🔔 MMM-FSS-Recommend Self-Contained Notification
+
+### Sound Design (Web Audio API)
+Uses `OscillatorNode` — no sound files or npm packages needed:
+| Type | Frequency | Duration | Count | Gap |
+|------|-----------|----------|-------|-----|
+| `recommend_done` | 550Hz → 770Hz (2nd) | 150ms | 2 | 100ms |
+
+### Multi-Recipe Merge
+`mergeResults(results)` combines results from comma-separated recipe searches:
+- Joins recipe names with ", "
+- Flattens all ingredient arrays
+- Recalculates available/needed/missing counts
+- Returns unified result object
+
+### Data Flow
+```
+[MMM-Keyboard] --KEYBOARD_INPUT--> [MMM-FSS-Recommend.js]
+    parse comma-separated recipes
+    |
+    v (for each recipe, via socket)
+[node_helper.js] --stdin--> [recommend_dbus_listener.py]
+    |
+    v (calls D-Bus)
+[RecommendDaemon.GenerateShoppingList()]
+    |
+    v (JSON string via D-Bus return)
+[recommend_dbus_listener.py] --stdout--> [node_helper.js]
+    |
+    v (socket notification)
+[MMM-FSS-Recommend.js]
+    ├── mergeResults() for multi-recipe
+    ├── playNotificationSound("recommend_done")
+    └── updateDom()
+```
+
+---
+
 ## CONSTRAINTS:
 DO NOT CHANGE THE CORE CODE
 USE CLEAN CODE AND DETAILED CLEAN COMMENT
