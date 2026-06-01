@@ -421,6 +421,168 @@ python -c "import sdbus; print(sdbus.__file__)"
 
 ---
 
+## 🚀 Full Setup Guide (Corrected & Complete)
+
+Execute these in order:
+
+### Step 1: System Dependencies
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake pkg-config \
+    libi2c-dev i2c-tools libv4l-dev v4l-utils \
+    libsystemd-dev libsdbus-c++-dev libdbus-1-dev \
+    libzmq3-dev libsqlite3-dev libopencv-dev \
+    libtensorflow-lite-dev \
+    python3-venv python3-dev python3-sdbus python3-systemd \
+    nodejs npm
+```
+
+### Step 2: Create Runtime Directory
+```bash
+sudo mkdir -p /opt/fss/{images,logs,data,models}
+sudo chown -R "$USER:$USER" /opt/fss
+
+# Create FRTApp log file with user ownership
+sudo touch /var/log/frt_app.log
+sudo chown "$USER:$USER" /var/log/frt_app.log
+```
+
+### Step 3: Install D-Bus Configuration
+```bash
+# Copy D-Bus policy to system (allows FSS services on system bus)
+sudo mkdir -p /etc/dbus-1/system.d
+sudo cp dbus_config/vn.edu.uit.FSS.conf /etc/dbus-1/system.d/
+```
+
+### Step 4: Build C++ Components
+```bash
+# SensorDaemon
+mkdir -p sensor_daemon/build && cd sensor_daemon/build
+cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
+cd ../..
+
+# FRTApp (camera core + C TFLite reader)
+mkdir -p frt_app/build && cd frt_app/build
+cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
+cd ../..
+
+# Install libtflite_reader.so to system library path
+sudo cp frt_app/build/c_tflite_reader/libtflite_reader.so /usr/local/lib/
+sudo ldconfig
+```
+
+### Step 5: Create Python Virtual Environments
+```bash
+# Helper function
+setup_venv() {
+    local dir="$1"
+    local flags="${2:-}"
+    python3 -m venv $flags "$dir/venv"
+    "$dir/venv/bin/pip" install --upgrade pip setuptools
+    if [ -f "$dir/requirements.txt" ]; then
+        "$dir/venv/bin/pip" install -r "$dir/requirements.txt"
+    fi
+}
+
+# Core daemon venvs
+setup_venv "db_daemon"
+setup_venv "recommend_daemon"
+
+# FRTApp AI core (needs --system-site-packages for sdbus)
+setup_venv "frt_app/py_ai_core" "--system-site-packages"
+
+# Electron bridge venv
+setup_venv "electron_app/py_bridge"
+
+# MagicMirror module bridges
+for module in MMM-FSS-Env MMM-FSS-Inventory MMM-FSS-Monitor MMM-FSS-LivePreview MMM-FSS-Recommend; do
+    if [ -d "electron_app/magicmirror/modules/$module/py_bridge" ]; then
+        setup_venv "electron_app/magicmirror/modules/$module/py_bridge"
+    fi
+done
+
+# Recommend System (library for NLP)
+setup_venv "recommend_system"
+```
+
+### Step 6: Install Node.js / MagicMirror
+```bash
+cd electron_app/magicmirror
+npm install
+cd ../..
+```
+
+### Step 7: Verify the Installation
+```bash
+# Check C++ binaries
+ls -la sensor_daemon/build/sensor_daemon_exec
+ls -la frt_app/build/c_tflite_reader/libtflite_reader.so
+ls -la frt_app/build/cpp_camera_core/camera_core_exec
+
+# Check Python venvs
+for dir in db_daemon recommend_daemon recommend_system frt_app/py_ai_core electron_app/py_bridge; do
+    [ -f "$dir/venv/bin/python" ] && echo "✓ $dir" || echo "✗ $dir"
+done
+
+# Check npm
+[ -d electron_app/magicmirror/node_modules ] && echo "✓ magicmirror" || echo "✗ magicmirror"
+
+# Validate D-Bus config
+bash tools/verify_dbus_config.sh
+```
+
+### Step 8: Start the System
+Choose method:
+
+A) **Manual testing** (individual terminals):
+```bash
+# Terminal 1: SensorDaemon (C++ hardware I/O)
+sudo ./sensor_daemon/build/sensor_daemon_exec
+
+# Terminal 2: FRTApp Camera Core (C++ V4L2 -> POSIX SHM)
+sudo ./frt_app/build/cpp_camera_core/camera_core_exec
+
+# Terminal 3: DBDaemon (Python data controller)
+source db_daemon/venv/bin/activate && python db_daemon/src/main.py
+
+# Terminal 4: FRTApp AI Core (Python YOLO inference on SHM frames)
+source frt_app/py_ai_core/venv/bin/activate && \
+  python frt_app/py_ai_core/src/main.py --use-c-backend
+
+# Terminal 5: RecommendDaemon (Python business logic)
+source recommend_daemon/venv/bin/activate && python recommend_daemon/src/main.py
+
+# Terminal 6: MagicMirror (Electron UI)
+cd electron_app/magicmirror && npm start
+```
+
+B) **Startup script** (manages all daemons):
+```bash
+bash startup_fss_system.sh
+```
+
+C) **Systemd services** (for RPi production):
+```bash
+bash fss_env_setup.sh
+sudo systemctl start fss-sensor fss-camera fss-ai fss-db fss-recommend
+```
+
+### Step 9: Run Tests
+```bash
+# Phase 1 schema validation
+python tests/run_phase1_tests.py
+
+# Recommend system NLP (use its own venv)
+source recommend_system/venv/bin/activate
+pytest recommend_system/tests/test_recipe_analyzer.py -v
+
+# Recommend daemon
+source recommend_daemon/venv/bin/activate
+pytest recommend_daemon/tests/test_recommend_engine.py -v
+```
+
+---
+
 ## 🐍 Python venv Management
 
 ### Standard Setup Per Component

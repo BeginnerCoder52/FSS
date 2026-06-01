@@ -30,6 +30,7 @@ Author: FSS Project Team
 License: Proprietary
 """
 
+import os
 import time
 import threading
 from enum import Enum
@@ -272,6 +273,16 @@ class FrtMain:
                         "timestamp": time.time(),
                         "frame_id": frame_count
                     })
+
+                # Write preview frame for LivePreview UI (every 3rd frame)
+                if frame_count % 3 == 0:
+                    try:
+                        import cv2
+                        preview_path = "/opt/fss/latest_preview.jpg"
+                        cv2.imwrite(preview_path, frame,
+                                    [cv2.IMWRITE_JPEG_QUALITY, 70])
+                    except Exception:
+                        pass
 
                 frame_count += 1
                 elapsed = time.time() - fps_start_time

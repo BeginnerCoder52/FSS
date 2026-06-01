@@ -3,7 +3,8 @@ project(tflite_reader C)
 
 set(CMAKE_C_STANDARD 11)
 
-find_package(TensorFlowLite REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(TFLITE REQUIRED tensorflow-lite)
 
 add_library(tflite_reader SHARED
     src/TfliteReader.c
@@ -11,11 +12,11 @@ add_library(tflite_reader SHARED
 
 target_include_directories(tflite_reader
     PUBLIC include
-    PRIVATE ${TensorFlowLite_INCLUDE_DIRS}
+    PRIVATE ${TFLITE_INCLUDE_DIRS}
 )
 
 target_link_libraries(tflite_reader
-    PRIVATE ${TensorFlowLite_LIBRARIES}
+    PRIVATE ${TFLITE_LIBRARIES}
 )
 
 add_executable(tflite_reader_test src/tflite_reader_test.c)

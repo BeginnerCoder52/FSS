@@ -5,6 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const envsub = require("envsub");
 const Log = require("logger");
+const SessionLog = require("./session_logger");
 
 const Server = require(`${__dirname}/server`);
 const Utils = require(`${__dirname}/utils`);
@@ -292,6 +293,12 @@ function App () {
 
 		Log.setLogLevel(config.logLevel);
 
+		SessionLog.info("MagicMirror session started");
+		SessionLog.info(`Version: v${global.version}`);
+		SessionLog.info(`Config file: ${global.configuration_file || "config/config.js"}`);
+		SessionLog.info(`Log file: ${SessionLog.logFile}`);
+		SessionLog.info(`Session ID: ${SessionLog.sessionId}`);
+
 		// get the used module positions
 		Utils.getModulePositions();
 
@@ -356,6 +363,7 @@ function App () {
 	 * the http server has been closed
 	 */
 	this.stop = async function () {
+		SessionLog.info("MagicMirror session stopping");
 		const nodePromises = [];
 		for (let nodeHelper of nodeHelpers) {
 			try {

@@ -13,6 +13,7 @@ const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const SessionLog = require("../../../js/session_logger");
 
 module.exports = NodeHelper.create({
 	/**
@@ -20,6 +21,7 @@ module.exports = NodeHelper.create({
 	 */
 	start() {
 		console.log(`${this.name}: Starting node helper`);
+		SessionLog.info(`[${this.name}] Node helper started`);
 		this.pythonProcess = null;
 		this.isListening = false;
 		this.reconnectAttempts = 0;
@@ -113,9 +115,10 @@ module.exports = NodeHelper.create({
 					timestamp: data.timestamp || Date.now(),
 				});
 			} else if (data.type === "DOOR_STATE_UPDATE") {
-				console.log(`${this.name}: Relaying door state - ${data.state}`);
+				const doorState = data.state || data.doorState || "UNKNOWN";
+				console.log(`${this.name}: Relaying door state - ${doorState}`);
 				this.sendSocketNotification("DOOR_STATE_UPDATE", {
-					state: data.state,
+					state: doorState,
 					timestamp: data.timestamp || Date.now(),
 				});
 				// Relay to MMM-FSS-Notification
@@ -161,6 +164,7 @@ module.exports = NodeHelper.create({
 	 * Stop the module.
 	 */
 	stop() {
+		SessionLog.info(`[${this.name}] Node helper stopped`);
 		console.log(`${this.name}: Stopping node helper`);
 		if (this.pythonProcess) {
 			this.pythonProcess.kill();

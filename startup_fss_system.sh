@@ -4,8 +4,10 @@
 # @brief FSS (Fridge Supervisor System) - Integrated Startup Script
 #
 # Manages startup and lifecycle of all FSS daemons:
-#   - SensorDaemon (C++)      - Hardware sensor interface
-#   - DBDaemon (Python)       - Data persistence layer
+#   - SensorDaemon (C++)       - Hardware sensor interface
+#   - DBDaemon (Python)        - Data persistence layer
+#   - FRTApp Camera Core (C++) - V4L2 capture -> POSIX SHM
+#   - FRTApp AI Core (Python)  - YOLO inference on SHM frames
 #   - RecommendDaemon (Python) - Business logic orchestrator
 #
 # Features:
@@ -15,7 +17,7 @@
 #   - Process monitoring and health checks
 # ==============================================================================
 
-set -euo pipefail
+set -uo pipefail
 
 FSS_ROOT="$(dirname "$(readlink -f "$0")")"
 LOG_DIR="/var/log/fss"
@@ -24,6 +26,9 @@ PID_DIR="/tmp/fss"
 SENSOR_DAEMON_EXEC="${FSS_ROOT}/sensor_daemon/build/sensor_daemon_exec"
 DB_DAEMON_SRC="${FSS_ROOT}/db_daemon/src"
 DB_DAEMON_VENV="${FSS_ROOT}/db_daemon/venv"
+FRT_CAMERA_EXEC="${FSS_ROOT}/frt_app/build/cpp_camera_core/camera_core_exec"
+FRT_AI_SRC="${FSS_ROOT}/frt_app/py_ai_core/src"
+FRT_AI_VENV="${FSS_ROOT}/frt_app/py_ai_core/venv"
 RECOMMEND_DAEMON_SRC="${FSS_ROOT}/recommend_daemon/src"
 RECOMMEND_DAEMON_VENV="${FSS_ROOT}/recommend_daemon/venv"
 
@@ -48,6 +53,26 @@ setup_log_directory() {
     fi
     mkdir -p "$PID_DIR"
     log_ok "Log directory: $LOG_DIR"
+}
+
+cleanup_stale_processes() {
+    log_info "Cleaning up stale daemon processes..."
+    for proc in sensor_daemon_exec camera_core_exec "db_daemon" "recommend_daemon" "frt_ai"; do
+        pids=$(pgrep -f "$proc" 2>/dev/null || true)
+        if [[ -n "$pids" ]]; then
+            log_warn "Killing stale $proc (PIDs: $pids)"
+            kill $pids 2>/dev/null || true
+            sleep 1
+            # Force kill if still alive
+            pids=$(pgrep -f "$proc" 2>/dev/null || true)
+            if [[ -n "$pids" ]]; then
+                kill -9 $pids 2>/dev/null || true
+            fi
+        fi
+    done
+    # Remove stale PID files
+    rm -f "$PID_DIR"/*.pid 2>/dev/null || true
+    log_ok "Stale processes cleaned"
 }
 
 check_venv() {
@@ -108,6 +133,40 @@ start_recommend_daemon() {
     return 1
 }
 
+start_frt_camera() {
+    log_info "Starting FRTApp Camera Core..."
+    if [[ ! -x "$FRT_CAMERA_EXEC" ]]; then
+        log_error "FRTApp Camera Core not built. Run setup.sh first."
+        return 1
+    fi
+    nohup sudo "$FRT_CAMERA_EXEC" >"${LOG_DIR}/frt_camera.log" 2>&1 &
+    local pid=$!
+    sleep 1
+    if kill -0 $pid 2>/dev/null; then
+        log_ok "FRTApp Camera Core started (PID: $pid)"
+        echo "$pid" > "$PID_DIR/frt_camera.pid"
+        return 0
+    fi
+    log_error "FRTApp Camera Core failed. Check ${LOG_DIR}/frt_camera.log"
+    return 1
+}
+
+start_frt_ai() {
+    log_info "Starting FRTApp AI Core..."
+    check_venv "$FRT_AI_VENV" || return 1
+    nohup sudo "${FRT_AI_VENV}/bin/python" "${FRT_AI_SRC}/main.py" \
+        --use-c-backend >"${LOG_DIR}/frt_ai.log" 2>&1 &
+    local pid=$!
+    sleep 2
+    if kill -0 $pid 2>/dev/null; then
+        log_ok "FRTApp AI Core started (PID: $pid)"
+        echo "$pid" > "$PID_DIR/frt_ai.pid"
+        return 0
+    fi
+    log_error "FRTApp AI Core failed. Check ${LOG_DIR}/frt_ai.log"
+    return 1
+}
+
 stop_daemon_by_pidfile() {
     local pidfile="$1"
     local name="$2"
@@ -130,6 +189,8 @@ stop_daemon_by_pidfile() {
 
 shutdown_handler() {
     log_info "Shutting down FSS system..."
+    stop_daemon_by_pidfile "$PID_DIR/frt_ai.pid" "FRTApp AI Core"
+    stop_daemon_by_pidfile "$PID_DIR/frt_camera.pid" "FRTApp Camera Core"
     stop_daemon_by_pidfile "$PID_DIR/recommend_daemon.pid" "RecommendDaemon"
     stop_daemon_by_pidfile "$PID_DIR/db_daemon.pid" "DBDaemon"
     stop_daemon_by_pidfile "$PID_DIR/sensor_daemon.pid" "SensorDaemon"
@@ -143,6 +204,8 @@ monitor_processes() {
         for pair in \
             "$PID_DIR/sensor_daemon.pid:SensorDaemon:start_sensor_daemon" \
             "$PID_DIR/db_daemon.pid:DBDaemon:start_db_daemon" \
+            "$PID_DIR/frt_camera.pid:FRTApp Camera:start_frt_camera" \
+            "$PID_DIR/frt_ai.pid:FRTApp AI:start_frt_ai" \
             "$PID_DIR/recommend_daemon.pid:RecommendDaemon:start_recommend_daemon"; do
             IFS=':' read -r pidfile name func <<< "$pair"
             if [[ -f "$pidfile" ]]; then
@@ -167,6 +230,8 @@ print_status() {
     for pair in \
         "$PID_DIR/sensor_daemon.pid:SensorDaemon" \
         "$PID_DIR/db_daemon.pid:DBDaemon" \
+        "$PID_DIR/frt_camera.pid:FRTApp Camera Core" \
+        "$PID_DIR/frt_ai.pid:FRTApp AI Core" \
         "$PID_DIR/recommend_daemon.pid:RecommendDaemon"; do
         IFS=':' read -r pidfile name <<< "$pair"
         if [[ -f "$pidfile" ]] && kill -0 $(cat "$pidfile") 2>/dev/null; then
@@ -180,11 +245,14 @@ print_status() {
 
 trap shutdown_handler SIGTERM SIGINT
 setup_log_directory
+cleanup_stale_processes
 
 log_info "Starting FSS system..."
-start_sensor_daemon || exit 1
-start_db_daemon || exit 1
-start_recommend_daemon || exit 1
+start_sensor_daemon || log_warn "SensorDaemon failed to start, continuing..."
+start_db_daemon || log_warn "DBDaemon failed to start, continuing..."
+start_frt_camera || log_warn "FRTApp Camera Core skipped (no camera?)"
+start_frt_ai || log_warn "FRTApp AI Core skipped"
+start_recommend_daemon || log_warn "RecommendDaemon failed to start, continuing..."
 print_status
 
 # Keep running and monitor

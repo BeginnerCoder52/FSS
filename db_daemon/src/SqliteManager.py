@@ -384,9 +384,18 @@ class SqliteManager:
         connection = self._connections[DatabaseType.REQUEST]
         
         try:
-            # Create request table for NLP recipe requirements
-            # Phase 1 Update: Added recipe_name and request_batch_id for recipe grouping
-            # Purpose: Track which items belong to which recipe for easy recipe management
+            # Migration: add recipe_name column if missing (older schema)
+            try:
+                cursor.execute(f"ALTER TABLE {self.REQUEST_TABLE_NAME} ADD COLUMN recipe_name TEXT")
+            except sqlite3.OperationalError:
+                pass
+            # Migration: add request_batch_id column if missing (older schema)
+            try:
+                cursor.execute(f"ALTER TABLE {self.REQUEST_TABLE_NAME} ADD COLUMN request_batch_id TEXT")
+            except sqlite3.OperationalError:
+                pass
+
+            # Create request table for NLP recipe requirements if not exists
             cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS {self.REQUEST_TABLE_NAME} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -18,12 +18,11 @@ opencv-python-headless>=4.8.0
 numpy>=1.24.0
 
 # TFLite Runtime - lightweight TensorFlow Lite inference engine
-# REQUIRED: Per SDD v1.1.0 constraint (NO Ultralytics for Pi 4B)
-# Install: pip install tflite-runtime
-# Note: Package name varies by platform:
-#   - Raspberry Pi OS: tflite-runtime
-#   - Ubuntu x86_64: tflite-runtime or tensorflow-cpu
-tflite-runtime>=2.14.0
+# NOTE: No wheel for Python 3.13 on ARM64. Using C backend (libtflite_reader.so) instead.
+# See frt_app/c_tflite_reader/ for the C implementation.
+# If you need Python-only fallback, install manually:
+#   pip install tflite-runtime
+# tflite-runtime>=2.14.0
 
 # Pillow - image processing utilities for preprocessing
 Pillow>=9.0.0
@@ -32,11 +31,13 @@ Pillow>=9.0.0
 # IPC & SYSTEM INTEGRATION
 # =====================================================================
 # D-Bus communication - inter-process message passing
+# Provided by system package: apt install python3-sdbus
 # Used for: Door events from SensorDaemon, results to DBDaemon
-sdbus-python>=0.12.0
+# sdbus-python>=0.12.0
 
 # Python-systemd - integration with systemd service management
-python-systemd>=235
+# Provided by system package: apt install python3-systemd
+# python-systemd>=235
 
 # =====================================================================
 # LOGGING & MONITORING

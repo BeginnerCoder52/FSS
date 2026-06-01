@@ -1,2 +1,2 @@
-# Python D-Bus Communication Library
-sdbus-python>=0.14.0
+# Python D-Bus Communication Library (system package: apt install python3-sdbus)
+sdbus>=0.14.0

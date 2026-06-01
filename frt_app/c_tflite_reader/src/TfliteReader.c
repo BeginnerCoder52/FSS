@@ -178,9 +178,9 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
         TfLiteTensorCopyToBuffer(output_tensor, reader->output_buffer, output_byte_size);
         reader->output_size = num_floats;
     } else if (output_type == kTfLiteInt8 || output_type == kTfLiteUInt8) {
-        float scale = TfLiteTensorQuantizationParams(output_tensor);
-        int zero_point = (int)TfLiteTensorQuantizationParams(output_tensor);
-        zero_point = (int)((float)zero_point); 
+        TfLiteQuantizationParams quant_params = TfLiteTensorQuantizationParams(output_tensor);
+        float scale = quant_params.scale;
+        int zero_point = quant_params.zero_point;
 
         int num_elements = (int)(output_byte_size / sizeof(uint8_t));
         uint8_t* quantized = (uint8_t*)malloc(output_byte_size);
@@ -198,8 +198,6 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
             return -1;
         }
 
-        scale = TfLiteTensorQuantizationParams(output_tensor);
-
         for (int i = 0; i < num_elements; i++) {
             reader->output_buffer[i] = (float)((int)quantized[i] - zero_point) * scale;
         }
@@ -216,7 +214,7 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
 
         TfLiteTensorCopyToBuffer(output_tensor, int16_buf, output_byte_size);
 
-        float scale = TfLiteTensorQuantizationParams(output_tensor);
+        float scale = TfLiteTensorQuantizationParams(output_tensor).scale;
 
         reader->output_buffer = (float*)malloc((size_t)num_elements * sizeof(float));
         if (!reader->output_buffer) {

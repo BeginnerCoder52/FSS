@@ -127,7 +127,7 @@ let config = {
         },
         {
             module: "MMM-FSS-LivePreview",
-            position: "center",
+            position: "middle_center",
             config: { previewFps: 10, timeoutAfterStable: 3000 }
         },
         {
@@ -163,7 +163,7 @@ let config = {
         },
         {
             module: "MMM-FSS-Notification",
-            position: "center"
+            position: "middle_center"
         },
 	]
 };

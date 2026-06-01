@@ -6,6 +6,11 @@ Module.register("MMM-FSS-Notification", {
     },
     start() {
         this.notifications = [];
+        this.audioCtx = null;
+        this.audioReady = false;
+    },
+    getScripts() {
+        return [];
     },
     getDom() {
         const wrapper = document.createElement("div");
@@ -54,9 +59,29 @@ Module.register("MMM-FSS-Notification", {
             this.updateDom();
         }, this.config.displayDuration);
     },
-    playNotificationSound(type) {
+    initAudio() {
+        if (this.audioReady) return;
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (!this.audioCtx) {
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (this.audioCtx.state === "suspended") {
+                this.audioCtx.resume().then(() => {
+                    this.audioReady = true;
+                }).catch(() => {});
+            } else {
+                this.audioReady = true;
+            }
+        } catch(e) {}
+    },
+
+    playNotificationSound(type) {
+        this.initAudio();
+        if (!this.audioReady && (!this.audioCtx || this.audioCtx.state !== "running")) {
+            return;
+        }
+        try {
+            const ctx = this.audioCtx;
             const soundMap = {
                 "user_detected":  { freq: 440, dur: 200, count: 3, gap: 80 },
                 "door_open":      { freq: 660, dur: 150, count: 2, gap: 100 },

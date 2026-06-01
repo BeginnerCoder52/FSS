@@ -48,6 +48,7 @@ include_directories(
 ##############################################################################
 # Main source files in src/ directory
 file(GLOB SOURCES "src/*.cpp")
+list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/camera_test.cpp")
 
 ##############################################################################
 # BUILD EXECUTABLE

@@ -9,7 +9,7 @@
 #   3. Generates the complete config file if missing
 #
 # D-Bus services covered:
-#   - vn.edu.uit.FSS.SensorDaemon  (C++: hardware I/O)
+#   - vn.edu.uit.FSS.Sensor  (C++: hardware I/O)
 #   - vn.edu.uit.FSS.FRTApp        (C++/Python: food recognition)
 #   - vn.edu.uit.FSS.DBDaemon      (Python: data controller)
 #   - vn.edu.uit.FSS.RecommendDaemon (Python: business logic)
@@ -45,7 +45,7 @@ warn() { WARN=$((WARN + 1)); echo -e "  ${YELLOW}⚠${NC} $1"; }
 
 # All services that must have <allow own="..."/> policy
 REQUIRED_OWN_SERVICES=(
-    "vn.edu.uit.FSS.SensorDaemon"
+    "vn.edu.uit.FSS.Sensor"
     "vn.edu.uit.FSS.FRTApp"
     "vn.edu.uit.FSS.DBDaemon"
     "vn.edu.uit.FSS.RecommendDaemon"
@@ -54,7 +54,7 @@ REQUIRED_OWN_SERVICES=(
 # All send_destination policies (who sends to whom)
 # Format: "sender_interface destination_service"
 REQUIRED_SEND_DESTINATIONS=(
-    "vn.edu.uit.FSS.SensorDaemon org.freedesktop.DBus"
+    "vn.edu.uit.FSS.Sensor org.freedesktop.DBus"
     "vn.edu.uit.FSS.FRTApp org.freedesktop.DBus"
     "vn.edu.uit.FSS.DBDaemon org.freedesktop.DBus"
     "vn.edu.uit.FSS.RecommendDaemon org.freedesktop.DBus"
@@ -63,7 +63,7 @@ REQUIRED_SEND_DESTINATIONS=(
 
 # All receive_sender policies (who receives from whom)
 REQUIRED_RECEIVE_SENDERS=(
-    "vn.edu.uit.FSS.DBDaemon vn.edu.uit.FSS.SensorDaemon"
+    "vn.edu.uit.FSS.DBDaemon vn.edu.uit.FSS.Sensor"
     "vn.edu.uit.FSS.DBDaemon vn.edu.uit.FSS.FRTApp"
     "vn.edu.uit.FSS.RecommendDaemon vn.edu.uit.FSS.DBDaemon"
 )
@@ -229,7 +229,7 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
        FSS (Fridge Supervisor System) D-Bus Security Policy
        
        Covers all daemons:
-         - vn.edu.uit.FSS.SensorDaemon   (C++: hardware I/O)
+         - vn.edu.uit.FSS.Sensor   (C++: hardware I/O)
          - vn.edu.uit.FSS.FRTApp         (C++/Python: food recognition)
          - vn.edu.uit.FSS.DBDaemon       (Python: data controller)
          - vn.edu.uit.FSS.RecommendDaemon (Python: business logic)
@@ -254,7 +254,7 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
        ============================================================ -->
   <policy user="fss">
     <!-- Allow owning service names -->
-    <allow own="vn.edu.uit.FSS.SensorDaemon"/>
+    <allow own="vn.edu.uit.FSS.Sensor"/>
     <allow own="vn.edu.uit.FSS.FRTApp"/>
     <allow own="vn.edu.uit.FSS.DBDaemon"/>
     <allow own="vn.edu.uit.FSS.RecommendDaemon"/>
@@ -262,7 +262,7 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
     <!-- Allow talking to D-Bus daemon (required for all) -->
     <allow send_destination="org.freedesktop.DBus"/>
 
-    <!-- SensorDaemon → DBDaemon (environment data, door events) -->
+    <!-- Sensor → DBDaemon (environment data, door events) -->
     <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
 
     <!-- FRTApp → DBDaemon (food detection results) -->
@@ -271,8 +271,8 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
     <!-- DBDaemon → RecommendDaemon (inventory data for Bù Trừ) -->
     <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
 
-    <!-- DBDaemon ← SensorDaemon (receive sensor events) -->
-    <allow receive_sender="vn.edu.uit.FSS.SensorDaemon"/>
+    <!-- DBDaemon ← Sensor (receive sensor events) -->
+    <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
 
     <!-- DBDaemon ← FRTApp (receive food detection events) -->
     <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
@@ -281,7 +281,7 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
     <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
 
     <!-- UI listeners (MagicMirror Python bridges) can receive from all daemons -->
-    <allow receive_sender="vn.edu.uit.FSS.SensorDaemon"/>
+    <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
     <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
     <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
     <allow receive_sender="vn.edu.uit.FSS.RecommendDaemon"/>
@@ -289,7 +289,7 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
 
   <!-- Allow the building user (pi/richardmelvin52) for development -->
   <policy user="richardmelvin52">
-    <allow own="vn.edu.uit.FSS.SensorDaemon"/>
+    <allow own="vn.edu.uit.FSS.Sensor"/>
     <allow own="vn.edu.uit.FSS.FRTApp"/>
     <allow own="vn.edu.uit.FSS.DBDaemon"/>
     <allow own="vn.edu.uit.FSS.RecommendDaemon"/>

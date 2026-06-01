@@ -1,8 +1,10 @@
 const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
+const SessionLog = require("../../../js/session_logger");
 
 module.exports = NodeHelper.create({
     start() {
+        SessionLog.info("[MMM-FSS-LivePreview] Node helper started");
         this.pythonProcess = null;
         this.started = false;
     },

@@ -2,52 +2,97 @@
     background: rgba(30,30,30,0.95);
     border-radius: 16px;
     padding: 12px;
-    max-width: 600px;
+    max-width: 750px;
     margin: 0 auto;
 }
 #fss-vk-search-bar {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 10px;
 }
 #fss-vk-input {
     flex: 1;
-    padding: 10px 16px;
-    border-radius: 24px;
+    padding: 16px 20px;
+    border-radius: 28px;
     border: 1px solid #555;
     background: #222;
     color: white;
-    font-size: 18px;
+    font-size: 26px;
     outline: none;
 }
 #fss-vk-search-btn {
-    padding: 8px 16px;
-    border-radius: 24px;
+    padding: 14px 24px;
+    border-radius: 28px;
     border: none;
     background: #3498db;
     color: white;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 24px;
+    min-width: 62px;
+}
+#fss-vk-lang-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    justify-content: flex-end;
+}
+#fss-vk-lang-btn {
+    padding: 8px 20px;
+    border-radius: 14px;
+    border: 1px solid #555;
+    background: #333;
+    color: #aaa;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    touch-action: manipulation;
+    min-height: 40px;
+}
+#fss-vk-lang-btn.vn-active {
+    background: #27ae60;
+    color: white;
+    border-color: #27ae60;
+}
+#fss-vk-clear-btn {
+    padding: 8px 20px;
+    border-radius: 14px;
+    border: 1px solid #555;
+    background: #333;
+    color: #e74c3c;
+    font-size: 16px;
+    cursor: pointer;
+    touch-action: manipulation;
+    min-height: 40px;
 }
 .fss-vk-row {
     display: flex;
     justify-content: center;
-    gap: 4px;
-    margin: 2px 0;
+    gap: 6px;
+    margin: 4px 0;
 }
 .fss-vk-key {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 62px;
+    height: 62px;
+    border-radius: 12px;
     border: 1px solid #444;
     background: #333;
     color: white;
-    font-size: 16px;
+    font-size: 22px;
     cursor: pointer;
     touch-action: manipulation;
     transition: background 0.1s;
+    user-select: none;
 }
 .fss-vk-key:active { background: #555; }
-.fss-vk-space { width: 180px; }
-.fss-vk-enter { background: #27ae60; width: 88px; }
+.fss-vk-space {
+    width: 100%;
+    max-width: 420px;
+    flex: 1;
+}
+.fss-vk-enter {
+    background: #27ae60;
+    width: 100px;
+    font-size: 24px;
+}
 .fss-vk-backspace { color: #e74c3c; }
+.fss-vk-shift { color: #f39c12; }

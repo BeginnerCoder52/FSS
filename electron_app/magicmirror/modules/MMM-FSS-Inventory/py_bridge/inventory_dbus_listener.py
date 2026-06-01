@@ -35,7 +35,8 @@ logging.basicConfig(level=logging.INFO, format="[InventoryListener] %(levelname)
 logger = logging.getLogger(__name__)
 
 # Constants
-DB_PATH = "/opt/fss/data/fss_data.db"
+DB_PATH = "/opt/fss/data/FSS_Inventory.db"
+DB_TABLE = "current_inventory"
 DB_QUERY_TIMEOUT_S = 15
 DB_POLL_INTERVAL_S = 2
 
@@ -88,9 +89,9 @@ class InventoryListener:
             cursor = conn.cursor()
             
             # Query all inventory items
-            cursor.execute("""
+            cursor.execute(f"""
                 SELECT food_id, quantity, confidence_score, image_path, last_updated
-                FROM inventory
+                FROM {DB_TABLE}
                 WHERE quantity > 0
                 ORDER BY last_updated DESC
             """)

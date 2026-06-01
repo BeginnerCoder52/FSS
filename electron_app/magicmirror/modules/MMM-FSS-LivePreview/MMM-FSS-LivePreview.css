@@ -3,15 +3,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.75);
     border-radius: 12px;
-    padding: 8px;
-    margin: 8px auto;
-    max-width: 660px;
-    transition: opacity 0.5s ease;
+    padding: 6px;
+    margin: 4px auto;
+    max-width: 480px;
+    max-height: 360px;
+    transition: opacity 0.4s ease;
+    z-index: 100;
+}
+#fss-live-preview[style*="display: none"] {
+    pointer-events: none;
 }
 #fss-live-preview img {
     border-radius: 8px;
     width: 100%;
     height: auto;
+    max-height: 340px;
+    object-fit: contain;
 }

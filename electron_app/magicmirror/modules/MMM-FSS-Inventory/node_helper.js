@@ -14,6 +14,7 @@ const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const SessionLog = require("../../../js/session_logger");
 
 module.exports = NodeHelper.create({
 	/**
@@ -21,6 +22,7 @@ module.exports = NodeHelper.create({
 	 */
 	start() {
 		console.log(`${this.name}: Starting node helper`);
+		SessionLog.info(`[${this.name}] Node helper started`);
 		this.pythonProcess = null;
 		this.isListening = false;
 		this.reconnectAttempts = 0;

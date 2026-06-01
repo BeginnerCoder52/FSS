@@ -228,13 +228,7 @@ class FrtDbusInterface:
     async def _subscribe_to_sensor_signals_async(self) -> None:
         """Asynchronously subscribe to SensorDaemon signals."""
         try:
-            # Using modern sdbus proxy
-            class SensorInterface(DbusInterfaceCommonAsync, interface_name=self.SENSOR_INTERFACE):
-                @dbus_signal_async('s')
-                def DoorStateChanged(self, state: str): pass
-
-            # Using None for service name if SensorDaemon doesn't request it, but typically it's SENSOR_SERVICE
-            proxy = SensorInterface.new_proxy(None, self.SENSOR_OBJECT_PATH)
+            proxy = SensorInterface.new_proxy(self.SENSOR_SERVICE, self.SENSOR_OBJECT_PATH)
             
             task = asyncio.create_task(self._listen_door_signals(proxy))
             self._signal_tasks.append(task)
@@ -328,11 +322,7 @@ class FrtDbusInterface:
     async def _subscribe_to_distance_async(self) -> None:
         """Asynchronously subscribe to SensorDaemon distance signals."""
         try:
-            class SensorInterface(DbusInterfaceCommonAsync, interface_name=self.SENSOR_INTERFACE):
-                @dbus_signal_async('d')
-                def DistanceDataChanged(self, distance_cm: float): pass
-
-            proxy = SensorInterface.new_proxy(None, self.SENSOR_OBJECT_PATH)
+            proxy = SensorInterface.new_proxy(self.SENSOR_SERVICE, self.SENSOR_OBJECT_PATH)
 
             task = asyncio.create_task(self._listen_distance_signals(proxy))
             self._signal_tasks.append(task)
@@ -441,6 +431,13 @@ class FrtDbusInterface:
 
 
 if SDBUS_AVAILABLE:
+    class SensorInterface(DbusInterfaceCommonAsync, interface_name=FrtDbusInterface.SENSOR_INTERFACE):
+        @dbus_signal_async('s')
+        def DoorStateChanged(self, state: str): pass
+
+        @dbus_signal_async('d')
+        def DistanceDataChanged(self, distance_cm: float): pass
+
     class FrtDaemonDbusObject(DbusInterfaceCommonAsync, interface_name=FrtDbusInterface.INTERFACE_NAME):
         @dbus_signal_async('s')
         def FoodDetected(self, json_data: str) -> None:

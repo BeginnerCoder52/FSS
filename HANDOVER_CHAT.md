@@ -1,10 +1,10 @@
 # HANDOVER CHAT — FSS Project
 
 > **Created**: 2026-05-24
-> **Last Updated**: 2026-05-31
-> **Previous session branch**: `FRTApp-dev` (Phase 1 — C TFLite Reader + D-Bus + Distance Sensor)
-> **This session branch**: `ElectronApp-dev` (Phase 2 — UI Modules + Fixes)
-> **Project phase**: Phase 2 Complete — Ready for Merge to main
+> **Last Updated**: 2026-06-01
+> **Previous session branch**: `ElectronApp-dev` (Phase 2 — UI Modules + Fixes)
+> **This session branch**: `main` (Phase 8 — Setup & Integration Fixes)
+> **Project phase**: Phase 8 Complete — System Integration Ready
 
 ---
 
@@ -321,7 +321,105 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 ---
 
-## 6. Design Notes & Rationale
+## 6. Current Session: Phase 8 — System Integration Fixes (2026-06-01)
+
+### What was done
+
+**Phase 8 — `main` branch — System Integration, Build Fixes & Startup Script (Completed)**:
+
+**8.1 FRTApp CMake Fix — TensorFlowLite not found**:
+- `frt_app/c_tflite_reader/CMakeLists.txt`: `find_package(TensorFlowLite REQUIRED)` → `pkg_check_modules(TFLITE REQUIRED tensorflow-lite)` because `libtensorflow-lite-dev` on Debian doesn't ship a CMake config file
+- Verified: cmake configures successfully, finds `tensorflow-lite` v2.20.0 via pkg-config
+
+**8.2 FRTApp C TFLite Reader — `TfLiteTensorQuantizationParams` API fix**:
+- `TfliteReader.c`: In newer TFLite C API, `TfLiteTensorQuantizationParams()` returns a `TfLiteQuantizationParams` struct (not a float)
+- Fixed 3 occurrences: INT8/UINT8 block (lines 181, 201) and INT16 block (line 219) to use `.scale` and `.zero_point` members
+- Verified: compiles and links `libtflite_reader.so` + `tflite_reader_test` successfully
+
+**8.3 FRTApp Camera Core — Duplicate `main()`**:
+- `cpp_camera_core/CMakeLists.txt`: `file(GLOB SOURCES "src/*.cpp")` picked up both `camera_test.cpp` and `main.cpp`, both with `main()`
+- Added `list(REMOVE_ITEM ... camera_test.cpp)` to exclude test from main executable
+- Verified: `camera_core_exec` links successfully
+
+**8.4 D-Bus Config — Service Name Alignment**:
+- Discovered C++ SensorDaemon registers as `vn.edu.uit.FSS.Sensor` (not `SensorDaemon`) in `SensorDbusInterface.cpp:18`
+- Updated `/etc/dbus-1/system.d/vn.edu.uit.FSS.conf` and `dbus_config/vn.edu.uit.FSS.conf`: all `SensorDaemon` → `Sensor`
+- Added `RecommendDaemon` ownership (was missing), uncommented all services (all now implemented)
+- Added `org.freedesktop.DBus` send_destination to all policy blocks (required for service name registration)
+
+**8.5 MagicMirror — Invalid Position `"center"`**:
+- `config.js`: `MMM-FSS-LivePreview` and `MMM-FSS-Notification` used `position: "center"` which is not a valid MagicMirror position
+- Changed both to `position: "middle_center"` (the correct equivalent)
+- Verified: MagicMirror starts without position warnings
+
+**8.6 Python 3.13 Compatibility — tflite-runtime & sdbus-python**:
+- `tflite-runtime` has no wheel for Python 3.13 on ARM64 → commented out in `frt_app/py_ai_core/requirements.txt` (C backend is primary path; Python fallback inside try/except)
+- `sdbus-python` has no wheel for Python 3.13 on ARM64 → installed system `python3-sdbus` (`apt install python3-sdbus`); recreated `frt_app/py_ai_core/venv` with `--system-site-packages`
+- `electron_app/py_bridge/requirements.txt`: `sdbus-python>=0.14.0` → `sdbus>=0.14.0` (same package name the module bridges already use)
+- Verified: All Python imports work (`sdbus`, `cv2`, `numpy`, `Pillow`, `loguru`, `psutil`)
+
+**8.7 Recommend System — Missing Venv**:
+- `recommend_system/` was missing its component venv (not in the original setup guide)
+- Created `recommend_system/venv/` and installed deps from `requirements.txt` (`sklearn-crfsuite`, `pyvi`, `joblib`)
+- Updated setup guide to include it
+
+**8.8 FrtDbusInterface — Duplicate `SensorInterface` Class**:
+- Both `_subscribe_to_sensor_signals_async()` and `_subscribe_to_distance_async()` defined a local class `SensorInterface(DbusInterfaceCommonAsync)` with the same `interface_name`, causing sdbus error: *"D-Bus interface of the name 'vn.edu.uit.FSS.Sensor' was already created"*
+- Moved `SensorInterface` to module level (alongside `FrtDaemonDbusObject`), containing both `DoorStateChanged` and `DistanceDataChanged` signals
+- Both subscription methods now create proxies from the single class
+- Verified: `py_compile` passes
+
+**8.9 Log File Permission**:
+- FRTApp AI Core couldn't write to `/var/log/frt_app.log` (didn't exist, created by root on first write)
+- Created with: `sudo touch /var/log/frt_app.log && sudo chown $USER:$USER /var/log/frt_app.log`
+- Added to setup guide Step 2
+
+**8.10 Startup Script — Added FRTApp**:
+- `startup_fss_system.sh` only managed 3 daemons (Sensor, DB, Recommend)
+- Added `start_frt_camera()`: starts `camera_core_exec` (C++ V4L2 → POSIX SHM)
+- Added `start_frt_ai()`: starts `main.py --use-c-backend` (Python YOLO inference)
+- Both added to shutdown handler, process monitor, and status display
+- FRTApp camera/ai start as non-fatal (skip gracefully if no camera)
+
+**8.11 Setup Guide — Full Correction**:
+- Added missing `python3-sdbus` and `python3-systemd` to system deps
+- Added D-Bus config installation step (`cp dbus_config/vn.edu.uit.FSS.conf /etc/dbus-1/system.d/`)
+- Added `libtflite_reader.so` installation to `/usr/local/lib` + `ldconfig`
+- Added `--system-site-packages` flag for FRTApp AI venv
+- Added `recommend_system` to venv creation list
+- Updated start methods to include FRTApp camera + AI
+- Updated verification to check all 5 venvs + D-Bus config
+
+### Verification
+- ✅ All C++ components build: `sensor_daemon_exec`, `libtflite_reader.so`, `camera_core_exec`, `tflite_reader_test`
+- ✅ All Python files pass `py_compile`
+- ✅ All pip installs succeed on Python 3.13 ARM64
+- ✅ `sdbus` importable from FRTApp venv (via system-site-packages)
+- ✅ `libtflite_reader.so` loadable via ctypes
+- ✅ MagicMirror starts without position errors
+- ✅ D-Bus config validated by `tools/verify_dbus_config.sh`
+- ✅ Full setup guide in AGENTS.md covers all 9 steps
+
+### Files changed this session
+| File | Status | Description |
+|------|--------|-------------|
+| `frt_app/c_tflite_reader/CMakeLists.txt` | **Modified** | find_package → pkg_check_modules for TFLite |
+| `frt_app/c_tflite_reader/src/TfliteReader.c` | **Modified** | TfLiteQuantizationParams struct access (scale/zero_point) |
+| `frt_app/cpp_camera_core/CMakeLists.txt` | **Modified** | Excluded camera_test.cpp from main build |
+| `frt_app/py_ai_core/requirements.txt` | **Modified** | Commented tflite-runtime, removed sdbus-python/sdbus (system package) |
+| `frt_app/py_ai_core/src/FrtDbusInterface.py` | **Modified** | SensorInterface defined once at module level |
+| `dbus_config/vn.edu.uit.FSS.conf` | **Modified** | SensorDaemon→Sensor, added RecommendDaemon |
+| `electron_app/magicmirror/config/config.js` | **Modified** | center→middle_center for 2 modules |
+| `electron_app/py_bridge/requirements.txt` | **Modified** | sdbus-python→sdbus |
+| `startup_fss_system.sh` | **Modified** | Added FRTApp camera + AI core, 5 daemons total |
+| `AGENTS.md` | **Modified** | Added full 9-step corrected setup guide |
+| `/etc/dbus-1/system.d/vn.edu.uit.FSS.conf` | **Modified** | SensorDaemon→Sensor, org.freedesktop.DBus entries |
+| `/var/log/frt_app.log` | **New** | Created with user ownership for FRTApp logging |
+| `HANDOVER_CHAT.md` | **Modified** | Added Phase 8 section |
+
+---
+
+## 7. Design Notes & Rationale
 
 ### Why per-component `requirements.txt` instead of one shared `.venv`?
 
@@ -342,7 +440,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 7. Project Phase Roadmap
+## 8. Project Phase Roadmap
 
 | Phase | Component | Branch | Status |
 |-------|-----------|--------|--------|
@@ -353,17 +451,12 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 | Phase 4 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |
 | Phase 5 | Recommend Daemon | `recommend_daemon` | ✅ Complete |
 | Phase 6 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
-| Phase 7 (Final Upg. 2) | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | ✅ Complete |
+| Phase 7 | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | ✅ Complete |
+| Phase 8 | System Integration Fixes | `main` | ✅ Complete |
 
 ---
 
-## 8. Remaining Work Before System Integration
-
-### 🔴 Must Do
-
-- [ ] **Deploy D-Bus config**: Run `sudo bash tools/verify_dbus_config.sh --fix` on the target machine to create `/etc/dbus-1/system.d/vn.edu.uit.FSS.conf`. Without this, all daemons will fail to register on the system bus.
-- [ ] **Create `venv/` for each component**: Run `bash setup.sh` (updated) to create all venvs and install dependencies. Or manually: `python3 -m venv recommend_daemon/venv && recommend_daemon/venv/bin/pip install -r recommend_daemon/requirements.txt`
-- [ ] **Update `tests/run_phase1_tests.py`**: Add `recommend_daemon` module validation to the Phase 1 test runner.
+## 9. Remaining Work
 
 ### 🟡 Should Do
 
@@ -372,23 +465,24 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 ### 🟢 Nice to Have
 
 - [ ] **`verify_dbus_fix.sh`**: Could be merged with `tools/verify_dbus_config.sh` into a single `tools/verify_all.sh` that validates everything at once.
+- [ ] **Phase 1 test runner**: Update `tests/run_phase1_tests.py` to include `recommend_daemon` and `recommend_system` module validation.
 
 ---
 
-## 9. Repository Information
+## 10. Repository Information
 
 | Property | Value |
 |----------|-------|
 | Remote | `origin` → `https://github.com/BeginnerCoder52/FSS.git` |
-| Current branch | `ElectronApp-dev` (Phase 2 complete) |
-| Next action | Merge `ElectronApp-dev` into `main` |
+| Current branch | `main` (Phase 8 complete — System Integration Ready) |
+| Next action | Run full system: `bash startup_fss_system.sh`, then `npm start` for MagicMirror |
 | Project root | `/home/richardmelvin52/FSS` |
 
 ### Branches overview
 
 | Branch | Phase | Component |
 |--------|-------|-----------|
-| `main` | — | Integration/stable |
+| `main` | — | Integration/stable (all phases merged) |
 | `DBDaemon-dev` | 1, 3 | Database + IPC broker |
 | `recommend_system` | 2 | NLP library (CRF model + recipes) |
 | `FRTApp-dev` | — | Food recognition (C++ + Python) |
@@ -398,13 +492,13 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 10. Architecture Reference
+## 11. Architecture Reference
 
 ### D-Bus Service Ownership
 
 | Component | D-Bus Service | Methods | Signals |
 |-----------|---------------|---------|---------|
-| SensorDaemon | `vn.edu.uit.FSS.SensorDaemon` | — | `EnvironmentDataUpdated`, `DoorStateChanged`, `UserPresenceDetected`, `DistanceDataChanged` |
+| SensorDaemon | `vn.edu.uit.FSS.Sensor` | — | `EnvironmentDataChanged`, `DistanceDataChanged`, `DoorStateChanged`, `UserPresenceDetected`, `EnvironmentDataUpdated` |
 | FRTApp | `vn.edu.uit.FSS.FRTApp` | — | `FoodDetected`/`FRTDetectionResult` |
 | DBDaemon | `vn.edu.uit.FSS.DBDaemon` | `GetInventory`, `GetRequests`, `InsertRequest`, `ClearRequest` | `UIUpdateRequired`, `EnvironmentUpdateRequired`, `SecondaryEnvironmentUpdateRequired`, `DoorStateUpdate`, `DistanceAlert`, `UserPresenceUpdate` |
 | RecommendDaemon | `vn.edu.uit.FSS.RecommendDaemon` | `GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased` | `RecommendationUpdated` |
@@ -429,4 +523,4 @@ User enters recipe in UI
 
 ---
 
-*End of handover. Next session should merge `recommend_daemon` into `main` and tackle the Integration remaining items (Section 5).*
+*End of handover. All phases merged to `main`. Next session: integration/E2E tests and full system startup.*

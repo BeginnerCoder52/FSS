@@ -50,6 +50,16 @@ Module.register("MMM-FSS-Recommend", {
 
         return wrapper;
     },
+    notificationReceived(notification, payload, sender) {
+        // Catch RECIPE_SEARCH from other modules (e.g., MMM-FSS-VirtualKeyboard)
+        // and forward to this module's backend via socket.
+        if (notification === "RECIPE_SEARCH") {
+            this.loading = true;
+            this.result = null;
+            this.updateDom();
+            this.sendSocketNotification("RECIPE_SEARCH", payload);
+        }
+    },
     socketNotificationReceived(notification, payload) {
         if (notification === "RECOMMEND_RESULT") {
             this.result = payload;
