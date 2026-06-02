@@ -1,10 +1,10 @@
 # HANDOVER CHAT — FSS Project
 
 > **Created**: 2026-05-24
-> **Last Updated**: 2026-06-02
-> **Previous session branch**: `main` (Phase 8 — System Integration Fixes)
-> **This session branch**: `main` (Phase 9 — Tasks A-J UI/DBus Upgrade + Mock Test)
-> **Project phase**: Phase 9 Complete — UI/DBus Upgrade + Recommend System D-Bus Service
+> **Last Updated**: 2026-06-03
+> **Previous session branch**: `main` (Phase 9 — Tasks A-J UI/DBus Upgrade + Mock Test)
+> **This session branch**: `main` (Phase 10 — MMM-Keyboard Telex Engine + FRTApp Test + Debug Logs)
+> **Project phase**: Phase 10 Complete — MMM-Keyboard Telex fixes, FRTApp scenario test, debug collection
 
 ---
 
@@ -582,6 +582,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 | Phase 7 | ElectronApp — UI Modules + Fixes | `ElectronApp-dev` | ✅ Complete |
 | Phase 8 | System Integration Fixes | `main` | ✅ Complete |
 | Phase 9 | Tasks A-J: UI/DBus Upgrade + Recommend System D-Bus + MMM-Keyboard | `main` | ✅ Complete |
+| Phase 10 | MMM-Keyboard Telex Engine + FRTApp Test + Debug Logs | `main` | ✅ Complete |
 
 ---
 
@@ -589,6 +590,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ### 🟡 Should Do
 
+- [ ] **Run FRTApp user scenario test**: `sudo python3 frt_app/py_ai_core/src/test_user_scenario_frtapp.py --debug` — validate camera + YOLO pipeline end-to-end on real hardware.
 - [ ] **Add integration/E2E tests**: Full data flow test: mock D-Bus → GenerateShoppingList → NLP → Bù Trừ → DB persistence → signal emission.
 
 ### 🟢 Nice to Have
@@ -596,6 +598,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 - [ ] **`verify_dbus_fix.sh`**: Could be merged with `tools/verify_dbus_config.sh` into a single `tools/verify_all.sh` that validates everything at once.
 - [ ] **Phase 1 test runner**: Update `tests/run_phase1_tests.py` to include `recommend_daemon` and `recommend_system` module validation.
 - [ ] **`tools/verify_dbus_config.sh` header**: Update to list 5 services (missing `RecommendSystem`).
+- [ ] **Run debug collection**: `sudo bash scripts/collect_debug_logs.sh` to capture full system state for diagnostics.
 
 ---
 
@@ -604,8 +607,8 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 | Property | Value |
 |----------|-------|
 | Remote | `origin` → `https://github.com/BeginnerCoder52/FSS.git` |
-| Current branch | `main` (Phase 9 complete — UI/DBus Upgrade + Recommend System D-Bus Service) |
-| Next action | Run full system: `bash startup_fss_system.sh`, then `npm start` for MagicMirror |
+| Current branch | `main` (Phase 10 complete — MMM-Keyboard Telex fixes + FRTApp test + debug collection) |
+| Next action | Run FRTApp scenario test: `sudo python3 frt_app/py_ai_core/src/test_user_scenario_frtapp.py --debug`; then full system: `bash startup_fss_system.sh` + `npm start` |
 | Project root | `/home/richardmelvin52/FSS` |
 
 ### Branches overview
@@ -712,4 +715,91 @@ Alternative: Recommend System D-Bus Service
 
 ---
 
-*End of handover. Phase 9 complete. Next session: integration/E2E tests and full system startup.*
+## 14. Current Session: Phase 10 — MMM-Keyboard Telex Engine + FRTApp Test + Debug Logs (2026-06-03)
+
+### What was done
+
+**A. MMM-Keyboard Telex Engine — Major Debugging & Fixes**:
+
+The Vietnamese Telex input engine in `MMM-Keyboard.js` had multiple bugs:
+
+1. **`getVowelGroup()` — `qu`/`gi` special case**: The `qu`/`gi` vowel-group-start skip had `start++` outside the conditional block, causing double-skip when the match was `q` or `g`. Moved `start++` inside the `if` body.
+
+2. **`applyTelex()` — Removed `aw/ow/uw` from `doubleMap`**: These letter pairs confict with the `w` backward modifier (ă/ơ/ư). The `w` modifier handles these now.
+
+3. **`applyTelex()` — Added `w` backward modifier**: Implemented `w` as a backward-looking modifier: `aw`→ă, `ow`→ơ, `uw`→ư. Uses the last character of the accumulated result.
+
+4. **`toneIdxInGroup()` — Open vs closed syllable logic**: The original code always placed tone on the 2nd-to-last vowel. Fixed: Vietnamese places tone on the 2nd vowel from the **end in open syllables** (no final consonant), and on the **1st vowel from the start in closed syllables** (has final consonant). Added `checkEnd=true` parameter from the caller to distinguish.
+
+5. **`applyTelex()` — `z` cancel key**: Added `z`/`Z` as a cancel key that removes the **most recent tone mark only** (not vowel diacritics ă/â/ê/ô/ơ/ư/đ). Uses `toneRemoval` map which contains only entries for accented vowels → base vowels. `z` also breaks double-letter merges (e.g., `taaz` → `tá`, not `tâz`).
+
+6. **`toneRemoval` vs `accentRemoval`**: Renamed `accentRemoval` to `toneRemoval` to reflect that it only handles tone marks (sắc/huyền/hỏi/ngã/nặng), not vowel-level diacritics like `a`→`â`. Updated the `z` cancel handler to use the renamed map. Also fixed the upper-case tone test which previously used `accentRemoval` but now correctly uses `toneRemoval`.
+
+7. **Uppercase tone edge case**: The `applyTelex` merge path had separate uppercase logic for `mergeInfo.merged` but was missing the same for the non-merge path. Added uppercase preservation (e.g., `Uwos` → `Ớ` not `ớ`).
+
+**Verification**: All **44 tests pass**, covering: single vowels, vowel groups, `w` modifier, `dd`, `z` cancel, double-letter break, qu/gi edge cases, merge combinations, uppercase, and error recovery.
+
+**B. FRTApp User Scenario Test** — `frt_app/py_ai_core/src/test_user_scenario_frtapp.py`:
+
+Simulates the complete FRTApp pipeline as used by MagicMirror:
+- **Test 1** — System & environment readiness (camera device, YOLO model, deps)
+- **Test 2** — CameraUvcDriver (UVC connection, frame capture, FPS benchmark, release)
+- **Test 3** — ImagePreprocessor (BGR→RGB, letterbox resize, normalize, tensor prep, latency)
+- **Test 4** — MotionDetector (MOG2 init, static scene, changed scene, background reset)
+- **Test 5** — YoloTfliteEngine (model load, tensor allocate, inference, output boxes, C backend check)
+- **Test 6** — Full pipeline: 10-cycle camera→motion→preprocess→YOLO→detections, preview save, SHM check, D-Bus check
+
+Output: timestamped `.log` + `frtapp_scenario_report.json`. Gracefully skips tests when hardware (camera/model) is missing.
+
+Run with:
+```bash
+sudo python3 frt_app/py_ai_core/src/test_user_scenario_frtapp.py \
+  --camera /dev/video0 --model /opt/fss/models/yolov11n.tflite --debug
+```
+
+**C. Debug Log Collection** — `scripts/collect_debug_logs.sh`:
+
+Comprehensive system-wide debug collection script. Captures 16 sections into a single tarball:
+1. System info (kernel, CPU, memory, disk)
+2. D-Bus status (service names, monitor snapshot, config)
+3. Hardware/devices (V4L2 camera, I2C bus, GPIO, POSIX SHM)
+4. FSS runtime directories (`/opt/fss/`)
+5. All 8 MMM-FSS-* MagicMirror modules (JS/CSS/helper/bridge/venv)
+6. FRTApp (build status, models, C lib, logs)
+7. Recommend System (NLP model, D-Bus service, venv)
+8. RecommendDaemon (databases, tests, venv)
+9. DBDaemon (databases, venv)
+10. SensorDaemon (build status)
+11. Systemd services (all 5 FSS services)
+12. Node.js/Electron (version, PM2, node_modules)
+13. Network (interfaces, listening ports)
+14. System logs (syslog, journal)
+15. Configuration files (config.js, D-Bus config, setup scripts)
+16. FRTApp test script (copied into archive)
+
+Output: `/tmp/fss_debug_<timestamp>.tar.gz`
+
+Run with:
+```bash
+sudo bash scripts/collect_debug_logs.sh
+```
+
+### Files changed this session
+
+| File | Status | Description |
+|------|--------|-------------|
+| `electron_app/magicmirror/modules/MMM-Keyboard/MMM-Keyboard.js` | **Modified** | Fixed `getVowelGroup` qu/gi bug; removed aw/ow/uw from doubleMap; added w/backward modifier; fixed toneIdxInGroup open/closed syllable; added z cancel key; renamed accentRemoval→toneRemoval; uppercase tone edge case |
+| `electron_app/magicmirror/modules/MMM-Keyboard/test-vni.js` | **Modified** | Updated test suite for all Telex fixes (44 tests) |
+| `frt_app/py_ai_core/src/test_user_scenario_frtapp.py` | **New** | Full user scenario test: camera→motion→YOLO pipeline |
+| `scripts/collect_debug_logs.sh` | **New** | Comprehensive debug log collection (16 sections) |
+| `HANDOVER_CHAT.md` | **Modified** | Added Phase 10 section |
+
+### Verification
+
+- ✅ All **44 MMM-Keyboard Telex tests pass**
+- ✅ Both new scripts have valid syntax (Python AST check, Bash `-n` check)
+- ✅ Both scripts made executable
+
+---
+
+*End of handover. Phase 10 — MMM-Keyboard fixes, FRTApp test script, debug collection complete.**

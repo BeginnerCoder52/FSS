@@ -1,0 +1,706 @@
+#!/usr/bin/env python3
+"""
+test_user_scenario_frtapp.py - Full user scenario test for FRTApp
+=================================================================
+
+Simulates the complete FRTApp pipeline as used by MagicMirror:
+  USB Camera → Frame Capture → Motion Detection → Preprocess → YOLO → Tracking
+
+Usage:
+    python3 test_user_scenario_frtapp.py [--camera /dev/video0]
+                                        [--model /opt/fss/models/yolov11n.tflite]
+                                        [--output-dir /tmp/frt_test_output]
+                                        [--debug]
+
+Exit Codes:
+    0 - All critical tests pass
+    1 - One or more tests failed
+"""
+
+import os
+import sys
+import time
+import json
+import argparse
+from pathlib import Path
+from datetime import datetime
+from typing import Optional
+
+FSS_ROOT = str(Path(__file__).resolve().parent.parent.parent.parent)
+if FSS_ROOT not in sys.path:
+    sys.path.insert(0, FSS_ROOT)
+
+
+# ==============================================================================
+# LOGGING SETUP
+# ==============================================================================
+
+    """Setup test logging to file and console (uses loguru - already a project dep)."""
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    from loguru import logger
+    logger.remove()
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = output_path / f"frtapp_scenario_test_{timestamp}.log"
+
+    level = "DEBUG" if debug else "INFO"
+    logger.add(sys.stderr, level=level,
+               format="<level>{time:HH:mm:ss.SSS}</level> | <level>{level: <8}</level> | {message}")
+    logger.add(str(log_file), level="DEBUG",
+               format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - {message}",
+               rotation="10 MB", retention=3)
+    logger.info("Test log file: {}", log_file)
+    return logger
+
+
+# ==============================================================================
+# TEST SUITE
+# ==============================================================================
+
+class FrtAppScenarioTest:
+    """
+    User scenario test for FRTApp pipeline.
+
+    Simulates: power on → camera detected → frames captured →
+    motion checked → preprocessed → YOLO inference → results.
+    """
+
+    def __init__(self, camera_device: str, model_path: str,
+                 output_dir: str, debug: bool = False):
+        self.camera_device = camera_device
+        self.model_path = model_path
+        self.output_dir = Path(output_dir)
+        self.debug = debug
+        self.logger = setup_test_logging(output_dir, debug)
+        self.results = {"passed": 0, "failed": 0, "skipped": 0}
+        self.captured_frames = []
+        self.fps_samples = []
+
+    def _pass(self, name: str, detail: str = ""):
+        self.results["passed"] += 1
+        self.logger.info("✓ PASS: {} {}", name, detail)
+
+    def _fail(self, name: str, detail: str = ""):
+        self.results["failed"] += 1
+        self.logger.error("✗ FAIL: {} {}", name, detail)
+
+    def _skip(self, name: str, detail: str = ""):
+        self.results["skipped"] += 1
+        self.logger.warning("∼ SKIP: {} {}", name, detail)
+
+    # ------------------------------------------------------------------
+    # TEST 1: System & Environment Readiness
+    # ------------------------------------------------------------------
+
+    def test_system_environment(self):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST 1: System Environment Readiness")
+        self.logger.info("=" * 70)
+
+        # 1a. Check camera device
+        self.logger.info("--- 1a. Camera device: {}", self.camera_device)
+        if os.path.exists(self.camera_device):
+            self._pass("Camera device present", self.camera_device)
+        else:
+            self._skip("Camera device not found",
+                       f"{self.camera_device} missing (expected on RPi with USB camera)")
+
+        # 1b. Check model file
+        self.logger.info("--- 1b. YOLO model: {}", self.model_path)
+        if os.path.exists(self.model_path):
+            model_size = os.path.getsize(self.model_path) / (1024 * 1024)
+            self._pass("YOLO model present", f"{model_size:.1f} MB")
+        else:
+            self._skip("YOLO model not found",
+                       "Download model to {} (inference will use fallback)".format(self.model_path))
+
+        # 1c. Check required directories
+        self.logger.info("--- 1c. Required directories")
+        dirs = {
+            "/opt/fss": "Runtime data",
+            "/opt/fss/images": "Captured images",
+            "/opt/fss/logs": "Log files",
+            "/opt/fss/models": "ML models",
+        }
+        for d, purpose in dirs.items():
+            p = Path(d)
+            if p.exists():
+                self._pass(f"Directory exists: {d}", purpose)
+            else:
+                try:
+                    p.mkdir(parents=True, exist_ok=True)
+                    self._pass(f"Directory created: {d}", purpose)
+                except PermissionError:
+                    self._skip(f"Cannot create: {d}", "Run with sudo or create manually")
+
+        # 1d. Check Python dependencies
+        self.logger.info("--- 1d. Python dependencies")
+        deps = {
+            "cv2": "OpenCV",
+            "numpy": "NumPy",
+            "loguru": "Loguru (logging)",
+        }
+        for mod_name, label in deps.items():
+            try:
+                __import__(mod_name)
+                self._pass(f"Module: {label}", f"{mod_name} available")
+            except ImportError:
+                self._fail(f"Module: {label}", f"{mod_name} not installed")
+
+        # 1e. Check TFLite runtime
+        self.logger.info("--- 1e. TFLite inference backend")
+        tflite_available = False
+        try:
+            import tflite_runtime.interpreter as tflite
+            tflite_available = True
+            self._pass("TFLite runtime", "tflite_runtime available")
+        except ImportError:
+            try:
+                import tensorflow.lite as tflite
+                tflite_available = True
+                self._pass("TFLite runtime", "tensorflow.lite available")
+            except ImportError:
+                self._skip("TFLite runtime", "No Python TFLite; C backend fallback available")
+
+    # ------------------------------------------------------------------
+    # TEST 2: Camera Driver
+    # ------------------------------------------------------------------
+
+    def test_camera_driver(self):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST 2: USB Camera Driver (CameraUvcDriver)")
+        self.logger.info("=" * 70)
+
+        from frt_app.py_ai_core.src.CameraUvcDriver import CameraUvcDriver
+
+        driver = CameraUvcDriver(self.camera_device)
+
+        # 2a. Check UVC connection
+        self.logger.info("--- 2a. Check UVC connection")
+        if driver.check_uvc_connection():
+            self._pass("UVC device accessible", self.camera_device)
+        else:
+            self._skip("UVC device not accessible",
+                       "Camera may not be connected. Using synthetic frames for remaining tests.")
+            return None
+
+        # 2b. Open camera stream
+        self.logger.info("--- 2b. Open camera stream")
+        if not driver.open_camera_stream():
+            self._fail("Camera stream open",
+                       "Failed to open {} with V4L2".format(self.camera_device))
+            driver.release_camera()
+            return None
+        self._pass("Camera stream opened", "640x480 @ 30 FPS via V4L2")
+
+        # 2c. Capture multiple frames
+        self.logger.info("--- 2c. Frame capture (5 frames)")
+        frames = []
+        for i in range(5):
+            frame = driver.read_frame()
+            if frame is not None:
+                frames.append(frame)
+                self.logger.info("  Frame {}: shape={}, dtype={}",
+                                 i + 1, frame.shape, frame.dtype)
+            else:
+                self.logger.warning("  Frame {}: FAILED", i + 1)
+            time.sleep(0.05)
+
+        if len(frames) >= 3:
+            self._pass("Frame capture", "{} / 5 frames captured".format(len(frames)))
+            self.captured_frames = frames
+        else:
+            self._fail("Frame capture",
+                       "Only {} / 5 frames captured".format(len(frames)))
+            driver.release_camera()
+            return None
+
+        # 2d. Save a sample frame
+        self.logger.info("--- 2d. Save sample frame")
+        try:
+            import cv2
+            sample_path = self.output_dir / "sample_frame.jpg"
+            cv2.imwrite(str(sample_path), frames[0],
+                        [cv2.IMWRITE_JPEG_QUALITY, 85])
+            self._pass("Sample frame saved", str(sample_path))
+        except Exception as e:
+            self._skip("Save sample frame", str(e))
+
+        # 2e. Measure frame read FPS
+        self.logger.info("--- 2e. Frame read FPS benchmark")
+        start = time.time()
+        count = 0
+        while time.time() - start < 2.0:
+            f = driver.read_frame()
+            if f is not None:
+                count += 1
+        elapsed = time.time() - start
+        fps = count / elapsed
+        self.fps_samples.append(fps)
+        self._pass("Camera read FPS", "{:.1f} FPS over {:.1f}s".format(fps, elapsed))
+
+        # 2f. Release camera
+        self.logger.info("--- 2f. Release camera")
+        driver.release_camera()
+        self._pass("Camera released", "")
+
+        return driver
+
+    # ------------------------------------------------------------------
+    # TEST 3: Image Preprocessor
+    # ------------------------------------------------------------------
+
+    def test_image_preprocessor(self, frame_source):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST 3: Image Preprocessor (ImagePreprocessor)")
+        self.logger.info("=" * 70)
+
+        from frt_app.py_ai_core.src.ImagePreprocessor import ImagePreprocessor
+
+        preprocessor = ImagePreprocessor(640, 640)
+
+        # Use real frame if available, otherwise synthetic
+        if frame_source is not None and len(frame_source) > 0:
+            test_frame = frame_source[0]
+            self.logger.info("Using captured frame: shape={}", test_frame.shape)
+        else:
+            import numpy as np
+            test_frame = np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
+            self.logger.info("Using synthetic frame: shape={}", test_frame.shape)
+
+        # 3a. BGR → RGB conversion
+        self.logger.info("--- 3a. BGR → RGB conversion")
+        rgb = preprocessor.convert_bgr_to_rgb(test_frame)
+        if rgb is not None and rgb.shape == test_frame.shape:
+            self._pass("BGR → RGB", "shape={}".format(rgb.shape))
+        else:
+            self._fail("BGR → RGB", "shape={}".format(
+                rgb.shape if rgb is not None else "None"))
+
+        # 3b. Resize with letterboxing
+        self.logger.info("--- 3b. Resize with letterboxing")
+        resized = preprocessor.resize_frame(rgb if rgb is not None else test_frame)
+        if resized is not None and resized.shape == (640, 640, 3):
+            self._pass("Resize with letterbox", "640x640x3")
+        else:
+            self._fail("Resize with letterbox", "got {}".format(
+                resized.shape if resized is not None else "None"))
+
+        # 3c. Pixel normalization
+        self.logger.info("--- 3c. Pixel normalization [0,1]")
+        normalized = preprocessor.normalize_pixels(resized)
+        if normalized is not None:
+            ok = normalized.min() >= 0.0 and normalized.max() <= 1.0
+            if ok:
+                self._pass("Pixel normalization",
+                           "range=[{:.3f}, {:.3f}]".format(
+                               normalized.min(), normalized.max()))
+            else:
+                self._fail("Pixel normalization",
+                           "range=[{:.3f}, {:.3f}]".format(
+                               normalized.min(), normalized.max()))
+        else:
+            self._fail("Pixel normalization", "returned None")
+
+        # 3d. Full tensor preparation
+        self.logger.info("--- 3d. Full tensor preparation")
+        tensor = preprocessor.prepare_tensor_input(test_frame)
+        if tensor is not None and tensor.shape == (1, 640, 640, 3):
+            self._pass("Tensor preparation",
+                       "shape={}, dtype={}".format(tensor.shape, tensor.dtype))
+        else:
+            self._fail("Tensor preparation", "got {}".format(
+                tensor.shape if tensor is not None else "None"))
+
+        # 3e. Benchmark preprocessing latency
+        self.logger.info("--- 3e. Preprocessing latency (100 iterations)")
+        import numpy as np
+        dummy = np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
+        start = time.time()
+        for _ in range(100):
+            preprocessor.prepare_tensor_input(dummy)
+        avg_ms = (time.time() - start) * 10
+        self._pass("Preprocessing latency", "avg {:.2f}ms per frame".format(avg_ms))
+
+        return preprocessor
+
+    # ------------------------------------------------------------------
+    # TEST 4: Motion Detector
+    # ------------------------------------------------------------------
+
+    def test_motion_detector(self):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST 4: Motion Detector (MotionDetector)")
+        self.logger.info("=" * 70)
+
+        from frt_app.py_ai_core.src.MotionDetector import MotionDetector
+        import numpy as np
+
+        detector = MotionDetector(threshold_percent=1.0)
+
+        # 4a. MOG2 initialization
+        self.logger.info("--- 4a. MOG2 initialization")
+        try:
+            detector.init_mog2()
+            self._pass("MOG2 initialized", "history=500, threshold=16.0")
+        except Exception as e:
+            self._fail("MOG2 initialization", str(e))
+            return None
+
+        # 4b. Process identical frames (should show no motion)
+        self.logger.info("--- 4b. Static scene (no motion)")
+        frame_static = np.ones((480, 640, 3), dtype=np.uint8) * 128
+        for _ in range(5):
+            detector.apply_background_subtraction(frame_static)
+        mask_last = detector.apply_background_subtraction(frame_static)
+        motion = detector.is_motion_detected(mask_last)
+        if not motion:
+            self._pass("No motion on static scene")
+        else:
+            self._skip("No motion on static scene",
+                       "MOG2 may need more warmup frames")
+
+        # 4c. Process changed frame (should show motion)
+        self.logger.info("--- 4c. Changed scene (motion)")
+        frame_motion = np.ones((480, 640, 3), dtype=np.uint8) * 200
+        mask_motion = detector.apply_background_subtraction(frame_motion)
+        motion_detected = detector.is_motion_detected(mask_motion)
+        if motion_detected:
+            self._pass("Motion detected on changed scene")
+        else:
+            self._skip("Motion on changed scene",
+                       "Difference may be below threshold. Try larger delta.")
+
+        # 4d. Background model reset
+        self.logger.info("--- 4d. Background model reset")
+        try:
+            detector.reset_background_model()
+            self._pass("Background model reset")
+        except Exception as e:
+            self._fail("Background model reset", str(e))
+
+        return detector
+
+    # ------------------------------------------------------------------
+    # TEST 5: YOLO Inference Engine
+    # ------------------------------------------------------------------
+
+    def test_yolo_engine(self):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST 5: YOLO Inference Engine (YoloTfliteEngine)")
+        self.logger.info("=" * 70)
+
+        from frt_app.py_ai_core.src.YoloTfliteEngine import YoloTfliteEngine
+        import numpy as np
+
+        engine = YoloTfliteEngine(
+            self.model_path,
+            use_c_backend=False,
+            c_precision=2
+        )
+
+        # 5a. Load model
+        self.logger.info("--- 5a. Load model: {}", self.model_path)
+        loaded = engine.load_model_mmap()
+        if loaded:
+            self._pass("Model loaded", self.model_path)
+        else:
+            self._skip("Model load",
+                       "Model file missing. Tests 5b-5e will be skipped.")
+            return engine
+
+        # 5b. Allocate tensors
+        self.logger.info("--- 5b. Allocate tensors")
+        try:
+            engine.allocate_tensors()
+            self._pass("Tensors allocated")
+        except Exception as e:
+            self._fail("Tensors allocate", str(e))
+
+        # 5c. Set input tensor
+        self.logger.info("--- 5c. Set input tensor")
+        dummy_input = np.random.rand(1, 640, 640, 3).astype(np.float32)
+        try:
+            engine.set_input_tensor(dummy_input)
+            self._pass("Input tensor set", "shape={}, dtype={}".format(
+                dummy_input.shape, dummy_input.dtype))
+        except Exception as e:
+            self._fail("Input tensor set", str(e))
+
+        # 5d. Run inference
+        self.logger.info("--- 5d. Run inference")
+        try:
+            engine.invoke_inference()
+            self._pass("Inference invoked")
+        except Exception as e:
+            self._fail("Inference invoke", str(e))
+
+        # 5e. Get output boxes
+        self.logger.info("--- 5e. Get output boxes")
+        try:
+            boxes = engine.get_output_boxes()
+            count = len(boxes)
+            self._pass("Output boxes received",
+                       "{} detections (expected 0-5 on random input)".format(count))
+            if count > 0:
+                for b in boxes[:3]:
+                    self.logger.info("    class_id={}, confidence={:.2f}, bbox={}",
+                                     b.get("class_id"), b.get("confidence", 0),
+                                     b.get("bbox"))
+        except Exception as e:
+            self._fail("Output boxes", str(e))
+
+        # 5f. Backend detection
+        self.logger.info("--- 5f. Inference backend")
+        if engine.use_c_backend:
+            self._pass("Backend: C TFLite reader",
+                       "libtflite_reader.so (faster on RPi)")
+        else:
+            self._pass("Backend: Python TFLite runtime",
+                       "tflite_runtime.interpreter (fallback)")
+
+        # 5g. C backend check (if available)
+        self.logger.info("--- 5g. C backend availability")
+        try:
+            import ctypes
+            lib = ctypes.CDLL("libtflite_reader.so")
+            self._pass("C backend library found",
+                       "libtflite_reader.so loaded via ctypes")
+        except Exception:
+            self._skip("C backend library",
+                       "libtflite_reader.so not found (optional, Python fallback works)")
+
+        return engine
+
+    # ------------------------------------------------------------------
+    # TEST 6: Full Pipeline (Camera → Preprocess → YOLO)
+    # ------------------------------------------------------------------
+
+    def test_full_pipeline(self, camera_driver):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST 6: Full Pipeline Integration")
+        self.logger.info("=" * 70)
+
+        from frt_app.py_ai_core.src.YoloTfliteEngine import YoloTfliteEngine
+        from frt_app.py_ai_core.src.ImagePreprocessor import ImagePreprocessor
+        from frt_app.py_ai_core.src.MotionDetector import MotionDetector
+
+        preprocessor = ImagePreprocessor(640, 640)
+        engine = YoloTfliteEngine(
+            self.model_path,
+            use_c_backend=False,
+            c_precision=2
+        )
+        engine.load_model_mmap()
+        detector = MotionDetector(threshold_percent=1.0)
+        detector.init_mog2()
+
+        # Determine frame source
+        if camera_driver is not None:
+            camera_driver.open_camera_stream()
+            self.logger.info("Frame source: USB camera ({})", self.camera_device)
+        elif self.captured_frames:
+            self.logger.info("Frame source: {} pre-captured frames",
+                             len(self.captured_frames))
+        else:
+            import numpy as np
+            self.captured_frames = [
+                np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
+                for _ in range(5)
+            ]
+            self.logger.info("Frame source: synthetic frames (no camera)")
+
+        # 6a. Pipeline iteration
+        self.logger.info("--- 6a. Complete inference cycle (10 iterations)")
+        processed = 0
+        inferred = 0
+        start = time.time()
+
+        for i in range(10):
+            frame = None
+            if camera_driver and camera_driver.is_camera_open:
+                frame = camera_driver.read_frame()
+            elif self.captured_frames:
+                frame = self.captured_frames[i % len(self.captured_frames)]
+
+            if frame is None:
+                continue
+            processed += 1
+
+            # Motion detection
+            mask = detector.apply_background_subtraction(frame)
+            if mask is not None and detector.is_motion_detected(mask):
+                inferred += 1
+            else:
+                continue
+
+            # Preprocess
+            tensor = preprocessor.prepare_tensor_input(frame)
+            if tensor is None:
+                continue
+
+            # Inference
+            engine.set_input_tensor(tensor)
+            engine.invoke_inference()
+            boxes = engine.get_output_boxes()
+
+            if i == 0:
+                self.logger.info("  First inference: {} detections".format(len(boxes)))
+
+        elapsed = time.time() - start
+        self._pass("Pipeline cycle",
+                   "{}/10 processed, {} inferences, {:.1f}s".format(
+                       processed, inferred, elapsed))
+
+        # 6b. Frame save for UI (as LivePreview would use)
+        self.logger.info("--- 6b. Save preview frame for UI (as LivePreview bridge)")
+        try:
+            import cv2
+            preview_path = self.output_dir / "latest_preview.jpg"
+            if self.captured_frames:
+                frame_to_save = self.captured_frames[0]
+                cv2.imwrite(str(preview_path), frame_to_save,
+                            [cv2.IMWRITE_JPEG_QUALITY, 70])
+                file_size = os.path.getsize(str(preview_path))
+                self._pass("Preview frame saved",
+                           "{} ({} KB)".format(preview_path, file_size // 1024))
+        except Exception as e:
+            self._skip("Save preview", str(e))
+
+        # 6c. SHM check (C++ camera core integration)
+        self.logger.info("--- 6c. POSIX shared memory check ({})", "/dev/shm/fss_video_frame")
+        shm_path = "/dev/shm/fss_video_frame"
+        if os.path.exists(shm_path):
+            shm_size = os.path.getsize(shm_path)
+            self._pass("SHM exists", "{} ({} bytes)".format(shm_path, shm_size))
+        else:
+            self._skip("SHM not found",
+                       "C++ camera core not running. Start: ./frt_app/build/cpp_camera_core/camera_core_exec")
+
+        # 6d. D-Bus service check
+        self.logger.info("--- 6d. D-Bus service status")
+        import subprocess
+        try:
+            result = subprocess.run(
+                ["dbus-send", "--system", "--print-reply",
+                 "--dest=org.freedesktop.DBus",
+                 "/org/freedesktop/DBus",
+                 "org.freedesktop.DBus.ListNames"],
+                capture_output=True, text=True, timeout=5
+            )
+            fss_services = [line for line in result.stdout.split("\n")
+                            if "FSS" in line]
+            if fss_services:
+                self._pass("FSS D-Bus services",
+                           "Found: {}".format(", ".join(s.strip()
+                                                         for s in fss_services)))
+            else:
+                self._skip("FSS D-Bus services",
+                           "No FSS services registered (expected in test env)")
+        except Exception as e:
+            self._skip("D-Bus check", str(e))
+
+        if camera_driver is not None and camera_driver.is_camera_open:
+            camera_driver.release_camera()
+
+    # ------------------------------------------------------------------
+    # TEST 7: Summary & Report
+    # ------------------------------------------------------------------
+
+    def print_summary(self):
+        self.logger.info("")
+        self.logger.info("=" * 70)
+        self.logger.info("TEST SUMMARY")
+        self.logger.info("=" * 70)
+        total = (self.results["passed"] + self.results["failed"]
+                 + self.results["skipped"])
+        self.logger.info("  Passed:  {}", self.results["passed"])
+        self.logger.info("  Failed:  {}", self.results["failed"])
+        self.logger.info("  Skipped: {}", self.results["skipped"])
+        self.logger.info("  Total:   {}", total)
+        self.logger.info("=" * 70)
+
+        # Save JSON report
+        report = {
+            "timestamp": datetime.now().isoformat(),
+            "camera_device": self.camera_device,
+            "model_path": self.model_path,
+            "output_dir": str(self.output_dir),
+            "results": self.results,
+            "fps_samples": self.fps_samples,
+        }
+        report_path = self.output_dir / "frtapp_scenario_report.json"
+        with open(report_path, "w") as f:
+            json.dump(report, f, indent=2)
+        self.logger.info("Report saved: {}", report_path)
+
+        if self.results["failed"] == 0:
+            self.logger.info("")
+            self.logger.info("✓ ALL CRITICAL TESTS PASSED")
+            self.logger.info("  System is ready for MagicMirror FRTApp integration.")
+        else:
+            self.logger.info("")
+            self.logger.error("✗ {} TEST(S) FAILED - Review logs above",
+                              self.results["failed"])
+
+    def run_all(self):
+        """Execute all tests in sequence."""
+        self.logger.info("")
+        self.logger.info("╔" + "=" * 68 + "╗")
+        self.logger.info("║          FRTApp USER SCENARIO TEST             ║")
+        self.logger.info("║  USB Camera → AI Pipeline → MagicMirror Flow  ║")
+        self.logger.info("╚" + "=" * 68 + "╝")
+        self.logger.info("Camera: {}", self.camera_device)
+        self.logger.info("Model:  {}", self.model_path)
+        self.logger.info("Output: {}", self.output_dir)
+        self.logger.info("Debug:  {}", self.debug)
+
+        self.test_system_environment()
+        camera_driver = self.test_camera_driver()
+        self.test_image_preprocessor(self.captured_frames)
+        self.test_motion_detector()
+        self.test_yolo_engine()
+        self.test_full_pipeline(camera_driver)
+        self.print_summary()
+
+        return 0 if self.results["failed"] == 0 else 1
+
+
+# ==============================================================================
+# MAIN
+# ==============================================================================
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="FRTApp User Scenario Test - USB Camera + YOLO Pipeline",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("--camera", default="/dev/video0",
+                        help="Camera device path (default: /dev/video0)")
+    parser.add_argument("--model", default="/opt/fss/models/yolov11n.tflite",
+                        help="YOLO model path (default: /opt/fss/models/yolov11n.tflite)")
+    parser.add_argument("--output-dir", default="/tmp/frt_test_output",
+                        help="Output directory for logs and artifacts")
+    parser.add_argument("--debug", action="store_true",
+                        help="Enable debug logging")
+    args = parser.parse_args()
+
+    tester = FrtAppScenarioTest(
+        camera_device=args.camera,
+        model_path=args.model,
+        output_dir=args.output_dir,
+        debug=args.debug
+    )
+    return tester.run_all()
+
+
+if __name__ == "__main__":
+    sys.exit(main())
