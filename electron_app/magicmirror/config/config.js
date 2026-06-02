@@ -73,7 +73,7 @@ let config = {
 					{
 						fetchInterval: 7 * 24 * 60 * 60 * 1000,
 						symbol: "calendar-check",
-						url: "https://ics.calendarlabs.com/77/104efb3b/Vietnam_Holidays.ics"
+						url: "https://ics.calendarlabs.com/77/fb176e15/Vietnam_Holidays.ics"
 					}
 				]
 			},
@@ -126,7 +126,7 @@ let config = {
             position: "fullscreen_above",
             config: {
                 startWithNumbers: false,
-                startUppercase: false,
+                startUppercase: true,
                 debug: false
             }
         },
