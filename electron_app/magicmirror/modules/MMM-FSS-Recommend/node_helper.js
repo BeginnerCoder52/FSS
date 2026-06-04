@@ -1,6 +1,7 @@
 const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
 const SessionLog = require("../../../js/session_logger");
+const { resolvePythonExecutable } = require("../fss_paths");
 
 module.exports = NodeHelper.create({
     start() {
@@ -22,7 +23,7 @@ module.exports = NodeHelper.create({
     },
     startBridge() {
         const script = require("path").join(__dirname, "py_bridge", "recommend_dbus_listener.py");
-        this.pythonProcess = spawn("/usr/bin/python3", [script]);
+        this.pythonProcess = spawn(resolvePythonExecutable(__dirname), [script]);
 
         let buffer = "";
         this.pythonProcess.stdout.on("data", (data) => {

@@ -14,6 +14,7 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const SessionLog = require("../../../js/session_logger");
+const { resolvePythonExecutable } = require("../fss_paths");
 
 module.exports = NodeHelper.create({
 	/**
@@ -61,7 +62,7 @@ module.exports = NodeHelper.create({
 		console.log(`${this.name}: Starting Python D-Bus listener from ${pythonScriptPath}`);
 
 		try {
-			const pythonExecutable = "/home/richardmelvin52/FSS/.venv/bin/python3";
+			const pythonExecutable = resolvePythonExecutable(__dirname);
 			this.pythonProcess = spawn(pythonExecutable, [pythonScriptPath], {
 				stdio: ["pipe", "pipe", "pipe"],
 				detached: false,
