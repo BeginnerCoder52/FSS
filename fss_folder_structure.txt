@@ -1,0 +1,3260 @@
+.
+├── AGENTS.md
+├── FINAL_UPGRADE_3005.md
+├── HANDOVER_CHAT.md
+├── LICENSE
+├── README.md
+├── camera_test
+├── capture_tool
+├── db_daemon
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── DbDaemonMain.py
+│   │   ├── DbDbusInterface.py
+│   │   ├── DiskFileManager.py
+│   │   ├── PosixShmReader.py
+│   │   ├── SqliteManager.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   └── tests
+│       ├── __init__.py
+│       └── test_phase3_cleanup.py
+├── dbus_config
+│   └── vn.edu.uit.FSS.conf
+├── docs
+│   ├── FSS_SAD_ClassDiagram_v0.5.0.png
+│   ├── FSS_SAD_v0.2.0.png
+│   ├── FSS_SequenceDiagram_STARTUP.png
+│   ├── FSS_SequenceDiagram_STOP_IDLE_v0.1.0.png
+│   ├── FSS_SoftwareDetailedDesign_v1.0.0.xlsx
+│   ├── FSS_SoftwareDetailedDesign_v1.1.0.txt
+│   ├── FSS_SoftwareDetailedDesign_v1.1.0.xlsx
+│   ├── FSS_SoftwareEngineering_v1.2.0.xlsx
+│   └── FSS_UnitTestSpec_v0.2.0.xlsx
+├── drivers
+│   ├── sensor
+│   │   ├── README_PINOUT.md
+│   │   ├── mc-38
+│   │   │   ├── include
+│   │   │   │   └── MC38.hpp
+│   │   │   ├── src
+│   │   │   │   └── MC38.cpp
+│   │   │   └── tests
+│   │   │       ├── README.md
+│   │   │       ├── test_mc38
+│   │   │       ├── test_mc38.cpp
+│   │   │       └── test_mc38_python.py
+│   │   ├── sht3x
+│   │   │   ├── example
+│   │   │   │   ├── driver_sht31_alert.c
+│   │   │   │   ├── driver_sht31_alert.h
+│   │   │   │   ├── driver_sht31_basic.c
+│   │   │   │   ├── driver_sht31_basic.h
+│   │   │   │   ├── driver_sht31_shot.c
+│   │   │   │   └── driver_sht31_shot.h
+│   │   │   ├── interface
+│   │   │   │   ├── driver_sht31_interface.h
+│   │   │   │   └── driver_sht31_interface_template.c
+│   │   │   ├── project
+│   │   │   │   └── raspberrypi4b
+│   │   │   │       ├── CMakeLists.txt
+│   │   │   │       ├── J8Header.jpg
+│   │   │   │       ├── README.md
+│   │   │   │       ├── cmake
+│   │   │   │       │   ├── VERSION
+│   │   │   │       │   ├── config.cmake.in
+│   │   │   │       │   └── uninstall.cmake
+│   │   │   │       ├── driver
+│   │   │   │       │   └── src
+│   │   │   │       │       └── raspberrypi4b_driver_sht31_interface.c
+│   │   │   │       ├── interface
+│   │   │   │       │   ├── inc
+│   │   │   │       │   │   ├── gpio.h
+│   │   │   │       │   │   └── iic.h
+│   │   │   │       │   └── src
+│   │   │   │       │       ├── gpio.c
+│   │   │   │       │       └── iic.c
+│   │   │   │       ├── libsht31.so.1.0.0
+│   │   │   │       ├── sht31
+│   │   │   │       └── src
+│   │   │   │           └── main.c
+│   │   │   ├── src
+│   │   │   │   ├── driver_sht31.c
+│   │   │   │   └── driver_sht31.h
+│   │   │   └── test
+│   │   │       ├── driver_sht31_alert_test.c
+│   │   │       ├── driver_sht31_alert_test.h
+│   │   │       ├── driver_sht31_read_test.c
+│   │   │       ├── driver_sht31_read_test.h
+│   │   │       ├── driver_sht31_register_test.c
+│   │   │       └── driver_sht31_register_test.h
+│   │   └── vl53l0x
+│   │       ├── examples
+│   │       │   ├── diagnose.c
+│   │       │   ├── last_shot.c
+│   │       │   ├── multi_shot.c
+│   │       │   └── single_shot.c
+│   │       ├── src
+│   │       │   ├── vl53l0x.c
+│   │       │   ├── vl53l0x.h
+│   │       │   └── vl53l0x_internal.h
+│   │       └── tests
+│   │           ├── test_continuous_nonblocking.c
+│   │           ├── test_last_measurement.c
+│   │           └── test_single_measurement.c
+│   └── usb_web_camera
+│       ├── uvcvideo-master
+│       │   ├── README.md
+│       │   ├── uvc
+│       │   │   ├── Kbuild
+│       │   │   ├── Makefile.android
+│       │   │   ├── merged-upstream-patches
+│       │   │   │   ├── 0000-Index
+│       │   │   │   ├── 0001-V4L-DVB-drivers-media-video-uvc-Use-kmemdup.patch
+│       │   │   │   ├── 0001-media-uvcvideo-Fix-alternate-setting-selection.patch
+│       │   │   │   ├── 0001-media-uvcvideo-Fix-uvc_fixup_video_ctrl-format-searc.patch
+│       │   │   │   ├── 0001-media-uvcvideo-Generate-discontinuous-sequence-numbe.patch
+│       │   │   │   ├── 0001-media-uvcvideo-Move-mutex-lock-unlock-inside-uvc_fre.patch
+│       │   │   │   ├── 0001-media-uvcvideo-Remove-buffers-from-the-queues-when-f.patch
+│       │   │   │   ├── 0002-media-uvcvideo-Disable-the-queue-when-failing-to-sta.patch
+│       │   │   │   ├── 0002-media-uvcvideo-Move-mmap-handler-to-uvc_queue.c.patch
+│       │   │   │   └── 0003-media-uvcvideo-Lock-stream-mutex-when-accessing-form.patch
+│       │   │   ├── test-uvc
+│       │   │   ├── uvc_ctrl.c
+│       │   │   ├── uvc_driver.c
+│       │   │   ├── uvc_isight.c
+│       │   │   ├── uvc_queue.c
+│       │   │   ├── uvc_status.c
+│       │   │   ├── uvc_v4l2.c
+│       │   │   ├── uvc_video.c
+│       │   │   └── uvcvideo.h
+│       │   └── v4l2-capture
+│       │       ├── capture.c
+│       │       └── test-vc
+│       └── uvcvideo-master.zip
+├── electron_app
+│   ├── config.json
+│   ├── magicmirror
+│   │   ├── clientonly
+│   │   │   └── index.js
+│   │   ├── config
+│   │   │   ├── config.js
+│   │   │   └── config.js.sample
+│   │   ├── cspell.config.json
+│   │   ├── css
+│   │   │   ├── custom.css.sample
+│   │   │   └── main.css
+│   │   ├── eslint.config.mjs
+│   │   ├── fonts
+│   │   │   ├── inter.css
+│   │   │   ├── package-lock.json
+│   │   │   ├── package.json
+│   │   │   └── roboto.css
+│   │   ├── images
+│   │   │   ├── dien-id.jpg
+│   │   │   └── hien-id.jpg
+│   │   ├── index.html
+│   │   ├── jest.config.js
+│   │   ├── js
+│   │   │   ├── animateCSS.js
+│   │   │   ├── app.js
+│   │   │   ├── check_config.js
+│   │   │   ├── class.js
+│   │   │   ├── defaults.js
+│   │   │   ├── deprecated.js
+│   │   │   ├── electron.js
+│   │   │   ├── loader.js
+│   │   │   ├── logger.js
+│   │   │   ├── main.js
+│   │   │   ├── module.js
+│   │   │   ├── node_helper.js
+│   │   │   ├── positions.js
+│   │   │   ├── server.js
+│   │   │   ├── server_functions.js
+│   │   │   ├── session_logger.js
+│   │   │   ├── socketclient.js
+│   │   │   ├── translator.js
+│   │   │   └── utils.js
+│   │   ├── jsconfig.json
+│   │   ├── module-types.ts
+│   │   ├── modules
+│   │   │   ├── MMM-FSS-Env
+│   │   │   │   ├── MMM-FSS-Env.css
+│   │   │   │   ├── MMM-FSS-Env.js
+│   │   │   │   ├── node_helper.js
+│   │   │   │   └── py_bridge
+│   │   │   │       ├── env_dbus_listener.py
+│   │   │   │       └── requirements.txt
+│   │   │   ├── MMM-FSS-Inventory
+│   │   │   │   ├── MMM-FSS-Inventory.css
+│   │   │   │   ├── MMM-FSS-Inventory.js
+│   │   │   │   ├── node_helper.js
+│   │   │   │   └── py_bridge
+│   │   │   │       ├── inventory_dbus_listener.py
+│   │   │   │       └── requirements.txt
+│   │   │   ├── MMM-FSS-LivePreview
+│   │   │   │   ├── MMM-FSS-LivePreview.css
+│   │   │   │   ├── MMM-FSS-LivePreview.js
+│   │   │   │   ├── node_helper.js
+│   │   │   │   └── py_bridge
+│   │   │   │       └── live_preview_bridge.py
+│   │   │   ├── MMM-FSS-Monitor
+│   │   │   │   ├── MMM-FSS-Monitor.css
+│   │   │   │   ├── MMM-FSS-Monitor.js
+│   │   │   │   ├── node_helper.js
+│   │   │   │   └── py_bridge
+│   │   │   │       ├── monitor_dbus_listener.py
+│   │   │   │       └── requirements.txt
+│   │   │   ├── MMM-FSS-Notification
+│   │   │   │   ├── MMM-FSS-Notification.css
+│   │   │   │   └── MMM-FSS-Notification.js
+│   │   │   ├── MMM-FSS-Recommend
+│   │   │   │   ├── MMM-FSS-Recommend.css
+│   │   │   │   ├── MMM-FSS-Recommend.js
+│   │   │   │   ├── node_helper.js
+│   │   │   │   └── py_bridge
+│   │   │   │       └── recommend_dbus_listener.py
+│   │   │   ├── MMM-FSS-VirtualKeyboard
+│   │   │   │   ├── MMM-FSS-VirtualKeyboard.css
+│   │   │   │   ├── MMM-FSS-VirtualKeyboard.js
+│   │   │   │   └── node_helper.js
+│   │   │   ├── MMM-Keyboard
+│   │   │   │   ├── MMM-Keyboard.js
+│   │   │   │   ├── keyboard-example.jpg
+│   │   │   │   ├── keyboard.css
+│   │   │   │   ├── layouts.json
+│   │   │   │   └── package.json
+│   │   │   └── default
+│   │   │       ├── alert
+│   │   │       │   ├── alert.js
+│   │   │       │   ├── notificationFx.js
+│   │   │       │   ├── styles
+│   │   │       │   │   ├── center.css
+│   │   │       │   │   ├── left.css
+│   │   │       │   │   ├── notificationFx.css
+│   │   │       │   │   └── right.css
+│   │   │       │   ├── templates
+│   │   │       │   │   ├── alert.njk
+│   │   │       │   │   └── notification.njk
+│   │   │       │   └── translations
+│   │   │       │       ├── bg.json
+│   │   │       │       ├── da.json
+│   │   │       │       ├── de.json
+│   │   │       │       ├── el.json
+│   │   │       │       ├── en.json
+│   │   │       │       ├── eo.json
+│   │   │       │       ├── es.json
+│   │   │       │       ├── fr.json
+│   │   │       │       ├── hu.json
+│   │   │       │       ├── nl.json
+│   │   │       │       ├── ru.json
+│   │   │       │       └── th.json
+│   │   │       ├── calendar
+│   │   │       │   ├── calendar.css
+│   │   │       │   ├── calendar.js
+│   │   │       │   ├── calendarfetcher.js
+│   │   │       │   ├── calendarfetcherutils.js
+│   │   │       │   ├── calendarutils.js
+│   │   │       │   ├── debug.js
+│   │   │       │   ├── node_helper.js
+│   │   │       │   └── windowsZones.json
+│   │   │       ├── clock
+│   │   │       │   ├── clock.js
+│   │   │       │   ├── clock_styles.css
+│   │   │       │   └── faces
+│   │   │       │       ├── face-001.svg
+│   │   │       │       ├── face-002.svg
+│   │   │       │       ├── face-003.svg
+│   │   │       │       ├── face-004.svg
+│   │   │       │       ├── face-005.svg
+│   │   │       │       ├── face-006.svg
+│   │   │       │       ├── face-007.svg
+│   │   │       │       ├── face-008.svg
+│   │   │       │       ├── face-009.svg
+│   │   │       │       ├── face-010.svg
+│   │   │       │       ├── face-011.svg
+│   │   │       │       └── face-012.svg
+│   │   │       ├── compliments
+│   │   │       │   └── compliments.js
+│   │   │       ├── defaultmodules.js
+│   │   │       ├── helloworld
+│   │   │       │   ├── helloworld.js
+│   │   │       │   └── helloworld.njk
+│   │   │       ├── newsfeed
+│   │   │       │   ├── fullarticle.njk
+│   │   │       │   ├── newsfeed.css
+│   │   │       │   ├── newsfeed.js
+│   │   │       │   ├── newsfeed.njk
+│   │   │       │   ├── newsfeedfetcher.js
+│   │   │       │   ├── node_helper.js
+│   │   │       │   └── oldconfig.njk
+│   │   │       ├── updatenotification
+│   │   │       │   ├── git_helper.js
+│   │   │       │   ├── node_helper.js
+│   │   │       │   ├── update_helper.js
+│   │   │       │   ├── updatenotification.css
+│   │   │       │   ├── updatenotification.js
+│   │   │       │   └── updatenotification.njk
+│   │   │       ├── utils.js
+│   │   │       └── weather
+│   │   │           ├── current.njk
+│   │   │           ├── forecast.njk
+│   │   │           ├── hourly.njk
+│   │   │           ├── providers
+│   │   │           │   ├── envcanada.js
+│   │   │           │   ├── openmeteo.js
+│   │   │           │   ├── openweathermap.js
+│   │   │           │   ├── overrideWrapper.js
+│   │   │           │   ├── pirateweather.js
+│   │   │           │   ├── smhi.js
+│   │   │           │   ├── ukmetoffice.js
+│   │   │           │   ├── ukmetofficedatahub.js
+│   │   │           │   ├── weatherbit.js
+│   │   │           │   ├── weatherflow.js
+│   │   │           │   ├── weathergov.js
+│   │   │           │   └── yr.js
+│   │   │           ├── weather.css
+│   │   │           ├── weather.js
+│   │   │           ├── weatherobject.js
+│   │   │           ├── weatherprovider.js
+│   │   │           └── weatherutils.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── prettier.config.mjs
+│   │   ├── serveronly
+│   │   │   └── index.js
+│   │   ├── tests
+│   │   │   ├── configs
+│   │   │   │   ├── customregions.js
+│   │   │   │   ├── default.js
+│   │   │   │   ├── empty_ipWhiteList.js
+│   │   │   │   ├── modules
+│   │   │   │   │   ├── alert
+│   │   │   │   │   │   └── default.js
+│   │   │   │   │   ├── calendar
+│   │   │   │   │   │   ├── 3_move_first_allday_repeating_event.js
+│   │   │   │   │   │   ├── auth-default.js
+│   │   │   │   │   │   ├── bad_rrule.js
+│   │   │   │   │   │   ├── basic-auth.js
+│   │   │   │   │   │   ├── berlin_end_of_day_repeating.js
+│   │   │   │   │   │   ├── berlin_multi.js
+│   │   │   │   │   │   ├── berlin_whole_day_event_moved_over_dst_change.js
+│   │   │   │   │   │   ├── changed-port.js
+│   │   │   │   │   │   ├── chicago-looking-at-ny-recurring.js
+│   │   │   │   │   │   ├── chicago_late_in_timezone.js
+│   │   │   │   │   │   ├── countCalendarEvents.js
+│   │   │   │   │   │   ├── custom.js
+│   │   │   │   │   │   ├── default.js
+│   │   │   │   │   │   ├── diff_tz_start_end.js
+│   │   │   │   │   │   ├── end_of_day_berlin_moved.js
+│   │   │   │   │   │   ├── event_with_time_over_multiple_days_non_repeating_display_end.js
+│   │   │   │   │   │   ├── event_with_time_over_multiple_days_non_repeating_no_display_end.js
+│   │   │   │   │   │   ├── exdate_and_recurrence_together.js
+│   │   │   │   │   │   ├── exdate_la_at_midnight_dst.js
+│   │   │   │   │   │   ├── exdate_la_at_midnight_std.js
+│   │   │   │   │   │   ├── exdate_la_before_midnight.js
+│   │   │   │   │   │   ├── exdate_syd_at_midnight_dst.js
+│   │   │   │   │   │   ├── exdate_syd_at_midnight_std.js
+│   │   │   │   │   │   ├── exdate_syd_before_midnight.js
+│   │   │   │   │   │   ├── fail-basic-auth.js
+│   │   │   │   │   │   ├── fullday_event_over_multiple_days_nonrepeating.js
+│   │   │   │   │   │   ├── germany_at_end_of_day_repeating.js
+│   │   │   │   │   │   ├── long-fullday-event.js
+│   │   │   │   │   │   ├── old-basic-auth.js
+│   │   │   │   │   │   ├── recurring.js
+│   │   │   │   │   │   ├── rrule_until.js
+│   │   │   │   │   │   ├── show-duplicates-in-calendar.js
+│   │   │   │   │   │   ├── single-fullday-event.js
+│   │   │   │   │   │   ├── sliceMultiDayEvents.js
+│   │   │   │   │   │   └── symboltest.js
+│   │   │   │   │   ├── clock
+│   │   │   │   │   │   ├── clock_12hr.js
+│   │   │   │   │   │   ├── clock_24hr.js
+│   │   │   │   │   │   ├── clock_analog.js
+│   │   │   │   │   │   ├── clock_displaySeconds_false.js
+│   │   │   │   │   │   ├── clock_showDateAnalog.js
+│   │   │   │   │   │   ├── clock_showPeriodUpper.js
+│   │   │   │   │   │   ├── clock_showSunMoon.js
+│   │   │   │   │   │   ├── clock_showTime.js
+│   │   │   │   │   │   ├── clock_showWeek.js
+│   │   │   │   │   │   └── es
+│   │   │   │   │   │       ├── clock_12hr.js
+│   │   │   │   │   │       ├── clock_24hr.js
+│   │   │   │   │   │       ├── clock_showPeriodUpper.js
+│   │   │   │   │   │       └── clock_showWeek.js
+│   │   │   │   │   ├── compliments
+│   │   │   │   │   │   ├── compliments_animateCSS.js
+│   │   │   │   │   │   ├── compliments_animateCSS_fallbackToDefault.js
+│   │   │   │   │   │   ├── compliments_animateCSS_invertedAnimationName.js
+│   │   │   │   │   │   ├── compliments_anytime.js
+│   │   │   │   │   │   ├── compliments_cron_entry.js
+│   │   │   │   │   │   ├── compliments_date.js
+│   │   │   │   │   │   ├── compliments_e2e_cron_entry.js
+│   │   │   │   │   │   ├── compliments_evening.js
+│   │   │   │   │   │   ├── compliments_file.js
+│   │   │   │   │   │   ├── compliments_file_change.js
+│   │   │   │   │   │   ├── compliments_only_anytime.js
+│   │   │   │   │   │   ├── compliments_parts_day.js
+│   │   │   │   │   │   ├── compliments_remote.js
+│   │   │   │   │   │   ├── compliments_specialDayUnique_false.js
+│   │   │   │   │   │   └── compliments_specialDayUnique_true.js
+│   │   │   │   │   ├── display.js
+│   │   │   │   │   ├── helloworld
+│   │   │   │   │   │   ├── helloworld.js
+│   │   │   │   │   │   └── helloworld_default.js
+│   │   │   │   │   ├── newsfeed
+│   │   │   │   │   │   ├── default.js
+│   │   │   │   │   │   ├── ignore_items.js
+│   │   │   │   │   │   ├── incorrect_url.js
+│   │   │   │   │   │   └── prohibited_words.js
+│   │   │   │   │   ├── positions.js
+│   │   │   │   │   └── weather
+│   │   │   │   │       ├── currentweather_compliments.js
+│   │   │   │   │       ├── currentweather_default.js
+│   │   │   │   │       ├── currentweather_options.js
+│   │   │   │   │       ├── currentweather_units.js
+│   │   │   │   │       ├── forecastweather_absolute.js
+│   │   │   │   │       ├── forecastweather_default.js
+│   │   │   │   │       ├── forecastweather_options.js
+│   │   │   │   │       ├── forecastweather_units.js
+│   │   │   │   │       ├── hourlyweather_default.js
+│   │   │   │   │       ├── hourlyweather_options.js
+│   │   │   │   │       └── hourlyweather_showPrecipitation.js
+│   │   │   │   ├── noIpWhiteList.js
+│   │   │   │   ├── port_8090.js
+│   │   │   │   ├── port_variable.env
+│   │   │   │   ├── port_variable.js.template
+│   │   │   │   └── without_modules.js
+│   │   │   ├── e2e
+│   │   │   │   ├── animateCSS_spec.js
+│   │   │   │   ├── custom_module_regions_spec.js
+│   │   │   │   ├── env_spec.js
+│   │   │   │   ├── fonts_spec.js
+│   │   │   │   ├── helpers
+│   │   │   │   │   ├── basic-auth.js
+│   │   │   │   │   ├── global-setup.js
+│   │   │   │   │   ├── mock-console.js
+│   │   │   │   │   └── weather-functions.js
+│   │   │   │   ├── ipWhitelist_spec.js
+│   │   │   │   ├── modules
+│   │   │   │   │   ├── alert_spec.js
+│   │   │   │   │   ├── calendar_spec.js
+│   │   │   │   │   ├── clock_es_spec.js
+│   │   │   │   │   ├── clock_spec.js
+│   │   │   │   │   ├── compliments_spec.js
+│   │   │   │   │   ├── helloworld_spec.js
+│   │   │   │   │   ├── newsfeed_spec.js
+│   │   │   │   │   ├── weather_current_spec.js
+│   │   │   │   │   ├── weather_forecast_spec.js
+│   │   │   │   │   └── weather_hourly_spec.js
+│   │   │   │   ├── modules_display_spec.js
+│   │   │   │   ├── modules_empty_spec.js
+│   │   │   │   ├── modules_position_spec.js
+│   │   │   │   ├── port_spec.js
+│   │   │   │   ├── serveronly_spec.js
+│   │   │   │   ├── template_spec.js
+│   │   │   │   ├── translations_spec.js
+│   │   │   │   └── vendor_spec.js
+│   │   │   ├── electron
+│   │   │   │   ├── env_spec.js
+│   │   │   │   ├── helpers
+│   │   │   │   │   ├── global-setup.js
+│   │   │   │   │   └── weather-setup.js
+│   │   │   │   └── modules
+│   │   │   │       ├── calendar_spec.js
+│   │   │   │       ├── compliments_spec.js
+│   │   │   │       └── weather_spec.js
+│   │   │   ├── mocks
+│   │   │   │   ├── 12_events.ics
+│   │   │   │   ├── 3_move_first_allday_repeating_event.ics
+│   │   │   │   ├── RepeatingEvent.Oct21.ics
+│   │   │   │   ├── bad_rrule.ics
+│   │   │   │   ├── calendar_test.ics
+│   │   │   │   ├── calendar_test_clone.ics
+│   │   │   │   ├── calendar_test_full_day_events.ics
+│   │   │   │   ├── calendar_test_icons.ics
+│   │   │   │   ├── calendar_test_multi_day_starting_today.ics
+│   │   │   │   ├── calendar_test_recurring.ics
+│   │   │   │   ├── chicago-nyedge.ics
+│   │   │   │   ├── chicago_late_in_timezone.ics
+│   │   │   │   ├── compliments_file.json
+│   │   │   │   ├── compliments_test.json
+│   │   │   │   ├── diff_tz_start_end.ics
+│   │   │   │   ├── end_of_day_berlin_moved.ics
+│   │   │   │   ├── event_with_time_over_multiple_days_non_repeating.ics
+│   │   │   │   ├── exdate_and_recurrence_together.ics
+│   │   │   │   ├── exdate_la_at_midnight_dst.ics
+│   │   │   │   ├── exdate_la_at_midnight_std.ics
+│   │   │   │   ├── exdate_la_before_midnight.ics
+│   │   │   │   ├── exdate_syd_at_midnight_dst.ics
+│   │   │   │   ├── exdate_syd_at_midnight_std.ics
+│   │   │   │   ├── exdate_syd_before_midnight.ics
+│   │   │   │   ├── fullday_event_over_multiple_days_nonrepeating.ics
+│   │   │   │   ├── germany_at_end_of_day_repeating.ics
+│   │   │   │   ├── newsfeed_test.xml
+│   │   │   │   ├── rrule_until.ics
+│   │   │   │   ├── sliceMultiDayEvents.ics
+│   │   │   │   ├── testNotification
+│   │   │   │   │   └── testNotification.js
+│   │   │   │   ├── translation_test.json
+│   │   │   │   ├── weather_current.json
+│   │   │   │   ├── weather_forecast.json
+│   │   │   │   ├── weather_hourly.json
+│   │   │   │   └── whole_day_moved_over_dst_change_berlin.ics
+│   │   │   ├── unit
+│   │   │   │   ├── classes
+│   │   │   │   │   ├── class_spec.js
+│   │   │   │   │   ├── deprecated_spec.js
+│   │   │   │   │   ├── translator_spec.js
+│   │   │   │   │   └── utils_spec.js
+│   │   │   │   ├── functions
+│   │   │   │   │   ├── __snapshots__
+│   │   │   │   │   │   └── updatenotification_spec.js.snap
+│   │   │   │   │   ├── cmp_versions_spec.js
+│   │   │   │   │   ├── server_functions_spec.js
+│   │   │   │   │   └── updatenotification_spec.js
+│   │   │   │   ├── global_vars
+│   │   │   │   │   ├── defaults_modules_spec.js
+│   │   │   │   │   └── root_path_spec.js
+│   │   │   │   ├── helpers
+│   │   │   │   │   └── global-setup.js
+│   │   │   │   └── modules
+│   │   │   │       └── default
+│   │   │   │           ├── calendar
+│   │   │   │           │   ├── calendar_fetcher_utils_bad_rrule.js
+│   │   │   │           │   ├── calendar_fetcher_utils_spec.js
+│   │   │   │           │   └── calendar_utils_spec.js
+│   │   │   │           ├── utils_spec.js
+│   │   │   │           └── weather
+│   │   │   │               ├── weather_object_spec.js
+│   │   │   │               └── weather_utils_spec.js
+│   │   │   └── utils
+│   │   │       ├── test_sequencer.js
+│   │   │       └── weather_mocker.js
+│   │   ├── translations
+│   │   │   ├── af.json
+│   │   │   ├── ar.json
+│   │   │   ├── bg.json
+│   │   │   ├── ca.json
+│   │   │   ├── cs.json
+│   │   │   ├── cv.json
+│   │   │   ├── cy.json
+│   │   │   ├── da.json
+│   │   │   ├── de.json
+│   │   │   ├── el.json
+│   │   │   ├── en.json
+│   │   │   ├── eo.json
+│   │   │   ├── es.json
+│   │   │   ├── et.json
+│   │   │   ├── fi.json
+│   │   │   ├── fr.json
+│   │   │   ├── fy.json
+│   │   │   ├── gl.json
+│   │   │   ├── gu.json
+│   │   │   ├── he.json
+│   │   │   ├── hi.json
+│   │   │   ├── hr.json
+│   │   │   ├── hu.json
+│   │   │   ├── id.json
+│   │   │   ├── is.json
+│   │   │   ├── it.json
+│   │   │   ├── ja.json
+│   │   │   ├── ko.json
+│   │   │   ├── lt.json
+│   │   │   ├── ms-my.json
+│   │   │   ├── nb.json
+│   │   │   ├── nl.json
+│   │   │   ├── nn.json
+│   │   │   ├── pl.json
+│   │   │   ├── ps.json
+│   │   │   ├── pt-br.json
+│   │   │   ├── pt.json
+│   │   │   ├── ro.json
+│   │   │   ├── ru.json
+│   │   │   ├── sk.json
+│   │   │   ├── sv.json
+│   │   │   ├── th.json
+│   │   │   ├── tlh.json
+│   │   │   ├── tr.json
+│   │   │   ├── translations.js
+│   │   │   ├── uk.json
+│   │   │   ├── vn.json
+│   │   │   ├── zh-cn.json
+│   │   │   └── zh-tw.json
+│   │   └── vendor
+│   │       ├── css
+│   │       │   └── font-awesome.css
+│   │       ├── package-lock.json
+│   │       ├── package.json
+│   │       └── vendor.js
+│   └── py_bridge
+│       └── requirements.txt
+├── frt_app
+│   ├── CMakeLists.txt
+│   ├── c_tflite_reader
+│   │   ├── CMakeLists.txt
+│   │   ├── include
+│   │   │   └── TfliteReader.h
+│   │   └── src
+│   │       ├── TfliteReader.c
+│   │       └── tflite_reader_test.c
+│   ├── cpp_camera_core
+│   │   ├── CMakeLists.txt
+│   │   ├── include
+│   │   │   ├── CameraConfig.hpp
+│   │   │   ├── ShmWriter.hpp
+│   │   │   ├── UvcStillMagic.hpp
+│   │   │   └── VideoCapture.hpp
+│   │   └── src
+│   │       ├── ShmWriter.cpp
+│   │       ├── VideoCapture.cpp
+│   │       ├── camera_test.cpp
+│   │       └── main.cpp
+│   ├── py_ai_core
+│   │   ├── models
+│   │   │   ├── YOLOv11n
+│   │   │   │   ├── YOLOv11n_260518_best_float16.tflite
+│   │   │   │   ├── YOLOv11n_260518_best_float32.tflite
+│   │   │   │   ├── YOLOv11n_260518_best_full_integer_quant.tflite
+│   │   │   │   ├── YOLOv11n_260518_best_int8.tflite
+│   │   │   │   └── YOLOv11n_260518_best_integer_quant.tflite
+│   │   │   └── YOLOv26n
+│   │   │       ├── YOLOv26n_260518_best_float16.tflite
+│   │   │       ├── YOLOv26n_260518_best_float32.tflite
+│   │   │       ├── YOLOv26n_260518_best_full_integer_quant(1).tflite
+│   │   │       ├── YOLOv26n_260518_best_int8.tflite
+│   │   │       └── YOLOv26n_260518_best_integer_quant.tflite
+│   │   ├── requirements.txt
+│   │   └── src
+│   │       ├── CameraUvcDriver.py
+│   │       ├── FrtDbusInterface.py
+│   │       ├── FrtMain.py
+│   │       ├── ImagePreprocessor.py
+│   │       ├── MotionDetector.py
+│   │       ├── SdbusInterface.py
+│   │       ├── ShmReader.py
+│   │       ├── YoloPipeline.py
+│   │       ├── YoloTfliteEngine.py
+│   │       ├── __init__.py
+│   │       ├── main.py
+│   │       ├── test_comprehensive_frt.py
+│   │       ├── test_phase1.py
+│   │       ├── test_phase2.py
+│   │       └── test_user_scenario_frtapp.py
+│   └── tests
+│       ├── __init__.py
+│       ├── live_camera_pipeline.py
+│       ├── run_frt_full_test.sh
+│       ├── run_live_camera_test.sh
+│       ├── test_comprehensive_frt.py
+│       ├── test_phase1.py
+│       ├── test_phase2.py
+│       ├── test_user_scenario_frtapp.py
+│       ├── tflite_reader_test.c
+│       └── user_scenario_pipeline.py
+├── fss-test
+│   ├── benchmark_results
+│   │   ├── run_20260423_004317
+│   │   │   ├── benchmark_summary_model_int8.csv
+│   │   │   ├── eval_per_class_model_int8_t1.csv
+│   │   │   ├── eval_per_class_model_int8_t2.csv
+│   │   │   ├── eval_per_class_model_int8_t4.csv
+│   │   │   ├── results_model_int8_t1.csv
+│   │   │   ├── results_model_int8_t2.csv
+│   │   │   └── results_model_int8_t4.csv
+│   │   ├── run_20260423_005404
+│   │   │   ├── benchmark_summary_model_fp32.csv
+│   │   │   ├── eval_per_class_model_fp32_t1.csv
+│   │   │   ├── eval_per_class_model_fp32_t2.csv
+│   │   │   ├── eval_per_class_model_fp32_t4.csv
+│   │   │   ├── results_model_fp32_t1.csv
+│   │   │   ├── results_model_fp32_t2.csv
+│   │   │   └── results_model_fp32_t4.csv
+│   │   └── run_20260423_010228
+│   │       ├── benchmark_summary_model_fp16.csv
+│   │       ├── eval_per_class_model_fp16_t4.csv
+│   │       └── results_model_fp16_t4.csv
+│   ├── models
+│   │   ├── model_fp16.tflite
+│   │   ├── model_fp32.tflite
+│   │   └── model_int8.tflite
+│   ├── results
+│   │   └── run_20260423_010722
+│   │       ├── benchmark_summary_model_int8.csv
+│   │       ├── eval_per_class_model_int8_t2.csv
+│   │       └── results_model_int8_t2.csv
+│   ├── test-cases.sh
+│   └── test-inference.py
+├── fss_env_setup.sh
+├── fss_folder_structure.txt
+├── recommend_daemon
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── DbusInterface.py
+│   │   ├── RecommendDbManager.py
+│   │   ├── RecommendEngine.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   ├── systemd
+│   │   └── recommend_daemon.service
+│   └── tests
+│       ├── __init__.py
+│       └── test_recommend_engine.py
+├── recommend_system
+│   ├── FSS_NLP.ipynb
+│   ├── PHASE2_COMPLETION_SUMMARY.md
+│   ├── __init__.py
+│   ├── data
+│   │   └── recipes
+│   │       ├── 1.json
+│   │       ├── 10.json
+│   │       ├── 100.json
+│   │       ├── 1000.json
+│   │       ├── 1001.json
+│   │       ├── 1002.json
+│   │       ├── 1003.json
+│   │       ├── 1004.json
+│   │       ├── 1005.json
+│   │       ├── 1006.json
+│   │       ├── 1007.json
+│   │       ├── 1008.json
+│   │       ├── 1009.json
+│   │       ├── 101.json
+│   │       ├── 1010.json
+│   │       ├── 1011.json
+│   │       ├── 1012.json
+│   │       ├── 1013.json
+│   │       ├── 1014.json
+│   │       ├── 1015.json
+│   │       ├── 1016.json
+│   │       ├── 1017.json
+│   │       ├── 1018.json
+│   │       ├── 1019.json
+│   │       ├── 102.json
+│   │       ├── 1020.json
+│   │       ├── 1021.json
+│   │       ├── 1022.json
+│   │       ├── 1023.json
+│   │       ├── 1024.json
+│   │       ├── 1025.json
+│   │       ├── 1026.json
+│   │       ├── 1027.json
+│   │       ├── 1028.json
+│   │       ├── 1029.json
+│   │       ├── 103.json
+│   │       ├── 1030.json
+│   │       ├── 1031.json
+│   │       ├── 1032.json
+│   │       ├── 1033.json
+│   │       ├── 1034.json
+│   │       ├── 1035.json
+│   │       ├── 1036.json
+│   │       ├── 1037.json
+│   │       ├── 1038.json
+│   │       ├── 1039.json
+│   │       ├── 104.json
+│   │       ├── 1040.json
+│   │       ├── 1041.json
+│   │       ├── 1042.json
+│   │       ├── 1043.json
+│   │       ├── 1044.json
+│   │       ├── 1045.json
+│   │       ├── 1046.json
+│   │       ├── 1047.json
+│   │       ├── 1048.json
+│   │       ├── 1049.json
+│   │       ├── 105.json
+│   │       ├── 1050.json
+│   │       ├── 1051.json
+│   │       ├── 1052.json
+│   │       ├── 1053.json
+│   │       ├── 1054.json
+│   │       ├── 1055.json
+│   │       ├── 1056.json
+│   │       ├── 1057.json
+│   │       ├── 1058.json
+│   │       ├── 1059.json
+│   │       ├── 106.json
+│   │       ├── 1060.json
+│   │       ├── 1061.json
+│   │       ├── 1062.json
+│   │       ├── 1063.json
+│   │       ├── 1064.json
+│   │       ├── 1065.json
+│   │       ├── 1066.json
+│   │       ├── 1067.json
+│   │       ├── 1068.json
+│   │       ├── 1069.json
+│   │       ├── 107.json
+│   │       ├── 1070.json
+│   │       ├── 1071.json
+│   │       ├── 1072.json
+│   │       ├── 1073.json
+│   │       ├── 1074.json
+│   │       ├── 1075.json
+│   │       ├── 1076.json
+│   │       ├── 1077.json
+│   │       ├── 1078.json
+│   │       ├── 1079.json
+│   │       ├── 108.json
+│   │       ├── 1080.json
+│   │       ├── 1081.json
+│   │       ├── 1082.json
+│   │       ├── 1083.json
+│   │       ├── 1084.json
+│   │       ├── 1085.json
+│   │       ├── 1086.json
+│   │       ├── 1087.json
+│   │       ├── 1088.json
+│   │       ├── 1089.json
+│   │       ├── 109.json
+│   │       ├── 1090.json
+│   │       ├── 1091.json
+│   │       ├── 1092.json
+│   │       ├── 1093.json
+│   │       ├── 1094.json
+│   │       ├── 1095.json
+│   │       ├── 1096.json
+│   │       ├── 1097.json
+│   │       ├── 1098.json
+│   │       ├── 1099.json
+│   │       ├── 11.json
+│   │       ├── 110.json
+│   │       ├── 1100.json
+│   │       ├── 1101.json
+│   │       ├── 1102.json
+│   │       ├── 1103.json
+│   │       ├── 1104.json
+│   │       ├── 1105.json
+│   │       ├── 1106.json
+│   │       ├── 1107.json
+│   │       ├── 1108.json
+│   │       ├── 1109.json
+│   │       ├── 111.json
+│   │       ├── 1110.json
+│   │       ├── 1111.json
+│   │       ├── 1112.json
+│   │       ├── 1113.json
+│   │       ├── 1114.json
+│   │       ├── 1115.json
+│   │       ├── 1116.json
+│   │       ├── 1117.json
+│   │       ├── 1118.json
+│   │       ├── 1119.json
+│   │       ├── 112.json
+│   │       ├── 1120.json
+│   │       ├── 1121.json
+│   │       ├── 1122.json
+│   │       ├── 1123.json
+│   │       ├── 1124.json
+│   │       ├── 1125.json
+│   │       ├── 1126.json
+│   │       ├── 1127.json
+│   │       ├── 1128.json
+│   │       ├── 1129.json
+│   │       ├── 113.json
+│   │       ├── 1130.json
+│   │       ├── 1131.json
+│   │       ├── 1132.json
+│   │       ├── 1133.json
+│   │       ├── 1134.json
+│   │       ├── 1135.json
+│   │       ├── 1136.json
+│   │       ├── 1137.json
+│   │       ├── 1138.json
+│   │       ├── 1139.json
+│   │       ├── 114.json
+│   │       ├── 1140.json
+│   │       ├── 1141.json
+│   │       ├── 1142.json
+│   │       ├── 1143.json
+│   │       ├── 1144.json
+│   │       ├── 1145.json
+│   │       ├── 1146.json
+│   │       ├── 1147.json
+│   │       ├── 1148.json
+│   │       ├── 1149.json
+│   │       ├── 115.json
+│   │       ├── 1150.json
+│   │       ├── 1151.json
+│   │       ├── 1152.json
+│   │       ├── 1153.json
+│   │       ├── 1154.json
+│   │       ├── 1155.json
+│   │       ├── 1156.json
+│   │       ├── 1157.json
+│   │       ├── 1158.json
+│   │       ├── 1159.json
+│   │       ├── 116.json
+│   │       ├── 1160.json
+│   │       ├── 1161.json
+│   │       ├── 1162.json
+│   │       ├── 1163.json
+│   │       ├── 1164.json
+│   │       ├── 1165.json
+│   │       ├── 1166.json
+│   │       ├── 1167.json
+│   │       ├── 1168.json
+│   │       ├── 1169.json
+│   │       ├── 117.json
+│   │       ├── 1170.json
+│   │       ├── 1171.json
+│   │       ├── 1172.json
+│   │       ├── 1173.json
+│   │       ├── 1174.json
+│   │       ├── 1175.json
+│   │       ├── 1176.json
+│   │       ├── 1177.json
+│   │       ├── 1178.json
+│   │       ├── 1179.json
+│   │       ├── 118.json
+│   │       ├── 1180.json
+│   │       ├── 1181.json
+│   │       ├── 1182.json
+│   │       ├── 1183.json
+│   │       ├── 1184.json
+│   │       ├── 1185.json
+│   │       ├── 1186.json
+│   │       ├── 1187.json
+│   │       ├── 1188.json
+│   │       ├── 1189.json
+│   │       ├── 119.json
+│   │       ├── 1190.json
+│   │       ├── 1191.json
+│   │       ├── 1192.json
+│   │       ├── 1193.json
+│   │       ├── 1194.json
+│   │       ├── 1195.json
+│   │       ├── 1196.json
+│   │       ├── 1197.json
+│   │       ├── 1198.json
+│   │       ├── 1199.json
+│   │       ├── 12.json
+│   │       ├── 120.json
+│   │       ├── 1200.json
+│   │       ├── 1201.json
+│   │       ├── 1202.json
+│   │       ├── 1203.json
+│   │       ├── 1204.json
+│   │       ├── 1205.json
+│   │       ├── 1206.json
+│   │       ├── 1207.json
+│   │       ├── 1208.json
+│   │       ├── 1209.json
+│   │       ├── 121.json
+│   │       ├── 1210.json
+│   │       ├── 1211.json
+│   │       ├── 1212.json
+│   │       ├── 1213.json
+│   │       ├── 1214.json
+│   │       ├── 1215.json
+│   │       ├── 1216.json
+│   │       ├── 1217.json
+│   │       ├── 1218.json
+│   │       ├── 1219.json
+│   │       ├── 122.json
+│   │       ├── 1220.json
+│   │       ├── 1221.json
+│   │       ├── 1222.json
+│   │       ├── 1223.json
+│   │       ├── 1224.json
+│   │       ├── 1225.json
+│   │       ├── 1226.json
+│   │       ├── 1227.json
+│   │       ├── 1228.json
+│   │       ├── 1229.json
+│   │       ├── 123.json
+│   │       ├── 1230.json
+│   │       ├── 1231.json
+│   │       ├── 1232.json
+│   │       ├── 1233.json
+│   │       ├── 1234.json
+│   │       ├── 1235.json
+│   │       ├── 1236.json
+│   │       ├── 1237.json
+│   │       ├── 1238.json
+│   │       ├── 1239.json
+│   │       ├── 124.json
+│   │       ├── 1240.json
+│   │       ├── 1241.json
+│   │       ├── 1242.json
+│   │       ├── 1243.json
+│   │       ├── 1244.json
+│   │       ├── 1245.json
+│   │       ├── 1246.json
+│   │       ├── 1247.json
+│   │       ├── 1248.json
+│   │       ├── 1249.json
+│   │       ├── 125.json
+│   │       ├── 1250.json
+│   │       ├── 1251.json
+│   │       ├── 1252.json
+│   │       ├── 1253.json
+│   │       ├── 1254.json
+│   │       ├── 1255.json
+│   │       ├── 1256.json
+│   │       ├── 1257.json
+│   │       ├── 1258.json
+│   │       ├── 1259.json
+│   │       ├── 126.json
+│   │       ├── 1260.json
+│   │       ├── 1261.json
+│   │       ├── 1262.json
+│   │       ├── 1263.json
+│   │       ├── 1264.json
+│   │       ├── 1265.json
+│   │       ├── 1266.json
+│   │       ├── 1267.json
+│   │       ├── 1268.json
+│   │       ├── 1269.json
+│   │       ├── 127.json
+│   │       ├── 1270.json
+│   │       ├── 1271.json
+│   │       ├── 1272.json
+│   │       ├── 1273.json
+│   │       ├── 1274.json
+│   │       ├── 1275.json
+│   │       ├── 1276.json
+│   │       ├── 1277.json
+│   │       ├── 1278.json
+│   │       ├── 1279.json
+│   │       ├── 128.json
+│   │       ├── 1280.json
+│   │       ├── 1281.json
+│   │       ├── 1282.json
+│   │       ├── 1283.json
+│   │       ├── 1284.json
+│   │       ├── 1285.json
+│   │       ├── 1286.json
+│   │       ├── 1287.json
+│   │       ├── 1288.json
+│   │       ├── 1289.json
+│   │       ├── 129.json
+│   │       ├── 1290.json
+│   │       ├── 1291.json
+│   │       ├── 1292.json
+│   │       ├── 1293.json
+│   │       ├── 1294.json
+│   │       ├── 1295.json
+│   │       ├── 1296.json
+│   │       ├── 1297.json
+│   │       ├── 1298.json
+│   │       ├── 1299.json
+│   │       ├── 13.json
+│   │       ├── 130.json
+│   │       ├── 1300.json
+│   │       ├── 1301.json
+│   │       ├── 1302.json
+│   │       ├── 1303.json
+│   │       ├── 1304.json
+│   │       ├── 1305.json
+│   │       ├── 1306.json
+│   │       ├── 1307.json
+│   │       ├── 1308.json
+│   │       ├── 1309.json
+│   │       ├── 131.json
+│   │       ├── 1310.json
+│   │       ├── 1311.json
+│   │       ├── 1312.json
+│   │       ├── 1313.json
+│   │       ├── 1314.json
+│   │       ├── 1315.json
+│   │       ├── 1316.json
+│   │       ├── 1317.json
+│   │       ├── 1318.json
+│   │       ├── 1319.json
+│   │       ├── 132.json
+│   │       ├── 1320.json
+│   │       ├── 1321.json
+│   │       ├── 1322.json
+│   │       ├── 1323.json
+│   │       ├── 1324.json
+│   │       ├── 1325.json
+│   │       ├── 1326.json
+│   │       ├── 1327.json
+│   │       ├── 1328.json
+│   │       ├── 1329.json
+│   │       ├── 133.json
+│   │       ├── 1330.json
+│   │       ├── 1331.json
+│   │       ├── 1332.json
+│   │       ├── 1333.json
+│   │       ├── 1334.json
+│   │       ├── 1335.json
+│   │       ├── 1336.json
+│   │       ├── 1337.json
+│   │       ├── 1338.json
+│   │       ├── 1339.json
+│   │       ├── 134.json
+│   │       ├── 1340.json
+│   │       ├── 1341.json
+│   │       ├── 1342.json
+│   │       ├── 1343.json
+│   │       ├── 1344.json
+│   │       ├── 1345.json
+│   │       ├── 1346.json
+│   │       ├── 1347.json
+│   │       ├── 1348.json
+│   │       ├── 1349.json
+│   │       ├── 135.json
+│   │       ├── 1350.json
+│   │       ├── 1351.json
+│   │       ├── 1352.json
+│   │       ├── 1353.json
+│   │       ├── 1354.json
+│   │       ├── 1355.json
+│   │       ├── 1356.json
+│   │       ├── 1357.json
+│   │       ├── 1358.json
+│   │       ├── 1359.json
+│   │       ├── 136.json
+│   │       ├── 1360.json
+│   │       ├── 1361.json
+│   │       ├── 1362.json
+│   │       ├── 1363.json
+│   │       ├── 1364.json
+│   │       ├── 1365.json
+│   │       ├── 1366.json
+│   │       ├── 1367.json
+│   │       ├── 1368.json
+│   │       ├── 1369.json
+│   │       ├── 137.json
+│   │       ├── 1370.json
+│   │       ├── 1371.json
+│   │       ├── 1372.json
+│   │       ├── 1373.json
+│   │       ├── 1374.json
+│   │       ├── 1375.json
+│   │       ├── 1376.json
+│   │       ├── 1377.json
+│   │       ├── 1378.json
+│   │       ├── 1379.json
+│   │       ├── 138.json
+│   │       ├── 1380.json
+│   │       ├── 1381.json
+│   │       ├── 1382.json
+│   │       ├── 1383.json
+│   │       ├── 1384.json
+│   │       ├── 1385.json
+│   │       ├── 1386.json
+│   │       ├── 1387.json
+│   │       ├── 1388.json
+│   │       ├── 1389.json
+│   │       ├── 139.json
+│   │       ├── 1390.json
+│   │       ├── 1391.json
+│   │       ├── 1392.json
+│   │       ├── 1393.json
+│   │       ├── 1394.json
+│   │       ├── 1395.json
+│   │       ├── 1396.json
+│   │       ├── 1397.json
+│   │       ├── 1398.json
+│   │       ├── 1399.json
+│   │       ├── 14.json
+│   │       ├── 140.json
+│   │       ├── 1400.json
+│   │       ├── 1401.json
+│   │       ├── 1402.json
+│   │       ├── 1403.json
+│   │       ├── 1404.json
+│   │       ├── 1405.json
+│   │       ├── 1406.json
+│   │       ├── 1407.json
+│   │       ├── 1408.json
+│   │       ├── 1409.json
+│   │       ├── 141.json
+│   │       ├── 1410.json
+│   │       ├── 1411.json
+│   │       ├── 1412.json
+│   │       ├── 1413.json
+│   │       ├── 1414.json
+│   │       ├── 1415.json
+│   │       ├── 1416.json
+│   │       ├── 1417.json
+│   │       ├── 1418.json
+│   │       ├── 1419.json
+│   │       ├── 142.json
+│   │       ├── 1420.json
+│   │       ├── 1421.json
+│   │       ├── 1422.json
+│   │       ├── 1423.json
+│   │       ├── 1424.json
+│   │       ├── 1425.json
+│   │       ├── 1426.json
+│   │       ├── 1427.json
+│   │       ├── 1428.json
+│   │       ├── 1429.json
+│   │       ├── 143.json
+│   │       ├── 1430.json
+│   │       ├── 1431.json
+│   │       ├── 1432.json
+│   │       ├── 1433.json
+│   │       ├── 1434.json
+│   │       ├── 1435.json
+│   │       ├── 1436.json
+│   │       ├── 1437.json
+│   │       ├── 1438.json
+│   │       ├── 1439.json
+│   │       ├── 144.json
+│   │       ├── 1440.json
+│   │       ├── 1441.json
+│   │       ├── 1442.json
+│   │       ├── 1443.json
+│   │       ├── 1444.json
+│   │       ├── 1445.json
+│   │       ├── 1446.json
+│   │       ├── 1447.json
+│   │       ├── 1448.json
+│   │       ├── 1449.json
+│   │       ├── 145.json
+│   │       ├── 1450.json
+│   │       ├── 1451.json
+│   │       ├── 1452.json
+│   │       ├── 1453.json
+│   │       ├── 1454.json
+│   │       ├── 1455.json
+│   │       ├── 1456.json
+│   │       ├── 1457.json
+│   │       ├── 1458.json
+│   │       ├── 1459.json
+│   │       ├── 146.json
+│   │       ├── 1460.json
+│   │       ├── 1461.json
+│   │       ├── 1462.json
+│   │       ├── 1463.json
+│   │       ├── 1464.json
+│   │       ├── 1465.json
+│   │       ├── 1466.json
+│   │       ├── 1467.json
+│   │       ├── 1468.json
+│   │       ├── 1469.json
+│   │       ├── 147.json
+│   │       ├── 1470.json
+│   │       ├── 1471.json
+│   │       ├── 1472.json
+│   │       ├── 1473.json
+│   │       ├── 1474.json
+│   │       ├── 1475.json
+│   │       ├── 1476.json
+│   │       ├── 1477.json
+│   │       ├── 1478.json
+│   │       ├── 1479.json
+│   │       ├── 148.json
+│   │       ├── 1480.json
+│   │       ├── 1481.json
+│   │       ├── 1482.json
+│   │       ├── 1483.json
+│   │       ├── 1484.json
+│   │       ├── 1485.json
+│   │       ├── 1486.json
+│   │       ├── 1487.json
+│   │       ├── 1488.json
+│   │       ├── 1489.json
+│   │       ├── 149.json
+│   │       ├── 1490.json
+│   │       ├── 1491.json
+│   │       ├── 1492.json
+│   │       ├── 1493.json
+│   │       ├── 1494.json
+│   │       ├── 1495.json
+│   │       ├── 1496.json
+│   │       ├── 1497.json
+│   │       ├── 1498.json
+│   │       ├── 1499.json
+│   │       ├── 15.json
+│   │       ├── 150.json
+│   │       ├── 1500.json
+│   │       ├── 1501.json
+│   │       ├── 1502.json
+│   │       ├── 1503.json
+│   │       ├── 1504.json
+│   │       ├── 1505.json
+│   │       ├── 1506.json
+│   │       ├── 1507.json
+│   │       ├── 1508.json
+│   │       ├── 1509.json
+│   │       ├── 151.json
+│   │       ├── 1510.json
+│   │       ├── 1511.json
+│   │       ├── 1512.json
+│   │       ├── 1513.json
+│   │       ├── 1514.json
+│   │       ├── 1515.json
+│   │       ├── 1516.json
+│   │       ├── 1517.json
+│   │       ├── 1518.json
+│   │       ├── 1519.json
+│   │       ├── 152.json
+│   │       ├── 1520.json
+│   │       ├── 1521.json
+│   │       ├── 1522.json
+│   │       ├── 1523.json
+│   │       ├── 1524.json
+│   │       ├── 1525.json
+│   │       ├── 1526.json
+│   │       ├── 1527.json
+│   │       ├── 1528.json
+│   │       ├── 1529.json
+│   │       ├── 153.json
+│   │       ├── 1530.json
+│   │       ├── 1531.json
+│   │       ├── 1532.json
+│   │       ├── 1533.json
+│   │       ├── 1534.json
+│   │       ├── 1535.json
+│   │       ├── 1536.json
+│   │       ├── 1537.json
+│   │       ├── 1538.json
+│   │       ├── 1539.json
+│   │       ├── 154.json
+│   │       ├── 1540.json
+│   │       ├── 1541.json
+│   │       ├── 1542.json
+│   │       ├── 1543.json
+│   │       ├── 1544.json
+│   │       ├── 1545.json
+│   │       ├── 1546.json
+│   │       ├── 1547.json
+│   │       ├── 1548.json
+│   │       ├── 1549.json
+│   │       ├── 155.json
+│   │       ├── 1550.json
+│   │       ├── 1551.json
+│   │       ├── 1552.json
+│   │       ├── 1553.json
+│   │       ├── 1554.json
+│   │       ├── 1555.json
+│   │       ├── 1556.json
+│   │       ├── 1557.json
+│   │       ├── 1558.json
+│   │       ├── 1559.json
+│   │       ├── 156.json
+│   │       ├── 1560.json
+│   │       ├── 1561.json
+│   │       ├── 1562.json
+│   │       ├── 1563.json
+│   │       ├── 1564.json
+│   │       ├── 1565.json
+│   │       ├── 1566.json
+│   │       ├── 1567.json
+│   │       ├── 1568.json
+│   │       ├── 1569.json
+│   │       ├── 157.json
+│   │       ├── 1570.json
+│   │       ├── 1571.json
+│   │       ├── 1572.json
+│   │       ├── 1573.json
+│   │       ├── 1574.json
+│   │       ├── 1575.json
+│   │       ├── 1576.json
+│   │       ├── 1577.json
+│   │       ├── 1578.json
+│   │       ├── 1579.json
+│   │       ├── 158.json
+│   │       ├── 1580.json
+│   │       ├── 1581.json
+│   │       ├── 1582.json
+│   │       ├── 1583.json
+│   │       ├── 1584.json
+│   │       ├── 1585.json
+│   │       ├── 1586.json
+│   │       ├── 1587.json
+│   │       ├── 1588.json
+│   │       ├── 1589.json
+│   │       ├── 159.json
+│   │       ├── 1590.json
+│   │       ├── 1591.json
+│   │       ├── 1592.json
+│   │       ├── 1593.json
+│   │       ├── 1594.json
+│   │       ├── 1595.json
+│   │       ├── 1596.json
+│   │       ├── 1597.json
+│   │       ├── 1598.json
+│   │       ├── 1599.json
+│   │       ├── 16.json
+│   │       ├── 160.json
+│   │       ├── 1600.json
+│   │       ├── 1601.json
+│   │       ├── 1602.json
+│   │       ├── 1603.json
+│   │       ├── 1604.json
+│   │       ├── 1605.json
+│   │       ├── 1606.json
+│   │       ├── 1607.json
+│   │       ├── 1608.json
+│   │       ├── 1609.json
+│   │       ├── 161.json
+│   │       ├── 1610.json
+│   │       ├── 1611.json
+│   │       ├── 1612.json
+│   │       ├── 1613.json
+│   │       ├── 1614.json
+│   │       ├── 1615.json
+│   │       ├── 1616.json
+│   │       ├── 1617.json
+│   │       ├── 1618.json
+│   │       ├── 1619.json
+│   │       ├── 162.json
+│   │       ├── 1620.json
+│   │       ├── 1621.json
+│   │       ├── 1622.json
+│   │       ├── 1623.json
+│   │       ├── 1624.json
+│   │       ├── 1625.json
+│   │       ├── 1626.json
+│   │       ├── 1627.json
+│   │       ├── 1628.json
+│   │       ├── 1629.json
+│   │       ├── 163.json
+│   │       ├── 1630.json
+│   │       ├── 1631.json
+│   │       ├── 1632.json
+│   │       ├── 1633.json
+│   │       ├── 1634.json
+│   │       ├── 1635.json
+│   │       ├── 1636.json
+│   │       ├── 1637.json
+│   │       ├── 1638.json
+│   │       ├── 1639.json
+│   │       ├── 164.json
+│   │       ├── 1640.json
+│   │       ├── 1641.json
+│   │       ├── 1642.json
+│   │       ├── 1643.json
+│   │       ├── 1644.json
+│   │       ├── 1645.json
+│   │       ├── 1646.json
+│   │       ├── 1647.json
+│   │       ├── 1648.json
+│   │       ├── 1649.json
+│   │       ├── 165.json
+│   │       ├── 1650.json
+│   │       ├── 1651.json
+│   │       ├── 1652.json
+│   │       ├── 1653.json
+│   │       ├── 1654.json
+│   │       ├── 1655.json
+│   │       ├── 1656.json
+│   │       ├── 1657.json
+│   │       ├── 1658.json
+│   │       ├── 1659.json
+│   │       ├── 166.json
+│   │       ├── 1660.json
+│   │       ├── 1661.json
+│   │       ├── 1662.json
+│   │       ├── 1663.json
+│   │       ├── 1664.json
+│   │       ├── 1665.json
+│   │       ├── 1666.json
+│   │       ├── 1667.json
+│   │       ├── 1668.json
+│   │       ├── 1669.json
+│   │       ├── 167.json
+│   │       ├── 1670.json
+│   │       ├── 1671.json
+│   │       ├── 1672.json
+│   │       ├── 1673.json
+│   │       ├── 1674.json
+│   │       ├── 1675.json
+│   │       ├── 1676.json
+│   │       ├── 1677.json
+│   │       ├── 1678.json
+│   │       ├── 1679.json
+│   │       ├── 168.json
+│   │       ├── 1680.json
+│   │       ├── 1681.json
+│   │       ├── 1682.json
+│   │       ├── 1683.json
+│   │       ├── 1684.json
+│   │       ├── 1685.json
+│   │       ├── 1686.json
+│   │       ├── 1687.json
+│   │       ├── 1688.json
+│   │       ├── 1689.json
+│   │       ├── 169.json
+│   │       ├── 1690.json
+│   │       ├── 1691.json
+│   │       ├── 1692.json
+│   │       ├── 1693.json
+│   │       ├── 1694.json
+│   │       ├── 1695.json
+│   │       ├── 1696.json
+│   │       ├── 1697.json
+│   │       ├── 1698.json
+│   │       ├── 1699.json
+│   │       ├── 17.json
+│   │       ├── 170.json
+│   │       ├── 1700.json
+│   │       ├── 1701.json
+│   │       ├── 1702.json
+│   │       ├── 1703.json
+│   │       ├── 1704.json
+│   │       ├── 1705.json
+│   │       ├── 1706.json
+│   │       ├── 1707.json
+│   │       ├── 1708.json
+│   │       ├── 1709.json
+│   │       ├── 171.json
+│   │       ├── 1710.json
+│   │       ├── 1711.json
+│   │       ├── 1712.json
+│   │       ├── 1713.json
+│   │       ├── 1714.json
+│   │       ├── 1715.json
+│   │       ├── 1716.json
+│   │       ├── 1717.json
+│   │       ├── 1718.json
+│   │       ├── 1719.json
+│   │       ├── 172.json
+│   │       ├── 1720.json
+│   │       ├── 1721.json
+│   │       ├── 1722.json
+│   │       ├── 1723.json
+│   │       ├── 1724.json
+│   │       ├── 1725.json
+│   │       ├── 1726.json
+│   │       ├── 1727.json
+│   │       ├── 1728.json
+│   │       ├── 1729.json
+│   │       ├── 173.json
+│   │       ├── 1730.json
+│   │       ├── 1731.json
+│   │       ├── 1732.json
+│   │       ├── 1733.json
+│   │       ├── 1734.json
+│   │       ├── 1735.json
+│   │       ├── 1736.json
+│   │       ├── 1737.json
+│   │       ├── 1738.json
+│   │       ├── 1739.json
+│   │       ├── 174.json
+│   │       ├── 1740.json
+│   │       ├── 1741.json
+│   │       ├── 1742.json
+│   │       ├── 1743.json
+│   │       ├── 1744.json
+│   │       ├── 1745.json
+│   │       ├── 1746.json
+│   │       ├── 1747.json
+│   │       ├── 1748.json
+│   │       ├── 1749.json
+│   │       ├── 175.json
+│   │       ├── 1750.json
+│   │       ├── 1751.json
+│   │       ├── 1752.json
+│   │       ├── 1753.json
+│   │       ├── 1754.json
+│   │       ├── 1755.json
+│   │       ├── 1756.json
+│   │       ├── 1757.json
+│   │       ├── 1758.json
+│   │       ├── 1759.json
+│   │       ├── 176.json
+│   │       ├── 1760.json
+│   │       ├── 1761.json
+│   │       ├── 1762.json
+│   │       ├── 1763.json
+│   │       ├── 1764.json
+│   │       ├── 1765.json
+│   │       ├── 1766.json
+│   │       ├── 1767.json
+│   │       ├── 1768.json
+│   │       ├── 1769.json
+│   │       ├── 177.json
+│   │       ├── 1770.json
+│   │       ├── 1771.json
+│   │       ├── 1772.json
+│   │       ├── 1773.json
+│   │       ├── 1774.json
+│   │       ├── 1775.json
+│   │       ├── 1776.json
+│   │       ├── 1777.json
+│   │       ├── 1778.json
+│   │       ├── 1779.json
+│   │       ├── 178.json
+│   │       ├── 1780.json
+│   │       ├── 1781.json
+│   │       ├── 1782.json
+│   │       ├── 1783.json
+│   │       ├── 1784.json
+│   │       ├── 1785.json
+│   │       ├── 1786.json
+│   │       ├── 1787.json
+│   │       ├── 1788.json
+│   │       ├── 1789.json
+│   │       ├── 179.json
+│   │       ├── 1790.json
+│   │       ├── 1791.json
+│   │       ├── 1792.json
+│   │       ├── 1793.json
+│   │       ├── 1794.json
+│   │       ├── 1795.json
+│   │       ├── 1796.json
+│   │       ├── 1797.json
+│   │       ├── 1798.json
+│   │       ├── 1799.json
+│   │       ├── 18.json
+│   │       ├── 180.json
+│   │       ├── 1800.json
+│   │       ├── 1801.json
+│   │       ├── 1802.json
+│   │       ├── 1803.json
+│   │       ├── 1804.json
+│   │       ├── 1805.json
+│   │       ├── 1806.json
+│   │       ├── 1807.json
+│   │       ├── 1808.json
+│   │       ├── 1809.json
+│   │       ├── 181.json
+│   │       ├── 1810.json
+│   │       ├── 1811.json
+│   │       ├── 1812.json
+│   │       ├── 1813.json
+│   │       ├── 1814.json
+│   │       ├── 1815.json
+│   │       ├── 1816.json
+│   │       ├── 1817.json
+│   │       ├── 1818.json
+│   │       ├── 1819.json
+│   │       ├── 182.json
+│   │       ├── 1820.json
+│   │       ├── 1821.json
+│   │       ├── 1822.json
+│   │       ├── 1823.json
+│   │       ├── 1824.json
+│   │       ├── 1825.json
+│   │       ├── 1826.json
+│   │       ├── 1827.json
+│   │       ├── 1828.json
+│   │       ├── 1829.json
+│   │       ├── 183.json
+│   │       ├── 1830.json
+│   │       ├── 1831.json
+│   │       ├── 1832.json
+│   │       ├── 1833.json
+│   │       ├── 1834.json
+│   │       ├── 1835.json
+│   │       ├── 1836.json
+│   │       ├── 1837.json
+│   │       ├── 1838.json
+│   │       ├── 1839.json
+│   │       ├── 184.json
+│   │       ├── 1840.json
+│   │       ├── 1841.json
+│   │       ├── 1842.json
+│   │       ├── 1843.json
+│   │       ├── 1844.json
+│   │       ├── 1845.json
+│   │       ├── 1846.json
+│   │       ├── 1847.json
+│   │       ├── 1848.json
+│   │       ├── 1849.json
+│   │       ├── 185.json
+│   │       ├── 1850.json
+│   │       ├── 1851.json
+│   │       ├── 1852.json
+│   │       ├── 1853.json
+│   │       ├── 1854.json
+│   │       ├── 1855.json
+│   │       ├── 1856.json
+│   │       ├── 1857.json
+│   │       ├── 1858.json
+│   │       ├── 1859.json
+│   │       ├── 186.json
+│   │       ├── 1860.json
+│   │       ├── 1861.json
+│   │       ├── 1862.json
+│   │       ├── 1863.json
+│   │       ├── 1864.json
+│   │       ├── 1865.json
+│   │       ├── 1866.json
+│   │       ├── 1867.json
+│   │       ├── 1868.json
+│   │       ├── 1869.json
+│   │       ├── 187.json
+│   │       ├── 1870.json
+│   │       ├── 1871.json
+│   │       ├── 1872.json
+│   │       ├── 1873.json
+│   │       ├── 1874.json
+│   │       ├── 1875.json
+│   │       ├── 1876.json
+│   │       ├── 1877.json
+│   │       ├── 1878.json
+│   │       ├── 1879.json
+│   │       ├── 188.json
+│   │       ├── 1880.json
+│   │       ├── 1881.json
+│   │       ├── 1882.json
+│   │       ├── 1883.json
+│   │       ├── 1884.json
+│   │       ├── 1885.json
+│   │       ├── 1886.json
+│   │       ├── 1887.json
+│   │       ├── 1888.json
+│   │       ├── 1889.json
+│   │       ├── 189.json
+│   │       ├── 1890.json
+│   │       ├── 1891.json
+│   │       ├── 1892.json
+│   │       ├── 1893.json
+│   │       ├── 1894.json
+│   │       ├── 1895.json
+│   │       ├── 1896.json
+│   │       ├── 1897.json
+│   │       ├── 1898.json
+│   │       ├── 1899.json
+│   │       ├── 19.json
+│   │       ├── 190.json
+│   │       ├── 1900.json
+│   │       ├── 1901.json
+│   │       ├── 1902.json
+│   │       ├── 1903.json
+│   │       ├── 1904.json
+│   │       ├── 1905.json
+│   │       ├── 1906.json
+│   │       ├── 1907.json
+│   │       ├── 1908.json
+│   │       ├── 1909.json
+│   │       ├── 191.json
+│   │       ├── 1910.json
+│   │       ├── 1911.json
+│   │       ├── 1912.json
+│   │       ├── 1913.json
+│   │       ├── 1914.json
+│   │       ├── 1915.json
+│   │       ├── 1916.json
+│   │       ├── 1917.json
+│   │       ├── 1918.json
+│   │       ├── 1919.json
+│   │       ├── 192.json
+│   │       ├── 1920.json
+│   │       ├── 1921.json
+│   │       ├── 1922.json
+│   │       ├── 1923.json
+│   │       ├── 1924.json
+│   │       ├── 1925.json
+│   │       ├── 1926.json
+│   │       ├── 1927.json
+│   │       ├── 1928.json
+│   │       ├── 1929.json
+│   │       ├── 193.json
+│   │       ├── 1930.json
+│   │       ├── 1931.json
+│   │       ├── 1932.json
+│   │       ├── 1933.json
+│   │       ├── 1934.json
+│   │       ├── 1935.json
+│   │       ├── 1936.json
+│   │       ├── 1937.json
+│   │       ├── 1938.json
+│   │       ├── 1939.json
+│   │       ├── 194.json
+│   │       ├── 1940.json
+│   │       ├── 1941.json
+│   │       ├── 1942.json
+│   │       ├── 1943.json
+│   │       ├── 1944.json
+│   │       ├── 1945.json
+│   │       ├── 1946.json
+│   │       ├── 1947.json
+│   │       ├── 1948.json
+│   │       ├── 1949.json
+│   │       ├── 195.json
+│   │       ├── 1950.json
+│   │       ├── 1951.json
+│   │       ├── 1952.json
+│   │       ├── 1953.json
+│   │       ├── 1954.json
+│   │       ├── 1955.json
+│   │       ├── 1956.json
+│   │       ├── 1957.json
+│   │       ├── 1958.json
+│   │       ├── 1959.json
+│   │       ├── 196.json
+│   │       ├── 1960.json
+│   │       ├── 1961.json
+│   │       ├── 1962.json
+│   │       ├── 1963.json
+│   │       ├── 1964.json
+│   │       ├── 1965.json
+│   │       ├── 1966.json
+│   │       ├── 1967.json
+│   │       ├── 1968.json
+│   │       ├── 1969.json
+│   │       ├── 197.json
+│   │       ├── 1970.json
+│   │       ├── 1971.json
+│   │       ├── 1972.json
+│   │       ├── 1973.json
+│   │       ├── 1974.json
+│   │       ├── 1975.json
+│   │       ├── 1976.json
+│   │       ├── 1977.json
+│   │       ├── 1978.json
+│   │       ├── 1979.json
+│   │       ├── 198.json
+│   │       ├── 1980.json
+│   │       ├── 1981.json
+│   │       ├── 1982.json
+│   │       ├── 1983.json
+│   │       ├── 1984.json
+│   │       ├── 1985.json
+│   │       ├── 1986.json
+│   │       ├── 1987.json
+│   │       ├── 1988.json
+│   │       ├── 1989.json
+│   │       ├── 199.json
+│   │       ├── 1990.json
+│   │       ├── 1991.json
+│   │       ├── 1992.json
+│   │       ├── 1993.json
+│   │       ├── 1994.json
+│   │       ├── 1995.json
+│   │       ├── 1996.json
+│   │       ├── 1997.json
+│   │       ├── 1998.json
+│   │       ├── 1999.json
+│   │       ├── 2.json
+│   │       ├── 20.json
+│   │       ├── 200.json
+│   │       ├── 2000.json
+│   │       ├── 2001.json
+│   │       ├── 2002.json
+│   │       ├── 2003.json
+│   │       ├── 2004.json
+│   │       ├── 2005.json
+│   │       ├── 2006.json
+│   │       ├── 2007.json
+│   │       ├── 2008.json
+│   │       ├── 2009.json
+│   │       ├── 201.json
+│   │       ├── 2010.json
+│   │       ├── 2011.json
+│   │       ├── 2012.json
+│   │       ├── 2013.json
+│   │       ├── 2014.json
+│   │       ├── 2015.json
+│   │       ├── 2016.json
+│   │       ├── 2017.json
+│   │       ├── 2018.json
+│   │       ├── 2019.json
+│   │       ├── 202.json
+│   │       ├── 2020.json
+│   │       ├── 2021.json
+│   │       ├── 2022.json
+│   │       ├── 2023.json
+│   │       ├── 2024.json
+│   │       ├── 2025.json
+│   │       ├── 2026.json
+│   │       ├── 2027.json
+│   │       ├── 2028.json
+│   │       ├── 2029.json
+│   │       ├── 203.json
+│   │       ├── 2030.json
+│   │       ├── 2031.json
+│   │       ├── 2032.json
+│   │       ├── 2033.json
+│   │       ├── 2034.json
+│   │       ├── 2035.json
+│   │       ├── 2036.json
+│   │       ├── 2037.json
+│   │       ├── 2038.json
+│   │       ├── 2039.json
+│   │       ├── 204.json
+│   │       ├── 2040.json
+│   │       ├── 2041.json
+│   │       ├── 2042.json
+│   │       ├── 2043.json
+│   │       ├── 2044.json
+│   │       ├── 2045.json
+│   │       ├── 2046.json
+│   │       ├── 2047.json
+│   │       ├── 2048.json
+│   │       ├── 2049.json
+│   │       ├── 205.json
+│   │       ├── 2050.json
+│   │       ├── 2051.json
+│   │       ├── 2052.json
+│   │       ├── 2053.json
+│   │       ├── 2054.json
+│   │       ├── 2055.json
+│   │       ├── 2056.json
+│   │       ├── 2057.json
+│   │       ├── 2058.json
+│   │       ├── 2059.json
+│   │       ├── 206.json
+│   │       ├── 2060.json
+│   │       ├── 2061.json
+│   │       ├── 2062.json
+│   │       ├── 2063.json
+│   │       ├── 2064.json
+│   │       ├── 2065.json
+│   │       ├── 2066.json
+│   │       ├── 2067.json
+│   │       ├── 2068.json
+│   │       ├── 2069.json
+│   │       ├── 207.json
+│   │       ├── 2070.json
+│   │       ├── 2071.json
+│   │       ├── 2072.json
+│   │       ├── 2073.json
+│   │       ├── 2074.json
+│   │       ├── 2075.json
+│   │       ├── 2076.json
+│   │       ├── 2077.json
+│   │       ├── 2078.json
+│   │       ├── 2079.json
+│   │       ├── 208.json
+│   │       ├── 2080.json
+│   │       ├── 2081.json
+│   │       ├── 2082.json
+│   │       ├── 2083.json
+│   │       ├── 2084.json
+│   │       ├── 2085.json
+│   │       ├── 2086.json
+│   │       ├── 2087.json
+│   │       ├── 2088.json
+│   │       ├── 2089.json
+│   │       ├── 209.json
+│   │       ├── 2090.json
+│   │       ├── 2091.json
+│   │       ├── 2092.json
+│   │       ├── 2093.json
+│   │       ├── 2094.json
+│   │       ├── 2095.json
+│   │       ├── 2096.json
+│   │       ├── 2097.json
+│   │       ├── 2098.json
+│   │       ├── 2099.json
+│   │       ├── 21.json
+│   │       ├── 210.json
+│   │       ├── 2100.json
+│   │       ├── 2101.json
+│   │       ├── 2102.json
+│   │       ├── 2103.json
+│   │       ├── 2104.json
+│   │       ├── 2105.json
+│   │       ├── 2106.json
+│   │       ├── 2107.json
+│   │       ├── 2108.json
+│   │       ├── 2109.json
+│   │       ├── 211.json
+│   │       ├── 2110.json
+│   │       ├── 2111.json
+│   │       ├── 2112.json
+│   │       ├── 2113.json
+│   │       ├── 2114.json
+│   │       ├── 2115.json
+│   │       ├── 2116.json
+│   │       ├── 2117.json
+│   │       ├── 2118.json
+│   │       ├── 2119.json
+│   │       ├── 212.json
+│   │       ├── 2120.json
+│   │       ├── 2121.json
+│   │       ├── 2122.json
+│   │       ├── 2123.json
+│   │       ├── 2124.json
+│   │       ├── 2125.json
+│   │       ├── 2126.json
+│   │       ├── 2127.json
+│   │       ├── 2128.json
+│   │       ├── 2129.json
+│   │       ├── 213.json
+│   │       ├── 2130.json
+│   │       ├── 2131.json
+│   │       ├── 2132.json
+│   │       ├── 2133.json
+│   │       ├── 2134.json
+│   │       ├── 2135.json
+│   │       ├── 2136.json
+│   │       ├── 2137.json
+│   │       ├── 2138.json
+│   │       ├── 2139.json
+│   │       ├── 214.json
+│   │       ├── 2140.json
+│   │       ├── 2141.json
+│   │       ├── 2142.json
+│   │       ├── 2143.json
+│   │       ├── 2144.json
+│   │       ├── 2145.json
+│   │       ├── 2146.json
+│   │       ├── 2147.json
+│   │       ├── 2148.json
+│   │       ├── 2149.json
+│   │       ├── 215.json
+│   │       ├── 2150.json
+│   │       ├── 2151.json
+│   │       ├── 2152.json
+│   │       ├── 2153.json
+│   │       ├── 2154.json
+│   │       ├── 2155.json
+│   │       ├── 2156.json
+│   │       ├── 2157.json
+│   │       ├── 2158.json
+│   │       ├── 2159.json
+│   │       ├── 216.json
+│   │       ├── 2160.json
+│   │       ├── 2161.json
+│   │       ├── 2162.json
+│   │       ├── 2163.json
+│   │       ├── 2164.json
+│   │       ├── 2165.json
+│   │       ├── 2166.json
+│   │       ├── 2167.json
+│   │       ├── 2168.json
+│   │       ├── 2169.json
+│   │       ├── 217.json
+│   │       ├── 2170.json
+│   │       ├── 2171.json
+│   │       ├── 2172.json
+│   │       ├── 2173.json
+│   │       ├── 2174.json
+│   │       ├── 2175.json
+│   │       ├── 2176.json
+│   │       ├── 2177.json
+│   │       ├── 2178.json
+│   │       ├── 2179.json
+│   │       ├── 218.json
+│   │       ├── 2180.json
+│   │       ├── 2181.json
+│   │       ├── 2182.json
+│   │       ├── 2183.json
+│   │       ├── 2184.json
+│   │       ├── 2185.json
+│   │       ├── 2186.json
+│   │       ├── 2187.json
+│   │       ├── 2188.json
+│   │       ├── 2189.json
+│   │       ├── 219.json
+│   │       ├── 2190.json
+│   │       ├── 2191.json
+│   │       ├── 2192.json
+│   │       ├── 2193.json
+│   │       ├── 2194.json
+│   │       ├── 2195.json
+│   │       ├── 2196.json
+│   │       ├── 2197.json
+│   │       ├── 2198.json
+│   │       ├── 2199.json
+│   │       ├── 22.json
+│   │       ├── 220.json
+│   │       ├── 2200.json
+│   │       ├── 2201.json
+│   │       ├── 2202.json
+│   │       ├── 2203.json
+│   │       ├── 2204.json
+│   │       ├── 2205.json
+│   │       ├── 2206.json
+│   │       ├── 2207.json
+│   │       ├── 2208.json
+│   │       ├── 2209.json
+│   │       ├── 221.json
+│   │       ├── 2210.json
+│   │       ├── 2211.json
+│   │       ├── 2212.json
+│   │       ├── 2213.json
+│   │       ├── 2214.json
+│   │       ├── 2215.json
+│   │       ├── 2216.json
+│   │       ├── 2217.json
+│   │       ├── 2218.json
+│   │       ├── 2219.json
+│   │       ├── 222.json
+│   │       ├── 2220.json
+│   │       ├── 2221.json
+│   │       ├── 2222.json
+│   │       ├── 2223.json
+│   │       ├── 2224.json
+│   │       ├── 2225.json
+│   │       ├── 2226.json
+│   │       ├── 2227.json
+│   │       ├── 2228.json
+│   │       ├── 2229.json
+│   │       ├── 223.json
+│   │       ├── 2230.json
+│   │       ├── 2231.json
+│   │       ├── 2232.json
+│   │       ├── 2233.json
+│   │       ├── 2234.json
+│   │       ├── 2235.json
+│   │       ├── 2236.json
+│   │       ├── 2237.json
+│   │       ├── 2238.json
+│   │       ├── 2239.json
+│   │       ├── 224.json
+│   │       ├── 2240.json
+│   │       ├── 2241.json
+│   │       ├── 2242.json
+│   │       ├── 2243.json
+│   │       ├── 2244.json
+│   │       ├── 2245.json
+│   │       ├── 2246.json
+│   │       ├── 2247.json
+│   │       ├── 2248.json
+│   │       ├── 2249.json
+│   │       ├── 225.json
+│   │       ├── 2250.json
+│   │       ├── 2251.json
+│   │       ├── 2252.json
+│   │       ├── 2253.json
+│   │       ├── 2254.json
+│   │       ├── 2255.json
+│   │       ├── 2256.json
+│   │       ├── 2257.json
+│   │       ├── 2258.json
+│   │       ├── 2259.json
+│   │       ├── 226.json
+│   │       ├── 2260.json
+│   │       ├── 2261.json
+│   │       ├── 2262.json
+│   │       ├── 2263.json
+│   │       ├── 2264.json
+│   │       ├── 2265.json
+│   │       ├── 2266.json
+│   │       ├── 2267.json
+│   │       ├── 2268.json
+│   │       ├── 2269.json
+│   │       ├── 227.json
+│   │       ├── 2270.json
+│   │       ├── 2271.json
+│   │       ├── 2272.json
+│   │       ├── 2273.json
+│   │       ├── 2274.json
+│   │       ├── 2275.json
+│   │       ├── 2276.json
+│   │       ├── 2277.json
+│   │       ├── 2278.json
+│   │       ├── 2279.json
+│   │       ├── 228.json
+│   │       ├── 2280.json
+│   │       ├── 2281.json
+│   │       ├── 2282.json
+│   │       ├── 2283.json
+│   │       ├── 2284.json
+│   │       ├── 2285.json
+│   │       ├── 2286.json
+│   │       ├── 2287.json
+│   │       ├── 2288.json
+│   │       ├── 2289.json
+│   │       ├── 229.json
+│   │       ├── 2290.json
+│   │       ├── 2291.json
+│   │       ├── 2292.json
+│   │       ├── 2293.json
+│   │       ├── 2294.json
+│   │       ├── 2295.json
+│   │       ├── 2296.json
+│   │       ├── 2297.json
+│   │       ├── 2298.json
+│   │       ├── 2299.json
+│   │       ├── 23.json
+│   │       ├── 230.json
+│   │       ├── 2300.json
+│   │       ├── 2301.json
+│   │       ├── 2302.json
+│   │       ├── 2303.json
+│   │       ├── 2304.json
+│   │       ├── 2305.json
+│   │       ├── 2306.json
+│   │       ├── 2307.json
+│   │       ├── 2308.json
+│   │       ├── 2309.json
+│   │       ├── 231.json
+│   │       ├── 2310.json
+│   │       ├── 2311.json
+│   │       ├── 2312.json
+│   │       ├── 2313.json
+│   │       ├── 2314.json
+│   │       ├── 2315.json
+│   │       ├── 2316.json
+│   │       ├── 2317.json
+│   │       ├── 2318.json
+│   │       ├── 2319.json
+│   │       ├── 232.json
+│   │       ├── 2320.json
+│   │       ├── 2321.json
+│   │       ├── 2322.json
+│   │       ├── 2323.json
+│   │       ├── 2324.json
+│   │       ├── 2325.json
+│   │       ├── 2326.json
+│   │       ├── 2327.json
+│   │       ├── 2328.json
+│   │       ├── 2329.json
+│   │       ├── 233.json
+│   │       ├── 2330.json
+│   │       ├── 2331.json
+│   │       ├── 2332.json
+│   │       ├── 2333.json
+│   │       ├── 2334.json
+│   │       ├── 2335.json
+│   │       ├── 2336.json
+│   │       ├── 2337.json
+│   │       ├── 2338.json
+│   │       ├── 2339.json
+│   │       ├── 234.json
+│   │       ├── 2340.json
+│   │       ├── 2341.json
+│   │       ├── 2342.json
+│   │       ├── 2343.json
+│   │       ├── 2344.json
+│   │       ├── 2345.json
+│   │       ├── 2346.json
+│   │       ├── 2347.json
+│   │       ├── 2348.json
+│   │       ├── 2349.json
+│   │       ├── 235.json
+│   │       ├── 2350.json
+│   │       ├── 2351.json
+│   │       ├── 2352.json
+│   │       ├── 2353.json
+│   │       ├── 2354.json
+│   │       ├── 2355.json
+│   │       ├── 2356.json
+│   │       ├── 2357.json
+│   │       ├── 2358.json
+│   │       ├── 2359.json
+│   │       ├── 236.json
+│   │       ├── 2360.json
+│   │       ├── 2361.json
+│   │       ├── 2362.json
+│   │       ├── 2363.json
+│   │       ├── 2364.json
+│   │       ├── 2365.json
+│   │       ├── 2366.json
+│   │       ├── 2367.json
+│   │       ├── 2368.json
+│   │       ├── 2369.json
+│   │       ├── 237.json
+│   │       ├── 2370.json
+│   │       ├── 2371.json
+│   │       ├── 2372.json
+│   │       ├── 2373.json
+│   │       ├── 2374.json
+│   │       ├── 2375.json
+│   │       ├── 2376.json
+│   │       ├── 2377.json
+│   │       ├── 2378.json
+│   │       ├── 2379.json
+│   │       ├── 238.json
+│   │       ├── 2380.json
+│   │       ├── 2381.json
+│   │       ├── 2382.json
+│   │       ├── 2383.json
+│   │       ├── 2384.json
+│   │       ├── 2385.json
+│   │       ├── 2386.json
+│   │       ├── 2387.json
+│   │       ├── 2388.json
+│   │       ├── 2389.json
+│   │       ├── 239.json
+│   │       ├── 2390.json
+│   │       ├── 2391.json
+│   │       ├── 2392.json
+│   │       ├── 2393.json
+│   │       ├── 2394.json
+│   │       ├── 2395.json
+│   │       ├── 2396.json
+│   │       ├── 2397.json
+│   │       ├── 2398.json
+│   │       ├── 2399.json
+│   │       ├── 24.json
+│   │       ├── 240.json
+│   │       ├── 2400.json
+│   │       ├── 2401.json
+│   │       ├── 2402.json
+│   │       ├── 2403.json
+│   │       ├── 2404.json
+│   │       ├── 2405.json
+│   │       ├── 2406.json
+│   │       ├── 2407.json
+│   │       ├── 2408.json
+│   │       ├── 2409.json
+│   │       ├── 241.json
+│   │       ├── 2410.json
+│   │       ├── 2411.json
+│   │       ├── 2412.json
+│   │       ├── 2413.json
+│   │       ├── 2414.json
+│   │       ├── 2415.json
+│   │       ├── 2416.json
+│   │       ├── 2417.json
+│   │       ├── 2418.json
+│   │       ├── 2419.json
+│   │       ├── 242.json
+│   │       ├── 2420.json
+│   │       ├── 2421.json
+│   │       ├── 2422.json
+│   │       ├── 2423.json
+│   │       ├── 2424.json
+│   │       ├── 2425.json
+│   │       ├── 2426.json
+│   │       ├── 2427.json
+│   │       ├── 2428.json
+│   │       ├── 2429.json
+│   │       ├── 243.json
+│   │       ├── 2430.json
+│   │       ├── 2431.json
+│   │       ├── 2432.json
+│   │       ├── 2433.json
+│   │       ├── 2434.json
+│   │       ├── 2435.json
+│   │       ├── 2436.json
+│   │       ├── 2437.json
+│   │       ├── 2438.json
+│   │       ├── 2439.json
+│   │       ├── 244.json
+│   │       ├── 2440.json
+│   │       ├── 2441.json
+│   │       ├── 2442.json
+│   │       ├── 2443.json
+│   │       ├── 2444.json
+│   │       ├── 2445.json
+│   │       ├── 2446.json
+│   │       ├── 2447.json
+│   │       ├── 2448.json
+│   │       ├── 2449.json
+│   │       ├── 245.json
+│   │       ├── 2450.json
+│   │       ├── 2451.json
+│   │       ├── 2452.json
+│   │       ├── 2453.json
+│   │       ├── 2454.json
+│   │       ├── 2455.json
+│   │       ├── 2456.json
+│   │       ├── 2457.json
+│   │       ├── 2458.json
+│   │       ├── 2459.json
+│   │       ├── 246.json
+│   │       ├── 2460.json
+│   │       ├── 2461.json
+│   │       ├── 2462.json
+│   │       ├── 2463.json
+│   │       ├── 2464.json
+│   │       ├── 2465.json
+│   │       ├── 2466.json
+│   │       ├── 2467.json
+│   │       ├── 2468.json
+│   │       ├── 2469.json
+│   │       ├── 247.json
+│   │       ├── 2470.json
+│   │       ├── 248.json
+│   │       ├── 249.json
+│   │       ├── 25.json
+│   │       ├── 250.json
+│   │       ├── 251.json
+│   │       ├── 252.json
+│   │       ├── 253.json
+│   │       ├── 254.json
+│   │       ├── 255.json
+│   │       ├── 256.json
+│   │       ├── 257.json
+│   │       ├── 258.json
+│   │       ├── 259.json
+│   │       ├── 26.json
+│   │       ├── 260.json
+│   │       ├── 261.json
+│   │       ├── 262.json
+│   │       ├── 263.json
+│   │       ├── 264.json
+│   │       ├── 265.json
+│   │       ├── 266.json
+│   │       ├── 267.json
+│   │       ├── 268.json
+│   │       ├── 269.json
+│   │       ├── 27.json
+│   │       ├── 270.json
+│   │       ├── 271.json
+│   │       ├── 272.json
+│   │       ├── 273.json
+│   │       ├── 274.json
+│   │       ├── 275.json
+│   │       ├── 276.json
+│   │       ├── 277.json
+│   │       ├── 278.json
+│   │       ├── 279.json
+│   │       ├── 28.json
+│   │       ├── 280.json
+│   │       ├── 281.json
+│   │       ├── 282.json
+│   │       ├── 283.json
+│   │       ├── 284.json
+│   │       ├── 285.json
+│   │       ├── 286.json
+│   │       ├── 287.json
+│   │       ├── 288.json
+│   │       ├── 289.json
+│   │       ├── 29.json
+│   │       ├── 290.json
+│   │       ├── 291.json
+│   │       ├── 292.json
+│   │       ├── 293.json
+│   │       ├── 294.json
+│   │       ├── 295.json
+│   │       ├── 296.json
+│   │       ├── 297.json
+│   │       ├── 298.json
+│   │       ├── 299.json
+│   │       ├── 3.json
+│   │       ├── 30.json
+│   │       ├── 300.json
+│   │       ├── 301.json
+│   │       ├── 302.json
+│   │       ├── 303.json
+│   │       ├── 304.json
+│   │       ├── 305.json
+│   │       ├── 306.json
+│   │       ├── 307.json
+│   │       ├── 308.json
+│   │       ├── 309.json
+│   │       ├── 31.json
+│   │       ├── 310.json
+│   │       ├── 311.json
+│   │       ├── 312.json
+│   │       ├── 313.json
+│   │       ├── 314.json
+│   │       ├── 315.json
+│   │       ├── 316.json
+│   │       ├── 317.json
+│   │       ├── 318.json
+│   │       ├── 319.json
+│   │       ├── 32.json
+│   │       ├── 320.json
+│   │       ├── 321.json
+│   │       ├── 322.json
+│   │       ├── 323.json
+│   │       ├── 324.json
+│   │       ├── 325.json
+│   │       ├── 326.json
+│   │       ├── 327.json
+│   │       ├── 328.json
+│   │       ├── 329.json
+│   │       ├── 33.json
+│   │       ├── 330.json
+│   │       ├── 331.json
+│   │       ├── 332.json
+│   │       ├── 333.json
+│   │       ├── 334.json
+│   │       ├── 335.json
+│   │       ├── 336.json
+│   │       ├── 337.json
+│   │       ├── 338.json
+│   │       ├── 339.json
+│   │       ├── 34.json
+│   │       ├── 340.json
+│   │       ├── 341.json
+│   │       ├── 342.json
+│   │       ├── 343.json
+│   │       ├── 344.json
+│   │       ├── 345.json
+│   │       ├── 346.json
+│   │       ├── 347.json
+│   │       ├── 348.json
+│   │       ├── 349.json
+│   │       ├── 35.json
+│   │       ├── 350.json
+│   │       ├── 351.json
+│   │       ├── 352.json
+│   │       ├── 353.json
+│   │       ├── 354.json
+│   │       ├── 355.json
+│   │       ├── 356.json
+│   │       ├── 357.json
+│   │       ├── 358.json
+│   │       ├── 359.json
+│   │       ├── 36.json
+│   │       ├── 360.json
+│   │       ├── 361.json
+│   │       ├── 362.json
+│   │       ├── 363.json
+│   │       ├── 364.json
+│   │       ├── 365.json
+│   │       ├── 366.json
+│   │       ├── 367.json
+│   │       ├── 368.json
+│   │       ├── 369.json
+│   │       ├── 37.json
+│   │       ├── 370.json
+│   │       ├── 371.json
+│   │       ├── 372.json
+│   │       ├── 373.json
+│   │       ├── 374.json
+│   │       ├── 375.json
+│   │       ├── 376.json
+│   │       ├── 377.json
+│   │       ├── 378.json
+│   │       ├── 379.json
+│   │       ├── 38.json
+│   │       ├── 380.json
+│   │       ├── 381.json
+│   │       ├── 382.json
+│   │       ├── 383.json
+│   │       ├── 384.json
+│   │       ├── 385.json
+│   │       ├── 386.json
+│   │       ├── 387.json
+│   │       ├── 388.json
+│   │       ├── 389.json
+│   │       ├── 39.json
+│   │       ├── 390.json
+│   │       ├── 391.json
+│   │       ├── 392.json
+│   │       ├── 393.json
+│   │       ├── 394.json
+│   │       ├── 395.json
+│   │       ├── 396.json
+│   │       ├── 397.json
+│   │       ├── 398.json
+│   │       ├── 399.json
+│   │       ├── 4.json
+│   │       ├── 40.json
+│   │       ├── 400.json
+│   │       ├── 401.json
+│   │       ├── 402.json
+│   │       ├── 403.json
+│   │       ├── 404.json
+│   │       ├── 405.json
+│   │       ├── 406.json
+│   │       ├── 407.json
+│   │       ├── 408.json
+│   │       ├── 409.json
+│   │       ├── 41.json
+│   │       ├── 410.json
+│   │       ├── 411.json
+│   │       ├── 412.json
+│   │       ├── 413.json
+│   │       ├── 414.json
+│   │       ├── 415.json
+│   │       ├── 416.json
+│   │       ├── 417.json
+│   │       ├── 418.json
+│   │       ├── 419.json
+│   │       ├── 42.json
+│   │       ├── 420.json
+│   │       ├── 421.json
+│   │       ├── 422.json
+│   │       ├── 423.json
+│   │       ├── 424.json
+│   │       ├── 425.json
+│   │       ├── 426.json
+│   │       ├── 427.json
+│   │       ├── 428.json
+│   │       ├── 429.json
+│   │       ├── 43.json
+│   │       ├── 430.json
+│   │       ├── 431.json
+│   │       ├── 432.json
+│   │       ├── 433.json
+│   │       ├── 434.json
+│   │       ├── 435.json
+│   │       ├── 436.json
+│   │       ├── 437.json
+│   │       ├── 438.json
+│   │       ├── 439.json
+│   │       ├── 44.json
+│   │       ├── 440.json
+│   │       ├── 441.json
+│   │       ├── 442.json
+│   │       ├── 443.json
+│   │       ├── 444.json
+│   │       ├── 445.json
+│   │       ├── 446.json
+│   │       ├── 447.json
+│   │       ├── 448.json
+│   │       ├── 449.json
+│   │       ├── 45.json
+│   │       ├── 450.json
+│   │       ├── 451.json
+│   │       ├── 452.json
+│   │       ├── 453.json
+│   │       ├── 454.json
+│   │       ├── 455.json
+│   │       ├── 456.json
+│   │       ├── 457.json
+│   │       ├── 458.json
+│   │       ├── 459.json
+│   │       ├── 46.json
+│   │       ├── 460.json
+│   │       ├── 461.json
+│   │       ├── 462.json
+│   │       ├── 463.json
+│   │       ├── 464.json
+│   │       ├── 465.json
+│   │       ├── 466.json
+│   │       ├── 467.json
+│   │       ├── 468.json
+│   │       ├── 469.json
+│   │       ├── 47.json
+│   │       ├── 470.json
+│   │       ├── 471.json
+│   │       ├── 472.json
+│   │       ├── 473.json
+│   │       ├── 474.json
+│   │       ├── 475.json
+│   │       ├── 476.json
+│   │       ├── 477.json
+│   │       ├── 478.json
+│   │       ├── 479.json
+│   │       ├── 48.json
+│   │       ├── 480.json
+│   │       ├── 481.json
+│   │       ├── 482.json
+│   │       ├── 483.json
+│   │       ├── 484.json
+│   │       ├── 485.json
+│   │       ├── 486.json
+│   │       ├── 487.json
+│   │       ├── 488.json
+│   │       ├── 489.json
+│   │       ├── 49.json
+│   │       ├── 490.json
+│   │       ├── 491.json
+│   │       ├── 492.json
+│   │       ├── 493.json
+│   │       ├── 494.json
+│   │       ├── 495.json
+│   │       ├── 496.json
+│   │       ├── 497.json
+│   │       ├── 498.json
+│   │       ├── 499.json
+│   │       ├── 5.json
+│   │       ├── 50.json
+│   │       ├── 500.json
+│   │       ├── 501.json
+│   │       ├── 502.json
+│   │       ├── 503.json
+│   │       ├── 504.json
+│   │       ├── 505.json
+│   │       ├── 506.json
+│   │       ├── 507.json
+│   │       ├── 508.json
+│   │       ├── 509.json
+│   │       ├── 51.json
+│   │       ├── 510.json
+│   │       ├── 511.json
+│   │       ├── 512.json
+│   │       ├── 513.json
+│   │       ├── 514.json
+│   │       ├── 515.json
+│   │       ├── 516.json
+│   │       ├── 517.json
+│   │       ├── 518.json
+│   │       ├── 519.json
+│   │       ├── 52.json
+│   │       ├── 520.json
+│   │       ├── 521.json
+│   │       ├── 522.json
+│   │       ├── 523.json
+│   │       ├── 524.json
+│   │       ├── 525.json
+│   │       ├── 526.json
+│   │       ├── 527.json
+│   │       ├── 528.json
+│   │       ├── 529.json
+│   │       ├── 53.json
+│   │       ├── 530.json
+│   │       ├── 531.json
+│   │       ├── 532.json
+│   │       ├── 533.json
+│   │       ├── 534.json
+│   │       ├── 535.json
+│   │       ├── 536.json
+│   │       ├── 537.json
+│   │       ├── 538.json
+│   │       ├── 539.json
+│   │       ├── 54.json
+│   │       ├── 540.json
+│   │       ├── 541.json
+│   │       ├── 542.json
+│   │       ├── 543.json
+│   │       ├── 544.json
+│   │       ├── 545.json
+│   │       ├── 546.json
+│   │       ├── 547.json
+│   │       ├── 548.json
+│   │       ├── 549.json
+│   │       ├── 55.json
+│   │       ├── 550.json
+│   │       ├── 551.json
+│   │       ├── 552.json
+│   │       ├── 553.json
+│   │       ├── 554.json
+│   │       ├── 555.json
+│   │       ├── 556.json
+│   │       ├── 557.json
+│   │       ├── 558.json
+│   │       ├── 559.json
+│   │       ├── 56.json
+│   │       ├── 560.json
+│   │       ├── 561.json
+│   │       ├── 562.json
+│   │       ├── 563.json
+│   │       ├── 564.json
+│   │       ├── 565.json
+│   │       ├── 566.json
+│   │       ├── 567.json
+│   │       ├── 568.json
+│   │       ├── 569.json
+│   │       ├── 57.json
+│   │       ├── 570.json
+│   │       ├── 571.json
+│   │       ├── 572.json
+│   │       ├── 573.json
+│   │       ├── 574.json
+│   │       ├── 575.json
+│   │       ├── 576.json
+│   │       ├── 577.json
+│   │       ├── 578.json
+│   │       ├── 579.json
+│   │       ├── 58.json
+│   │       ├── 580.json
+│   │       ├── 581.json
+│   │       ├── 582.json
+│   │       ├── 583.json
+│   │       ├── 584.json
+│   │       ├── 585.json
+│   │       ├── 586.json
+│   │       ├── 587.json
+│   │       ├── 588.json
+│   │       ├── 589.json
+│   │       ├── 59.json
+│   │       ├── 590.json
+│   │       ├── 591.json
+│   │       ├── 592.json
+│   │       ├── 593.json
+│   │       ├── 594.json
+│   │       ├── 595.json
+│   │       ├── 596.json
+│   │       ├── 597.json
+│   │       ├── 598.json
+│   │       ├── 599.json
+│   │       ├── 6.json
+│   │       ├── 60.json
+│   │       ├── 600.json
+│   │       ├── 601.json
+│   │       ├── 602.json
+│   │       ├── 603.json
+│   │       ├── 604.json
+│   │       ├── 605.json
+│   │       ├── 606.json
+│   │       ├── 607.json
+│   │       ├── 608.json
+│   │       ├── 609.json
+│   │       ├── 61.json
+│   │       ├── 610.json
+│   │       ├── 611.json
+│   │       ├── 612.json
+│   │       ├── 613.json
+│   │       ├── 614.json
+│   │       ├── 615.json
+│   │       ├── 616.json
+│   │       ├── 617.json
+│   │       ├── 618.json
+│   │       ├── 619.json
+│   │       ├── 62.json
+│   │       ├── 620.json
+│   │       ├── 621.json
+│   │       ├── 622.json
+│   │       ├── 623.json
+│   │       ├── 624.json
+│   │       ├── 625.json
+│   │       ├── 626.json
+│   │       ├── 627.json
+│   │       ├── 628.json
+│   │       ├── 629.json
+│   │       ├── 63.json
+│   │       ├── 630.json
+│   │       ├── 631.json
+│   │       ├── 632.json
+│   │       ├── 633.json
+│   │       ├── 634.json
+│   │       ├── 635.json
+│   │       ├── 636.json
+│   │       ├── 637.json
+│   │       ├── 638.json
+│   │       ├── 639.json
+│   │       ├── 64.json
+│   │       ├── 640.json
+│   │       ├── 641.json
+│   │       ├── 642.json
+│   │       ├── 643.json
+│   │       ├── 644.json
+│   │       ├── 645.json
+│   │       ├── 646.json
+│   │       ├── 647.json
+│   │       ├── 648.json
+│   │       ├── 649.json
+│   │       ├── 65.json
+│   │       ├── 650.json
+│   │       ├── 651.json
+│   │       ├── 652.json
+│   │       ├── 653.json
+│   │       ├── 654.json
+│   │       ├── 655.json
+│   │       ├── 656.json
+│   │       ├── 657.json
+│   │       ├── 658.json
+│   │       ├── 659.json
+│   │       ├── 66.json
+│   │       ├── 660.json
+│   │       ├── 661.json
+│   │       ├── 662.json
+│   │       ├── 663.json
+│   │       ├── 664.json
+│   │       ├── 665.json
+│   │       ├── 666.json
+│   │       ├── 667.json
+│   │       ├── 668.json
+│   │       ├── 669.json
+│   │       ├── 67.json
+│   │       ├── 670.json
+│   │       ├── 671.json
+│   │       ├── 672.json
+│   │       ├── 673.json
+│   │       ├── 674.json
+│   │       ├── 675.json
+│   │       ├── 676.json
+│   │       ├── 677.json
+│   │       ├── 678.json
+│   │       ├── 679.json
+│   │       ├── 68.json
+│   │       ├── 680.json
+│   │       ├── 681.json
+│   │       ├── 682.json
+│   │       ├── 683.json
+│   │       ├── 684.json
+│   │       ├── 685.json
+│   │       ├── 686.json
+│   │       ├── 687.json
+│   │       ├── 688.json
+│   │       ├── 689.json
+│   │       ├── 69.json
+│   │       ├── 690.json
+│   │       ├── 691.json
+│   │       ├── 692.json
+│   │       ├── 693.json
+│   │       ├── 694.json
+│   │       ├── 695.json
+│   │       ├── 696.json
+│   │       ├── 697.json
+│   │       ├── 698.json
+│   │       ├── 699.json
+│   │       ├── 7.json
+│   │       ├── 70.json
+│   │       ├── 700.json
+│   │       ├── 701.json
+│   │       ├── 702.json
+│   │       ├── 703.json
+│   │       ├── 704.json
+│   │       ├── 705.json
+│   │       ├── 706.json
+│   │       ├── 707.json
+│   │       ├── 708.json
+│   │       ├── 709.json
+│   │       ├── 71.json
+│   │       ├── 710.json
+│   │       ├── 711.json
+│   │       ├── 712.json
+│   │       ├── 713.json
+│   │       ├── 714.json
+│   │       ├── 715.json
+│   │       ├── 716.json
+│   │       ├── 717.json
+│   │       ├── 718.json
+│   │       ├── 719.json
+│   │       ├── 72.json
+│   │       ├── 720.json
+│   │       ├── 721.json
+│   │       ├── 722.json
+│   │       ├── 723.json
+│   │       ├── 724.json
+│   │       ├── 725.json
+│   │       ├── 726.json
+│   │       ├── 727.json
+│   │       ├── 728.json
+│   │       ├── 729.json
+│   │       ├── 73.json
+│   │       ├── 730.json
+│   │       ├── 731.json
+│   │       ├── 732.json
+│   │       ├── 733.json
+│   │       ├── 734.json
+│   │       ├── 735.json
+│   │       ├── 736.json
+│   │       ├── 737.json
+│   │       ├── 738.json
+│   │       ├── 739.json
+│   │       ├── 74.json
+│   │       ├── 740.json
+│   │       ├── 741.json
+│   │       ├── 742.json
+│   │       ├── 743.json
+│   │       ├── 744.json
+│   │       ├── 745.json
+│   │       ├── 746.json
+│   │       ├── 747.json
+│   │       ├── 748.json
+│   │       ├── 749.json
+│   │       ├── 75.json
+│   │       ├── 750.json
+│   │       ├── 751.json
+│   │       ├── 752.json
+│   │       ├── 753.json
+│   │       ├── 754.json
+│   │       ├── 755.json
+│   │       ├── 756.json
+│   │       ├── 757.json
+│   │       ├── 758.json
+│   │       ├── 759.json
+│   │       ├── 76.json
+│   │       ├── 760.json
+│   │       ├── 761.json
+│   │       ├── 762.json
+│   │       ├── 763.json
+│   │       ├── 764.json
+│   │       ├── 765.json
+│   │       ├── 766.json
+│   │       ├── 767.json
+│   │       ├── 768.json
+│   │       ├── 769.json
+│   │       ├── 77.json
+│   │       ├── 770.json
+│   │       ├── 771.json
+│   │       ├── 772.json
+│   │       ├── 773.json
+│   │       ├── 774.json
+│   │       ├── 775.json
+│   │       ├── 776.json
+│   │       ├── 777.json
+│   │       ├── 778.json
+│   │       ├── 779.json
+│   │       ├── 78.json
+│   │       ├── 780.json
+│   │       ├── 781.json
+│   │       ├── 782.json
+│   │       ├── 783.json
+│   │       ├── 784.json
+│   │       ├── 785.json
+│   │       ├── 786.json
+│   │       ├── 787.json
+│   │       ├── 788.json
+│   │       ├── 789.json
+│   │       ├── 79.json
+│   │       ├── 790.json
+│   │       ├── 791.json
+│   │       ├── 792.json
+│   │       ├── 793.json
+│   │       ├── 794.json
+│   │       ├── 795.json
+│   │       ├── 796.json
+│   │       ├── 797.json
+│   │       ├── 798.json
+│   │       ├── 799.json
+│   │       ├── 8.json
+│   │       ├── 80.json
+│   │       ├── 800.json
+│   │       ├── 801.json
+│   │       ├── 802.json
+│   │       ├── 803.json
+│   │       ├── 804.json
+│   │       ├── 805.json
+│   │       ├── 806.json
+│   │       ├── 807.json
+│   │       ├── 808.json
+│   │       ├── 809.json
+│   │       ├── 81.json
+│   │       ├── 810.json
+│   │       ├── 811.json
+│   │       ├── 812.json
+│   │       ├── 813.json
+│   │       ├── 814.json
+│   │       ├── 815.json
+│   │       ├── 816.json
+│   │       ├── 817.json
+│   │       ├── 818.json
+│   │       ├── 819.json
+│   │       ├── 82.json
+│   │       ├── 820.json
+│   │       ├── 821.json
+│   │       ├── 822.json
+│   │       ├── 823.json
+│   │       ├── 824.json
+│   │       ├── 825.json
+│   │       ├── 826.json
+│   │       ├── 827.json
+│   │       ├── 828.json
+│   │       ├── 829.json
+│   │       ├── 83.json
+│   │       ├── 830.json
+│   │       ├── 831.json
+│   │       ├── 832.json
+│   │       ├── 833.json
+│   │       ├── 834.json
+│   │       ├── 835.json
+│   │       ├── 836.json
+│   │       ├── 837.json
+│   │       ├── 838.json
+│   │       ├── 839.json
+│   │       ├── 84.json
+│   │       ├── 840.json
+│   │       ├── 841.json
+│   │       ├── 842.json
+│   │       ├── 843.json
+│   │       ├── 844.json
+│   │       ├── 845.json
+│   │       ├── 846.json
+│   │       ├── 847.json
+│   │       ├── 848.json
+│   │       ├── 849.json
+│   │       ├── 85.json
+│   │       ├── 850.json
+│   │       ├── 851.json
+│   │       ├── 852.json
+│   │       ├── 853.json
+│   │       ├── 854.json
+│   │       ├── 855.json
+│   │       ├── 856.json
+│   │       ├── 857.json
+│   │       ├── 858.json
+│   │       ├── 859.json
+│   │       ├── 86.json
+│   │       ├── 860.json
+│   │       ├── 861.json
+│   │       ├── 862.json
+│   │       ├── 863.json
+│   │       ├── 864.json
+│   │       ├── 865.json
+│   │       ├── 866.json
+│   │       ├── 867.json
+│   │       ├── 868.json
+│   │       ├── 869.json
+│   │       ├── 87.json
+│   │       ├── 870.json
+│   │       ├── 871.json
+│   │       ├── 872.json
+│   │       ├── 873.json
+│   │       ├── 874.json
+│   │       ├── 875.json
+│   │       ├── 876.json
+│   │       ├── 877.json
+│   │       ├── 878.json
+│   │       ├── 879.json
+│   │       ├── 88.json
+│   │       ├── 880.json
+│   │       ├── 881.json
+│   │       ├── 882.json
+│   │       ├── 883.json
+│   │       ├── 884.json
+│   │       ├── 885.json
+│   │       ├── 886.json
+│   │       ├── 887.json
+│   │       ├── 888.json
+│   │       ├── 889.json
+│   │       ├── 89.json
+│   │       ├── 890.json
+│   │       ├── 891.json
+│   │       ├── 892.json
+│   │       ├── 893.json
+│   │       ├── 894.json
+│   │       ├── 895.json
+│   │       ├── 896.json
+│   │       ├── 897.json
+│   │       ├── 898.json
+│   │       ├── 899.json
+│   │       ├── 9.json
+│   │       ├── 90.json
+│   │       ├── 900.json
+│   │       ├── 901.json
+│   │       ├── 902.json
+│   │       ├── 903.json
+│   │       ├── 904.json
+│   │       ├── 905.json
+│   │       ├── 906.json
+│   │       ├── 907.json
+│   │       ├── 908.json
+│   │       ├── 909.json
+│   │       ├── 91.json
+│   │       ├── 910.json
+│   │       ├── 911.json
+│   │       ├── 912.json
+│   │       ├── 913.json
+│   │       ├── 914.json
+│   │       ├── 915.json
+│   │       ├── 916.json
+│   │       ├── 917.json
+│   │       ├── 918.json
+│   │       ├── 919.json
+│   │       ├── 92.json
+│   │       ├── 920.json
+│   │       ├── 921.json
+│   │       ├── 922.json
+│   │       ├── 923.json
+│   │       ├── 924.json
+│   │       ├── 925.json
+│   │       ├── 926.json
+│   │       ├── 927.json
+│   │       ├── 928.json
+│   │       ├── 929.json
+│   │       ├── 93.json
+│   │       ├── 930.json
+│   │       ├── 931.json
+│   │       ├── 932.json
+│   │       ├── 933.json
+│   │       ├── 934.json
+│   │       ├── 935.json
+│   │       ├── 936.json
+│   │       ├── 937.json
+│   │       ├── 938.json
+│   │       ├── 939.json
+│   │       ├── 94.json
+│   │       ├── 940.json
+│   │       ├── 941.json
+│   │       ├── 942.json
+│   │       ├── 943.json
+│   │       ├── 944.json
+│   │       ├── 945.json
+│   │       ├── 946.json
+│   │       ├── 947.json
+│   │       ├── 948.json
+│   │       ├── 949.json
+│   │       ├── 95.json
+│   │       ├── 950.json
+│   │       ├── 951.json
+│   │       ├── 952.json
+│   │       ├── 953.json
+│   │       ├── 954.json
+│   │       ├── 955.json
+│   │       ├── 956.json
+│   │       ├── 957.json
+│   │       ├── 958.json
+│   │       ├── 959.json
+│   │       ├── 96.json
+│   │       ├── 960.json
+│   │       ├── 961.json
+│   │       ├── 962.json
+│   │       ├── 963.json
+│   │       ├── 964.json
+│   │       ├── 965.json
+│   │       ├── 966.json
+│   │       ├── 967.json
+│   │       ├── 968.json
+│   │       ├── 969.json
+│   │       ├── 97.json
+│   │       ├── 970.json
+│   │       ├── 971.json
+│   │       ├── 972.json
+│   │       ├── 973.json
+│   │       ├── 974.json
+│   │       ├── 975.json
+│   │       ├── 976.json
+│   │       ├── 977.json
+│   │       ├── 978.json
+│   │       ├── 979.json
+│   │       ├── 98.json
+│   │       ├── 980.json
+│   │       ├── 981.json
+│   │       ├── 982.json
+│   │       ├── 983.json
+│   │       ├── 984.json
+│   │       ├── 985.json
+│   │       ├── 986.json
+│   │       ├── 987.json
+│   │       ├── 988.json
+│   │       ├── 989.json
+│   │       ├── 99.json
+│   │       ├── 990.json
+│   │       ├── 991.json
+│   │       ├── 992.json
+│   │       ├── 993.json
+│   │       ├── 994.json
+│   │       ├── 995.json
+│   │       ├── 996.json
+│   │       ├── 997.json
+│   │       ├── 998.json
+│   │       └── 999.json
+│   ├── models
+│   │   └── fss_ner_crf_optimized.joblib
+│   ├── requirements.txt
+│   ├── rm_system_plan.txt
+│   ├── src
+│   │   ├── RecipeAnalyzerAPI.py
+│   │   ├── RecipeProcessor.py
+│   │   ├── __init__.py
+│   │   ├── dbus_service.py
+│   │   └── main.py
+│   ├── tests
+│   │   ├── __init__.py
+│   │   ├── mock_terminal_test.py
+│   │   └── test_recipe_analyzer.py
+│   └── validate_phase2.py
+├── scripts
+│   └── collect_debug_logs.sh
+├── sensor_daemon
+│   ├── CMakeLists.txt
+│   ├── include
+│   │   ├── DoorSensorDriver.hpp
+│   │   ├── GpioHandler.hpp
+│   │   ├── I2cHandler.hpp
+│   │   ├── InputProcessor.hpp
+│   │   ├── OutputProcessor.hpp
+│   │   ├── SensorDaemonMain.hpp
+│   │   ├── SensorDbusInterface.hpp
+│   │   ├── Sht3xDriver.hpp
+│   │   ├── SystemWatchdog.hpp
+│   │   └── Vl53l0xDriver.hpp
+│   ├── src
+│   │   ├── DoorSensorDriver.cpp
+│   │   ├── GpioHandler.cpp
+│   │   ├── I2cHandler.cpp
+│   │   ├── InputProcessor.cpp
+│   │   ├── OutputProcessor.cpp
+│   │   ├── SensorDaemonMain.cpp
+│   │   ├── SensorDbusInterface.cpp
+│   │   ├── Sht3xDriver.cpp
+│   │   ├── SystemWatchdog.cpp
+│   │   ├── Vl53l0xDriver.cpp
+│   │   └── main.cpp
+│   └── tests
+│       ├── CMakeLists.txt
+│       ├── README.md
+│       ├── mc-38
+│       │   ├── DoorSensorTest.cpp
+│       │   ├── DoorSensorTest.hpp
+│       │   ├── README.md
+│       │   ├── test_main.cpp
+│       │   └── test_mc38_driver
+│       ├── sht3x
+│       │   ├── Sht3xNativeTest.cpp
+│       │   ├── Sht3xTest.cpp
+│       │   ├── Sht3xTest.hpp
+│       │   └── test_main.cpp
+│       └── vl53l0x
+│           ├── Vl53l0xTest.cpp
+│           ├── Vl53l0xTest.hpp
+│           └── test_main.cpp
+├── setup.sh
+├── startup_fss_system.sh
+├── tests
+│   ├── PHASE1_COMPLETION_SUMMARY.md
+│   ├── PHASE1_TEST_REPORT.md
+│   ├── __init__.py
+│   ├── run_phase1_tests.py
+│   └── unit
+│       ├── __init__.py
+│       └── db_daemon
+│           ├── __init__.py
+│           ├── test_db_dbus_interface.py
+│           └── test_phase1_schema.py
+├── tools
+│   ├── deploy-model
+│   │   ├── README.md
+│   │   ├── setup.sh
+│   │   └── setup_python.sh
+│   └── verify_dbus_config.sh
+└── verify_dbus_fix.sh
+
+150 directories, 3108 files
