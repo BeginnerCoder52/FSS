@@ -157,10 +157,12 @@ class Track:
         self.age = 0
         
         # Line Crossing tracking
-        # We store centroid history (y-coordinates only for horizontal line crossing)
+        # We store centroid history (x and y)
+        self.centroid_x_history = []
         self.centroid_y_history = []
         cx = bbox[0] + bbox[2] / 2
         cy = bbox[1] + bbox[3] / 2
+        self.centroid_x_history.append(cx)
         self.centroid_y_history.append(cy)
         self.entry_counted = False
         self.exit_counted = False
@@ -176,9 +178,11 @@ class Track:
         
         cx = bbox[0] + bbox[2] / 2
         cy = bbox[1] + bbox[3] / 2
+        self.centroid_x_history.append(cx)
         self.centroid_y_history.append(cy)
         
         if len(self.centroid_y_history) > 10:
+            self.centroid_x_history.pop(0)
             self.centroid_y_history.pop(0)
             
         measurement = bbox_to_xyah(bbox)
@@ -199,37 +203,55 @@ class Track:
 class LineCrossDetector:
     """Detects when objects cross a virtual boundary line."""
     def __init__(self, boundary_y: int = 240):
-        self.boundary_y = boundary_y
+        # Default to horizontal line
+        self.boundary_line = {
+            'type': 'horizontal',
+            'pos': boundary_y
+        }
         self.qty_changes = {} # class_id -> change quantity (+ or -)
         
+    def set_virtual_line(self, line_info: dict):
+        """Set a dynamic virtual line detected from frame."""
+        if line_info:
+            self.boundary_line = line_info
+            logger.info(f"LineCrossDetector updated with {line_info['type']} virtual line at {int(line_info['pos'])}")
+
     def check_crossing(self, track: Track):
         """
         Check if a track has crossed the boundary.
         Top -> Bottom (Outside -> Inside) = Entry (+1)
         Bottom -> Top (Inside -> Outside) = Exit (-1)
+        Left -> Right (Outside -> Inside) = Entry (+1)
+        Right -> Left (Inside -> Outside) = Exit (-1)
         """
-        if len(track.centroid_y_history) < 2:
+        if len(track.centroid_y_history) < 2 or len(track.centroid_x_history) < 2:
             return
             
-        # Check direction between oldest recorded centroid and newest
-        start_y = track.centroid_y_history[0]
-        end_y = track.centroid_y_history[-1]
+        line_type = self.boundary_line['type']
+        pos = self.boundary_line['pos']
         
-        # Top to Bottom (Entry)
-        if start_y < self.boundary_y and end_y >= self.boundary_y and not track.entry_counted:
+        if line_type == 'horizontal':
+            start_pos = track.centroid_y_history[0]
+            end_pos = track.centroid_y_history[-1]
+        else: # vertical
+            start_pos = track.centroid_x_history[0]
+            end_pos = track.centroid_x_history[-1]
+            
+        # Outside to Inside (Entry)
+        if start_pos < pos and end_pos >= pos and not track.entry_counted:
             class_id = track.class_id
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) + 1
             track.entry_counted = True
             track.exit_counted = False # Reset if it changes direction
-            logger.info(f"Entry detected! Track ID {track.track_id}, Class {class_id} (+1)")
+            logger.info(f"Entry detected! Track ID {track.track_id}, Class {class_id} (+1) via {line_type} line")
             
-        # Bottom to Top (Exit)
-        elif start_y > self.boundary_y and end_y <= self.boundary_y and not track.exit_counted:
+        # Inside to Outside (Exit)
+        elif start_pos > pos and end_pos <= pos and not track.exit_counted:
             class_id = track.class_id
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) - 1
             track.exit_counted = True
             track.entry_counted = False # Reset if it changes direction
-            logger.info(f"Exit detected! Track ID {track.track_id}, Class {class_id} (-1)")
+            logger.info(f"Exit detected! Track ID {track.track_id}, Class {class_id} (-1) via {line_type} line")
 
     def get_and_clear_changes(self) -> Dict[int, int]:
         """Return the net changes and clear the buffer."""

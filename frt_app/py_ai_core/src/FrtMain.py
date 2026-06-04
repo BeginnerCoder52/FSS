@@ -107,6 +107,9 @@ class FrtMain:
         self.ai_engine = None
         self.dbus_interface = None
         self.tracker = None
+        self.virtual_line_detector = None
+        self.virtual_line_ready = False
+        self.frames_without_line = 0
 
         # C backend configuration (Phase 1 upgrade)
         self.use_c_backend: bool = True
@@ -220,6 +223,9 @@ class FrtMain:
 
         from YoloPipeline import ByteTrack
         self.tracker = ByteTrack(max_age=30)
+        
+        from VirtualLineDetector import VirtualLineDetector
+        self.virtual_line_detector = VirtualLineDetector()
 
         frame_count = 0
         fps_start_time = time.time()
@@ -247,6 +253,19 @@ class FrtMain:
                 if frame is None:
                     time.sleep(0.033)
                     continue
+                    
+                # Auto-configure virtual line on first frames of the session
+                if not getattr(self, 'virtual_line_ready', True) and self.virtual_line_detector is not None:
+                    line_info = self.virtual_line_detector.detect_virtual_line(frame)
+                    if line_info:
+                        self.tracker.line_detector.set_virtual_line(line_info)
+                        self.virtual_line_ready = True
+                        logger.info("Dynamic virtual line configured successfully.")
+                    else:
+                        self.frames_without_line += 1
+                        if self.frames_without_line > 5:
+                            logger.warning("Failed to detect virtual line after 5 frames, using default.")
+                            self.virtual_line_ready = True
 
                 # Motion detection
                 motion_mask = self.motion_detector.apply_background_subtraction(frame)
@@ -325,6 +344,9 @@ class FrtMain:
                 self.current_state = AppState.TRACKING.value
                 if self.tracker:
                     self.tracker.reset()
+                self.virtual_line_ready = False
+                self.frames_without_line = 0
+                
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("ON")
                 if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:
