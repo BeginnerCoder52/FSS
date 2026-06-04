@@ -28,9 +28,13 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
-FSS_ROOT = str(Path(__file__).resolve().parent.parent.parent.parent)
+FSS_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if FSS_ROOT not in sys.path:
     sys.path.insert(0, FSS_ROOT)
+
+FRT_SRC = str(Path(__file__).resolve().parent.parent / 'py_ai_core' / 'src')
+if FRT_SRC not in sys.path:
+    sys.path.insert(0, FRT_SRC)
 
 
 # ==============================================================================
@@ -78,6 +82,7 @@ class FrtAppScenarioTest:
         self.results = {"passed": 0, "failed": 0, "skipped": 0}
         self.captured_frames = []
         self.fps_samples = []
+        self.target_fps = 10
 
     def _pass(self, name: str, detail: str = ""):
         self.results["passed"] += 1
@@ -201,7 +206,7 @@ class FrtAppScenarioTest:
         self.logger.info("TEST 2: USB Camera Driver (CameraUvcDriver)")
         self.logger.info("=" * 70)
 
-        from frt_app.py_ai_core.src.CameraUvcDriver import CameraUvcDriver
+        from CameraUvcDriver import CameraUvcDriver
 
         driver = CameraUvcDriver(self.camera_device)
 
@@ -327,7 +332,7 @@ class FrtAppScenarioTest:
         self.logger.info("TEST 3: Image Preprocessor (ImagePreprocessor)")
         self.logger.info("=" * 70)
 
-        from frt_app.py_ai_core.src.ImagePreprocessor import ImagePreprocessor
+        from ImagePreprocessor import ImagePreprocessor
 
         preprocessor = ImagePreprocessor(640, 640)
 
@@ -406,7 +411,7 @@ class FrtAppScenarioTest:
         self.logger.info("TEST 4: Motion Detector (MotionDetector)")
         self.logger.info("=" * 70)
 
-        from frt_app.py_ai_core.src.MotionDetector import MotionDetector
+        from MotionDetector import MotionDetector
         import numpy as np
 
         detector = MotionDetector(threshold_percent=1.0)
@@ -464,7 +469,7 @@ class FrtAppScenarioTest:
         self.logger.info("TEST 5: YOLO Inference Engine (YoloTfliteEngine)")
         self.logger.info("=" * 70)
 
-        from frt_app.py_ai_core.src.YoloTfliteEngine import YoloTfliteEngine
+        from YoloTfliteEngine import YoloTfliteEngine
         import numpy as np
 
         engine = YoloTfliteEngine(
@@ -578,9 +583,9 @@ class FrtAppScenarioTest:
         self.logger.info("TEST 6: Full Pipeline Integration")
         self.logger.info("=" * 70)
 
-        from frt_app.py_ai_core.src.YoloTfliteEngine import YoloTfliteEngine
-        from frt_app.py_ai_core.src.ImagePreprocessor import ImagePreprocessor
-        from frt_app.py_ai_core.src.MotionDetector import MotionDetector
+        from YoloTfliteEngine import YoloTfliteEngine
+        from ImagePreprocessor import ImagePreprocessor
+        from MotionDetector import MotionDetector
 
         preprocessor = ImagePreprocessor(640, 640)
         engine = YoloTfliteEngine(
@@ -614,12 +619,15 @@ class FrtAppScenarioTest:
                 self.logger.warning("Frame source: synthetic frames (no camera available)")
 
         # 6a. Pipeline iteration
-        self.logger.info("--- 6a. Complete inference cycle (10 iterations)")
+        frame_budget_ms = 1000.0 / max(self.target_fps, 1)
+        num_iterations = max(self.target_fps * 2, 10)  # run for ~2s at target FPS
+        self.logger.info("--- 6a. Inference cycle ({} iterations, target {:.1f} ms/frame, {:.0f}s window)",
+                         num_iterations, frame_budget_ms, num_iterations / max(self.target_fps, 1))
         processed = 0
         inferred = 0
         start = time.time()
 
-        for i in range(10):
+        for i in range(num_iterations):
             frame = None
             if camera_driver and camera_driver.is_camera_open:
                 frame = camera_driver.read_frame()
@@ -787,6 +795,8 @@ def main():
                         help="Output directory for logs and artifacts")
     parser.add_argument("--synthetic", action="store_true",
                         help="Use synthetic frames instead of real camera/model")
+    parser.add_argument("--target-fps", type=int, default=10,
+                        help="Target pipeline processing FPS (default: 10)")
     parser.add_argument("--debug", action="store_true",
                         help="Enable debug logging")
     args = parser.parse_args()
@@ -798,6 +808,7 @@ def main():
         debug=args.debug,
         synthetic=args.synthetic,
     )
+    tester.target_fps = args.target_fps
     return tester.run_all()
 
 

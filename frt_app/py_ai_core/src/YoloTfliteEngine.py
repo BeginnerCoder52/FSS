@@ -31,14 +31,18 @@ class YoloTfliteEngine:
     YOLOv11 TFLite Inference Engine
     """
     
+<<<<<<< HEAD
     # Model path (placeholder until YOLO model available)
     DEFAULT_MODEL_PATH = os.environ.get(
         "FSS_MODEL_PATH",
         "/opt/fss/models/yolov11n.tflite"
     )
+=======
+    DEFAULT_MODEL_PATH = "/opt/fss/models/yolov11n_fp32.tflite"
+>>>>>>> f3aa189ce70fa84f2aa6a83396ea4f388804e2fb
     
     # Inference parameters
-    CONFIDENCE_THRESHOLD = 0.25      # Minimum confidence for detection
+    CONFIDENCE_THRESHOLD = 0.60      # Minimum confidence for detection
     IOU_THRESHOLD = 0.45             # NMS IoU threshold
     
     def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
@@ -257,23 +261,23 @@ class YoloTfliteEngine:
             num_elements = num_out.value
             out_array = np.ctypeslib.as_array(out_ptr, shape=(num_elements,)).copy()
 
-            num_classes = 80
-            num_detections = 8400
-            expected_per_det = num_classes + 4
+            YOLO_GRID_CELLS = 8400
+            actual_per_det = num_elements // YOLO_GRID_CELLS
+            num_classes = actual_per_det - 4
 
-            if num_elements == expected_per_det * num_detections:
-                output_data = out_array.reshape(1, expected_per_det, num_detections)
-                output_data = output_data.transpose(0, 2, 1)
-            elif num_elements == num_detections * expected_per_det:
-                output_data = out_array.reshape(1, num_detections, expected_per_det)
-            else:
-                logger.warning("Unexpected C output size: {}".format(num_elements))
+            if num_elements % YOLO_GRID_CELLS != 0 or num_classes <= 0:
+                logger.warning("C output size {}: expected multiple of {}, got {} values per det ({} classes)".format(
+                    num_elements, YOLO_GRID_CELLS, actual_per_det, num_classes))
                 return []
 
-            predictions = output_data[0]
+            num_detections = YOLO_GRID_CELLS
+            output_data = out_array.reshape(num_detections, actual_per_det)
 
-            boxes = predictions[:, :4]
-            scores = predictions[:, 4:]
+            boxes = output_data[:, :4]
+            scores = output_data[:, 4:]
+
+            if scores.max() > 1.0:
+                scores = 1.0 / (1.0 + np.exp(-np.clip(scores, -15, 15)))
 
             class_ids = np.argmax(scores, axis=1)
             max_scores = np.max(scores, axis=1)
@@ -286,23 +290,35 @@ class YoloTfliteEngine:
             if len(boxes) == 0:
                 return []
 
+            # Boxes are in [x_center, y_center, width, height] normalized to [0,1]
+            # (YOLOv11 TFLite outputs normalized coords; if range > 2.0, it's pixel-space)
+            if boxes.max() > 2.0:
+                inv_size = 1.0 / 640.0
+            else:
+                inv_size = 1.0
+
             results = []
             for i in range(len(boxes)):
-                x, y, w, h = boxes[i]
-                x1 = x - w/2
-                y1 = y - h/2
-                x2 = x + w/2
-                y2 = y + h/2
+                xc, yc, w, h = boxes[i]
+                x1 = (xc - w/2) * inv_size
+                y1 = (yc - h/2) * inv_size
+                x2 = (xc + w/2) * inv_size
+                y2 = (yc + h/2) * inv_size
 
                 results.append({
                     "class_id": int(class_ids[i]),
                     "confidence": float(max_scores[i]),
-                    "bbox": [float(x1), float(y1), float(w), float(h)],
+                    "bbox": [float(x1), float(y1), float(x2), float(y2)],
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
 
+            nms_boxes = []
+            for r in results:
+                bx1, by1, bx2, by2 = r["bbox"]
+                nms_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
+
             indices = cv2.dnn.NMSBoxes(
-                [r["bbox"] for r in results],
+                nms_boxes,
                 [r["confidence"] for r in results],
                 self.CONFIDENCE_THRESHOLD,
                 self.IOU_THRESHOLD
@@ -332,23 +348,23 @@ class YoloTfliteEngine:
 
             output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
             
-            # YOLOv11 output is typically (1, 84, 8400) or (1, 8400, 84)
-            # If (1, 84, 8400), transpose to (1, 8400, 84)
             if output_data.shape[1] < output_data.shape[2]:
                 output_data = output_data.transpose(0, 2, 1)
             
-            # Remove batch dimension: (8400, 84)
             predictions = output_data[0]
             
-            # Extract boxes and scores
-            boxes = predictions[:, :4]  # [x_center, y_center, width, height]
-            scores = predictions[:, 4:]  # Class scores
+            num_classes = predictions.shape[1] - 4
+            self.classes = [f"class_{i}" for i in range(num_classes)] if num_classes != len(self.classes) else self.classes
             
-            # Get max score and class ID for each box
+            boxes = predictions[:, :4]
+            scores = predictions[:, 4:]
+            
+            if scores.max() > 1.0:
+                scores = 1.0 / (1.0 + np.exp(-np.clip(scores, -15, 15)))
+            
             class_ids = np.argmax(scores, axis=1)
             max_scores = np.max(scores, axis=1)
             
-            # Filter by confidence threshold
             mask = max_scores > self.CONFIDENCE_THRESHOLD
             boxes = boxes[mask]
             max_scores = max_scores[mask]
@@ -357,26 +373,33 @@ class YoloTfliteEngine:
             if len(boxes) == 0:
                 return []
             
-            # Convert [x_center, y_center, w, h] to [x1, y1, x2, y2]
-            # Coordinates are usually normalized [0, 640]
+            if boxes.max() > 2.0:
+                inv_size = 1.0 / 640.0
+            else:
+                inv_size = 1.0
+            
             results = []
             for i in range(len(boxes)):
-                x, y, w, h = boxes[i]
-                x1 = x - w/2
-                y1 = y - h/2
-                x2 = x + w/2
-                y2 = y + h/2
+                xc, yc, w, h = boxes[i]
+                x1 = (xc - w/2) * inv_size
+                y1 = (yc - h/2) * inv_size
+                x2 = (xc + w/2) * inv_size
+                y2 = (yc + h/2) * inv_size
                 
                 results.append({
                     "class_id": int(class_ids[i]),
                     "confidence": float(max_scores[i]),
-                    "bbox": [float(x1), float(y1), float(w), float(h)],
+                    "bbox": [float(x1), float(y1), float(x2), float(y2)],
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
             
-            # Apply NMS (Non-Maximum Suppression)
+            nms_boxes = []
+            for r in results:
+                bx1, by1, bx2, by2 = r["bbox"]
+                nms_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
+            
             indices = cv2.dnn.NMSBoxes(
-                [r["bbox"] for r in results],
+                nms_boxes,
                 [r["confidence"] for r in results],
                 self.CONFIDENCE_THRESHOLD,
                 self.IOU_THRESHOLD

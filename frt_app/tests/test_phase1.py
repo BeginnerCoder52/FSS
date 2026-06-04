@@ -23,9 +23,15 @@ License: Proprietary
 """
 
 import sys
+import os
 import time
+from pathlib import Path
 import numpy as np
 from loguru import logger
+
+FRT_SRC = str(Path(__file__).resolve().parent.parent / 'py_ai_core' / 'src')
+if FRT_SRC not in sys.path:
+    sys.path.insert(0, FRT_SRC)
 
 # Setup logging
 logger.remove()
