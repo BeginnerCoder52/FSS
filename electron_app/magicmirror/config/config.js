@@ -27,6 +27,9 @@ let config = {
 	httpsPrivateKey: "",	// HTTPS private key path, only require when useHttps is true
 	httpsCertificate: "",	// HTTPS Certificate path, only require when useHttps is true
 
+	// Fix white screen on RPi: disable transparent window (requires compositor otherwise)
+	electronOptions: { transparent: false },
+
 	language: "vi",
 	locale: "vi-VN",   // this variable is provided as a consistent location
 			   // it is currently only used by 3rd party modules. no MagicMirror code uses this value

@@ -115,12 +115,17 @@ module.exports = NodeHelper.create({
 					withinThreshold: data.withinThreshold,
 					timestamp: data.timestamp || Date.now(),
 				});
-			} else if (data.type === "DOOR_STATE_UPDATE") {
-				const doorState = data.state || data.doorState || "UNKNOWN";
+		} else if (data.type === "DOOR_STATE_UPDATE") {
+				const doorState = data.doorState || data.state || "UNKNOWN";
 				console.log(`${this.name}: Relaying door state - ${doorState}`);
 				this.sendSocketNotification("DOOR_STATE_UPDATE", {
 					state: doorState,
 					timestamp: data.timestamp || Date.now(),
+				});
+				// Relay to MMM-FSS-Notification
+				this.sendSocketNotification("FSS_NOTIFICATION", {
+					type: "monitor",
+					message: `🚪 DOOR ${doorState} - Opening/Turning off USB Camera…`
 				});
 				// Relay to MMM-FSS-Notification
 				this.sendSocketNotification("FSS_NOTIFICATION", {
