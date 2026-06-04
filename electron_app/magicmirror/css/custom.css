@@ -1,0 +1,117 @@
+/* custom.css - Phục vụ giao diện nền sáng theo mockup FSS */
+
+:root {
+  --color-text: #000000;
+  --color-text-dimmed: #666666;
+  --color-text-bright: #000000;
+  --color-background: #F5F5F5;
+  --color-panel-bg: #FFFFFF;
+  --color-border: #000000;
+  --font-primary: "Inter", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --gap-size: 20px;
+}
+
+body {
+  margin: 0;
+  padding: var(--gap-size);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-primary);
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Ẩn các khu vực không cần thiết hoặc setup margin bằng 0 để tận dụng tối đa */
+.region.fullscreen {
+  display: none;
+}
+.region.fullscreen.above {
+  display: block; /* Giữ cho MMM-Keyboard */
+}
+
+.region.top.bar, .region.bottom.bar, .region.lower.third {
+  display: none;
+}
+
+/* Thiết lập Layout 3 cột */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 100%;
+  gap: var(--gap-size);
+  height: 100%;
+  padding: 0;
+}
+
+.region.left {
+  width: 100%;
+  min-width: 300px;
+}
+.region.center {
+  width: 100%;
+}
+.region.right {
+  width: 100%;
+  min-width: 300px;
+}
+
+/* Các module được đặt vào container viền trắng */
+.fss-panel {
+  background-color: var(--color-panel-bg);
+  border: 2px solid var(--color-border);
+  margin-bottom: var(--gap-size);
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--color-text);
+}
+
+/* Clock Module Override */
+.clock {
+  background-color: var(--color-panel-bg);
+  border: 2px solid var(--color-border);
+  padding: 20px;
+  margin-bottom: var(--gap-size);
+  text-align: left;
+}
+
+.clock .time {
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: 80px;
+  line-height: 1;
+}
+
+.clock .date {
+  color: var(--color-text-dimmed);
+  font-size: 30px;
+  font-weight: normal;
+  margin-top: 10px;
+}
+
+/* Checkbox/Circle Icon chung */
+.fss-circle-check {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  background-color: transparent;
+}
+
+/* Ghi đè CSS toàn cục của MagicMirror cho phù hợp */
+header {
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-border);
+  text-transform: uppercase;
+  font-size: 24px;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-family: var(--font-primary);
+  font-weight: bold;
+}
+
+.dimmed { color: var(--color-text-dimmed); }
+.normal { color: var(--color-text); }
+.bright { color: var(--color-text-bright); }
