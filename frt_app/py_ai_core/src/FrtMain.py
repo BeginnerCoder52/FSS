@@ -323,6 +323,8 @@ class FrtMain:
             if can_track and self.current_state != AppState.TRACKING.value:
                 logger.info("Transitioning to TRACKING state")
                 self.current_state = AppState.TRACKING.value
+                if self.tracker:
+                    self.tracker.reset()
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("ON")
                 if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:

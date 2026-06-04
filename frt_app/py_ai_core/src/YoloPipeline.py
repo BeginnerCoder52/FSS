@@ -35,6 +35,7 @@ from CameraUvcDriver import CameraUvcDriver
 from MotionDetector import MotionDetector
 from ImagePreprocessor import ImagePreprocessor
 from YoloTfliteEngine import YoloTfliteEngine
+from ByteTracker import ByteTracker as ByteTrack
 
 
 class SharedMemoryReader:
@@ -99,141 +100,6 @@ class SharedMemoryReader:
         self.is_attached = False
 
 
-class ByteTrack:
-    """
-    ByteTrack multi-object tracker integration.
-    
-    Purpose:
-        Track objects across frames to detect +1/-1 quantity changes.
-        Assign persistent IDs to detected food items.
-    
-    Algorithm:
-        1. Sort detections by confidence
-        2. First association: High confidence detections with Kalman filter predictions
-        3. Second association: Low confidence detections with remaining predictions
-        4. Create new tracks for unmatched detections
-        5. Remove old tracks (lost for too long)
-    """
-    
-    def __init__(self, max_age: int = 30):
-        """
-        Initialize ByteTrack tracker.
-        
-        Args:
-            max_age: Maximum frames to keep lost tracks
-        """
-        self.max_age = max_age
-        self.tracks: Dict[int, Dict] = {}  # track_id -> track_data
-        self.next_track_id = 1
-        self.detection_history: List[Dict] = []
-    
-    def update(self, detections: List[Dict]) -> List[Dict]:
-        """
-        Update tracker with new detections.
-        
-        Args:
-            detections: List of detection dicts with 'bbox', 'confidence', 'class_id'
-            
-        Returns:
-            List of tracked objects with 'track_id' added
-        """
-        tracks = []
-        
-        for det in detections:
-            # Simple nearest neighbor assignment
-            track_id = self._assign_track(det)
-            
-            track_data = {
-                'track_id': track_id,
-                'bbox': det['bbox'],
-                'confidence': det['confidence'],
-                'class_id': det['class_id'],
-                'age': 0
-            }
-            
-            self.tracks[track_id] = track_data
-            tracks.append(track_data)
-        
-        # Increment age for unmatched tracks
-        matched_ids = {t['track_id'] for t in tracks}
-        for track_id in list(self.tracks.keys()):
-            if track_id not in matched_ids:
-                self.tracks[track_id]['age'] += 1
-                if self.tracks[track_id]['age'] > self.max_age:
-                    del self.tracks[track_id]
-        
-        return tracks
-    
-    def _assign_track(self, detection: Dict) -> int:
-        """
-        Assign existing or new track ID to detection.
-        
-        Args:
-            detection: Detection dictionary
-            
-        Returns:
-            Track ID
-        """
-        # Simple IoU-based assignment
-        best_iou = 0.5
-        best_track_id = -1
-        
-        for track_id, track in self.tracks.items():
-            iou = self._calculate_iou(detection['bbox'], track['bbox'])
-            if iou > best_iou:
-                best_iou = iou
-                best_track_id = track_id
-        
-        if best_track_id >= 0:
-            return best_track_id
-        
-        # Create new track
-        track_id = self.next_track_id
-        self.next_track_id += 1
-        return track_id
-    
-    def _calculate_iou(self, bbox1: List, bbox2: List) -> float:
-        """Calculate IoU between two bounding boxes."""
-        x1, y1, w1, h1 = bbox1
-        x2, y2, w2, h2 = bbox2
-        
-        # Calculate intersection
-        xi1 = max(x1, x2)
-        yi1 = max(y1, y2)
-        xi2 = min(x1 + w1, x2 + w2)
-        yi2 = min(y1 + h1, y2 + h2)
-        
-        if xi2 <= xi1 or yi2 <= yi1:
-            return 0.0
-        
-        intersection = (xi2 - xi1) * (yi2 - yi1)
-        union = w1 * h1 + w2 * h2 - intersection
-        
-        return intersection / union if union > 0 else 0.0
-    
-    def get_quantity_change(self) -> Dict[int, int]:
-        """
-        Detect quantity changes based on track history.
-        
-        Returns:
-            Dict mapping class_id -> quantity change (+1 or -1)
-        """
-        changes = {}
-        
-        for track_id, track in self.tracks.items():
-            class_id = track['class_id']
-            
-            # Simple logic: count new tracks as +1
-            if track.get('age', 0) == 0:
-                changes[class_id] = changes.get(class_id, 0) + 1
-        
-        return changes
-    
-    def reset(self):
-        """Reset tracker state."""
-        self.tracks.clear()
-        self.next_track_id = 1
-        self.detection_history.clear()
 
 
 class YoloPipeline:

@@ -17,6 +17,10 @@ opencv-python-headless>=4.8.0
 # Used in: ImagePreprocessor, YoloTfliteEngine for matrix operations
 numpy>=1.24.0
 
+# SciPy - scientific computing
+# Used in: ByteTracker for linear_sum_assignment (Hungarian Algorithm)
+scipy>=1.10.0
+
 # TFLite Runtime - lightweight TensorFlow Lite inference engine
 # NOTE: No wheel for Python 3.13 on ARM64. Using C backend (libtflite_reader.so) instead.
 # See frt_app/c_tflite_reader/ for the C implementation.
