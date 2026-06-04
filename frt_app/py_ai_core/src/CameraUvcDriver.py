@@ -80,16 +80,8 @@ class CameraUvcDriver:
         logger.info("Opening camera stream from {}".format(self.device_path))
         
         try:
-            # Extract integer device ID if path is /dev/videoX
-            device = self.device_path
-            if isinstance(device, str) and device.startswith("/dev/video"):
-                try:
-                    device = int(device.replace("/dev/video", ""))
-                except ValueError:
-                    pass
-                    
-            # Open camera with V4L2 backend
-            self.video_capture = cv2.VideoCapture(device, cv2.CAP_V4L2)
+            # Open camera with default backend (CAP_ANY)
+            self.video_capture = cv2.VideoCapture(self.device_path)
             
             if not self.video_capture.isOpened():
                 logger.error("Failed to open camera")
