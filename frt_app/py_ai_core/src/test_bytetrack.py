@@ -35,12 +35,16 @@ def test_bytetrack_exit():
     dets = [{'bbox': [100, 300, 100, 100], 'confidence': 0.9, 'class_id': 2}]
     tracker.update(dets)
     
-    # Frame 2: Bottom (y_center=250)
+    # Frame 2: Bottom (y_center=300)
+    dets = [{'bbox': [100, 250, 100, 100], 'confidence': 0.9, 'class_id': 2}]
+    tracker.update(dets)
+    
+    # Frame 3: Top (y_center=250)
     dets = [{'bbox': [100, 200, 100, 100], 'confidence': 0.9, 'class_id': 2}]
     tracker.update(dets)
     
-    # Frame 3: Top (y_center=150) - crosses line!
-    dets = [{'bbox': [100, 100, 100, 100], 'confidence': 0.9, 'class_id': 2}]
+    # Frame 4: Top (y_center=200) - crosses line!
+    dets = [{'bbox': [100, 150, 100, 100], 'confidence': 0.9, 'class_id': 2}]
     tracker.update(dets)
     
     changes = tracker.get_quantity_change()
