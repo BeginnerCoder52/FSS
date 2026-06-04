@@ -33,23 +33,27 @@ sudo chown -R "${FSS_RUNTIME_USER}:${FSS_RUNTIME_USER}" "${FSS_RUNTIME_DIR}"
 sudo chmod -R 755 "${FSS_RUNTIME_DIR}"
 sudo chown -R "${FSS_RUNTIME_USER}:${FSS_RUNTIME_USER}" "${FSS_LOG_DIR}"
 
-# 4. Build C++ Components
-fss_log_info "Building C++ components..."
-fss_log_info " -> SensorDaemon..."
-mkdir -p "${FSS_ROOT}/sensor_daemon/build" && cd "${FSS_ROOT}/sensor_daemon/build"
-cmake .. && make -j4
-cd "${FSS_ROOT}"
+# 4. Build C++ Components (Only on Raspberry Pi)
+if [[ "$FSS_DEVICE" == "rpi4b" ]]; then
+    fss_log_info "Building C++ components..."
+    fss_log_info " -> SensorDaemon..."
+    mkdir -p "${FSS_ROOT}/sensor_daemon/build" && cd "${FSS_ROOT}/sensor_daemon/build"
+    cmake .. && make -j4
+    cd "${FSS_ROOT}"
 
-fss_log_info " -> FRT Camera Core and C TFLite Reader..."
-mkdir -p "${FSS_ROOT}/frt_app/build" && cd "${FSS_ROOT}/frt_app/build"
-cmake .. && make -j4
-cd "${FSS_ROOT}"
+    fss_log_info " -> FRT Camera Core and C TFLite Reader..."
+    mkdir -p "${FSS_ROOT}/frt_app/build" && cd "${FSS_ROOT}/frt_app/build"
+    cmake .. && make -j4
+    cd "${FSS_ROOT}"
 
-# Copy libtflite_reader.so to /usr/local/lib
-if [[ -f "${FSS_TFLITE_LIB}" ]]; then
-    fss_log_info "Installing libtflite_reader.so..."
-    sudo cp "${FSS_TFLITE_LIB}" /usr/local/lib/
-    sudo ldconfig
+    # Copy libtflite_reader.so to /usr/local/lib
+    if [[ -f "${FSS_TFLITE_LIB}" ]]; then
+        fss_log_info "Installing libtflite_reader.so..."
+        sudo cp "${FSS_TFLITE_LIB}" /usr/local/lib/
+        sudo ldconfig
+    fi
+else
+    fss_log_skip "Skipping C++ components build on non-rpi4b device (${FSS_DEVICE})."
 fi
 
 # 5. Create Python Virtual Environments
