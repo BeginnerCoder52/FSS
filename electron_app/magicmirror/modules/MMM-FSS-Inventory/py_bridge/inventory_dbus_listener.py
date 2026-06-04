@@ -22,7 +22,18 @@ import logging
 import signal
 import sqlite3
 import time
+import os
 from typing import Optional, Dict, Any, List
+
+def get_dbus_config():
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../config.json"))
+    try:
+        with open(config_path, "r") as f:
+            return json.load(f).get("dbus", {})
+    except Exception:
+        return {}
+
+dbus_config = get_dbus_config()
 
 try:
     from sdbus import DbusInterfaceCommonAsync, dbus_signal_async
@@ -41,7 +52,7 @@ DB_QUERY_TIMEOUT_S = 15
 DB_POLL_INTERVAL_S = 2
 
 
-class FRTAppProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.FRTApp"):
+class FRTAppProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("sensor_interface", "vn.edu.uit.FSS.FRTApp")):
     """D-Bus interface proxy for raw FRT signals from frt_app."""
 
     @dbus_signal_async("sis")
@@ -50,7 +61,7 @@ class FRTAppProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.FRTAp
         pass
 
 
-class DbDaemonInventoryProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
+class DbDaemonInventoryProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("dbdaemon_interface", "vn.edu.uit.FSS.DBDaemon")):
     """D-Bus interface proxy for FRT signals from DBDaemon."""
 
     @dbus_signal_async("sis")
@@ -63,11 +74,11 @@ class InventoryListener:
     """Main listener for FRT inventory with two-tier fetching strategy."""
 
     # D-Bus configuration
-    DBUS_SERVICE = "vn.edu.uit.FSS.DBDaemon"
-    DBUS_PATH = "/vn/edu/uit/FSS/DBDaemon"
+    DBUS_SERVICE = dbus_config.get("dbdaemon_service", "vn.edu.uit.FSS.DBDaemon")
+    DBUS_PATH = dbus_config.get("dbdaemon_path", "/vn/edu/uit/FSS/DBDaemon")
     
-    FRT_DBUS_SERVICE = "vn.edu.uit.FSS.FRTApp"
-    FRT_DBUS_PATH = "/vn/edu/uit/FSS/FRTApp"
+    FRT_DBUS_SERVICE = dbus_config.get("sensor_service", "vn.edu.uit.FSS.FRTApp")
+    FRT_DBUS_PATH = dbus_config.get("sensor_path", "/vn/edu/uit/FSS/FRTApp")
 
     def __init__(self, frt_app_enabled: bool = False):
         """Initialize the listener."""

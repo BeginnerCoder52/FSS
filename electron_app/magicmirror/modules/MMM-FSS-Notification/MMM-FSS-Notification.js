@@ -2,7 +2,8 @@ Module.register("MMM-FSS-Notification", {
     defaults: {
         displayDuration: 5000,
         maxVisible: 5,
-        animationDuration: 300
+        animationDuration: 300,
+        showMockNotifications: false
     },
     start() {
         this.notifications = [];
@@ -10,7 +11,7 @@ Module.register("MMM-FSS-Notification", {
         this.audioReady = false;
         
         // Mock data for previewing layout
-        if (this.notifications.length === 0) {
+        if (this.config.showMockNotifications && this.notifications.length === 0) {
             this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ RỐT' }, true);
             this.addNotification({ type: 'food_removed', message: 'Bạn vừa lấy ra x1 TRỨNG' }, true);
             this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ CHUA' }, true);

@@ -33,6 +33,14 @@ module.exports = NodeHelper.create({
                 } catch(e) {}
             }
         });
+        this.pythonProcess.on("error", (err) => {
+            console.error("[MMM-FSS-LivePreview] Failed to start bridge:", err);
+        });
+        this.pythonProcess.on("close", (code) => {
+            console.warn(`[MMM-FSS-LivePreview] Python bridge closed with code ${code}`);
+            this.started = false;
+            this.pythonProcess = null;
+        });
         this.started = true;
     },
     stop() {

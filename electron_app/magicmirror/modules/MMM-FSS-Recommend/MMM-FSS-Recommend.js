@@ -7,6 +7,7 @@ Module.register("MMM-FSS-Recommend", {
         this.loading = false;
         this.accumulatedResults = [];
         this.pendingCount = 0;
+        this.hasSearched = false;
         
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -34,7 +35,7 @@ Module.register("MMM-FSS-Recommend", {
         shoppingPanel.appendChild(shoppingTitle);
 
         // Hiển thị dữ liệu thực hoặc mock data
-        let ingredientsToBuy = this.mockShoppingList;
+        let ingredientsToBuy = this.hasSearched ? [] : this.mockShoppingList;
         if (this.result && this.result.ingredients) {
             ingredientsToBuy = this.result.ingredients
                 .filter(i => i.status === 'missing')
@@ -76,7 +77,7 @@ Module.register("MMM-FSS-Recommend", {
         menuPanel.appendChild(menuTitle);
 
         // Danh sách các món ăn
-        let currentMenu = this.mockMenu;
+        let currentMenu = this.hasSearched ? [] : this.mockMenu;
         if (this.result && this.result.recipe_name) {
             currentMenu = this.result.recipe_name.split(',').map(s => s.trim());
         }
@@ -126,6 +127,7 @@ Module.register("MMM-FSS-Recommend", {
     notificationReceived(notification, payload, sender) {
         if (notification === "RECIPE_SEARCH") {
             this.loading = true;
+            this.hasSearched = true;
             this.result = null;
             this.updateDom();
             this.sendSocketNotification("RECIPE_SEARCH", payload);
@@ -134,6 +136,7 @@ Module.register("MMM-FSS-Recommend", {
             const recipes = payload.message.split(",").map(s => s.trim()).filter(s => s);
             if (recipes.length === 0) return;
             this.loading = true;
+            this.hasSearched = true;
             this.result = null;
             this.accumulatedResults = [];
             this.pendingCount = recipes.length;

@@ -45,6 +45,11 @@ module.exports = NodeHelper.create({
         this.pythonProcess.on("error", (err) => {
             console.error("[MMM-FSS-Recommend] Failed to start bridge:", err);
         });
+        this.pythonProcess.on("close", (code) => {
+            console.warn(`[MMM-FSS-Recommend] Python bridge closed with code ${code}`);
+            this.started = false;
+            this.pythonProcess = null;
+        });
         this.started = true;
     },
     stop() {

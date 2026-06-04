@@ -1,18 +1,28 @@
 #!/usr/bin/env python3
 """Bridge: listen for RECIPE_SEARCH, call RecommendDaemon D-Bus, relay results."""
-import sys, json, asyncio, uuid
+import sys, json, asyncio, uuid, os
 from sdbus import DbusInterfaceCommon, dbus_method
 
+def get_dbus_config():
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../config.json"))
+    try:
+        with open(config_path, "r") as f:
+            return json.load(f).get("dbus", {})
+    except Exception:
+        return {}
+
+dbus_config = get_dbus_config()
+RECOMMEND_SERVICE = dbus_config.get("recommend_service", "vn.edu.uit.FSS.RecommendDaemon")
+RECOMMEND_INTERFACE = dbus_config.get("recommend_interface", "vn.edu.uit.FSS.RecommendDaemon")
+RECOMMEND_PATH = dbus_config.get("recommend_path", "/vn/edu/uit/FSS/RecommendDaemon")
+
 class RecommendDaemonInterface(DbusInterfaceCommon,
-                               interface_name="vn.edu.uit.FSS.RecommendDaemon"):
+                               interface_name=RECOMMEND_INTERFACE):
     @dbus_method('ss', 's')
     def GenerateShoppingList(self, recipe_name: str, batch_id: str) -> str:
         pass
 
-proxy = RecommendDaemonInterface.new_proxy(
-    "vn.edu.uit.FSS.RecommendDaemon",
-    "/vn/edu/uit/FSS/RecommendDaemon"
-)
+proxy = RecommendDaemonInterface.new_proxy(RECOMMEND_SERVICE, RECOMMEND_PATH)
 
 for line in sys.stdin:
     line = line.strip()
