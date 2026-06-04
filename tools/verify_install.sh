@@ -173,7 +173,7 @@ echo ""
 echo "--- [8] Hardcoded Path Check ---"
 HARDCODED=$(grep -rn "/home/richardmelvin52" \
     --include="*.py" --include="*.js" --include="*.sh" --include="*.conf" \
-    "$FSS_ROOT" 2>/dev/null | grep -v ".md:" | grep -v ".git/" | grep -v "HANDOVER" | grep -v "FINAL_UPGRADE" || true)
+    "$FSS_ROOT" 2>/dev/null | grep -v ".md:" | grep -v ".git/" | grep -v "HANDOVER" | grep -v "FINAL_UPGRADE" | grep -v "verify_install.sh" || true)
 if [[ -z "$HARDCODED" ]]; then
     pass "No hardcoded /home/richardmelvin52 paths in source files"
 else
