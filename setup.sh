@@ -81,7 +81,7 @@ if [[ -d "${FSS_ROOT}/electron_app/magicmirror" ]]; then
     cd "${FSS_ROOT}"
     for v in "${FSS_MM_BRIDGE_VENVS[@]}"; do
         # Extract base path without py_bridge since setup_venv handles relative paths
-        local mm_path=$(echo "$v" | sed 's/\/py_bridge.*//')
+        mm_path=$(echo "$v" | sed 's/\/py_bridge.*//')
         cd "${FSS_ROOT}/${mm_path}"
         npm install
         cd "${FSS_ROOT}"
