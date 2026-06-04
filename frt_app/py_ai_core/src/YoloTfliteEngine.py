@@ -32,7 +32,10 @@ class YoloTfliteEngine:
     """
     
     # Model path (placeholder until YOLO model available)
-    DEFAULT_MODEL_PATH = "/home/richardmelvin52/FSS/frt_app/py_ai_core/models/yolov11n.tflite"
+    DEFAULT_MODEL_PATH = os.environ.get(
+        "FSS_MODEL_PATH",
+        "/opt/fss/models/yolov11n.tflite"
+    )
     
     # Inference parameters
     CONFIDENCE_THRESHOLD = 0.25      # Minimum confidence for detection
