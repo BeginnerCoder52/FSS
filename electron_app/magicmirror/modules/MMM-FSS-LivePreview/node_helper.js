@@ -1,6 +1,6 @@
 const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
-const SessionLog = require("../../../js/session_logger");
+const SessionLog = require("../../js/session_logger");
 const { resolvePythonExecutable } = require("../fss_paths");
 
 module.exports = NodeHelper.create({
