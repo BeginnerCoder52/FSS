@@ -55,6 +55,7 @@ class AppState(Enum):
     """
     INIT = "INIT"              # Initialization phase
     IDLE = "IDLE"              # Ready but dormant (door closed)
+    AUTO_CALIBRATION = "AUTO_CALIBRATION" # Detecting virtual line before AI
     TRACKING = "TRACKING"      # Active inference (door open)
     ERROR = "ERROR"            # Error state
     STOPPED = "STOPPED"        # Shutdown
@@ -234,7 +235,7 @@ class FrtMain:
             try:
                 loop_start = time.time()
 
-                if self.current_state != AppState.TRACKING.value:
+                if self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
                     time.sleep(0.1)
                     continue
 
@@ -254,19 +255,32 @@ class FrtMain:
                     time.sleep(0.033)
                     continue
                     
-                # Auto-configure virtual line on first frames of the session
-                if not getattr(self, 'virtual_line_ready', True) and self.virtual_line_detector is not None:
-                    line_info = self.virtual_line_detector.detect_virtual_line(frame)
-                    if line_info:
-                        self.tracker.line_detector.set_virtual_line(line_info)
-                        self.virtual_line_ready = True
-                        logger.info("Dynamic virtual line configured successfully.")
-                    else:
-                        self.frames_without_line += 1
-                        if self.frames_without_line > 5:
-                            logger.warning("Failed to detect virtual line after 5 frames, using default.")
+                # ============================================================
+                # Phase 1: Auto-Calibration (Run OpenCV only, yield CPU)
+                # ============================================================
+                if self.current_state == AppState.AUTO_CALIBRATION.value:
+                    if self.virtual_line_detector is not None:
+                        line_info = self.virtual_line_detector.detect_virtual_line(frame)
+                        if line_info:
+                            self.tracker.line_detector.set_virtual_line(line_info)
                             self.virtual_line_ready = True
+                            self.current_state = AppState.TRACKING.value
+                            logger.info("Auto-Calibration complete. Virtual Line saved. Transitioning to TRACKING state.")
+                            continue # Nhường CPU, frame tiếp theo mới chạy AI
+                        else:
+                            self.frames_without_line += 1
+                            if self.frames_without_line > 5:
+                                logger.warning("Auto-Calibration timeout after 5 frames, using default. Transitioning to TRACKING state.")
+                                self.virtual_line_ready = True
+                                self.current_state = AppState.TRACKING.value
+                                continue # Nhường CPU
+                            else:
+                                time.sleep(0.01) # Chờ frame tiếp theo
+                                continue # Bỏ qua YOLO, ở lại phase Calibration
 
+                # ============================================================
+                # Phase 2: AI Vision Core (MOG2 + YOLO)
+                # ============================================================
                 # Motion detection
                 motion_mask = self.motion_detector.apply_background_subtraction(frame)
                 if not self.motion_detector.is_motion_detected(motion_mask):
@@ -339,9 +353,9 @@ class FrtMain:
             elif self.last_distance_cm is not None and self.last_distance_cm < self.distance_threshold_cm:
                 can_track = True
 
-            if can_track and self.current_state != AppState.TRACKING.value:
-                logger.info("Transitioning to TRACKING state")
-                self.current_state = AppState.TRACKING.value
+            if can_track and self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
+                logger.info("Transitioning to AUTO_CALIBRATION state")
+                self.current_state = AppState.AUTO_CALIBRATION.value
                 if self.tracker:
                     self.tracker.reset()
                 self.virtual_line_ready = False
