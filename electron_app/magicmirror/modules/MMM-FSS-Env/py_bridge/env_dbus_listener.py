@@ -40,7 +40,7 @@ class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS
     """D-Bus interface proxy for raw sensor signals from sensor_daemon."""
 
     @dbus_signal_async("dd")
-    def EnvironmentReadingUpdated(self) -> None:
+    def EnvironmentDataChanged(self) -> None:
         """Signal: Sensor 1 and 2 readings."""
         pass
 
@@ -259,7 +259,7 @@ class EnvironmentListener:
             return
             
         try:
-            async for temp1, humid1 in self.sensor_proxy.EnvironmentReadingUpdated:
+            async for temp1, humid1 in self.sensor_proxy.EnvironmentDataChanged:
                 try:
                     self.last_db_update_time = time.time()
                     # Send Sensor 1 data from raw sensor signal

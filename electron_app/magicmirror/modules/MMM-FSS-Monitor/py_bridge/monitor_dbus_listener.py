@@ -44,14 +44,14 @@ DISTANCE_THRESHOLD_M = 0.6  # 60cm
 class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.Sensor"):
     """D-Bus interface proxy for raw sensor signals from sensor_daemon."""
 
-    @dbus_signal_async("db")
-    def DistanceUpdated(self) -> None:
-        """Signal: Distance reading and threshold."""
+    @dbus_signal_async("d")
+    def DistanceDataChanged(self) -> None:
+        """Signal: Distance reading."""
         pass
 
-    @dbus_signal_async("sd")
-    def DoorStateUpdated(self) -> None:
-        """Signal: Door state and timestamp."""
+    @dbus_signal_async("s")
+    def DoorStateChanged(self) -> None:
+        """Signal: Door state."""
         pass
 
 
@@ -281,14 +281,14 @@ class MonitorListener:
             return
             
         try:
-            async for distance, within_threshold in self.sensor_proxy.DistanceUpdated:
+            async for distance in self.sensor_proxy.DistanceDataChanged:
                 try:
                     self.last_db_update_time = time.time()
                     is_user_detected = distance < DISTANCE_THRESHOLD_M
                     data = {
                         "type": "DISTANCE_ALERT",
                         "distance": float(distance),
-                        "withinThreshold": within_threshold,
+                        "withinThreshold": is_user_detected,
                         "isUserDetected": is_user_detected,
                         "source": "raw_sensor",
                         "timestamp": int(time.time() * 1000),
@@ -308,7 +308,7 @@ class MonitorListener:
             return
             
         try:
-            async for door_state, timestamp in self.sensor_proxy.DoorStateUpdated:
+            async for door_state in self.sensor_proxy.DoorStateChanged:
                 try:
                     self.last_db_update_time = time.time()
                     data = {

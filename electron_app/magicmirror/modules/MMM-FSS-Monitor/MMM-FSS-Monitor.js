@@ -68,8 +68,8 @@ Module.register("MMM-FSS-Monitor", {
 
 		// Black screen overlay (initially hidden)
 		const overlay = document.createElement("div");
-		overlay.id = "mmm-fss-monitor-overlay";
-		overlay.classList.add("mmm-fss-monitor-overlay");
+		overlay.id = "fss-blackout-overlay";
+		overlay.classList.add("fss-blackout-overlay");
 		if (this.state.isBlackScreenActive) {
 			overlay.classList.add("active");
 		}
