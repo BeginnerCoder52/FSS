@@ -1,117 +1,90 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ==============================================================================
-# Runtime Environment & Systemd Services setup for FSS on Raspberry Pi
+# Helper script to generate systemd services for FSS production mode.
+# Called by setup.sh when FSS_MODE=production
 # ==============================================================================
 
 set -euo pipefail
 
-echo "[*] Setting up hardware access (I2C, Video, GPIO)..."
-sudo usermod -aG i2c,video,gpio "$USER"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+. "${SCRIPT_DIR}/fss_profile.conf"
 
-echo "[*] Creating data directories..."
-sudo mkdir -p /opt/fss/images /opt/fss/logs
-sudo chown -R "$USER:$USER" /opt/fss
-sudo chmod -R 755 /opt/fss
+if [[ "${1:-}" != "--generate-systemd" ]]; then
+    fss_log_error "This script is a helper and should be called by setup.sh in production mode."
+    echo "Usage: $0 --generate-systemd"
+    exit 1
+fi
 
-echo "[*] Creating systemd service files..."
+fss_log_info "Creating systemd service files..."
 SERVICE_DIR="/etc/systemd/system"
-PROJECT_DIR=$(pwd)
 
-# 1. Sensor Daemon (C++)
-sudo tee "$SERVICE_DIR/fss-sensor.service" > /dev/null <<EOF
+generate_service() {
+    local name="$1"
+    local desc="$2"
+    local exec="$3"
+    local wd="$4"
+    local after="$5"
+    
+    sudo tee "$SERVICE_DIR/${name}.service" > /dev/null <<EOF
+[Unit]
+Description=${desc}
+After=${after}
+
+[Service]
+ExecStart=${exec}
+WorkingDirectory=${wd}
+Restart=always
+User=${FSS_RUNTIME_USER}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    fss_log_ok "Generated ${name}.service"
+}
+
+# 1. Sensor Daemon
+sudo tee "$SERVICE_DIR/${FSS_SERVICE_SENSOR}.service" > /dev/null <<EOF
 [Unit]
 Description=FSS Sensor Daemon (C++)
 After=network.target
 
 [Service]
-ExecStart=$PROJECT_DIR/sensor_daemon/build/sensor_daemon_exec
-WorkingDirectory=$PROJECT_DIR/sensor_daemon
+ExecStart=${FSS_SENSOR_EXEC}
+WorkingDirectory=${FSS_ROOT}/sensor_daemon
 Restart=always
 WatchdogSec=10s
-User=$USER
+User=${FSS_RUNTIME_USER}
 
 [Install]
 WantedBy=multi-user.target
 EOF
+fss_log_ok "Generated ${FSS_SERVICE_SENSOR}.service"
 
-# 2. Camera Core (C++)
-sudo tee "$SERVICE_DIR/fss-camera.service" > /dev/null <<EOF
-[Unit]
-Description=FSS Camera Core (C++)
-After=fss-sensor.service
+# 2. Camera Core
+generate_service "${FSS_SERVICE_CAMERA}" "FSS Camera Core (C++)" "${FSS_CAMERA_EXEC}" "${FSS_ROOT}/frt_app/cpp_camera_core" "${FSS_SERVICE_SENSOR}.service"
 
-[Service]
-ExecStart=$PROJECT_DIR/frt_app/cpp_camera_core/build/camera_core_exec
-WorkingDirectory=$PROJECT_DIR/frt_app/cpp_camera_core
-Restart=always
-User=$USER
+# 3. FRT AI Core
+generate_service "${FSS_SERVICE_AI}" "FSS AI Core (Python YOLO)" "${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py" "${FSS_ROOT}/frt_app/py_ai_core" "${FSS_SERVICE_CAMERA}.service"
 
-[Install]
-WantedBy=multi-user.target
-EOF
+# 4. DB Daemon
+generate_service "${FSS_SERVICE_DB}" "FSS Database Daemon (Python)" "${FSS_VENV_DB_DAEMON}/bin/python ${FSS_ROOT}/db_daemon/src/main.py" "${FSS_ROOT}/db_daemon" "${FSS_SERVICE_SENSOR}.service"
 
-# 3. FRT AI Core (Python)
-sudo tee "$SERVICE_DIR/fss-ai.service" > /dev/null <<EOF
-[Unit]
-Description=FSS AI Core (Python YOLO)
-After=fss-camera.service
+# 5. Recommend Daemon
+generate_service "${FSS_SERVICE_RECOMMEND}" "FSS Recommend Daemon (Python)" "${FSS_VENV_RECOMMEND_DAEMON}/bin/python ${FSS_ROOT}/recommend_daemon/src/main.py" "${FSS_ROOT}/recommend_daemon" "${FSS_SERVICE_DB}.service"
 
-[Service]
-ExecStart=$PROJECT_DIR/frt_app/py_ai_core/venv/bin/python $PROJECT_DIR/frt_app/py_ai_core/src/main.py
-WorkingDirectory=$PROJECT_DIR/frt_app/py_ai_core
-Restart=always
-User=$USER
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# 4. DB Daemon (Python)
-sudo tee "$SERVICE_DIR/fss-db.service" > /dev/null <<EOF
-[Unit]
-Description=FSS Database Daemon (Python)
-After=fss-sensor.service
-
-[Service]
-ExecStart=$PROJECT_DIR/db_daemon/venv/bin/python $PROJECT_DIR/db_daemon/src/main.py
-WorkingDirectory=$PROJECT_DIR/db_daemon
-Restart=always
-User=$USER
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# 5. Recommend Daemon (Python) - NEW
-sudo tee "$SERVICE_DIR/fss-recommend.service" > /dev/null <<EOF
-[Unit]
-Description=FSS Recommend Daemon (Python) - Business Logic Orchestrator
-After=fss-db.service
-
-[Service]
-ExecStart=$PROJECT_DIR/recommend_daemon/venv/bin/python $PROJECT_DIR/recommend_daemon/src/main.py
-WorkingDirectory=$PROJECT_DIR/recommend_daemon
-Restart=always
-User=$USER
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-echo "[*] Reloading systemd and enabling services..."
+fss_log_info "Reloading systemd and enabling services..."
 sudo systemctl daemon-reload
-sudo systemctl enable fss-sensor.service
-sudo systemctl enable fss-camera.service
-sudo systemctl enable fss-ai.service
-sudo systemctl enable fss-db.service
-sudo systemctl enable fss-recommend.service
+sudo systemctl enable ${FSS_SERVICE_SENSOR}.service
+sudo systemctl enable ${FSS_SERVICE_CAMERA}.service
+sudo systemctl enable ${FSS_SERVICE_AI}.service
+sudo systemctl enable ${FSS_SERVICE_DB}.service
+sudo systemctl enable ${FSS_SERVICE_RECOMMEND}.service
 
-echo "[*] Configuring PM2 for MagicMirror UI..."
-cd "$PROJECT_DIR/electron_app/magicmirror"
+fss_log_info "Configuring PM2 for MagicMirror UI..."
+cd "${FSS_ROOT}/electron_app/magicmirror"
 pm2 start npm --name "MagicMirror" -- run start 2>/dev/null || true
 pm2 save
-sudo env PATH="$PATH:/usr/bin" /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u "$USER" --hp "/home/$USER" 2>/dev/null || true
+sudo env PATH="$PATH:/usr/bin" /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u "${FSS_RUNTIME_USER}" --hp "/home/${FSS_RUNTIME_USER}" 2>/dev/null || true
 
-echo "[+] Done! Start all daemons with:"
-echo "    sudo systemctl start fss-sensor fss-camera fss-ai fss-db fss-recommend"
-echo "    or: journalctl -u fss-sensor -f"
+fss_log_ok "Done! Start all daemons with:"
+echo "    sudo systemctl start ${FSS_SERVICE_SENSOR} ${FSS_SERVICE_CAMERA} ${FSS_SERVICE_AI} ${FSS_SERVICE_DB} ${FSS_SERVICE_RECOMMEND}"

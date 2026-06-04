@@ -22,6 +22,10 @@
 
 set -euo pipefail
 
+# Source FSS profile for paths
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+. "${SCRIPT_DIR}/../fss_profile.conf" 2>/dev/null || true
+
 CONFIG_PATH="/etc/dbus-1/system.d/vn.edu.uit.FSS.conf"
 BACKUP_SUFFIX=".backup.$(date +%Y%m%d_%H%M%S)"
 
@@ -189,9 +193,9 @@ done
 echo ""
 echo "--- [7] Python sdbus Dependency Check ---"
 COMPONENT_VENVS=(
-    "/home/richardmelvin52/FSS/db_daemon/venv"
-    "/home/richardmelvin52/FSS/recommend_daemon/venv"
-    "/home/richardmelvin52/FSS/frt_app/py_ai_core/venv"
+    "${FSS_ROOT}/db_daemon/venv"
+    "${FSS_ROOT}/recommend_daemon/venv"
+    "${FSS_ROOT}/frt_app/py_ai_core/venv"
 )
 for venv in "${COMPONENT_VENVS[@]}"; do
     if [[ -f "$venv/bin/python" ]]; then
@@ -288,7 +292,7 @@ if [[ "$CONFIG_EXISTS" == false || "$*" == *"--force"* ]]; then
   </policy>
 
   <!-- Allow the building user (pi/richardmelvin52) for development -->
-  <policy user="richardmelvin52">
+  <policy user="${FSS_RUNTIME_USER}">
     <allow own="vn.edu.uit.FSS.Sensor"/>
     <allow own="vn.edu.uit.FSS.FRTApp"/>
     <allow own="vn.edu.uit.FSS.DBDaemon"/>

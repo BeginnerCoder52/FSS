@@ -17,10 +17,11 @@ Dựa trên sơ đồ SAD và SDD mới nhất, hệ thống được tối ưu 
 
 ```
 FSS/
-├── setup.sh                    # Script tự động cấu hình môi trường, build C++ và cài Python/Node
-├── fss_env_setup.sh            # Script cấu hình systemd service và mount /opt/fss vào RAM (tmpfs)
+├── fss_profile.conf            # Central configuration profile for paths and user settings
+├── setup.sh                    # Unified installer (dependencies, build, venvs, DBus, systemd)
+├── fss_env_setup.sh            # Helper script for systemd services (called by setup.sh)
 ├── startup_fss_system.sh       # Integrated startup (all daemons + systemd watchdog)
-├── verify_dbus_fix.sh          # D-Bus fix verification script
+├── tools/verify_install.sh     # Post-install verification script
 ├── docs/                       # Chứa tài liệu SAD, SDD, Class Diagram
 │
 ├── drivers/                    # Hardware Abstraction Layer (HAL)
@@ -145,9 +146,27 @@ FSS/
 └── docs/                       # Tài liệu thiết kế
 ```
 
-## ⚙️ Hướng dẫn Khởi chạy (Dành cho Development)
+## ⚙️ Hướng dẫn Cài đặt & Khởi chạy
 
-Sau khi chạy thành công `./setup.sh`, bạn cần mở 6 terminal để khởi chạy độc lập các thành phần:
+Toàn bộ hệ thống được cài đặt thông qua 1 file cấu hình duy nhất: `fss_profile.conf` và script `setup.sh`.
+
+### 1. Cài đặt hệ thống
+Bạn có thể cài đặt theo 2 chế độ: Development (chạy thủ công bằng Terminal) hoặc Production (chạy tự động ngầm qua systemd).
+
+**Cài đặt Development (Mặc định)**:
+```bash
+bash setup.sh
+bash tools/verify_install.sh
+```
+
+**Cài đặt Production (Raspberry Pi)**:
+```bash
+FSS_MODE=production bash setup.sh
+bash tools/verify_install.sh
+```
+
+### 2. Khởi chạy (Chế độ Development)
+Sau khi cài đặt xong, bạn có thể mở 6 terminal để khởi chạy độc lập các thành phần, hoặc dùng script tự động:
 
 ```bash
 # Terminal 1: Chạy Core Sensor (C++)

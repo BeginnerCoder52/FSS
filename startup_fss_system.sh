@@ -20,28 +20,24 @@
 set -uo pipefail
 
 FSS_ROOT="$(dirname "$(readlink -f "$0")")"
-LOG_DIR="/var/log/fss"
+. "${FSS_ROOT}/fss_profile.conf"
+
+LOG_DIR="${FSS_LOG_DIR}"
 PID_DIR="/tmp/fss"
 
-SENSOR_DAEMON_EXEC="${FSS_ROOT}/sensor_daemon/build/sensor_daemon_exec"
+SENSOR_DAEMON_EXEC="${FSS_SENSOR_EXEC}"
 DB_DAEMON_SRC="${FSS_ROOT}/db_daemon/src"
-DB_DAEMON_VENV="${FSS_ROOT}/db_daemon/venv"
-FRT_CAMERA_EXEC="${FSS_ROOT}/frt_app/build/cpp_camera_core/camera_core_exec"
+DB_DAEMON_VENV="${FSS_VENV_DB_DAEMON}"
+FRT_CAMERA_EXEC="${FSS_CAMERA_EXEC}"
 FRT_AI_SRC="${FSS_ROOT}/frt_app/py_ai_core/src"
-FRT_AI_VENV="${FSS_ROOT}/frt_app/py_ai_core/venv"
+FRT_AI_VENV="${FSS_VENV_FRT_AI}"
 RECOMMEND_DAEMON_SRC="${FSS_ROOT}/recommend_daemon/src"
-RECOMMEND_DAEMON_VENV="${FSS_ROOT}/recommend_daemon/venv"
+RECOMMEND_DAEMON_VENV="${FSS_VENV_RECOMMEND_DAEMON}"
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-log_info()  { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} INFO: $1"; }
-log_warn()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARN: $1${NC}"; }
-log_error() { echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}" >&2; }
-log_ok()    { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] ✓ $1${NC}"; }
+log_info()  { fss_log_info "$1"; }
+log_warn()  { fss_log_warn "$1"; }
+log_error() { fss_log_error "$1"; }
+log_ok()    { fss_log_ok "$1"; }
 
 setup_log_directory() {
     if [[ ! -d "$LOG_DIR" ]]; then

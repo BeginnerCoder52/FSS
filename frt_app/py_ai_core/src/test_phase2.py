@@ -93,7 +93,8 @@ class TestPhase2:
     def start_camera_core(self):
         """Start C++ camera core in background"""
         try:
-            camera_exec = Path("/home/richardmelvin52/FSS/frt_app/cpp_camera_core/build/camera_core_exec")
+            fss_root = Path(__file__).resolve().parents[3]
+            camera_exec = fss_root / "frt_app" / "build" / "cpp_camera_core" / "camera_core_exec"
             if not camera_exec.exists():
                 self.log_warning("Camera core executable not found - skipping camera test")
                 return False
@@ -252,7 +253,8 @@ class TestPhase2:
         
         if not camera_started:
             print("\n[!] Skipping SHM tests (camera core not available)")
-            print("    Run: /home/richardmelvin52/FSS/frt_app/cpp_camera_core/build/camera_core_exec")
+            fss_root = Path(__file__).resolve().parents[3]
+            print(f"    Run: {fss_root / 'frt_app' / 'build' / 'cpp_camera_core' / 'camera_core_exec'}")
             print("    And then run this test in another terminal")
         else:
             # Run tests

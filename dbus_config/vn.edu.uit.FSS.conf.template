@@ -7,8 +7,8 @@
   <!-- ============================================================
        FSS (Fridge Supervisor System) D-Bus Security Policy
 
-       Generated from vn.edu.uit.FSS.conf.template by setup.sh.
-       To regenerate: sudo bash setup.sh (Stage 4: D-Bus config)
+       Generated from template by setup.sh.
+       Runtime user placeholder: @@FSS_RUNTIME_USER@@
 
        Covers all daemons:
          - vn.edu.uit.FSS.Sensor          (C++: hardware I/O)
@@ -17,14 +17,16 @@
          - vn.edu.uit.FSS.RecommendDaemon (Python: business logic)
        ============================================================ -->
 
-  <!-- Default policy: allow communication with FSS services -->
+  <!-- Default policy: deny ownership (whitelist approach) -->
   <policy context="default">
+    <!-- Allow all users to talk to FSS services (UI bridges need this) -->
     <allow send_destination="vn.edu.uit.FSS.Sensor"/>
     <allow send_destination="vn.edu.uit.FSS.FRTApp"/>
     <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
     <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
     <allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
 
+    <!-- Allow all users to receive signals from FSS services -->
     <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
     <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
     <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
@@ -44,20 +46,25 @@
   </policy>
 
   <!-- FSS runtime user policy -->
-  <policy user="fss">
+  <policy user="@@FSS_RUNTIME_USER@@">
+    <!-- Allow owning service names -->
     <allow own="vn.edu.uit.FSS.Sensor"/>
     <allow own="vn.edu.uit.FSS.FRTApp"/>
     <allow own="vn.edu.uit.FSS.DBDaemon"/>
     <allow own="vn.edu.uit.FSS.RecommendDaemon"/>
     <allow own="vn.edu.uit.FSS.RecommendSystem"/>
 
+    <!-- Allow talking to D-Bus daemon -->
     <allow send_destination="org.freedesktop.DBus"/>
+
+    <!-- Allow sending to all FSS services -->
     <allow send_destination="vn.edu.uit.FSS.Sensor"/>
     <allow send_destination="vn.edu.uit.FSS.FRTApp"/>
     <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
     <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
     <allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
 
+    <!-- Allow receiving from all FSS services -->
     <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
     <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
     <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
