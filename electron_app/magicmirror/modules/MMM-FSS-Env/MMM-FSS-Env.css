@@ -1,175 +1,52 @@
-/**
- * @file MMM-FSS-Env.css
- * @brief Styling for the environmental sensor module.
- * 
- * Dark theme with light text and icons.
- * Designed for mirror display (right_center position).
- */
+/* Cập nhật CSS cho MMM-FSS-Env theo mockup (nền sáng, viền đen) */
 
-.mmm-fss-env-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	padding: 10px;
-	background: linear-gradient(135deg, rgba(20, 20, 30, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%);
-	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-	border: 1px solid rgba(100, 150, 200, 0.3);
-	font-family: "Roboto", sans-serif;
-	color: #e0e0e0;
+.fss-env-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
 }
 
-/**
- * Individual sensor box styling
- */
-.mmm-fss-env-sensor-box {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	padding: 8px 12px;
-	background: rgba(40, 40, 55, 0.8);
-	border-radius: 6px;
-	border-left: 3px solid #4db8ff;
-	min-width: 120px;
-	transition: all 0.3s ease;
+.fss-env-box {
+    /* Được thừa hưởng từ custom.css .fss-panel */
+    padding: 20px;
 }
 
-.mmm-fss-env-sensor-box:hover {
-	background: rgba(50, 50, 70, 0.9);
-	border-left-color: #6ec9ff;
+.fss-env-title {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-transform: none;
 }
 
-/**
- * Stale data styling (data hasn't been updated in staleDataTimeout)
- */
-.mmm-fss-env-sensor-box.stale {
-	opacity: 0.6;
-	border-left-color: #ff9800;
+.fss-env-data-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
-/**
- * Sensor label (Ngan mat, Ngan dong)
- */
-.mmm-fss-env-label {
-	font-size: 12px;
-	font-weight: 600;
-	color: #81d4fa;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	margin-bottom: 2px;
+.fss-env-data-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 24px;
+    font-weight: 500;
 }
 
-/**
- * Row for temperature/humidity display
- */
-.mmm-fss-env-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 14px;
-	color: #e0e0e0;
-	transition: color 0.3s ease;
+.fss-env-icon-temp,
+.fss-env-icon-humid {
+    font-size: 32px;
 }
 
-/**
- * Icons styling (thermometer, water droplet)
- */
-.mmm-fss-env-icon {
-	font-size: 16px;
-	width: 20px;
-	text-align: center;
-	transition: all 0.3s ease;
+/* Các tuỳ chỉnh nhỏ cho icon nếu cần */
+.fss-env-icon-temp {
+    color: var(--color-text); /* Mockup cho màu đen hoặc xám */
 }
 
-/* Temperature icon color */
-.mmm-fss-env-row .fa-thermometer-half {
-	color: #ff6b6b;
+.fss-env-icon-humid {
+    color: var(--color-text); /* Mockup cho màu đen hoặc xám */
 }
 
-/* Humidity icon color */
-.mmm-fss-env-row .fa-droplet {
-	color: #4db8ff;
-}
-
-.mmm-fss-env-row:hover .mmm-fss-env-icon {
-	transform: scale(1.1);
-}
-
-/**
- * Temperature and humidity values
- */
-.mmm-fss-env-value {
-	font-weight: 500;
-	color: #ffffff;
-	font-size: 15px;
-	min-width: 60px;
-	text-align: right;
-}
-
-/**
- * No data state
- */
-.mmm-fss-env-value.no-data {
-	color: #b0bec5;
-	font-style: italic;
-	opacity: 0.7;
-}
-
-/**
- * Separator between sensor boxes
- */
-.mmm-fss-env-separator {
-	width: 100%;
-	height: 1px;
-	background: linear-gradient(to right, transparent, rgba(100, 150, 200, 0.3), transparent);
-	margin: 2px 0;
-}
-
-/**
- * Responsive design for smaller displays
- */
-@media (max-width: 768px) {
-	.mmm-fss-env-container {
-		padding: 8px;
-		gap: 6px;
-	}
-
-	.mmm-fss-env-sensor-box {
-		min-width: 100px;
-		padding: 6px 10px;
-	}
-
-	.mmm-fss-env-label {
-		font-size: 11px;
-	}
-
-	.mmm-fss-env-row {
-		font-size: 12px;
-	}
-
-	.mmm-fss-env-icon {
-		font-size: 14px;
-	}
-
-	.mmm-fss-env-value {
-		font-size: 13px;
-	}
-}
-
-/**
- * Animations
- */
-@keyframes dataUpdate {
-	0% {
-		background-color: rgba(100, 150, 200, 0.2);
-	}
-	100% {
-		background-color: rgba(40, 40, 55, 0.8);
-	}
-}
-
-.mmm-fss-env-sensor-box.updated {
-	animation: dataUpdate 0.5s ease-in-out;
+.stale {
+    opacity: 0.6;
 }

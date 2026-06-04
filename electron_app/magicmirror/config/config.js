@@ -49,127 +49,57 @@ let config = {
 		},
 		{
 			module: "clock",
-			position: "top_left",
+			position: "top_right",
 			classes: "everyone",
 			config: {
-				timeFormat: "HH:mm",
-				displayType: "analog",
+				timeFormat: 24,
+				displayType: "digital",
 				dateFormat: "dddd, D MMMM YYYY",
-				locale: "vi-VN",
-				face: "modules/default/clock/faces/face-003.svg",  // CHƯA CHỈNH ĐƯỢC mặt đồng hồ
+				locale: "en-US", // Mockup có 'Sun, 31 May 2026'
 				displaySeconds: false,
-				showPeriodUpper: false,
-				clockBold: true,
-				clockColor: "#FFFFFF",
-				clockSize: 120
+				showDate: true
 			},
 		},
 		{
-			module: "calendar",
-			header: "Lịch nghỉ lễ Việt Nam",
-			position: "top_left",
+			module: "MMM-Keyboard",
+			position: "fullscreen_above",
 			config: {
-				calendars: [
-					{
-						fetchInterval: 7 * 24 * 60 * 60 * 1000,
-						symbol: "calendar-check",
-						url: "https://ics.calendarlabs.com/77/fb176e15/Vietnam_Holidays.ics"
-					}
-				]
-			},
+				startWithNumbers: false,
+				startUppercase: true,
+				debug: false
+			}
 		},
 		{
-			module: "compliments",
-			position: "lower_third",
-			config: {
-                compliments: {
-                    anytime: [
-                        "Xin chào người đẹp!",
-                        "Hôm nay bạn trông thật tuyệt vời!",
-                        "Nhớ làm xong deadline nha người đẹp!"
-                    ]
-                }
-            },
-			classes: "default",
+			module: "MMM-FSS-Recommend",
+			position: "top_left"
 		},
 		{
-			module: "weather",
+			module: "MMM-FSS-Notification",
+			position: "top_center"
+		},
+		{
+			module: "MMM-FSS-Inventory",
+			position: "bottom_center",
+			config: {
+				frtAppEnabled: true,
+				showPlaceholder: false
+			}
+		},
+		{
+			module: "MMM-FSS-Env",
 			position: "top_right",
-			header: "Dự báo thời tiết",
 			config: {
-				weatherProvider: "openmeteo",
-				type: "forecast",
-				lat: 10.7769,
-                lon: 106.7009,
-                units: "metric"
-			},
+				updateInterval: 2000,
+				roundTemperature: false,
+				roundHumidity: false,
+				displayUnits: true
+			}
 		},
 		{
-			module: "newsfeed",
-			position: "bottom_bar",
-			config: {
-				feeds: [
-					{
-						title: "Báo Thanh Niên",
-						url: "https://thanhnien.vn/rss/home.rss"
-					}
-				],
-				showSourceTitle: true,
-				showPublishDate: true,
-				broadcastNewsFeeds: true,
-				broadcastNewsUpdates: true
-			},
-		},
-		
-		{
-            module: "MMM-Keyboard",
-            position: "fullscreen_above",
-            config: {
-                startWithNumbers: false,
-                startUppercase: true,
-                debug: false
-            }
-        },
-        {
-            module: "MMM-FSS-LivePreview",
-            position: "middle_center",
-            config: { previewFps: 10, timeoutAfterStable: 3000 }
-        },
-        {
-            module: "MMM-FSS-Monitor",
-            position: "top_center",
-            config: {
-                distanceThreshold: 0.6,
-                showDebugInfo: false
-            }
-        },
-        {
-            module: "MMM-FSS-Env",
-            position: "top_right",
-            config: {
-                updateInterval: 2000,
-                roundTemperature: false,
-                roundHumidity: false,
-                displayUnits: true
-            }
-        },
-        {
-            module: "MMM-FSS-Recommend",
-            position: "bottom_center"
-        },
-        {
-            module: "MMM-FSS-Inventory",
-            position: "bottom_right",
-            config: {
-                notificationDuration: 3000,
-                frtAppEnabled: true,
-                showPlaceholder: false
-            }
-        },
-        {
-            module: "MMM-FSS-Notification",
-            position: "middle_center"
-        },
+			module: "MMM-FSS-LivePreview",
+			position: "bottom_right",
+			config: { previewFps: 10, timeoutAfterStable: 3000 }
+		}
 	]
 };
 

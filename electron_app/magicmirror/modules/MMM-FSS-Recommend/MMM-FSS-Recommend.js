@@ -7,78 +7,119 @@ Module.register("MMM-FSS-Recommend", {
         this.loading = false;
         this.accumulatedResults = [];
         this.pendingCount = 0;
+        
+        // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
+        this.mockShoppingList = [
+            { name: "Thịt heo", qty: "500g" },
+            { name: "Thịt bò", qty: "500g" },
+            { name: "Táo tàu", qty: "100g" },
+            { name: "Hành tây", qty: "2 cây" }
+        ];
+        this.mockMenu = [
+            "Thịt kho măng",
+            "Cơm cuộn"
+        ];
     },
     getDom() {
         const wrapper = document.createElement("div");
-        wrapper.id = "fss-recommend-container";
+        wrapper.className = "fss-recommend-wrapper";
 
-        const headerRow = document.createElement("div");
-        headerRow.className = "fss-recommend-header-row";
+        // Khung 1: Danh sách nguyên liệu cần chuẩn bị thêm
+        const shoppingPanel = document.createElement("div");
+        shoppingPanel.className = "fss-panel fss-shopping-panel";
+        
+        const shoppingTitle = document.createElement("div");
+        shoppingTitle.className = "fss-panel-title";
+        shoppingTitle.innerHTML = "Danh sách<br>nguyên liệu cần<br>chuẩn bị thêm";
+        shoppingPanel.appendChild(shoppingTitle);
 
-        const title = document.createElement("span");
-        title.className = "fss-recommend-title";
-        title.textContent = "🍳 Tìm món ăn";
-        headerRow.appendChild(title);
+        // Hiển thị dữ liệu thực hoặc mock data
+        let ingredientsToBuy = this.mockShoppingList;
+        if (this.result && this.result.ingredients) {
+            ingredientsToBuy = this.result.ingredients
+                .filter(i => i.status === 'missing')
+                .map(i => ({ name: i.name, qty: i.required - i.available }));
+        }
 
-        const searchBtn = document.createElement("button");
-        searchBtn.className = "fss-recommend-search-btn";
-        searchBtn.textContent = "🔍 Tìm kiếm";
-        searchBtn.addEventListener("click", () => {
+        ingredientsToBuy.forEach(item => {
+            const row = document.createElement("div");
+            row.className = "fss-list-row";
+            
+            const leftPart = document.createElement("div");
+            leftPart.className = "fss-list-left";
+            const circle = document.createElement("div");
+            circle.className = "fss-circle-check";
+            leftPart.appendChild(circle);
+            
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = item.name;
+            leftPart.appendChild(nameSpan);
+            
+            const qtySpan = document.createElement("span");
+            qtySpan.className = "fss-list-qty";
+            qtySpan.textContent = item.qty;
+            
+            row.appendChild(leftPart);
+            row.appendChild(qtySpan);
+            shoppingPanel.appendChild(row);
+        });
+
+        wrapper.appendChild(shoppingPanel);
+
+        // Khung 2: THỰC ĐƠN HÔM NAY
+        const menuPanel = document.createElement("div");
+        menuPanel.className = "fss-panel fss-menu-panel";
+        
+        const menuTitle = document.createElement("div");
+        menuTitle.className = "fss-panel-title-center";
+        menuTitle.textContent = "THỰC ĐƠN HÔM NAY";
+        menuPanel.appendChild(menuTitle);
+
+        // Danh sách các món ăn
+        let currentMenu = this.mockMenu;
+        if (this.result && this.result.recipe_name) {
+            currentMenu = this.result.recipe_name.split(',').map(s => s.trim());
+        }
+
+        currentMenu.forEach(meal => {
+            const row = document.createElement("div");
+            row.className = "fss-list-row-full";
+            
+            const circle = document.createElement("div");
+            circle.className = "fss-circle-check";
+            row.appendChild(circle);
+            
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = meal;
+            row.appendChild(nameSpan);
+            
+            menuPanel.appendChild(row);
+        });
+
+        // Nút / Input Nhập thực đơn hôm nay
+        const inputRow = document.createElement("div");
+        inputRow.className = "fss-list-row-full fss-input-row";
+        
+        const inputCircle = document.createElement("div");
+        inputCircle.className = "fss-circle-check";
+        inputRow.appendChild(inputCircle);
+        
+        const inputSpan = document.createElement("span");
+        inputSpan.textContent = this.loading ? "Đang phân tích..." : "Nhập thực đơn hôm nay";
+        inputSpan.className = "fss-input-text";
+        inputRow.appendChild(inputSpan);
+
+        // Gắn sự kiện click để mở bàn phím tìm kiếm
+        inputRow.addEventListener("click", () => {
             this.sendNotification("KEYBOARD", {
                 key: "recommendSearch",
                 style: "default",
                 data: {}
             });
         });
-        headerRow.appendChild(searchBtn);
-        wrapper.appendChild(headerRow);
+        menuPanel.appendChild(inputRow);
 
-        if (this.loading) {
-            const loadingDiv = document.createElement("div");
-            loadingDiv.className = "fss-recommend-loading";
-            loadingDiv.textContent = "Đang phân tích...";
-            wrapper.appendChild(loadingDiv);
-            return wrapper;
-        }
-
-        if (!this.result) {
-            const emptyDiv = document.createElement("div");
-            emptyDiv.className = "fss-recommend-empty";
-            emptyDiv.textContent = "Nhập tên món ăn để tìm kiếm";
-            wrapper.appendChild(emptyDiv);
-            return wrapper;
-        }
-
-        const recipeHeader = document.createElement("div");
-        recipeHeader.className = "fss-recommend-header";
-        recipeHeader.textContent = `📋 ${this.result.recipe_name}`;
-        wrapper.appendChild(recipeHeader);
-
-        const table = document.createElement("table");
-        table.className = "fss-recommend-table";
-        let tableHtml = '<tr><th>Nguyên liệu</th><th>Cần</th><th>Có</th><th></th></tr>';
-        if (this.result.ingredients) {
-            tableHtml += this.result.ingredients.map(ing => `
-                <tr class="fss-recommend-${ing.status}">
-                    <td>${ing.name}</td>
-                    <td>${ing.required}</td>
-                    <td>${ing.available}</td>
-                    <td>${ing.status === 'available' ? '✅' : ing.status === 'needed' ? '⚠️' : '❌'}</td>
-                </tr>
-            `).join('');
-        }
-        table.innerHTML = tableHtml;
-        wrapper.appendChild(table);
-
-        const summary = document.createElement("div");
-        summary.className = "fss-recommend-summary";
-        const missing = this.result.ingredients
-            ? this.result.ingredients.filter(i => i.status === 'missing').length
-            : 0;
-        summary.textContent = missing > 0
-            ? `❌ Còn thiếu ${missing} nguyên liệu`
-            : '✅ Đã có đủ nguyên liệu!';
-        wrapper.appendChild(summary);
+        wrapper.appendChild(menuPanel);
 
         return wrapper;
     },

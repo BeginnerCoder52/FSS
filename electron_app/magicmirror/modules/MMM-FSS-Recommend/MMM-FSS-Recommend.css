@@ -1,76 +1,65 @@
-#fss-recommend-container {
-    background: rgba(20,20,30,0.95);
-    border-radius: 12px;
-    padding: 16px;
-    max-width: 500px;
-    margin: 0 auto;
-    color: #e0e0e0;
+/* Cập nhật CSS cho MMM-FSS-Recommend theo thiết kế mockup (nền sáng, viền đen) */
+
+.fss-recommend-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    color: var(--color-text);
 }
-.fss-recommend-loading,
-.fss-recommend-empty {
+
+.fss-panel-title {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.fss-panel-title-center {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
     text-align: center;
-    padding: 20px;
-    color: #95a5a6;
-    font-size: 14px;
+    text-transform: uppercase;
 }
-.fss-recommend-header-row {
+
+.fss-list-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 10px 15px;
     margin-bottom: 10px;
+    font-size: 18px;
+    background-color: transparent;
 }
-.fss-recommend-title {
-    font-size: 16px;
-    font-weight: bold;
+
+.fss-list-left {
+    display: flex;
+    align-items: center;
 }
-.fss-recommend-search-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: none;
-    background: #3498db;
-    color: white;
-    font-size: 13px;
+
+.fss-list-qty {
+    font-weight: 500;
+}
+
+.fss-list-row-full {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    background-color: transparent;
+}
+
+.fss-input-row {
     cursor: pointer;
-    touch-action: manipulation;
-    transition: background 0.2s;
 }
-.fss-recommend-search-btn:active {
-    background: #2176ae;
-}
-.fss-recommend-header {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 10px;
-}
-.fss-recommend-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-.fss-recommend-table th {
-    text-align: left;
-    padding: 6px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    color: #81d4fa;
-    font-weight: 600;
-}
-.fss-recommend-table td {
-    padding: 6px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.fss-recommend-available td { color: #2ecc71; }
-.fss-recommend-needed td { color: #f39c12; }
-.fss-recommend-missing td { color: #e74c3c; }
-.fss-recommend-summary {
-    text-align: center;
-    padding: 10px;
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    border-top: 1px solid rgba(255,255,255,0.1);
+
+.fss-input-text {
+    color: var(--color-text-dimmed);
 }

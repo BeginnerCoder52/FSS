@@ -8,29 +8,54 @@ Module.register("MMM-FSS-Notification", {
         this.notifications = [];
         this.audioCtx = null;
         this.audioReady = false;
+        
+        // Mock data for previewing layout
+        if (this.notifications.length === 0) {
+            this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ RỐT' }, true);
+            this.addNotification({ type: 'food_removed', message: 'Bạn vừa lấy ra x1 TRỨNG' }, true);
+            this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ CHUA' }, true);
+            this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CHANH' }, true);
+        }
     },
     getScripts() {
         return [];
     },
     getDom() {
         const wrapper = document.createElement("div");
-        wrapper.id = "fss-notification-overlay";
+        wrapper.className = "fss-panel fss-notification-panel";
+
+        const titleBox = document.createElement("div");
+        titleBox.className = "fss-notif-title-vertical";
+        titleBox.innerHTML = "T<br>H<br>Ô<br>N<br>G<br><br>B<br>Á<br>O";
+        
+        const listWrapper = document.createElement("div");
+        listWrapper.className = "fss-notif-list-wrapper";
 
         this.notifications.forEach((n) => {
-            const card = document.createElement("div");
-            card.className = `fss-notification-card fss-notif-${n.type}`;
+            const row = document.createElement("div");
+            row.className = "fss-list-row-full";
 
-            const msg = document.createElement("div");
-            msg.className = "fss-notif-message";
+            const circle = document.createElement("div");
+            circle.className = "fss-circle-check";
+            row.appendChild(circle);
+
+            const msg = document.createElement("span");
             msg.textContent = n.message;
-            card.appendChild(msg);
+            row.appendChild(msg);
 
-            const timer = document.createElement("div");
-            timer.className = "fss-notif-timer";
-            card.appendChild(timer);
-
-            wrapper.appendChild(card);
+            listWrapper.appendChild(row);
         });
+
+        // The mockup has the text "THÔNG BÁO" written vertically on the left side, 
+        // and the list of notifications on the right.
+        const flexContainer = document.createElement("div");
+        flexContainer.style.display = "flex";
+        flexContainer.style.flexDirection = "row";
+        
+        flexContainer.appendChild(titleBox);
+        flexContainer.appendChild(listWrapper);
+        
+        wrapper.appendChild(flexContainer);
 
         return wrapper;
     },
@@ -40,9 +65,9 @@ Module.register("MMM-FSS-Notification", {
             this.addNotification(payload);
         }
     },
-    addNotification(data) {
+    addNotification(data, preventTimeout = false) {
         this.notifications.unshift({
-            id: Date.now(),
+            id: Date.now() + Math.random(),
             type: data.type,
             message: data.message,
             timestamp: Date.now()
@@ -54,10 +79,12 @@ Module.register("MMM-FSS-Notification", {
 
         this.updateDom();
 
-        setTimeout(() => {
-            this.notifications = this.notifications.filter(n => n.id !== data.id);
-            this.updateDom();
-        }, this.config.displayDuration);
+        if (!preventTimeout) {
+            setTimeout(() => {
+                this.notifications = this.notifications.filter(n => n.id !== data.id);
+                this.updateDom();
+            }, this.config.displayDuration);
+        }
     },
     initAudio() {
         if (this.audioReady) return;
