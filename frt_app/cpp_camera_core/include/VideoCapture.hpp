@@ -12,7 +12,7 @@
  *     - Device Path: /dev/video0 (USB camera)
  *     - Backend: OpenCV cv::CAP_V4L2
  *     - Resolution: 640x480 (configurable)
- *     - FPS: 30 (target frame rate)
+ *     - FPS: 10 (target frame rate)
  *     - Format: BGR (OpenCV standard)
  *
  * Integration:
@@ -33,6 +33,7 @@
 #include <chrono>
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
+#include "CameraConfig.hpp"
 
 /**
  * VideoCapture - USB Camera Stream Handler
@@ -51,10 +52,10 @@
 class VideoCapture {
 public:
     // Configuration Constants
-    static constexpr const char* DEFAULT_DEVICE = "/dev/video0";
-    static constexpr int DEFAULT_WIDTH = 640;
-    static constexpr int DEFAULT_HEIGHT = 480;
-    static constexpr int DEFAULT_FPS = 30;
+    static constexpr const char* DEFAULT_DEVICE = CameraConfig::DEVICE_PATH;
+    static constexpr int DEFAULT_WIDTH = CameraConfig::DEFAULT_WIDTH;
+    static constexpr int DEFAULT_HEIGHT = CameraConfig::DEFAULT_HEIGHT;
+    static constexpr int DEFAULT_FPS = CameraConfig::DEFAULT_FPS;
     
     /**
      * Constructor
