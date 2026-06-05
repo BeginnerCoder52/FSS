@@ -55,7 +55,7 @@ async def main():
         # 1. Phát tín hiệu thêm 1 apple
         apple_payload = {"id": "apple", "score": 0.95, "qty": 1}
         print(f"[{time.strftime('%X')}] Gửi D-Bus (FoodDetected): {apple_payload}")
-        mock_obj.FoodDetected(json.dumps(apple_payload))
+        mock_obj.FoodDetected.emit(json.dumps(apple_payload))
         
         # Đợi một chút để tránh spam liên tục
         await asyncio.sleep(1)
@@ -63,7 +63,7 @@ async def main():
         # 2. Phát tín hiệu bớt 1 egg
         egg_payload = {"id": "egg", "score": 0.98, "qty": -1}
         print(f"[{time.strftime('%X')}] Gửi D-Bus (FoodDetected): {egg_payload}")
-        mock_obj.FoodDetected(json.dumps(egg_payload))
+        mock_obj.FoodDetected.emit(json.dumps(egg_payload))
         
         print("-" * 50)
         # Đợi 10 giây cho lần lặp tiếp theo
