@@ -4,11 +4,11 @@
     justify-content: center;
     align-items: center;
     background: rgba(0,0,0,0.75);
-    border-radius: 12px;
-    padding: 6px;
-    margin: 4px auto;
-    max-width: 480px;
-    max-height: 360px;
+    border-radius: 0.8em;
+    padding: 0.4em;
+    margin: 0.25em auto;
+    max-width: 30em;
+    max-height: 22.5em;
     transition: opacity 0.4s ease;
     z-index: 100;
 }
@@ -16,9 +16,9 @@
     pointer-events: none;
 }
 #fss-live-preview img {
-    border-radius: 8px;
+    border-radius: 0.5em;
+    object-fit: contain;
     width: 100%;
-    height: auto;
-    max-height: 340px;
+    max-height: 21em;
     object-fit: contain;
 }

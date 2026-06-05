@@ -5,11 +5,11 @@
 }
 
 .fss-notif-title-vertical {
-    font-size: 20px;
+    font-size: 1.2em;
     font-weight: bold;
     text-align: center;
     line-height: 1.1;
-    margin-right: 20px;
+    margin-right: 1.2em;
     display: flex;
     align-items: center;
 }

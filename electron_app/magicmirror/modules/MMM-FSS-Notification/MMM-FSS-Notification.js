@@ -9,7 +9,7 @@ Module.register("MMM-FSS-Notification", {
         this.notifications = [];
         this.audioCtx = null;
         this.audioReady = false;
-        
+
         // Mock data for previewing layout
         if (this.config.showMockNotifications && this.notifications.length === 0) {
             this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ RỐT' }, true);
@@ -26,9 +26,13 @@ Module.register("MMM-FSS-Notification", {
         wrapper.className = "fss-panel fss-notification-panel";
 
         const titleBox = document.createElement("div");
-        titleBox.className = "fss-notif-title-vertical";
-        titleBox.innerHTML = "T<br>H<br>Ô<br>N<br>G<br><br>B<br>Á<br>O";
-        
+        titleBox.className = "fss-notif-title-horizontal";
+        titleBox.innerHTML = "THÔNG BÁO";
+        titleBox.style.fontWeight = "bold";
+        titleBox.style.textAlign = "center";
+        titleBox.style.fontSize = "1.5em";
+        titleBox.style.marginRight = "1.2em";
+
         const listWrapper = document.createElement("div");
         listWrapper.className = "fss-notif-list-wrapper";
 
@@ -52,10 +56,10 @@ Module.register("MMM-FSS-Notification", {
         const flexContainer = document.createElement("div");
         flexContainer.style.display = "flex";
         flexContainer.style.flexDirection = "row";
-        
+
         flexContainer.appendChild(titleBox);
         flexContainer.appendChild(listWrapper);
-        
+
         wrapper.appendChild(flexContainer);
 
         return wrapper;
@@ -96,11 +100,11 @@ Module.register("MMM-FSS-Notification", {
             if (this.audioCtx.state === "suspended") {
                 this.audioCtx.resume().then(() => {
                     this.audioReady = true;
-                }).catch(() => {});
+                }).catch(() => { });
             } else {
                 this.audioReady = true;
             }
-        } catch(e) {}
+        } catch (e) { }
     },
 
     playNotificationSound(type) {
@@ -111,11 +115,11 @@ Module.register("MMM-FSS-Notification", {
         try {
             const ctx = this.audioCtx;
             const soundMap = {
-                "user_detected":  { freq: 440, dur: 200, count: 3, gap: 80 },
-                "door_open":      { freq: 660, dur: 150, count: 2, gap: 100 },
-                "door_closed":    { freq: 330, dur: 150, count: 1, gap: 0 },
-                "food_added":     { freq: 880, dur: 100, count: 1, gap: 0 },
-                "food_removed":   { freq: 330, dur: 200, count: 2, gap: 150 },
+                "user_detected": { freq: 440, dur: 200, count: 3, gap: 80 },
+                "door_open": { freq: 660, dur: 150, count: 2, gap: 100 },
+                "door_closed": { freq: 330, dur: 150, count: 1, gap: 0 },
+                "food_added": { freq: 880, dur: 100, count: 1, gap: 0 },
+                "food_removed": { freq: 330, dur: 200, count: 2, gap: 150 },
                 "recommend_done": { freq: 550, dur: 150, count: 2, gap: 100, freq2: 770 }
             };
 
@@ -138,7 +142,7 @@ Module.register("MMM-FSS-Notification", {
                 osc.stop(startTime + s.dur / 1000);
                 startTime += (s.dur + s.gap) / 1000;
             }
-        } catch(e) {
+        } catch (e) {
             // Audio not available
         }
     }

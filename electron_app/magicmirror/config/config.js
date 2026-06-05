@@ -79,7 +79,7 @@ let config = {
 		},
 		{
 			module: "MMM-FSS-Inventory",
-			position: "bottom_center",
+			position: "top_center",
 			config: {
 				frtAppEnabled: true,
 				showPlaceholder: false

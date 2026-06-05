@@ -21,7 +21,7 @@ Module.register("MMM-FSS-Inventory", {
             lastUpdate: null,
             isStale: false,
         };
-        
+
         // Dữ liệu mẫu (mock) để demo UI dựa theo thiết kế
         if (Object.keys(this.inventoryData.foods).length === 0) {
             this.inventoryData.foods = {
@@ -54,11 +54,15 @@ Module.register("MMM-FSS-Inventory", {
         const title = document.createElement("div");
         title.className = "fss-panel-title-center";
         title.textContent = "NGUYÊN LIỆU TỒN KHO";
+        title.style.fontWeight = "bold";
+        title.style.textAlign = "center";
+        title.style.fontSize = "1.5em";
+        title.style.marginBottom = "1.2em";
         wrapper.appendChild(title);
 
         const grid = document.createElement("div");
         grid.className = "fss-inventory-grid";
-        
+
         if (!this.config.frtAppEnabled && this.config.showPlaceholder) {
             const emptyMsg = document.createElement("div");
             emptyMsg.textContent = "FRTApp not available";
@@ -83,7 +87,7 @@ Module.register("MMM-FSS-Inventory", {
 
                 const circleAvatar = document.createElement("div");
                 circleAvatar.className = "fss-inventory-circle";
-                
+
                 if (food.imagePath) {
                     const img = document.createElement("img");
                     img.src = food.imagePath;
@@ -95,15 +99,15 @@ Module.register("MMM-FSS-Inventory", {
 
                 const labelWrapper = document.createElement("div");
                 labelWrapper.className = "fss-inventory-label";
-                
+
                 const nameSpan = document.createElement("span");
                 nameSpan.className = "fss-inventory-name";
                 nameSpan.textContent = food.name;
-                
+
                 const qtySpan = document.createElement("span");
                 qtySpan.className = "fss-inventory-qty";
                 qtySpan.textContent = `x${food.quantity}`;
-                
+
                 labelWrapper.appendChild(nameSpan);
                 labelWrapper.appendChild(document.createTextNode(" "));
                 labelWrapper.appendChild(qtySpan);
@@ -121,7 +125,7 @@ Module.register("MMM-FSS-Inventory", {
         if (notification === "FRT_UPDATE") {
             const foodId = payload.foodId || `unknown_${Date.now()}`;
             const action = payload.action || "detected";
-            
+
             // Forward event to Notification module for showing popup box
             this.sendNotification("FSS_NOTIFICATION", {
                 type: action === "removed" ? "food_removed" : "food_added",
