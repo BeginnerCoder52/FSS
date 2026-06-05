@@ -5,6 +5,9 @@ Module.register("MMM-FSS-Notification", {
         animationDuration: 300,
         showMockNotifications: false
     },
+    getStyles() {
+        return ["MMM-FSS-Notification.css"];
+    },
     start() {
         this.notifications = [];
         this.audioCtx = null;

@@ -2,6 +2,9 @@ Module.register("MMM-FSS-Recommend", {
     defaults: {
         updateInterval: 5000
     },
+    getStyles() {
+        return ["MMM-FSS-Recommend.css"];
+    },
     start() {
         this.result = null;
         this.loading = false;
@@ -35,7 +38,7 @@ Module.register("MMM-FSS-Recommend", {
         shoppingTitle.innerHTML = "DANH SÁCH ĐỀ XUẤT";
         shoppingTitle.style.fontWeight = "bold";
         shoppingTitle.style.textAlign = "center";
-        shoppingTitle.style.fontSize = "1.5em";
+        shoppingTitle.style.fontSize = "1.2vw";
         shoppingTitle.style.marginBottom = "1.2em";
         shoppingPanel.appendChild(shoppingTitle);
 
@@ -47,14 +50,31 @@ Module.register("MMM-FSS-Recommend", {
                 .map(i => ({ name: i.name, qty: i.required - i.available }));
         }
 
-        ingredientsToBuy.forEach(item => {
+        ingredientsToBuy.forEach((item, index) => {
             const row = document.createElement("div");
             row.className = "fss-list-row";
+            
+            // Xóa viền cũ và thêm màu xen kẽ
+            row.style.border = "none";
+            row.style.backgroundColor = index % 2 === 0 ? "transparent" : "rgba(0,0,0,0.05)";
+            row.style.whiteSpace = "nowrap";
+            row.style.overflow = "hidden";
+            row.style.fontSize = "0.95em";
 
             const leftPart = document.createElement("div");
             leftPart.className = "fss-list-left";
+            leftPart.style.overflow = "hidden";
+            leftPart.style.textOverflow = "ellipsis";
+            leftPart.style.whiteSpace = "nowrap";
+            leftPart.style.flex = "1"; // Để ép chữ dài bị cắt
+            
             const circle = document.createElement("div");
             circle.className = "fss-circle-check";
+            circle.style.cursor = "pointer";
+            circle.style.flexShrink = "0"; // Giữ vòng tròn không bị móp
+            circle.addEventListener("click", () => {
+                this.removeIngredient(item.name);
+            });
             leftPart.appendChild(circle);
 
             const nameSpan = document.createElement("span");
@@ -64,6 +84,7 @@ Module.register("MMM-FSS-Recommend", {
             const qtySpan = document.createElement("span");
             qtySpan.className = "fss-list-qty";
             qtySpan.textContent = item.qty;
+            qtySpan.style.marginLeft = "1em"; // Tạo khoảng cách với tên món ăn
 
             row.appendChild(leftPart);
             row.appendChild(qtySpan);
@@ -81,7 +102,7 @@ Module.register("MMM-FSS-Recommend", {
         menuTitle.textContent = "THỰC ĐƠN HÔM NAY";
         menuTitle.style.fontWeight = "bold";
         menuTitle.style.textAlign = "center";
-        menuTitle.style.fontSize = "1.5em";
+        menuTitle.style.fontSize = "1.2vw";
         menuTitle.style.marginBottom = "1.2em";
         menuPanel.appendChild(menuTitle);
 
@@ -93,6 +114,9 @@ Module.register("MMM-FSS-Recommend", {
         inputRow.style.borderRadius = "2em"; // Bo góc tròn theo em
         inputRow.style.border = "0.15vw solid var(--color-border)"; // Khung viền
         inputRow.style.padding = "0.8em 1.5em"; // Tránh chữ bị lẹm vào góc bo tròn
+        inputRow.style.pointerEvents = "auto";
+        inputRow.style.position = "relative";
+        inputRow.style.zIndex = "10";
 
         const searchIcon = document.createElement("i");
         searchIcon.className = "fas fa-search";
@@ -162,6 +186,21 @@ Module.register("MMM-FSS-Recommend", {
         return wrapper;
     },
     
+    removeIngredient(name) {
+        if (this.hasSearched && this.result && this.result.ingredients) {
+            const target = this.result.ingredients.find(i => i.name === name);
+            if (target) {
+                target.status = 'available'; // Giả lập đã mua/chuẩn bị xong
+            }
+        } else {
+            const idx = this.mockShoppingList.findIndex(i => i.name === name);
+            if (idx > -1) {
+                this.mockShoppingList.splice(idx, 1);
+            }
+        }
+        this.updateDom();
+    },
+
     deleteRecipe(index) {
         this.searchedRecipes.splice(index, 1);
         if (this.searchedRecipes.length === 0) {
