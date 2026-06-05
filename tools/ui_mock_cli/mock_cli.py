@@ -67,8 +67,8 @@ def start_dbus_thread():
 # Helper for emitting signals safely from main thread
 def emit_signal(obj, method_name, *args):
     if obj and dbus_loop:
-        method = getattr(obj, method_name)
-        dbus_loop.call_soon_threadsafe(method, *args)
+        signal = getattr(obj, method_name)
+        dbus_loop.call_soon_threadsafe(signal.emit, *args)
 
 # ======================================================================
 # 2. SQLite Update Logic (Standalone)
