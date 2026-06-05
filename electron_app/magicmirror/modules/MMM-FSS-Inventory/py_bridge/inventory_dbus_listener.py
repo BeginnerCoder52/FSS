@@ -46,9 +46,9 @@ DB_TABLE = "current_inventory"
 class DbDaemonInventoryProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("dbdaemon_interface", "vn.edu.uit.FSS.DBDaemon")):
     """D-Bus interface proxy for FRT signals from DBDaemon."""
 
-    @dbus_signal_async("sis")
+    @dbus_signal_async("sisi")
     def UIUpdateRequired(self) -> None:
-        """Signal: FRT result - food_id (string), quantity (int), image_path (string)."""
+        """Signal: FRT result - food_id (string), quantity (int), image_path (string), delta (int)."""
         pass
 
 class InventoryListener:
@@ -142,22 +142,23 @@ class InventoryListener:
             return
             
         try:
-            async for food_id, quantity, image_path in self.dbus_proxy.UIUpdateRequired:
+            async for food_id, quantity, image_path, delta in self.dbus_proxy.UIUpdateRequired:
                 try:
-                    action = "added" if quantity > 0 else "removed"
+                    action = "added" if delta > 0 else "removed"
                     
                     data = {
                         "type": "FRT_UPDATE",
                         "foodId": str(food_id),
                         "className": str(food_id),
                         "quantity": int(abs(quantity)),
+                        "delta": int(abs(delta)),
                         "imagePath": str(image_path),
                         "action": action,
                         "source": "dbus_signal",
                         "timestamp": int(time.time() * 1000),
                     }
                     print(json.dumps(data), flush=True)
-                    logger.debug(f"FRT from DBDaemon: {food_id}, qty={quantity}, action={action}")
+                    logger.debug(f"FRT from DBDaemon: {food_id}, total={quantity}, delta={delta}, action={action}")
                 except Exception as e:
                     logger.error(f"Error processing FRT data: {e}")
         except asyncio.CancelledError:
@@ -212,6 +213,7 @@ class InventoryListener:
                 "foodId": str(item['food_id']),
                 "className": str(item['food_id']),
                 "quantity": item['quantity'],
+                "delta": item['quantity'],
                 "imagePath": str(item['image_path']) if item['image_path'] else "",
                 "action": "added",
                 "source": "database",

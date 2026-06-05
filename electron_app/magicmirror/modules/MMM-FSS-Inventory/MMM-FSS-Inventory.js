@@ -22,23 +22,7 @@ Module.register("MMM-FSS-Inventory", {
             isStale: false,
         };
 
-        // Dữ liệu mẫu (mock) để demo UI dựa theo thiết kế
-        if (Object.keys(this.inventoryData.foods).length === 0) {
-            this.inventoryData.foods = {
-                "mock1": { name: "Cà rốt", quantity: 2, imagePath: "" },
-                "mock2": { name: "Cà chua", quantity: 2, imagePath: "" },
-                "mock3": { name: "Chanh", quantity: 2, imagePath: "" },
-                "mock4": { name: "Táo", quantity: 2, imagePath: "" },
-                "mock5": { name: "Vải", quantity: 2, imagePath: "" },
-                "mock6": { name: "Xoài", quantity: 2, imagePath: "" },
-                "mock7": { name: "Sữa", quantity: 2, imagePath: "" },
-                "mock8": { name: "Trứng", quantity: 2, imagePath: "" },
-                "mock9": { name: "Trà sữa", quantity: 2, imagePath: "" },
-                "mock10": { name: "Coca", quantity: 2, imagePath: "" },
-                "mock11": { name: "Nước lọc", quantity: 2, imagePath: "" },
-                "mock12": { name: "Sữa chua", quantity: 2, imagePath: "" }
-            };
-        }
+        // Dữ liệu sẽ được nạp từ D-Bus/DB thay vì dữ liệu mẫu.
 
         this.staleTimer = null;
         this.sendSocketNotification("MMM_FSS_INVENTORY_START", this.config);
@@ -72,11 +56,7 @@ Module.register("MMM-FSS-Inventory", {
         }
 
         const foodKeys = Object.keys(this.inventoryData.foods);
-        if (foodKeys.length === 0) {
-            const emptyMsg = document.createElement("div");
-            emptyMsg.textContent = "Không có nguyên liệu";
-            grid.appendChild(emptyMsg);
-        } else {
+        if (foodKeys.length > 0) {
             const sorted = foodKeys
                 .map(k => ({ key: k, food: this.inventoryData.foods[k] }))
                 .sort((a, b) => (b.food.timestamp || 0) - (a.food.timestamp || 0));
@@ -93,6 +73,15 @@ Module.register("MMM-FSS-Inventory", {
                     img.src = food.imagePath;
                     img.alt = food.name;
                     circleAvatar.appendChild(img);
+                } else {
+                    const defaultIcon = document.createElement("div");
+                    defaultIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:50%;height:50%;color:var(--color-text-dimmed)"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>`;
+                    defaultIcon.style.display = "flex";
+                    defaultIcon.style.alignItems = "center";
+                    defaultIcon.style.justifyContent = "center";
+                    defaultIcon.style.width = "100%";
+                    defaultIcon.style.height = "100%";
+                    circleAvatar.appendChild(defaultIcon);
                 }
 
                 itemWrapper.appendChild(circleAvatar);
@@ -127,10 +116,12 @@ Module.register("MMM-FSS-Inventory", {
             const action = payload.action || "detected";
 
             // Forward event to Notification module for showing popup box
-            this.sendNotification("FSS_NOTIFICATION", {
-                type: action === "removed" ? "food_removed" : "food_added",
-                message: `Bạn vừa ${action === "removed" ? "lấy ra" : "thêm vào"} x${payload.quantity} ${payload.className}`
-            });
+            if (payload.source !== "database") {
+                this.sendNotification("FSS_NOTIFICATION", {
+                    type: action === "removed" ? "food_removed" : "food_added",
+                    message: `Bạn vừa ${action === "removed" ? "lấy ra" : "thêm vào"} x${payload.delta || payload.quantity} ${payload.className}`
+                });
+            }
 
             if (action === "added" || action === "updated") {
                 this.inventoryData.foods[foodId] = {

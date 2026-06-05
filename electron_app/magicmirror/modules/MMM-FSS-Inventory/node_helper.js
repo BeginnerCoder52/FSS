@@ -30,6 +30,13 @@ module.exports = NodeHelper.create({
 		this.maxReconnectAttempts = 10;
 		this.reconnectDelay = 1000; // ms
 		this.frtAppEnabled = false;
+
+		// Serve /opt/fss using Express if available
+		if (this.expressApp) {
+			const express = require("express");
+			this.expressApp.use("/opt/fss", express.static("/opt/fss"));
+			console.log(`${this.name}: Serving /opt/fss directory via HTTP`);
+		}
 	},
 
 	/**
@@ -125,15 +132,11 @@ module.exports = NodeHelper.create({
 						foodId: data.foodId || `food_${Date.now()}`,
 						className: data.className,
 						quantity: data.quantity,
+						delta: data.delta || data.quantity,
 						imagePath: data.imagePath,
 						action: data.action || "detected",
+						source: data.source || "dbus_signal",
 						timestamp: data.timestamp || Date.now(),
-					});
-					// Relay to MMM-FSS-Notification
-					const actionLabel = data.action === "added" ? "to" : "from";
-					this.sendSocketNotification("FSS_NOTIFICATION", {
-						type: "food",
-						message: `📦 ${data.action} ${data.quantity} ${data.className} ${actionLabel} the fridge`
 					});
 				} else if (data.type === "FRT_APP_ENABLED") {
 					// FRT app enabled/disabled flag

@@ -1,7 +1,7 @@
 Module.register("MMM-FSS-Notification", {
     defaults: {
         displayDuration: 5000,
-        maxVisible: 5,
+        maxVisible: 15,
         animationDuration: 300,
         showMockNotifications: false
     },
@@ -13,13 +13,7 @@ Module.register("MMM-FSS-Notification", {
         this.audioCtx = null;
         this.audioReady = false;
 
-        // Mock data for previewing layout
-        if (this.config.showMockNotifications && this.notifications.length === 0) {
-            this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ RỐT' }, true);
-            this.addNotification({ type: 'food_removed', message: 'Bạn vừa lấy ra x1 TRỨNG' }, true);
-            this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CÀ CHUA' }, true);
-            this.addNotification({ type: 'food_added', message: 'Bạn vừa thêm vào x1 CHANH' }, true);
-        }
+        // Mock data removed. Notifications will be populated by D-Bus signals.
     },
     getScripts() {
         return [];
@@ -67,7 +61,7 @@ Module.register("MMM-FSS-Notification", {
 
         return wrapper;
     },
-    socketNotificationReceived(notification, payload) {
+    notificationReceived(notification, payload, sender) {
         if (notification === "FSS_NOTIFICATION") {
             this.playNotificationSound(payload.type);
             this.addNotification(payload);
@@ -86,13 +80,6 @@ Module.register("MMM-FSS-Notification", {
         }
 
         this.updateDom();
-
-        if (!preventTimeout) {
-            setTimeout(() => {
-                this.notifications = this.notifications.filter(n => n.id !== data.id);
-                this.updateDom();
-            }, this.config.displayDuration);
-        }
     },
     initAudio() {
         if (this.audioReady) return;
