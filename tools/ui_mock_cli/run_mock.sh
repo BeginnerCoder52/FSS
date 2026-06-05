@@ -1,18 +1,23 @@
 #!/bin/bash
 # run_mock.sh
-# Kích hoạt virtualenv của db_daemon và chạy python script giả lập
+# Kích hoạt virtualenv độc lập cho mock_cli
 
 cd "$(dirname "$0")"
 
-VENV_PATH="../../db_daemon/venv"
+VENV_PATH="./venv"
 
-if [ -f "$VENV_PATH/bin/activate" ]; then
-    source "$VENV_PATH/bin/activate"
-    echo "Đã kích hoạt virtualenv của db_daemon."
-else
-    echo "Cảnh báo: Không tìm thấy virtualenv tại $VENV_PATH"
-    echo "Hãy chắc chắn rằng db_daemon đã được setup."
+if [ ! -d "$VENV_PATH" ]; then
+    echo "Đang tạo môi trường ảo độc lập (Standalone Test Environment)..."
+    python3 -m venv "$VENV_PATH"
 fi
+
+source "$VENV_PATH/bin/activate"
+
+# Cài đặt sdbus-python nếu chưa có
+pip install -r requirements.txt > /dev/null 2>&1
+
+echo "Đã kích hoạt môi trường ảo."
+echo "Đang chạy CLI Mock..."
 
 # D-Bus yêu cầu chạy dưới quyền root (sudo) cho System Bus
 sudo -E $(which python) mock_cli.py
