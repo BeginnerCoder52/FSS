@@ -81,6 +81,10 @@ let config = {
 			position: "top_center"
 		},
 		{
+			module: "MMM-FSS-Monitor",
+			position: "top_bar"
+		},
+		{
 			module: "MMM-FSS-Inventory",
 			position: "bottom_center",
 			config: {
