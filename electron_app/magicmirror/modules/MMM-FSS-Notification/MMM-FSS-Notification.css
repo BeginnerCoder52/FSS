@@ -2,6 +2,8 @@
 
 .fss-notification-panel {
     /* Đã có style fss-panel từ custom.css */
+    height: 30vh;
+    overflow: hidden;
 }
 
 .fss-notif-title-vertical {
