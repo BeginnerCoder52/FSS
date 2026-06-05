@@ -29,31 +29,11 @@ body {
   display: block; /* Giữ cho MMM-Keyboard */
 }
 
-.region.top.bar, .region.bottom.bar, .region.lower.third {
+.region.lower.third {
   display: none;
 }
 
-/* Thiết lập Layout 3 cột */
-.container {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 100%;
-  gap: var(--gap-size);
-  height: 100%;
-  padding: 0;
-}
-
-.region.left {
-  width: 100%;
-  min-width: 300px;
-}
-.region.center {
-  width: 100%;
-}
-.region.right {
-  width: 100%;
-  min-width: 300px;
-}
+/* Loại bỏ override layout cũ để MagicMirror tự canh lề (float left/center/right) */
 
 /* Các module được đặt vào container viền trắng */
 .fss-panel {
