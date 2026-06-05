@@ -1,0 +1,29 @@
+{
+    "recipe_name": "Lẩu Cá Dìa",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá dìa làm sạch 2 con",
+        "Tỏi băm 2M",
+        "Ngò gai, rau om, bún tươi, ớt hiểm",
+        "Rau ăn lẩu: hoa chuối, kèo nèo, cà chua, giá",
+        "Dầu ăn, nước mắm"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cá làm sạch, khứa xéo 2 bên mình cá, ướp với 1m Aji-Quick® Gia vị nêm sẵn Lẩu Thái.",
+        "Cà chua cắt múi cau. Ngò gai, rau om cắt khúc. Xếp các loại rau ăn lẩu ra dĩa: hoa chuối, kèo nèo cắt khúc, cà chua, giá."
+    ],
+    "cook": [
+        "Cho 3M dầu ăn vào chảo, phi thơm tỏi rồi vớt ra dĩa, cho cá dìa vào chiên vàng mặt rồi lấy ra để riêng.",
+        "Sau đó cho 1.5 lít nước vào đun sôi, đổ phần Aji-Quick® Gia vị nêm sẵn Lẩu Thái còn lại vào, khuấy tan đều, nêm thêm 1M nước mắm, nếm vị vừa ăn."
+    ],
+    "usage": [],
+    "tips": [
+        "Khứa xéo 2 bên mình cá để dễ thấm gia vị và trông bắt mắt hơn.",
+        "Chiên cá qua dầu phi tỏi để cá thơm hơn."
+    ]
+}

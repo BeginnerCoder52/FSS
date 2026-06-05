@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Lẩu Lươn Hoa Chuối",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lươn : 300g",
+        "Hoa chuối : 200g",
+        "Sấu : 3 trái",
+        "Cà chua chín đỏ : 2 trái",
+        "Thơm chin : 1/4 trái",
+        "Tỏi phi : 1M",
+        "Hành tỏi băm: 1M",
+        "Bún : 800g",
+        "Rau om, ngò gai, ớt hiểm",
+        "Nước dung : 1.5L",
+        "Đường, muối, nước mắm, dầu điều"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Lươn làm sạch, cắt khúc 6cm, ướp với 1m muối, 1/2m Bột ngọt AJI-NO-MOTO®, để thấm.",
+        "Hoa chuối rửa sạch, để ráo. Sấu đập dập. Thơm: cắt miếng rẻ quạt",
+        "Cà chua cắt múi cau. Rau om, ngò gai, cắt nhỏ. Ớt hiểm đập dập."
+    ],
+    "cook": [
+        "Phi thơm hành tỏi băm với 2M dầu điều, cho lươn vào xào sơ, trút ra.",
+        "Đun nước dùng và sấu đến khi sấu chín, thêm cà chua, thơm và ớt hiểm vào.",
+        "Nêm 2M đường, 2m hạt nêm Aji-ngon®, 2m muối, 2m Bột ngọt AJI-NO-MOTO®, 2M Giấm gạo lên men LISA®, thêm rau om, ngò gai vào, nêm thêm 2M nước mắm, tắt lửa."
+    ],
+    "usage": [
+        "Cho nước dùng vào nồi lẩu, đun sôi cho lươn vào nấu chín, thêm tỏi phi và nhúng hoa chuối vào vừa chín. Dùng chung với bún."
+    ],
+    "tips": [
+        "Ướp lươn và xào sơ qua giúp thịt lươn săn và thấm gia vị. Đập dập sấu để sấu dễ hoà tan vị chua vào nước lẩu."
+    ]
+}

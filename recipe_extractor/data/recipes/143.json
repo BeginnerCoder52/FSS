@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Súp Trái Cây",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm đất: 300g",
+        "Dâu tây: 5 trái",
+        "Lê: 1/2 trái",
+        "Táo: 1/2 trái",
+        "Hành tím băm, ngò rí",
+        "Bột năng",
+        "Tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Tôm lột vỏ, bỏ đầu, đuôi, cắt hạt lựu, ướp với 1 ít tiêu và 1m hạt nêm Aji-ngon®.",
+        "Lê, táo, dâu tây cắt hạt lựu cạnh 0,7cm.",
+        "Ngò rí cắt nhỏ. Pha loãng 2M bột năng với 1/2 chén nước."
+    ],
+    "cook": [
+        "Phi thơm hành tím băm, cho tôm vào xào săn, thêm 1 lít nước, nêm 2M hạt nêm Aji-ngon®, đợi nước sôi cho hết trái cây vào, cho nước bột năng vào khuấy đều tạo độ sánh, cuối cùng rắc thêm ngò rí, tắt bếp."
+    ],
+    "usage": [
+        "Múc súp ra chén, rắc tiêu và ngò rí lên trên, dùng nóng"
+    ],
+    "tips": [
+        "Không nấu trái cây quá lâu sẽ bị nát và mất chất dinh dưỡng.",
+        "Chọn trái cây có vị chua nhẹ sẽ tạo vị chua thanh cho món súp.",
+        "Tùy theo mùa có thể chọn các loại trái cây khác nhau."
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Cơm Chiên Trái Cây",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm nguội: 3 chén",
+        "Thanh long: 50g",
+        "Thơm: 30g",
+        "Nho xanh không hạt: 50g",
+        "Lê: 50g",
+        "Tôm tươi: 200g",
+        "Giò lụa: 50g",
+        "Muối hột: 2M",
+        "Trứng gà: 2 quả",
+        "Trứng gà: 2 quả",
+        "Muối, tiêu, dầu ăn",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Tôm rang với muối hột, bóc vỏ, cắt hạt lựu.",
+        "Các loại trái cây và giò lụa cắt hạt lựu.",
+        "Trứng gà đánh tan, nêm ít muối, tiêu, bột ngọt AJI-NO-MOTO®."
+    ],
+    "cook": [
+        "Phi thơm hành tím, cho cơm vào chiên săn, thêm trứng gà vào đảo đều đến khi trứng chín, hạt cơm tơi, nêm 2/3m muối, 2/3m bột ngọt AJI-NO-MOTO®, 1/4m tiêu, 1m nước tương LISA, tiếp tục cho tôm, giò lụa, cuối cùng cho các loại trái cây vào trộn nhanh, tắt bếp. Rắc thêm tiêu, ngò rí."
+    ],
+    "usage": [
+        "Múc cơm ra dĩa, dùng kèm nước tương LISA tùy khẩu vị."
+    ],
+    "tips": [
+        "Trái cây cho vào sau cùng để không bị nát và giữ được độ giòn.Tôm rang với muối sẽ giúp tôm có vị đậm đà và giữ được độ ngọt."
+    ]
+}

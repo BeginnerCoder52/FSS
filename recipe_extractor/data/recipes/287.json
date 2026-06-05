@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Salad Trái Cây",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Dưa leo: 1/2 trái",
+        "Dưa lưới nhỏ: 1 miếng",
+        "Dâu tây: 5 trái",
+        "Lê: 1/2 trái",
+        "Táo đỏ: 1/2 trái",
+        "Nho khô: 10g",
+        "Xà lách: 3 lá",
+        "Sữa đặc có đường",
+        "Sữa chua có đường",
+        "Muối, đường"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Dâu tây cắt đôi, ướp với 1m đường, để 10 phút. Nho khô ngâm nước 10 phút, để ráo. Dưa leo để vỏ, bỏ ruột, cắt miếng vuông 1cm. Xà lách cắt sợi 1cm.",
+        "Lê, dưa lưới gọt vỏ, cắt miếng vuông 1cm. Táo để nguyên vỏ, cắt miếng vuông 1cm, ngâm vào nước muối pha loãng, vớt ra để ráo."
+    ],
+    "cook": [
+        "Pha xốt: Trộn đều 3M xốt Mayonnaise Aji-Mayo® với 1M sữa đặc có đường và 1M sữa chua.",
+        "Cho các loại trái cây vào tô, trộn đều với hỗn hợp xốt vừa trộn."
+    ],
+    "usage": [
+        "Xếp xà lách ra dĩa, cho trái cây trộn lên trên."
+    ],
+    "tips": [
+        "Táo cắt xong ngâm vào nước muối pha loãng để không bị đen."
+    ]
+}

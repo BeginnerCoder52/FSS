@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bánh Mì Nướng Xốt Cà",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì baguette: 1 ổ",
+        "Cà chua: 3 trái",
+        "Hành tím: 5 củ",
+        "Tỏi: 8 tép",
+        "Húng quế tây: 10 lá",
+        "Nấm rơm: 100g",
+        "Ngò tây: 1 ít",
+        "Muối, tiêu, đường",
+        "Bơ lạt, nước cốt chanh, bột ớt"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Bánh mì cắt lát dày 1cm. Tỏi 1/2 mài nhỏ, 1/2 băm nhuyễn. Hành tím cắt nhỏ. Húng quế tây cắt nhuyễn. Nấm rơm rửa sạch, cắt lát.",
+        "Cà chua nên lựa loại thật chín, khoét ở cuốn cà chua 1 chút xíu cắt ở 4 góc trên của trái cà, chần qua nước sôi 3s, lột vỏ bỏ hạt, cắt hạt lựu để ráo nước."
+    ],
+    "cook": [
+        "Phi thơm tỏi với bơ, cho nấm vào đảo nhanh, nêm 1/2m muối, 1/2m tiêu, để nguội.",
+        "Bánh mì nướng sơ cho bề mặt cứng lại, khứa đầu tỏi, mài lên mặt bánh, rồi nướng lại lần 2 cho bánh mì giòn và vàng đều.",
+        "Trộn cà chua với hành tím và lá quế tây, nêm 1/2M nước cốt chanh, 1/3m ớt bột, 1/2m muối và 1/2m đường."
+    ],
+    "usage": [
+        "Phết xốt Mayonnaise Aji-Mayo® lên bánh mì, cho nấm rơm và cà chua lên trên, trang trí với lá ngò tây."
+    ],
+    "tips": [
+        "Mài tỏi lên bánh mì, khi nướng bánh mì sẽ rất thơm.",
+        "Hành tím cắt hạt lựu sẽ giữ được chất ngọt và độ giòn khi ăn."
+    ]
+}

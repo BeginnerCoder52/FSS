@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Phở Tái Lăn",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bò phi lê 100g",
+        "Gầu bò 100g",
+        "Phở 600g",
+        "Hành tây 1 củ lớn",
+        "Hành lá 3 cây",
+        "Gừng 1M",
+        "Tỏi băm 1M",
+        "Đường 1,5m",
+        "Cải ngọt 100g",
+        "Dầu 1M",
+        "RAU NÊM: Ngò gai, lá quế, ớt sừng",
+        "Ăn sáng: Ăn kèm tráng miệng: Táo",
+        "GIA VỊ: Dầu ăn"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Phở Bò"
+    ],
+    "process": [
+        "Bò để tủ đá, cắt lát thật mỏng, 1m GVNS AJI-QUICK® PHỞ BÒ, 1,5m đường ướp 1M tỏi băm, 1M gừng băm, để thấm.",
+        "Hành tây cắt lát mỏng 1/2 củ, phần còn lại nấu nước dùng. Hành lá cắt nhỏ, phần cọng nấu nước dùng.",
+        "Bánh phở chần nóng, chia ra 4 tô, thêm hành tây, hành lá."
+    ],
+    "cook": [
+        "Đun sôi 1.5L nước sôi, nêm Gia vị nêm sẵn Aji-Quick Phở Bò còn lại vào, thêm hành tây và đầu hành lá.",
+        "Làm nóng chảo với 1M dầu ăn, xào thịt bò, cải ngọt và hành tây với lửa lớn, bò vừa chín trút vào các tô phở."
+    ],
+    "usage": [],
+    "tips": []
+}

@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Lẩu Khoai Mỡ",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Khoai mỡ tím 200g",
+        "Giò sống chay 200g",
+        "Sườn non chay chiên sẵn 20g",
+        "Hạt sen luộc 50g",
+        "Nước dùng chay 2 lít",
+        "Rau đắng 300g",
+        "Boa rô băm 1M",
+        "Boa rô phi 1M",
+        "Ngò gai , ớt hiểm",
+        "Đường, tiêu, bột năng, dầu ăn",
+        "Nước mắm chay"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Khoai mỡ cắt khối vuông 1cm.",
+        "Rau đắng, nấm linh chi cắt chân, rửa sạch. Ngò gai cắt nhỏ."
+    ],
+    "cook": [
+        "Trộn đều giò sống chay với 1M ngò gai băm, 1m hạt nêm hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1M boa rô phi, 1/4m tiêu, 1/2M bột năng, quết dẻo, chia thành các phần bằng nhau, cho hạt sen vào giữa vo viên tròn. Đun nóng dầu cho viên giò sống vào chiên sơ, vớt ra để riêng.",
+        "Phi thơm hành boa rô với dầu ăn, cho khoai mỡ vào xào sơ, rồi cho 2 lít nước dùng chay vào, đun sôi, thêm khoai mỡ, nêm 3M hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1/2m bột ngọt AJI-NO-MOTO®, 1m đường, khuấy đều, nếm vị vừa ăn. Cho viên hạt sen, ngò gai vào nấu sôi trở lại, tắt lửa."
+    ],
+    "usage": [],
+    "tips": []
+}

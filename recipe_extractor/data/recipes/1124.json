@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Nem Thịt Bò Chiên Xù",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò: 100g",
+        "Giò sống: 50g",
+        "Hành tây: 30g",
+        "Nấm linh chi: 30g",
+        "Trứng gà:1 quả",
+        "Ngò rí băm: 3m",
+        "Bột xù: 100g",
+        "Bột mì: 100g",
+        "Tỏi phi, tương cà, tương xí muội, dầu ăn, bột nghệ"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt bò băm nhuyễn. Hành tây, nấm linh chi băm nhỏ.",
+        "Trứng gà đánh tan.",
+        "Trộn thịt bò, giò sống, hành tây, nấm với 1m bột nghệ, 1m tỏi phi, 1/2m hạt nêm Aji-ngon®, 1m nước tương “Phú Sĩ”, 2m ngò rí băm, 1M xốt Mayonnaise Aji-Mayo® quết cho đều. Thêm vào 2M bột xù, trộn đều lần nữa. Dùng miếng nylon nắn thành từng miếng nem tròn dẹp đường kính 4cm, dày 1cm. Lăn từng miếng nem qua bột mì, nhúng qua trứng rồi tẩm bột xù.",
+        "Trộn xốt: 1m ngò rí băm, 1M tương cà, 1M tương xí muội, với 2M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, chiên vàng nem thịt bò, vớt ra để ráo dầu."
+    ],
+    "usage": [
+        "Dọn ăn kèm với dưa leo, cà chua bi và xốt trộn."
+    ],
+    "tips": [
+        "Trộn giò sống với thịt bò để nem không bị khô, dai hơn và dễ tạo hình",
+        "Trộn bột xù vào nem giúp nem sẽ giúp hút nước và dễ tạo hình."
+    ]
+}

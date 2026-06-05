@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Gà Chiên Xá Xị",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cánh gà 4 cánh",
+        "Hành lá 1 nhánh",
+        "Tỏi băm 2M",
+        "Gừng mài 1m",
+        "Ớt khô 5 trái",
+        "Tương ớt Hàn Quốc (Gochujang) 1M",
+        "Tương cà 1M",
+        "Mè trắng rang 1M",
+        "Nước ngọt xá xị 1 lon",
+        "ĂN KÈM: cơm trắng",
+        "Gia vị: dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Gà",
+        "Aji-Quick® Bột Chiên Giòn"
+    ],
+    "process": [
+        "Cánh gà chặt miếng 3cm, ướp 1m Hạt nêm Aji-ngon® Gà, 1M nước tỏi, 2M nước ngọt xá xị, để thấm 15 phút.",
+        "Hành lá cắt khúc 3cm. Tỏi băm vắt lấy 1M nước tỏi, phần xác giữ lại. Ớt khô ngâm mềm."
+    ],
+    "cook": [
+        "Xốt xá xị: Phi thơm tỏi, gừng, ớt. Thêm 1M tương ớt Hàn Quốc, 1M tương cà, 8M nước ngọt xá xị, 1/2m Hạt nêm Aji-ngon® Gà, 1M Nước tương “Phú Sĩ” nấu đến khi xốt sệt.",
+        "Đun nóng dầu ăn. Áo đều từng miếng gà qua Gia vị nêm sẵn Aji-Quick® Bột chiên giòn, sau đó nhúng vào hỗn hợp Gia vị nêm sẵn Aji-Quick® Bột chiên giòn đã được pha với nước theo tỉ lệ của bao bì. Chiên gà chín vàng, vớt ra để ráo.",
+        "Cho cánh gà đã chiên vào chảo xóc đều với xốt. Tắt lửa, rắc mè trắng và hành lá."
+    ],
+    "usage": [
+        "Xếp gà ra dĩa, dùng nóng với cơm trắng."
+    ],
+    "tips": [
+        "Để ráo cánh gà để không bi bắn dầu khi chiên.",
+        "Chiên cánh gà với lửa già để bề mặt cánh gà được se cứng khi xóc với xốt không bị giảm độ giòn.",
+        "Dùng tương ớt Hàn Quốc và nước ngọt xá xị tạo vị cay ngọt mới lạ cho món cánh gà chiên."
+    ]
+}

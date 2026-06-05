@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Tôm Chiên Xốt Mayo",
+    "serving": "0 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú đông lạnh 200g",
+        "Xà lách lolo 100g",
+        "Sữa đặc 20g",
+        "Ketchup 10g",
+        "Mè rang 5g",
+        "Bột mì 40g"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm sú rã đông, để ráo, dùng dao xẻ dọc lưng tôm.",
+        "Rau xà lách rửa sạch, cắt nhỏ. Mè rang thơm."
+    ],
+    "cook": [
+        "Trộn xốt: trộn đều 20g Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản với 20g sữa đặc, 10g ketchup.",
+        "Lăn tôm qua bột rồi cho vào chảo dầu nóng chiên đến khi tôm chín thì vớt ra, để ráo dầu. Sau đó cho tôm vào trộn đều với xốt."
+    ],
+    "usage": [
+        "Xếp rau xà lách và tôm ra dĩa, rắc mè lên trên, dùng nóng."
+    ],
+    "tips": [
+        "Tôm sau khi chiên xong nên trộn với xốt ngay khi còn nóng tôm sẽ thấm vị mayonnaise và ngon hơn."
+    ]
+}

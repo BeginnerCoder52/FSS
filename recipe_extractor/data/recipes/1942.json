@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Khoai Tây Trộn Mayonnaise",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Khoai tây: 2 củ",
+        "Thịt ba rọi muối: 50gr",
+        "Hành tây: 1/2 củ",
+        "Ngò tây, cà chua bi",
+        "Muối, tiêu, mù tạc vàng, bột ớt, dầu ăn"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Khoai tây gọt vỏ, cắt khối 2cm. Hành tây cắt nhỏ.",
+        "Thịt ba rọi cắt sợi, chiên vàng. Ngò tây băm nhuyễn.",
+        "Cà chua bi cắt múi cau."
+    ],
+    "cook": [
+        "Pha nước trộn salad: xào hành tây trong chảo đã chiên thịt ba rọi, thêm 1m mù tạc, 1 chén nước, 1M Giấm gạo lên men LISA®, 2m hạt nêm Aji-ngon®, 1m muối và 1/2m tiêu.",
+        "Luộc chín khoai tây rồi vớt ra trộn với nước trộn salad, để nguội. Sau đó thêm 4M xốt Mayonnaise Aji-mayo®, cà chua bi, 1M ngò tây và thịt ba rọi vào trộn đều."
+    ],
+    "usage": [
+        "Cho khoai tây trộn ra dĩa, rắc ít bột ớt và ngò tây lên trên."
+    ],
+    "tips": [
+        "Để thịt ba rọi có màu vàng đẹp, khi chiên ta nên để lửa nhỏ để mỡ ra từ từ phủ đều mặt thịt.",
+        "Khoai tây trộn với nước trộn salad khi còn nóng giúp khoai thấm gia vị hơn."
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Canh Cá Hanh Vị Thái",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá hanh: 800g",
+        "Mỡ gáy heo: 100g",
+        "Đậu rồng: 5 trái",
+        "Cà bi: 50g",
+        "Ngó sen: 200g",
+        "Lá lốt, rau răm, rau quế",
+        "Gia vị: Ớt sừng, nước mắm, tỏi băm"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cá làm sạch, khứa hai đường trên mình cá, nhét một ít rau nêm vào bụng cá, ướp 1M Gia vị nêm sẵn Aji-Quick® Lẩu Thái.",
+        "Mỡ cắt hạt lựu, phi mỡ nước, cho tỏi vào phi thơm, tắt lửa, múc 2M tỏi phi để riêng, cho cá vào xốc đều.",
+        "Đậu rồng cắt xéo. Ngó sen cắt khúc 4cm. Cà bi cắt đôi. Cắt nhỏ lá lốt, rau răm, rau quế."
+    ],
+    "cook": [
+        "Đun sôi 1.5L nước, nêm Gia vị nêm sẵn Aji-Quick® Lẩu Thái, nấu cá vừa chín, vớt cá ra để riêng, lần lượt cho cà chua, ngó sen, đậu rồng vào nấu vừa chín tới. Tắt lửa."
+    ],
+    "usage": [
+        "Muc canh ra tô, nêm rau thơm, ớt, tỏi phi. Dùng nóng với cơm hoặc bún."
+    ],
+    "tips": [
+        "Xốc cá với dầu và tỏi phi giúp đệm mùi cho thịt cá thơm ngon hơn.",
+        "Nhét một ít rau quế, lá lốt vào bụng cá giúp cá thơm và không bị bể sau khi nấu.",
+        "Dùng thêm một ít mỡ heo giúp cân bằng lượng chất béo thực vật và động vật."
+    ]
+}

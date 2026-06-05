@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Cơm Chiên Mayonnaise",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm trắng: 3 chén",
+        "Thịt nguội: 50g",
+        "Cải ngọt: 100g",
+        "Cà rốt: 1/4 củ",
+        "Trứng gà: 1 quả",
+        "Hành lá, ngò rí, tiêu",
+        "Tỏi băm, ớt cắt lát"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt nguội cắt hạt lựu.",
+        "Cải ngọt cắt bỏ gốc, cắt khúc ngắn, để riêng cọng và lá. Trứng gà đánh tan.",
+        "Hành tây cắt hạt lựu. cà rốt cắt nhỏ. Hành lá, ngò rí cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm tỏi với 2M xốt Mayonnaise Aji-Mayo®, xào hành tây và cọng cải ngọt, tiếp tục cho trứng vào chiên sơ, thêm cơm và cà rốt vào đảo đều, nêm 1,5m hạt nêm Aji-ngon®, lá cải, thịt nguội, chiên đến khi cơm săn hạt, thêm 1M xốt Mayonnaise Aji-Mayo®, trộn đều rồi tắt bếp. Rắc thêm tiêu, hành lá và ngò rí."
+    ],
+    "usage": [
+        "Dùng nóng, kèm nước tương và ớt cắt lát."
+    ],
+    "tips": [
+        "Chiên cơm đến khi hạt cơm săn lại, cơm chiên sẽ ngon hơn. Thay thế dầu ăn bằng xốt Mayonnaise Aji-Mayo®, giúp món ăn thêm ngon và hấp dẫn."
+    ]
+}

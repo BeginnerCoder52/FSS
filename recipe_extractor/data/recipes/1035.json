@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Bánh Mì Chiên Tôm",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 150g",
+        "Giò sống: 50g",
+        "Bánh mì sandwich: 3 lát",
+        "Mè trắng: 20g",
+        "Đầu hành lá: 5 cái",
+        "Tỏi: 3 tép",
+        "Nước mắm, tiêu, tương ớt"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm tươi bóc bỏ đầu, đuôi, chỉ lưng và vỏ, đập dập. Đầu hành lá, và tỏi băm nhuyễn.",
+        "Bánh mì cắt miếng vuông khoảng 3cm, có thể cắt hình vuông, hình tròn hoặc hình tam giác tùy ý."
+    ],
+    "cook": [
+        "Cho tôm và giò sống vào cối quết nhuyễn với đầu hành lá và tỏi băm, thêm 1m nước mắm, 1/2m tiêu và 1/2M xốt Mayonnaise Aji-Mayo®, 1/2m Hạt nêm Aji-ngon® vào trộn đều.",
+        "Cho hỗn hợp tôm lên miếng bánh mì, tẩm mè trắng lên mặt rồi chiên chín vàng, vớt ra để ráo dầu."
+    ],
+    "usage": [
+        "Xếp bánh mì chiên tôm ra dĩa, khi ăn chấm xốt Mayonnaise Aji-Mayo® trộn tương ớt."
+    ],
+    "tips": [
+        "Tẩm mè kĩ cho mè bám chặt vào tôm để khi chiên mè không bị rơi ra.",
+        "Nên chiên nhanh với lửa vừa để bánh mì được giòn.",
+        "Nên trét nhân mỏng vừa để nhân chín cùng lúc với bánh mì."
+    ]
+}

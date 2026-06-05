@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Cá Tẩm Bột Cay Chiên Giòn",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá basa phi lê (đông lạnh) 400g",
+        "Hành tây 1 củ",
+        "Nước hành tím, nước tỏi 2M",
+        "Nước gừng 1/2M",
+        "Nước chanh 1m",
+        "Lá chanh Thái, băm nhuyễn 5 lá",
+        "Ớt bột mịn 1M",
+        "Gia vị: Dầu ăn, nước mắm, mù tạt vàng",
+        "Sữa đặc có đường, bột tempura"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Chuẩn bị: Cá basa thấm ráo nước, cắt thanh 2x5cm, khuấy đều nước hành, tỏi, nước gừng, nước chanh, 1m bột ngọt AJI-NO-MOTO®, 1M nước mắm, cho cá vào ướp, để 15 phút cho cá thấm gia vị. Hành tây cắt khoanh tròn, phần hành vòng lớn bên ngoài để chiên giòn, phần hành vòng nhỏ cắt nhuyễn, lá chanh băm nhuyễn.",
+        "Trộn bột: Trộn đều bột tempura, lá chanh cắt nhuyễn, ớt bột cho cá và hành tây cắt khoanh tròn vào tẩm đều."
+    ],
+    "cook": [
+        "Chiên cá: Làm nóng dầu cho cá vào chiên chín vàng vớt ra để ráo, cho tiếp hành tây vào chiên giòn vớt ra giấy thấm dầu.",
+        "Pha xốt chấm: Khuấy đều 1m xốt mù tạt vàng, 1M sữa đặc có đường, 1M hành tây cắt nhuyễn, 3M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "usage": [],
+    "tips": [
+        "Ướp cá với nước chanh và nước gừng để khử mùi tanh của cá.",
+        "Băm nhuyễn lá chanh để khi chiên lá chanh không bị cháy và giữ được mùi thơm của lá chanh."
+    ]
+}

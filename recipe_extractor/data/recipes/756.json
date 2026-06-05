@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Mắm Kho",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mắm cá sặc: 100g",
+        "Mắm cá linh: 50g",
+        "Cá hú hoặc cá basa: 300g (3 khứa phần đuôi)",
+        "Thịt ba rọi: 150g",
+        "Cà tím: 1 trái",
+        "Dừa tươi: 1 trái",
+        "Ớt hiểm băm: 2 trái",
+        "Sả băm: 5 cây",
+        "Hành tím: 3M",
+        "ĂN KÈM Rau ghém: rau đắng, bông súng, kèo nèo, hoa chuối, rau nhút, rau muống chẻ, hẹ nước, rau dừa",
+        "Gia vị: đường, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt ba rọi cắt miếng dày 1cm, ướp với 1/2M đường, để thấm. Cá cắt lát, để riêng.",
+        "Nấu mắm cá: Đun sôi 200ml nước, cho mắm sặc và mắm linh vào nấu đến khi tan hết, lọc lại.",
+        "Cà tím: cắt miếng dài 2-3cm."
+    ],
+    "cook": [
+        "Kho: phi thơm hành, sả, ớt, cho thịt ba rọi vào xào săn kỹ, đổ nước mắm cá và thêm 2 chén nước dừa tươi vào, nêm 1m Bột ngọt AJI-NO-MOTO®, 1M đường, đun sôi nước thì cho cá vào, kho khoảng 10 phút thì cho cà tím vào, kho thêm 3-5 phút đến khi cà chín mềm thì tắt lửa."
+    ],
+    "usage": [
+        "cho mắm kho ra tô, ăn với cơm và rau ghém."
+    ],
+    "tips": [
+        "Sử dụng cá da trơn để kho với mắm sẽ có độ béo ngon hơn.",
+        "Kết hợp 2 loại mắm để nấu món mắm kho sẽ đậm đà và có hương vị đặc trưng.",
+        "Đun sôi nước mắm cá rồi mới cho cá vào để cá thơm ngon hơn."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Gỏi Bông Bí",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bông bí: 500g",
+        "Thịt bò phi lê: 200g",
+        "Mè trắng rang: 50g",
+        "Rau răm: 30g",
+        "Tỏi băm, ớt băm",
+        "Ớt cắt sợi, hành phi",
+        "Muối, nước mắm",
+        "Tiêu, đường, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Bông bí tước xơ phần cọng, bỏ nhụy, đài, ngâm rửa sạch, để ráo. Đun sôi nước, cho bông bí vào chần sơ, lưu ý chần phần cọng trước, ngâm vào nước đá, vớt ra để ráo. Rau răm cắt nhỏ.",
+        "Thịt bò ướp với 1/2m đường, 1/2m hạt nêm Aji-ngon®, 1/3m tiêu, 1M tỏi băm và 1M dầu ăn, để thấm. Phi thơm tỏi, cho thịt bò vào xào nhanh, thịt vừa chín tới thì tắt bếp."
+    ],
+    "cook": [
+        "Pha nước trộn gỏi: trộn đều 3M Giấm gạo lên men LISA® với 2M đường, 2M nước mắm và 1/4m muối, thêm tỏi băm và ớt băm, khuấy tan.",
+        "Trộn bông bí và thịt bò với nước trộn gỏi, thêm mè rang, hành phi, ớt sợi và rau răm vào, trộn đều."
+    ],
+    "usage": [
+        "Xếp gỏi bông bí ra dĩa, dùng kèm nước mắm chua ngọt."
+    ],
+    "tips": [
+        "Bông bí lấy cả phần cọng, tước xơ, ăn rất giòn và ngon.",
+        "Khi chần bông bí nên cho cọng vào trước để bông bí được chín đều, chần nhanh rồi vớt ra ngâm ngay vào nước đá để bông không bị mềm nhũn."
+    ]
+}

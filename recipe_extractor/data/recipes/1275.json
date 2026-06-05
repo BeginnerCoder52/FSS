@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Bánh Canh Khoai Tím",
+    "serving": "4 người",
+    "times": "60 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Khoai mỡ tím 250g",
+        "Giò heo 4 khoanh",
+        "Tôm sú 4 con",
+        "Mực ống 1 con",
+        "Trứng cút 4 quả",
+        "Thịt càng cua 4 cái",
+        "Bột gạo, bột năng mỗi loại 200g",
+        "Nước dùng gà 1.5 lít",
+        "Hành ngò, hành phi, ớt cắt lát",
+        "Đường, muối, tiêu, nước mắm, rượu trắng"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Khoai mỡ tím cắt miếng vừa, rưới lên 2M nước, hấp chín trong lò vi sóng , cho 1/4m bột ngọt AJI-NO-MO-TO®, 1/2m hạt nêm Aji-Ngon®, 1/2m muối, tán nhuyễn.",
+        "Làm sợi bánh canh khoai tím: trộn đều 150g bột gạo và 50g bột năng, rồi từ từ cho 200ml nước sôi vào, nhồi đến khi bột dẻo mịn. Sau đó cho khoai mỡ vào nhồi đến khi mịn là được. Chia hỗn hợp bột làm 3 phần, cán mỏng dày 3 ly, dùng bột năng còn lại làm bột áo, cắt sợi ngang 3 ly.",
+        "Giò heo rửa sạch, cho giò heo vào luộc lúc nấu nước dùng, khi giò chín, vớt ra ngâm vào nước lạnh.",
+        "Mực ống luộc chín, cắt khoanh. Tôm sú luộc chín, lột vỏ, chừa đuôi.",
+        "Trứng cút luộc chín, bóc vỏ. Thịt cua chần qua nước sôi có 1/2M rượu trắng."
+    ],
+    "cook": [],
+    "usage": [
+        "Múc bánh canh, chân giò, mực khoanh, tôm sú, trứng cút ra tô, cho thêm hành ngò, hành phi, tiêu lên trên mặt.",
+        "Dọn kèm nước mắm nguyên chất, chanh, ớt cắt lát."
+    ],
+    "tips": []
+}

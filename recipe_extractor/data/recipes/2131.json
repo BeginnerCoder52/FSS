@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Gà Xào Lăn Mayonnaise",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đùi gà: 2 cái",
+        "Hành tây: 1/2 củ",
+        "Nước cốt dừa: 1/2 chén",
+        "Nước cốt dừa: 1/2 chén",
+        "Ớt sừng: 1 trái",
+        "Sả cây: 3 khúc",
+        "Lá cà ri: 1 nhánh",
+        "Nấm mèo: 3 tai",
+        "Tỏi băm",
+        "Đậu phộng rang, rau om",
+        "Ăn kèm: bánh mì",
+        "Đường, nước mắm, dầu điều, bột cà ri, tương ớt"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Gà chặt miếng vừa ăn, ướp 1M bột cà ri, 2M hạt nêm Aji-ngon®, 1M đường, 1 nước mắm, để thấm.",
+        "Hành tây cắt múi cau. Bún tàu ngâm mềm, cắt khúc. Nấm mèo ngâm mềm cắt miếng vừa ăn. Ớt cắt lát. Sả đập dập. Rau om cắt nhỏ."
+    ],
+    "cook": [
+        "Cho dầu ăn vào chảo, xào thơm sả, tỏi, 1/2 lượng ớt xắt lát xào cho thơm, cho tiếp lá cà ri, xào đều, cho tiếp thịt gà vào xào với lửa lớn. Khi thịt gà đã săn, giảm lửa nhỏ, cho thêm 1 m bột cà ri và một ít dầu điều, khoảng 1 chén nước cốt dừa, 1M tương ớt, thêm hành tây, 1/4 lọn bún tàu đã được ngâm mềm và cắt thành khúc ngắn 7cm. Cuối cùng tắt lửa, cho 2M xốt Mayonnaise Aji-Mayo®, đảo đều."
+    ],
+    "usage": [
+        "Cho món gà ra dĩa sâu lòng, rắc đậu phộng, rau om và ớt cắt lát, la càri chiên lên trên. Dùng với cơm hoặc bánh mì."
+    ],
+    "tips": [
+        "Ướp thịt gà với bột cà ri để thịt gà thấm màu và vị cà ri khi xào.",
+        "Hạ lửa khi xào bột cà ri để bột không bị khét và dậy mùi thơm."
+    ]
+}

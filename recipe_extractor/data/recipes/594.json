@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Đậu Hũ Bao Bố",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đậu hũ trắng: 2 miếng",
+        "Nấm đông cô: 3 tai",
+        "Củ năng cắt hạt lựu nhỏ: 20g",
+        "Chả chay cắt hạt lựu nhỏ: 60g",
+        "Cà rốt cắt hạt lựu nhỏ: 20g",
+        "Bắp cải cắt sợi nhỏ: 30g",
+        "Bông hẹ chần: 8 cọng",
+        "Nước lạnh: 1/2 chén",
+        "Poa-rô băm nhỏ: 1M",
+        "Cải thìa luộc chín: 4 cây",
+        "Dầu hào chay: 1M",
+        "Dầu ăn, tương ớt, muối, tiêu, dầu mè, đường, bột năng pha loãng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Đậu hủ cắt khối hình chữ nhật 6×4 cm, chiên vàng, múc phần ruột ra để tạo thành những “bao bố” nhỏ. Phần ruột tán nhuyễn.",
+        "Nấm đông cô ngâm mềm, cắt hạt lựu."
+    ],
+    "cook": [
+        "Nhồi “bao bố”: Phi thơm poa-rô, cho rau củ vào xào, nêm 2m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1m đường, ít tiêu, trút ra dĩa, trộn với phần ruột đậu hủ tán nhuyễn. Cho nhân vào “bao bố” và dùng bông hẹ cột nhẹ tay.",
+        "Phi thơm tỏi, xào cải thìa nêm 1 ít hạt nêm Aji-ngon® từ nấm hương và hạt sen.",
+        "Làm xốt: Hòa tan 1 chén nước với 1M dầu hào chay, 2M nước tương “Phú Sĩ”, 1/2M đường, 1/2m hạt nêm Aji-ngon® từ nấm hương và hạt sen và 1M tương ớt, nấu sôi, giảm lửa, thêm 1/2M nước bột năng khuấy sệt. Sau cùng cho 1/2m dầu mè vào đảo đều.",
+        "Cho “bao bố” vào nước xốt kho 5 phút, tắt lửa."
+    ],
+    "usage": [
+        "Xếp “bao bố” lên dĩa có lót cải thìa và chan xốt lên trên trước khi ăn"
+    ],
+    "tips": [
+        "Lấy kỹ phần ruột đậu hũ ở phía trên cho thật mỏng để tạo hình bao bố đẹp hơn.",
+        "Giảm lửa khi cho bột năng pha loãng vào để xốt không bị vón cục."
+    ]
+}

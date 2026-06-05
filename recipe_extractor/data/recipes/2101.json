@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Gà Nấu Đông",
+    "serving": "4 người",
+    "times": "50 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ức gà: 500g",
+        "Da heo: 100g",
+        "Chân gà: 200g",
+        "Nấm hương: 10g",
+        "Cà rốt: 1/2 củ",
+        "Đậu Hà lan: 5 trái",
+        "Nấm mèo: 2 tai",
+        "Hành tím, muối, tiêu sọ"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Nấu nước dùng: da heo cạo sạch mỡ, làm sạch phần da, cho vào nồi nấu cùng với chân gà, hành tím nướng sơ bỏ vào, đun nhỏ lửa, hớt bọt kỹ, lọc lại lấy 0,5 lít nước dùng, nêm 1/2m muối và 1m bột ngọt AJI-NO-MOTO®.",
+        "Cà rốt tỉa hoa, cắt mỏng 3mm. Đậu Hà Lan tước bỏ gân. Nấm hương ngâm nở, cắt bỏ chân. Nấm mèo ngâm nở."
+    ],
+    "cook": [
+        "Thịt gà luộc chín trong nồi nước dùng, lọc bỏ da, xé sợi, ướp với 1/3m tiêu và 1/2m bột ngọt AJI-NO-MOTO®.",
+        "Luộc chín cà rốt, đậu Hà Lan, nấm hương và nấm mèo trong nước có nêm hạt nêm Aji-ngon®, vớt ra ngâm vào nước lạnh, để ráo. Nấm mèo cắt sợi, nấm hương cắt đôi, đậu cắt bỏ 2 đầu.",
+        "Xếp thịt gà, đậu Hà Lan, cà rốt, nấm hương và nấm mèo vào chén, rắc thêm ít tiêu sọ, đổ nước dùng vào, bỏ cà rốt trang trí lên trên rồi để nơi thoáng mát cho đặc lại."
+    ],
+    "usage": [
+        "dưa hành, dưa cải chua, củ kiệu…"
+    ],
+    "tips": []
+}

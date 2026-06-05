@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Chả Khoai Hấp",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Khoai mỡ: 100g",
+        "Khoai môn: 100g",
+        "Thịt xay: 80g",
+        "Tôm sú: 50g",
+        "Trứng gà: 1 quả",
+        "Nấm mèo: 10g",
+        "Tiêu, muối, đường",
+        "Ngò rí, ớt sừng, xà lách, rau sống"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Khoai cắt cỡ ngón tay, cho vào tô với 1M nước, 1 ít muối, tiêu, bao màng nhựa, nấu lò vi sóng trong 5-7 phút, lấy ra tán nhỏ.",
+        "Trứng gà tách riêng lòng trắng và lòng đỏ. Nấm mèo ngâm nở, cắt sợi nhỏ. Ngò rí băm nhỏ. Ớt sừng cắt sợi.",
+        "Trộn đều tôm, thịt, khoai, nấm mèo, lòng trắng trứng gà với 1/2m Bột ngọt AJI-NO-MOTO®, 1/3m muối, 1m đường, 1/3m tiêu, ngò rí."
+    ],
+    "cook": [
+        "Thoa dầu vào đĩa sâu lòng, cho nhân vào, nén lại cho đẹp hấp trong 15 phút. Sau đó phết lòng đỏ trứng gà lên, không đậy nắp, khi lòng đỏ chín là được."
+    ],
+    "usage": [
+        "Món hấp ngon dùng kèm xà lách, rau sống, nước tương “Phú Sĩ”."
+    ],
+    "tips": [
+        "Có thể thêm hoặc thay các loại khoai khác tùy ý.",
+        "Nấu khoai bằng lò vi ba giúp tiết kiệm thời gian, khoai ráo và thơm ngon hơn."
+    ]
+}

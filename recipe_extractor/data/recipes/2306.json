@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Lẩu Cá Cờ",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá cờ 500g",
+        "Măng chua 300g",
+        "Bún 1kg",
+        "Cà chua 1 quả",
+        "Nấm rơm 100g",
+        "Tỏi phi 1M",
+        "Hành tỏi băm, rau om, ngò gai, thì là",
+        "Rau ăn kèm: nấm kim châm, bông bí, bắp cải, ngồng cải, cải bẹ xanh",
+        "Gia vị: dầu màu điều, nước mắm"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cá cờ cắt miếng dày 0.8cm. Rau om, ngò gai, thì là cắt khúc ngắn 2cm.",
+        "Cà chua cắt làm 4. Nấm rơm chẻ đôi. Măng chua cắt khúc ngắn vừa ăn.",
+        "Các loại rau và nấm ăn kèm rửa sạch, cắt khúc, xếp ra đĩa."
+    ],
+    "cook": [
+        "Phi thơm 2M hành tỏi băm, tắt lửa, cho măng vào xóc đều rồi cho ra riêng. Cho cà chua, nấm rơm vào xào, rồi cho 1.5L nước và gói Aji-Quick® Gia vị nêm sẵn Lẩu Thái vào nấu cho sôi khoảng 5 phút để các nguyên liệu ra nước ngọt. Cuối cùng cho măng, 1M tỏi phi và 1M nước mắm vào rồi tắt bếp."
+    ],
+    "usage": [
+        "Đặt nồi lẩu lên bếp, khi ăn nấu sôi nước lẩu, cho cá vào và nhúng rau, dọn kèm bún và chén mắm ớt."
+    ],
+    "tips": [
+        "Xóc măng với hành tỏi phi giúp măng thơm mà vẫn giữ được độ giòn."
+    ]
+}

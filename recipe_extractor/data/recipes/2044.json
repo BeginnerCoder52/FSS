@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Cơm Sen Cốm",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Hạt sen tươi: 50g",
+        "Đậu bi: 30g",
+        "Cà rốt: 30g",
+        "Thit nguội chay: 30g",
+        "Cốm xanh: 30g",
+        "Hành boaro: 30g",
+        "Cơm nguội: 2 chén",
+        "Nấm hương khô: 3 tai",
+        "Hoa sen: 2 cái",
+        "Muối, tiêu, đường",
+        "Dầu ăn, ngò rí, ớt",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Hòa 1M nước nóng với 1/2m bột ngọt AJI-NO-MOTO®, 1/2m đường và 1/5m muối cho tan rồi trộn đều với cơm.",
+        "Hạt sen, đậu bi, cà rốt cắt hạt lựu luộc chín. Nấm hương ngâm nở, cắt hạt lựu. Thịt nguội chay cắt hạt lựu. Cốm chiên phồng. Hành boaro băm nhỏ. Ngò rí rửa sạch, cắt nhỏ. Ớt cắt lát."
+    ],
+    "cook": [
+        "Phi thơm hành boaro với 2M dầu ăn, múc bớt 1M dầu ra rồi cho cà rốt, đậu bi, nấm hương, hạt sen và thịt nguội vào xào, nêm 1/2m bột ngọt AJI-NO-MOTO® và 1/3m muối, trộn đều, trút ra dĩa.",
+        "Cho 1M dầu phi hành boaro vào chảo, cho cơm vào xào săn với lửa nhỏ, nêm 1/2M nước tương LISA, cho rau củ đã xào vào trộn đều, tắt bếp.",
+        "Pha nước tương ăn kèm: trộn đều 1M nước tương LISA với 1/3m Giấm gạo lên men LISA®, 1/3m đường và ớt cắt lát."
+    ],
+    "usage": [
+        "Múc cơm chiên ra dĩa, rải cốm lên mặt, trang trí với cánh hoa sen xung quanh dĩa, dùng kèm nước tương pha."
+    ],
+    "tips": [
+        "Trộn cơm trước với gia vị đã hòa tan trong nước giúp cơm khi chiên sẽ mềm và gia vị thấm đều hơn.",
+        "Nấu cơm với nước dừa hoặc nước dùng giúp cơm ngọt và ngon hơn."
+    ]
+}

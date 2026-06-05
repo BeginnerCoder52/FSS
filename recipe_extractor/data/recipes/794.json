@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Chả Giò Cá Chẽm",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá chẽm fillet 150g",
+        "Ớt sừng cắt sợi 2 trái",
+        "Nấm kim châm 100g",
+        "Nấm đông cô tươi 30g",
+        "Bánh tráng bò bía tươi 1 xấp",
+        "Gừng cắt sợi 1 củ",
+        "Trứng gà 1 quả",
+        "ĂN KÈM: Xà lách, dưa leo, rau thơm các loại",
+        "Gia vị: dầu ăn, tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Cá chẽm cắt hình con chì, ướp 1/2m Hạt nêm Aji-ngon® Heo, 1/3m Bột ngọt AJI-NO-MOTO® và 1m Giấm gạo lên men Ajinomoto, 1 ít tiêu, 1M ớt sợi và 1m gừng cắt sợi. Để thấm.",
+        "Nấm đông cô cắt lát mỏng, ướp 1m giấm gạo lên men Ajinomoto với nấm kim châm và nấm đông cô.",
+        "Trứng gà đánh tan."
+    ],
+    "cook": [
+        "Cuốn chả giò : Trải bánh tráng bò bía, lần lượt xếp cá chẽm, nấm các loại, ớt sừng và gừng sợi, cuốn lại, dùng trứng gà đánh tan dán mí.",
+        "Đun nóng dầu ăn, chiên chả giò chín vàng, vớt ra để ráo dầu.",
+        "Pha xốt chấm: Trộn đều Xốt mayonnaise Aji-mayo® với tương ớt theo tỷ lệ 2:1."
+    ],
+    "usage": [
+        "Xếp chả giò ra dĩa. Ăn nóng cùng xà lách, rau thơm và dưa leo, chấm xốt đã pha."
+    ],
+    "tips": [
+        "Ướp một ít giấm vào cá giúp tạo vị hấp dẫn cho món ăn.",
+        "Dùng trứng gà đánh tan để dán mí chả giò khi chiên sẽ không bị bung."
+    ]
+}

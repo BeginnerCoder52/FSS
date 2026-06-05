@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Lẩu Bạch Tuộc",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bạch tuộc 300g",
+        "Tôm sú 200g",
+        "Thịt bò mềm 100g",
+        "Chân gà 300g",
+        "Cà rốt 1 củ nhỏ",
+        "Củ cải trắng 1 củ",
+        "Bắp Mỹ 1 trái",
+        "Sả cây đập dập 3 cây",
+        "Gừng nướng 1 củ",
+        "Hành tây nướng 1 củ",
+        "RAU NÊM: Ngò gai",
+        "ĂN KÈM: Rau tần ô, nấm kim châm, nấm linh chi nâu, mì gói",
+        "Gia vị: nước mắm, đường, tiêu"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Chân gà đập dập, trụng qua nước có ít muối rồi rửa sạch.",
+        "Bạch tuộc: rửa qua với muối và rượu gừng cho sạch. Đập dập sả, cắt khúc. Tôm rửa sạch, cắt râu. Xếp bạch tuộc, tôm, thịt bò ra dĩa, cất trong tủ lạnh.",
+        "Cà rốt tỉa hoa, cắt lát dày 0.3cm. Bắp Mỹ cắt khúc 2cm. Củ cải trắng cắt khúc 3cm, chẻ làm 6. Rau tần ô rửa sạch. Nấm các loại xếp ra dĩa. Ngò gai cắt khúc."
+    ],
+    "cook": [
+        "Nấu nước dùng: Cho chân gà vào nồi với 2L nước, bỏ hành tây nướng, gừng nướng vào nấu sôi rồi giảm lửa, hớt bọt. Nấu lửa nhỏ trong khoảng 45-60 phút. Lọc lấy 1.5 lít nước dùng",
+        "Nấu nước lẩu: Đun sôi nước dùng gà, nêm 2m hạt nêm Aji-ngon®, 2m bột ngọt AJI-NO-MOTO, 1/2M đường, 1/2M muối, 2M nước mắm, 3M giấm gạo lên men của Ajinomoto, khuấy đều cho tan gia vị."
+    ],
+    "usage": [],
+    "tips": [
+        "Bạch tuộc rửa sạch bằng rượu gừng để khử mùi tanh.",
+        "Khi nấu nước dùng cho thêm hành tây nướng giúp nước dùng có mùi thơm, vị ngọt và có màu sắc đẹp."
+    ]
+}

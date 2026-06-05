@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Cá Nướng Thảo Mộc",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá tầm phi lê: 250g",
+        "Xà lách thập cẩm (để trộn ăn kèm): 100g",
+        "Lá thyme, oregano, rosemary tươi: mỗi thứ 1 ít",
+        "Muối hồng Hymalaya: 1M",
+        "Nước cốt chanh: 1m",
+        "Giấy bạc: 1 miếng",
+        "RAU NÊM: Lá hương thảo tươi",
+        "ĂN KÈM: chanh vàng cắt khoanh, măng tây, cà rốt bi",
+        "Gia vị: Muối, đường, ớt bột, xốt dầu giấm, dầu olive"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Giã hỗn hợp gia vị thảo mộc gồm: 1/2m đường, 1/4m ớt bột, 1 ít tiêu, 1M rosemary, 1/2M oregano, 1/3M lá thyme, 1/2M muối hồng, 1m Hạt nêm Aji-ngon® (Heo), cho vào cối giã nhuyễn rồi thêm 1m nước cốt chanh, 1M dầu olive.",
+        "Ướp cá với hỗn hợp gia vị thảo mộc trong 10 phút.",
+        "Ướp rau ăn kèm: Măng tây, cà rốt bi, chanh vàng ướp với dầu olive và 1 ít muối."
+    ],
+    "cook": [
+        "Nướng: Mở lò nóng trước 250oC, trải giấy bạc ra, rắc 1 ít muối hồng và vài cọng thảo mộc tươi lên, xếp cá tầm lên trên, cho cá vào lò nướng 15 phút, sau đó xếp rau ăn kèm 2 bên và nướng thêm 7 phút nữa.",
+        "Trộn salad: trộn salad thập cẩm với xốt dầu giấm để ăn kèm."
+    ],
+    "usage": [
+        "lấy cá nướng ra khỏi lò, cho ra dĩa, trang trí với lá hương thảo, dùng nóng kèm salad trộn."
+    ],
+    "tips": [
+        "Lót thảo mộc bên dưới để nướng cá thơm hơn và không bị dính vào giấy bạc.",
+        "Cho dầu olive sau khi giã thảo mộc giúp tinh dầu trong thảo mộc hòa tan tốt hơn",
+        "Rắc đều muối hồng cá lên cá để gia vị được thấm đều"
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cá Hấp Nước Tương",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá điêu hồng: 1 con",
+        "Rau cải thìa: 500g",
+        "Hành lá: 2 cây",
+        "Ngò rí: 2 cây nhỏ",
+        "Gừng: 1 củ",
+        "Ớt sừng: 1 trái",
+        "Tỏi bằm: 1M",
+        "Muối, tiêu, đường, dầu ăn, dầu mè"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Cá điêu hồng làm sạch, khứa 2 đường dọc theo sống lưng cá, móc hết phần bụng và màng đen phía trong bụng cá. Làm sạch bằng Giấm gạo lên men LISA® và sát 1m muối lên trên thân cá rồi rửa sạch lại.",
+        "Rau cải thìa cắt bỏ gốc, ngâm trong nước muối pha loãng 15 phút, xả sạch, để ráo.",
+        "Hành lá cắt khúc 5cm. Ớt sừng cắt sợi, gừng 1/2 củ cắt sợi, 1/2 củ cắt lát.",
+        "Ngò rí rửa sạch, cắt thân và lá và để riêng. Rễ ngò đập dập."
+    ],
+    "cook": [
+        "Hấp cá: ướp với 1m tiêu, 1m muối, chà sát khắp mình cá. Gác 3 cây đũa lên dĩa, đặt cá lên đũa, xếp hành lá, gừng, ớt cắt lát lên trên mình cá, cho vào nồi hấp 15-17 phút.",
+        "Làm nước xốt: pha 1 chén nước lọc với 5M nước tương Phú Sĩ, 1m đường, 1/2M hạt nêm Aji-ngon®. Nước sốt sôi lên, cho rễ ngò vào, thêm 1/2M dầu mè vào, tắt lửa.",
+        "Xào rau: cải thìa trụng qua nước sôi có nêm 1/2m muối, vớt ra ngâm nước lạnh rồi để ráo. Phi thơm tỏi với 1 ít dầu ăn, cho cải vào xào nhanh, nêm 1/2m hạt nêm Aji-ngon® và 1/2m tiêu cho vừa ăn."
+    ],
+    "usage": [
+        "Khi cá chín, trình bày cá ra dĩa. Xếp hành lá, ớt, gừng, ngò rí, cải thìa xung quanh cá. Chế xốt vào dĩa cá. Sau cùng rưới dầu nóng lên mình cá. Dùng món hấp ,với cơm trắng, chấm kèm nước tương LISA."
+    ],
+    "tips": [
+        "Xẻ hai bên sống lưng cá để thịt cá thấm gia vị và dễ lấy thịt khi ăn.",
+        "Đặt cá lên đũa khi hấp để khi cá chín đổ bỏ nước hấp đọng trong dĩa để cá không bị tanh."
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Gỏi Cuốn Tôm Chiên",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 500g",
+        "Rau mầm: 100g",
+        "Tía tô: 2 cây",
+        "Húng quế: 2 cây",
+        "Rau diếp cá: 5 cây",
+        "Xà lách: 1 cây",
+        "Bánh ướt không nhân: 200g",
+        "Bánh tráng: 1 gói",
+        "Đường, nước mắm, tỏi băm",
+        "Ớt băm, dầu ăn"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Tôm bóc vỏ, chừa đuôi, khứa nhẹ vài đường dưới bụng tôm. Rau mầm, tía tô, húng quế, diếp cá, xà lách lặt rửa sạch, để ráo. Bánh ướt cắt miếng khoảng 2*6cm."
+    ],
+    "cook": [
+        "Cho tôm vào tô, rắc ½ gói Aji-Quick® Bột tẩm khô chiên giòn vào, trộn đều rồi cho vào chảo dầu nóng chiên vàng, vớt ra để ráo dầu.",
+        "Cuốn: thấm mềm bánh tráng bằng nước lọc, xếp xà lách, rau tía tô, húng quế, rau mầm, diếp cá và bánh ướt vào, gấp phần trên và 1 bên mép bánh vào, đặt 1 con tôm lên, phần đuôi hướng ra ngoài bánh, gấp mép còn lại vào rồi cuộn tròn.",
+        "Pha nước mắm chua ngọt: trộn đều 1,5M Giấm gạo lên men LISA® với 2M đường, 2M nước mắm, ½ chén nước, 1m ớt băm và 1m tỏi băm."
+    ],
+    "usage": [
+        "Xếp gỏi cuốn tôm chiên ra dĩa, khi ăn chấm với nước mắm chua ngọt."
+    ],
+    "tips": [
+        "Chiên tôm với Aji-Quick® Bột tẩm khô chiên giòn tôm sẽ có vị vừa ăn, vàng đẹp và giòn, giữ được vị ngọt của tôm. Khi sơ chế khứa vài đường dưới bụng tôm đề chiên xong tôm không bị cong."
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Nộm Bì",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Hoa chuối bào 200g",
+        "Da heo 100g",
+        "Tai heo 100g",
+        "Hành tây 1/2 củ",
+        "Ớt sừng cắt sợi 1 trái",
+        "Dưa kiệu cắt sợi 20g",
+        "Ớt tỏi băm, lá chanh cắt sợi",
+        "Hành tím phi, đậu phộng rang",
+        "Muối, đường, tiêu, nước mắm"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Da heo luộc chín trong nước có chút muối, ngâm nước đá lạnh, vớt ra để ráo, cắt sợi mỏng.",
+        "Tai heo làm sạch, luộc chín, xả qua nước lạnh, cắt lát dài, vừa ăn.",
+        "Hành tây cắt lát mỏng, ngâm nước đá, vớt ra, để ráo. Đậu phộng rang đập sơ.",
+        "Pha nước trộn: 2M đường, 2M nước mắm, 1/2m muối, 2M Giấm gạo lên men LISA®, 1M tỏi ớt băm."
+    ],
+    "cook": [
+        "Trộn da heo, tai heo với 1M nước trộn cho thấm.",
+        "Trộn chung hành tây, bắp chuối bào, dưa kiệu, với nước trộn, cho da heo, tai heo vào cùng với một nửa gia vị gồm: đậu phộng, lá chanh, hành phi, ớt sừng cắt sợi."
+    ],
+    "usage": [
+        "Trình bày ra đĩa, rắc phần rau thơm còn lại lên trên."
+    ],
+    "tips": [
+        "Da heo, tai heo luộc xong ngâm vào nước lạnh để",
+        "Da heo trắng và không bị khô."
+    ]
+}

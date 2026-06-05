@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Heo Nướng Hàn Quốc",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt cổ heo 500g",
+        "Tỏi băm 2M",
+        "Nước gừng 1M",
+        "Hành lá 1 nhánh",
+        "Mè trắng rang 1M",
+        "Tương ớt Hàn Quốc (Gochujang) 1M",
+        "ĂN KÈM: Ớt xanh to, tỏi lát, xà lách xoắn, dưa leo thanh",
+        "Gia vị: Dầu ăn, dầu mè, đường, tiêu đen bể"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt cổ cắt miếng 3mm.",
+        "Tỏi băm vắt lấy 2M nước tỏi, phần xác giữ lại. Hành lá cắt nhỏ."
+    ],
+    "cook": [
+        "Xốt ướp thịt: Hòa đều 4M Nước tương “Phú Sĩ”, 2m Hạt nêm Aji-ngon® Heo, 1m tiêu đen bể, 1M đường, 2M nước tỏi, 1M nước gừng, hành lá, 2M mè trắng rang và 2M dầu mè.",
+        "Ướp thịt với xốt, để thấm 30 phút, nướng áp chảo thịt.",
+        "Xốt chấm: Hòa tan 1M đường với 2m Giấm gạo lên men Ajinomoto, 1m Bột ngọt AJI-NO-MOTO®, 3M tương ớt Hàn Quốc, 1M tỏi băm, 2m Nước tương “Phú Sĩ”, 2m dầu mè."
+    ],
+    "usage": [
+        "Trình bày thịt ra dĩa. Khi ăn cuốn thịt với xà lách, dưa leo chấm với nước chấm dùng kèm thêm tỏi ớt tùy thích."
+    ],
+    "tips": [
+        "Dùng phần thịt cổ sẽ giòn và hấp dẫn hơn.",
+        "Dùng nước tỏi gừng để ướp để thịt thơm, mau thấm, lúc nướng không bị cháy, không khô.",
+        "Có thể thay tương ớt Hàn Quốc bằng tương ơt Việt nhưng cần điều chỉnh lượng dùng cho hợp khẩu vị."
+    ]
+}

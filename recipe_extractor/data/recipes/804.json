@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Cà Ri Tổ Ong",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tổ ong bò : 250g",
+        "Khoai tây đỏ : 250g",
+        "Sữa tươi : 1/2 chén",
+        "Nước cốt dừa : 1/2 chén",
+        "Nước dão dừa : 2/3 chén",
+        "Ớt sừng : 1 trái",
+        "Ớt hiểm : 2 trái",
+        "Bột cà ri, lá cà ri, rau răm",
+        "Tỏi băm, ớt băm, nước me",
+        "Rượu trắng, gừng, đường, muối"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Khoai tây rửa sạch, cắt khối 3cm, ngâm nước muối loãng. Sau đó vớt ra để ráo, ướp 1/2m bột cà ri, 1/2m hạt nêm Aji-ngon®.",
+        "Tổ ong bò chà với gừng và rượu cho hết mùi tanh, rửa sạch, nhúng sơ qua nước sôi sau đó vớt ra chà muối thêm 1 lần nữa. Cắt miếng vừa ăn, ướp 1/2m đường, 1m tỏi băm, 1m bột cà ri, 2m hạt nêm Aji-ngon®.",
+        "Ớt hiểm đập dập, ớt sừng cắt khoanh hình thoi."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, chiên vàng khoai trong dầu ngập rồi vớt ra giấy thấm dầu.",
+        "Phi thơm tỏi và ớt băm, cho lá cà ri vào, sau đó cho tổ ong bò vào xào cho săn. Cho 2/3 chén nước dão dừa vào nấu sôi khoảng 5 phút. Sau đó cho khoai tây, ớt hiểm đập dập và ớt sừng vào nấu thêm 5 phút nữa, thêm nước cốt dừa và sữa tươi vào, tắt bếp.",
+        "Pha nước mắm me: cho 1,5M đường, 2M nước mắm, 2M nước me, tỏi băm, ớt băm vào tô, khuấy đều."
+    ],
+    "usage": [
+        "Múc ra tô, dọn kèm nước mắm me, rau răm. Ăn kèm bánh mì."
+    ],
+    "tips": [
+        "Chiên khoai trước giúp khoai chín vàng, không bị nát trong khi nấu và giữ hương vị thơm ngon hơn.",
+        "Cho nước cốt dừa và sữa tươi vào giai đoạn cuối giúp món ăn có mùi thơm, vị béo và ko bị vón cục."
+    ]
+}

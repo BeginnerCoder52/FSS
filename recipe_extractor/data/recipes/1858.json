@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Canh Cải Cầu Vồng Nấu Cua",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cải cầu vồng (1 gói) 350g",
+        "Cua đồng xay (không nêm muối) 200g",
+        "Giò sống 100g",
+        "Nấm linh chi trắng 100g",
+        "Đầu hành lá 3 cái",
+        "Hành tím băm 1M",
+        "Gia vị: dầu ăn, muối, tiêu, nước mắm, đường"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Phi hành tím: Cho 1M dầu ăn vào chảo, cho hành tím băm vào phi thơm, để riêng phần dầu và hành phi.",
+        "Đầu hành lá: đập dập, cắt nhỏ. Cải cầu vồng cắt khúc 2cm. Nấm tách nhỏ.",
+        "Cua xay: sử dụng 1,3 lít nước, cho từ từ vào hòa với cua xay rồi lọc lấy nước cua."
+    ],
+    "cook": [
+        "Nấu nước cua: đun sôi nước cua, giảm lửa nấu cho phần riêu cua nổi lên, tắt lửa, cho phần dầu phi hành vào, vớt riêu cua ra.",
+        "Làm chả cua: trộn chung riêu cua với giò sống, đầu hành lá, hành tím phi thơm, 1/3m tiêu xay, quết cho dai.",
+        "Nấu canh: đun sôi lại nước cua, múc chả cua cho vào nồi, thả nấm linh chi vào, khi chả cua nổi lên, cho cải cầu vồng vào nấu chín, nêm 1m Hạt nêm Aji-ngon® (Heo), 1/3m muối, 1/2m đường, 1m nước mắm, nếm vị vừa ăn."
+    ],
+    "usage": [],
+    "tips": [
+        "Trộn chả cua với giò sống giúp chả cua được định hình tốt hơn.",
+        "Khi nước cua sôi thì giảm lửa để riêu cua không bị vỡ."
+    ]
+}

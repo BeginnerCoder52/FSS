@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Miến Trộn Bò Bằm",
+    "serving": "4 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò xay 200g",
+        "Nấm linh chi trắng 100g",
+        "Nấm đông cô khô 25g",
+        "Tỏi băm 2m",
+        "Cà rốt 25g (1/4 củ )",
+        "Wakame 2g",
+        "Miến dẹt sợi lớn 150g",
+        "RAU NÊM: Hành lá, mè trắng rang, tỏi phi",
+        "Gia vị: Dầu hào, dầu ăn, tương ớt, dầu mè đen"
+    ],
+    "spices": [
+        "Xốt mè rang \"Aji-Xốt\"",
+        "Nước tương \"Phú Sĩ\"",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Thịt bò ướp 1m dầu hào, 1m nước tương Phú Sĩ, 1m tỏi băm, để thấm",
+        "Nấm đông cô khô ngâm mềm, cắt sợi. Nấm linh chi tách nhỏ. Cà rốt cắt sợi. Wakame ngâm mềm, chần sơ nhanh để ráo.",
+        "Miến ngâm mềm, trụng chín với nước sôi, xả nước lạnh, để ráo, trộn với 1m dầu ăn.",
+        "Pha xốt trộn miến: 1M dầu hào, 1M nước tương, 1/2m đường, 1M tương ớt, 1/3m giấm, 1m dầu mè đen."
+    ],
+    "cook": [
+        "Áp chảo nấm linh chi trắng với 1m dầu ăn + 2M nước lọc, cho cà rốt vào + 1M xốt đảo đều, trút ra để riêng.",
+        "Phi thơm 1m tỏi băm, xào thịt bò và nấm đông cô khô với lửa lớn.",
+        "Trộn đều miến với 3M xốt và 1m tỏi phi."
+    ],
+    "usage": [],
+    "tips": []
+}

@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cơm Gà Xối Mỡ",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đùi gà góc 4 2 cái",
+        "Lá dứa (thắt gút) 2 cái",
+        "Nước gừng 30g",
+        "Nước cốt tỏi 1M",
+        "Gừng lát 2 lát",
+        "Mỡ gà 100g",
+        "Cơm trắng 4 chén",
+        "Tỏi băm 1M",
+        "Gia vị: dầu ăn, bột nghệ, rượu ngũ vị hương, mạch nha, nước cốt chanh",
+        "Ăn kèm: xà lách, dưa leo, cà chua, hành tím chua, ớt cắt lát."
+    ],
+    "spices": [
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn",
+        "Hạt nêm Aji-ngon® Gà",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Đùi gà: khứa bên trong vài đường sao cho không bị rách da, ướp với 2m hạt nêm Aji-ngon®, 1M nước gừng, 1M nước cốt tỏi, 1M rượu ngũ vị hương, 1M nước tương “Phú Sĩ”, để thấm.",
+        "Cà chua, dưa leo cắt lát."
+    ],
+    "cook": [
+        "Hấp chín đùi gà, rồi để nguội, lau cho da gà khô, thoa 1 lớp Aji-Quick® Bột Chiên Gà Giòn lên da gà. Pha hỗn hợp 2M mạch nha, 1M nước cốt chanh, phết lên da gà, khi nào khô thì phết tiếp. Để cho khô mặt lại.,",
+        "Đun sôi dầu, dùng vá xối dầu sôi lên da gà đến khi da gà vàng giòn. Để ráo dầu, chặt miếng vừa ăn.,",
+        "Trộn cơm với 1m hạt nêm Aji-ngon®. Thắng mỡ gà cho tới khi ra nước, tắt bếp, nêm vào 1/4m bột nghệ, lá dứa, gừng lát. Dùng mỡ này phi thơm tỏi, cho cơm vào xào sơ với 1M tỏi băm."
+    ],
+    "usage": [
+        "Ém cơm ra dĩa, xếp cà chua, dưa leo và thịt gà chặt xung quanh, dùng nóng kèm nước tương."
+    ],
+    "tips": [
+        "Hấp gà, để thật nguội trước khi xối mỡ để da gà được giòn, ngọt và có màu vàng đẹp.",
+        "Tẩm Aji-Quick® Bột Chiên Gà Giòn giúp da gà khô giòn."
+    ]
+}

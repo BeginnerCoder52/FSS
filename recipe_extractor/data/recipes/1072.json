@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Lưỡi Heo Xào Lăn",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lưỡi heo : 300g",
+        "Hành tây : 1/2 củ",
+        "Nước cốt dừa : 1 chén",
+        "Bún tàu : 1/2 lọn",
+        "Nấm mèo : 3 tai",
+        "Sả : 3 cây",
+        "Gừng : 1 củ nhỏ",
+        "Muối, tiêu, đường",
+        "Màu dầu điều, dầu ăn",
+        "Đậu phộng rang, bột cà ri",
+        "Ngò gai, rau om, ớt sừng, hành tỏi băm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Lưỡi heo trụng qua nước sôi có gừng đập dập, cạo sạch bên ngoài, xắt lát mỏng, ướp với 1 ít tiêu, 1/2m muối, 1/2m bột ngọt AJI-NO-MOTO®, 1m hạt nêm Aji-ngon®, 1m đường, 1M hành tỏi băm,1m bột cà ri, trộn đều.",
+        "Hành tây cắt múi cau. Bún tàu ngâm mềm cắt khúc, nấm mèo ngâm mềm, cắt miếng. Ớt sừng cắt hình thoi, sả cây đập dập, cắt khúc. Ngò gai, rau om cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm sả rồi cho tiếp 1M hành tím và tỏi băm, cho lưỡi heo vào xào cho săn.",
+        "Sau đó cho 1/2 chén nước và 1 chén nước cốt dừa, nấm mèo vào nấu.",
+        "Cho thêm 1M màu dầu điều, sau đó cho tiếp hành tây, ớt sừng, cuối cùng cho bún tàu, nêm rau om, ngò gai, rắc đậu phộng lên trên."
+    ],
+    "usage": [
+        "Dùng nóng với cơm, bún hay bánh mì."
+    ],
+    "tips": [
+        "Trụng lưỡi heo qua nước có gừng rồi cạo sạch giúp khử mùi hôi trong lưỡi.",
+        "Cho bún tàu vào lúc cuối và đảo nhanh tay để bún không bị nát"
+    ]
+}

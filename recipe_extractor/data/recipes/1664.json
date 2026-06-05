@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Bánh Đúc Tôm Thịt",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột gạo: 80g",
+        "Nước cốt dừa: 600ml",
+        "Thịt nạc dăm",
+        "Tôm khô: 20g",
+        "Nước dừa tươi: 1 chén",
+        "Hành tím băm,củ sắn xắt sợi nhuyễn, tỏi băm, ớt băm, hành lá, ngò rí, chanh",
+        "Nước mắm, đường, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Tôm khô ngâm mềm, giã sơ. Củ sắn cắt sợi nhuyễn, luộc sơ, vắt ráo.",
+        "Xào nhân: phi thơm hành tím băm, xào thịt, củ sắn và tôm khô, nêm 1/2m nước mắm và 1m đường.",
+        "Pha bột: trộn bột với nước cốt dừa, nêm 1/2m hạt nêm Aji-ngon® và 1m dầu ăn, đặt lên bếp, khuấy cho bột hơi sệt lại."
+    ],
+    "cook": [
+        "Thoa dầu vào khuôn, lót ni lon, cho 1/2 lượng bột vào khuôn, cho tiếp 1 lớp nhân, 1 lớp bột rồi 1 lớp nhân lên mặt.",
+        "Cho vào xửng nước sôi, hấp khoảng 15 phút cho bánh chín. Lấy bánh ra, gắn ngò lên mặt.",
+        "Pha nước mắm ăn kèm: 1 chén nước dừa tươi, 1M đường, 1M nước cốt chanh, 1.5M nước mắm, tỏi và ớt băm."
+    ],
+    "usage": [
+        "Xếp bánh đúc ra dĩa, ăn kèm nước mắm pha."
+    ],
+    "tips": [
+        "Pha nước mắm bằng nước dừa tươi tạo vị ngọt thanh, ăn rất hợp với bánh đúc.",
+        "Nên ém chặt nhân vào lớp bột để khi lấy bánh ra không bị tách lớp."
+    ]
+}

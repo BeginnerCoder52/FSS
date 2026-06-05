@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Gà Viên Chiên",
+    "serving": "4 người",
+    "times": "60 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt gà xay: 300g",
+        "Hành tây: 1/2 củ",
+        "Cà rốt: 1/4 củ",
+        "Ngò tây: 1 cọng",
+        "Sữa tươi: 150ml",
+        "Trứng gà: 2 quả",
+        "Bột mì, bột xù, bơ lạt",
+        "Muối, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Hành tây, cà rốt, ngò tây băm nhuyễn. Trứng gà đánh tan.",
+        "Xào 2M hành tây và 2M cà rốt với 2M bơ, khoảng 2 phút rồi cho 2M bột mì vào đảo đều, cho sữa tươi vào nấu đến khi bột mì nở và hỗn hợp sánh lại, đẻ nguội. Thêm thịt gà xay vào, nêm 1m hạt nêm Aji-ngon®, 1/2m muối, 1/2m tiêu, ngò tây băm và 2M xốt Mayonnaise Aji-mayo®, trộn đều."
+    ],
+    "cook": [
+        "Viên hỗn hợp thịt gà thành những viên hình thoi, lăn qua bột mì, nhúng qua trứng rồi tẩm bột xù, giữ trong tủ lạnh 15 phút.",
+        "Đun nóng dầu, chiên gà viên đến khi chín vàng, vớt ra để ráo dầu."
+    ],
+    "usage": [
+        "Xếp món gà viên chiên ra dĩa, khi ăn chấm với xốt Mayonnaise Aji-mayo®."
+    ],
+    "tips": [
+        "Để xốt sữa không bị vón cục, chúng ta phải đảo đều tay với lửa nhỏ.",
+        "Giữ lạnh viên gà trước khi chiên sẽ giữ được hình dáng và không bị bể.",
+        "Để chiên gà không bị ngậm dầu, ta nên chiên lửa vừa nhưng tăng lửa lớn trước khi vớt gà ra."
+    ]
+}

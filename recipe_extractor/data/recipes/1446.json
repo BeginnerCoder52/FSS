@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Lẩu Cá Lăng Măng Chua",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá lăng : 500gr",
+        "Măng chua : 300gr",
+        "Cà chua : 2 trái",
+        "Thơm : 1/4trái",
+        "Bún tươi : 500gr",
+        "Hành tím băm : 1M",
+        "Tỏi băm : 1M",
+        "Rau om : 3 cây",
+        "Ngò gai : 3 cây",
+        "Ớt hiểm : 1 trái",
+        "Gừng tươi, sả",
+        "Dầu ăn, nước mắm, đường, muối"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cá lăng cắt khúc dày 1.5cm, chần qua nước sôi có ít gừng. Sả băm nhỏ.",
+        "Măng chua rửa sạch, vắt ráo. Cà chua cắt múi cau. Thơm cắt miếng mỏng. Rau om, ngò gai cắt khúc 2cm. Ớt cắt lát."
+    ],
+    "cook": [
+        "Phi thơm sả, ớt hiểm, hành tỏi băm với 1/2 chén dầu ăn (~7M), cho cá vào xốc săn, trút ra dĩa, rồi thêm cà chua, thơm, nêm 1M muối, 1M đường, cho măng chua và 1.5 lít nước, đun sôi, nêm 1 gói Aji-Quick® Gia vị nêm sẵn Lẩu Thái và 1M đường khuấy đều, cho cá vào lại nước lẩu, nấu thêm 1 lúc cho cá chín, cho rau om, ngò gai vào."
+    ],
+    "usage": [
+        "Ăn kèm bún, chấm cá với nước mắm và ớt cắt lát."
+    ],
+    "tips": [
+        "Xốc cá trước với hành tỏi băm và sả giúp cá tăng hương vị.",
+        "Xào cà chua, thơm và măng chua trước với hành tỏi và sả băm rồi mới cho cá vào giúp khử được mùi tanh của cá"
+    ]
+}

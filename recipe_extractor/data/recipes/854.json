@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Gà Nướng Xiên",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ức gà: 350g",
+        "Ớt chuông xanh: 1 trái",
+        "Hành tây: 1 củ",
+        "Ớt chuông vàng: 1 trái",
+        "Ớt chuông đỏ: 1 trái",
+        "Que xiên: 15 que",
+        "Ớt hiểm: 2 trái",
+        "Tỏi, gừng bằm: 2M",
+        "Muối, tiêu, đường, tương cà",
+        "Rượu nếp, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt gà rửa sạch, cắt miếng vuông 2 cm.",
+        "Hành tây, ớt chuông các loại cắt khối vuông 3 cm. Ớt hiểm bỏ hạt, băm nhỏ.",
+        "Trộn đều hỗn hợp ướp gồm 2M nước tương Phú Sĩ, 1M rượu nếp, 1/2m tiêu, 1/2m muối, 1/2m bột ngọt AJI-NO-MOTO®, 1/2m đường, tỏi băm, gừng băm và 1M dầu ăn. Cho thịt gà, hành tây, ớt chuông vào hỗn hợp ướp, để thấm 30 phút."
+    ],
+    "cook": [
+        "Xiên thịt gà, ớt chuông và hành tây vào que xiên, nướng trên vỉ nướng bếp gas đến khi chín vàng.",
+        "Trộn xốt: trộn đều 2M xốt Mayonnaise Aji-mayo® với 1M tương cà, 1/2m tiêu và 1m ớt bằm."
+    ],
+    "usage": [
+        "Xếp thịt gà nướng ra dĩa, khi ăn chấm thêm xốt Mayonnaise Aji-mayo® đã trộn."
+    ],
+    "tips": [
+        "Nên ngâm que tre vào nước 5 – 10 phút trước khi xiên thịt để thịt không bị dính.",
+        "Để nướng xong thịt gà không bị khô, sau khi ướp nên cho vào ngăn mát tủ lạnh khoảng 30 phút."
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Lẩu Uyên Ương",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò mềm: 300g",
+        "Trứng gà: 4 quả",
+        "Sa tế: 40g",
+        "Táo tàu: 50g",
+        "Khoai môn: 300g",
+        "Bắp Mỹ: 1 trái",
+        "Ớt hiểm khô: 2 trái",
+        "Mì khô: 4 vắt",
+        "Nấm kim châm, nấm đùi gà, nấm bạch linh đen",
+        "Tần ô, cải con xanh, rau muống cọng, đậu hũ non",
+        "Đường, hành lá, tỏi băm, củ cải trắng bào"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt bò cắt lát mỏng, xếp ra dĩa.",
+        "Bắp Mỹ, củ cải cắt khúc, chừa 1 ít mài nhỏ. Các loại rau nấm sơ chế sạch, xếp ra dĩa. Khoai môn cắt miếng vừa ăn. Trứng gà đánh tan. Hành lá cắt nhỏ."
+    ],
+    "cook": [
+        "Nấu nước dùng cay: cho 1 lít nước vào nồi, cho sa tế, táo tàu, ớt khô, khoai môn vào. Nêm 2M hạt nêm Aji-ngon®, 1/2M đường, nấu sôi, múc ra lẩu.",
+        "Nấu nước dùng ngọt: cho 1 lít nước vào nồi, cho củ cải trắng, bắp mỹ cắt khúc vào nấu lửa nhỏ, nêm 2,5M hạt nêm Aji-ngon®.",
+        "Pha nước chấm: trộn 1M củ cải trắng mài, 1M hành lá, 1/2M tỏi, 1/2M sa tế, 3M nước tương “Phú Sĩ”, 1/2M đường. Trộn đều."
+    ],
+    "usage": [
+        "Bày lẩu ra khi ăn nhúng thịt bò, trứng, nấm, rau vào lẩu, dùng nóng với mì."
+    ],
+    "tips": [
+        "Nấu khoai môn chung với nước dùng giúp nước lẩu có độ bùi, thơm.",
+        "Dùng củ cải và bắp giúp nước dùng ngọt và trong."
+    ]
+}

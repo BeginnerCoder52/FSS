@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Chả Bắp",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Giò sống: 200g",
+        "Tôm thẻ: 100g",
+        "Bắp mĩ: 1 trái",
+        "Đầu hành lá băm: 1M (cắt nhỏ)",
+        "Tiêu: 1m",
+        "Ớt hiểm: 1 trái (băm nhuyễn)",
+        "Tỏi băm: 1/2m (băm nhuyễn)",
+        "Ớt sừng băm: 1M",
+        "RAU NÊM: Ngò rí",
+        "ĂN KÈM: Cơm trắng",
+        "Gia vị: Nước mắm"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Tôm thẻ lột vỏ, cắt nhỏ.",
+        "Bắp mĩ lột vỏ, giữ lại phần vỏ & rửa rạch, bắp bào hạt, xé lá bắp làm dây cột chả."
+    ],
+    "cook": [
+        "Trộn nhân: cho mọc, tôm, bắp mĩ, đầu hành lá băm, 1/3m tiêu, nêm 1m Hạt nêm Aji-ngon® HEO, 1/3m bột ngọt Ajinomoto, 1m ớt sừng băm, trộn đều.",
+        "Nhồi nhân: nhồi phần nhân vào vỏ trái bắp, sau đó dùng lá bắp cột lại.",
+        "Hấp: Hấp trong vòng 30 phút.",
+        "Pha nước chấm: trộn đều 5M nước, 2M đường, 1M giấm, 2M nước mắm, ớt băm, tỏi băm."
+    ],
+    "usage": [],
+    "tips": [
+        "Dùng tay quết mạnh chả sẽ làm chả dai và ngon hơn.",
+        "Để chả vào tủ mát 30 phút để tăng kết dính cho chả và dễ cuốn hơn.",
+        "Dùng dây xé từ vỏ bắp cột vừa tay vì chả còn nở ra."
+    ]
+}

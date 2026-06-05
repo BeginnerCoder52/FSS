@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Phở Sắn Xào Thập Cẩm",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Phở sắn khô: 2 miếng (khoảng 30g)",
+        "Nấm rơm búp: 100g",
+        "Nấm hương khô ngâm nở: 50g",
+        "Tàu hũ ky lá: 1 lá to",
+        "Nước dùng chay: 250ml",
+        "Hành tây tím: 1/2 củ",
+        "Hành boa rô: 2 cây",
+        "Ớt Đà Lạt đỏ, vàng: 40g/ loại",
+        "Đậu Hà Lan trái, cà rốt, bắp non, cà chua bi: 50g/ loại",
+        "Gia vị: Bột năng, dầu mè, dầu ăn, ngò rí, ớt, tiêu, đường"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Phở sắn khô bẻ làm 4. Tàu hũ ky lau sạch. Cà rốt tỉa hoa, cắt lát mỏng.",
+        "Nấm rơm, nấm hương cắt đôi. Hành tây cắt múi cau. Hành boa rô cắt lát. Ớt Đà Lạt cắt sợi."
+    ],
+    "cook": [
+        "Trụng rau củ: Đun nước sôi, cho cà rốt, bắp non, đậu Hà Lan vào trụng sơ, vớt ra để ráo.",
+        "Pha xốt xào: Gồm 250ml nước dùng, 1M Hạt nêm Aji-ngon® (Nấm hương & Hạt sen), 3/4m tiêu, 2m đường, 1M dầu hào, 2M Giấm gạo lên men LISA® và 2M nước tương “Phú Sĩ”.",
+        "Chiên phở và đậu hũ: Bắc chảo dầu nóng, cho phở sắn vào chiên nở giòn, vớt ra để ráo dầu. Tiếp theo cho tàu hũ ky vào chiên vàng giòn, để ráo dầu.",
+        "Xào phở: Phi thơm hành boa rô, cho nấm vào xào nhanh rồi thêm phần rau củ đã trụng vào, nêm xốt xào vào đảo đều, xào lửa lớn cho rau củ chín tới rồi thêm hành tây, ớt Đà Lạt và cà chua bi vào xóc đều, thêm 1m nước bột năng để nước xốt có độ sánh nhẹ, cuối cùng nêm vào 1m dầu mè xóc đều rồi tắt lửa."
+    ],
+    "usage": [],
+    "tips": [
+        "Chiên phở sắn và tàu hũ ky với lửa vừa để nở đều và giòn xốp.",
+        "Cho bột năng vào sau cùng để canh được độ sánh của xốt theo ý muốn.",
+        "Sơ chế nấm rơm bằng cách ngâm nước vo gạo giúp nấm sạch và trắng."
+    ]
+}

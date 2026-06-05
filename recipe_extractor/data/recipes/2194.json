@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Nghêu Nướng Mỡ Chài",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mỡ chài: 200g",
+        "Thịt nghêu: 150g",
+        "Thịt nạc dăm: 50g",
+        "Vỏ nghêu: 14 cái",
+        "Tôm khô: 1M",
+        "Trứng vịt: 1 quả",
+        "Nấm mèo trắng: 2 tai",
+        "Hành lá: 2 cọng",
+        "Gừng, me chín, ớt sừng",
+        "Hành tim phi, bột năng",
+        "Đường, tương ớt, tiêu sọ, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Vỏ nghêu rửa sạch, úp ráo. Thịt nghêu lấy bỏ túi đen, băm nhỏ. Hành lá cắt nhỏ. Mỡ chài ngâm rửa sạch. Nấm mèo ngâm nở, cắt sợi, ướp với 1 ít tiêu.",
+        "Thịt băm nhuyễn. Tôm khô ngâm mềm, bằm nhuyễn. Gừng băm nhỏ. Me ngâm nước nóng, dằm rồi lọc lấy 1/3 chén nước me.",
+        "Làm xốt me: phi thơm 1/2M gừng băm với 1/2M ớt sừng băm, cho nước me vào, nêm 1M đường, 1/2m hạt nêm Aji-ngon® và 1M tương ớt, khuấy đều cho nước sánh lại thì tắt bếp."
+    ],
+    "cook": [
+        "Làm nhân: trộn thịt nghêu với hành lá, tôm khô, thịt băm, nấm mèo và lòng trắng trứng, nêm 1/2m hạt nêm Aji-ngon®, 1/2m tiêu, 1/2M hành phi cắt nhỏ và 1m bột năng.",
+        "Nướng: cho nhân vào từng vỏ nghêu, ém chặt, gói lại bằng mỡ chài, phết lòng đỏ trứng lên, cho vào lò nướng ở nhiệt độ 220 độ trong khoảng 20 phút."
+    ],
+    "usage": [
+        "Lấy món nghêu nướng ra khỏi lò, xếp ra dĩa, rưới xốt me lên, dùng nóng."
+    ],
+    "tips": [
+        "Dùng mỡ chài gói nhân giúp món ăn không bị khô.",
+        "Mỡ chài nên chọn miếng to, mỏng, có độ trong, không bị rách và không có mùi hôi."
+    ]
+}

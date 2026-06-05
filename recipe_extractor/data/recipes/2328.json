@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Canh Gà Nấu Nho",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cánh gà : 2 cái",
+        "Nho đỏ : 200g",
+        "Bí ngòi vàng : 1/2 trái",
+        "Cà rốt : 1/2 củ",
+        "Nấm rơm : 100g",
+        "Hành tây bi : 50g",
+        "Đậu bi : 50g",
+        "Gừng đập dập : 2 lát",
+        "Ngò rí, hành tím băm",
+        "Muối, đường, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Cánh gà rửa sạch, chần sơ qua nước sôi với ít muối, chặt miếng nhỏ vừa ăn ướp với gừng đập dập, 1/2m muối, 1/2m đường, 1/2m bột ngọt AJI-NO-MOTO®, để thấm.",
+        "Nấm rơm cắt chân, rửa sạch. Nho cắt đôi, bỏ hạt. Ngò rí cắt nhỏ. Cà rốt, bí ngòi vàng múc tròn. Hành tây bi cắt đôi bằng cách tỉa chữ V."
+    ],
+    "cook": [
+        "Phi thơm hành tím, cho gà vào xào săn, cho nấm rơm vào xào sơ, thêm 1.2 lít nước rồi cho đậu bi, cà rốt, bí ngòi và hành tây bi vào nấu chín tới, cho nho vào, nêm 1m muối, 1m bột ngọt AJI-NO-MOTO®, tắt lửa."
+    ],
+    "usage": [
+        "Múc canh ra tô, rắc ngò rí lên trên."
+    ],
+    "tips": [
+        "Chọn nho chín giòn để món canh ngon và có vị chua thanh.",
+        "Chần sơ cánh gà để khử mùi giúp nước canh trong và thanh."
+    ]
+}
