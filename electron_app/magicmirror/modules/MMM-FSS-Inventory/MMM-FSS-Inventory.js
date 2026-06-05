@@ -123,14 +123,14 @@ Module.register("MMM-FSS-Inventory", {
                 });
             }
 
-            if (action === "added" || action === "updated") {
+            if (payload.quantity > 0) {
                 this.inventoryData.foods[foodId] = {
                     name: payload.className,
                     quantity: payload.quantity,
                     imagePath: payload.imagePath,
                     timestamp: payload.timestamp || Date.now(),
                 };
-            } else if (action === "removed") {
+            } else {
                 delete this.inventoryData.foods[foodId];
             }
 
