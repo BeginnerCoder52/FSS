@@ -285,10 +285,12 @@ class MonitorListener:
             logger.info("Connected to Sensor Daemon - listening for raw signals")
             print(json.dumps({"type": "STATUS", "message": "Switched to raw sensor signals"}), flush=True)
 
-            tasks = [
-                asyncio.create_task(self._listen_sensor_distance()),
-                asyncio.create_task(self._listen_sensor_door()),
-            ]
+        tasks = [
+            asyncio.create_task(self._listen_sensor_distance()),
+            asyncio.create_task(self._listen_sensor_door()),
+            asyncio.create_task(self._listen_user_presence()),
+        ]
+
             self.signal_tasks.extend(tasks)
 
             await asyncio.gather(*tasks)
@@ -325,29 +327,30 @@ class MonitorListener:
         except Exception as e:
             logger.error(f"Error in raw distance listener: {e}")
 
-    async def _listen_sensor_door(self):
-        """Listen for raw door state readings from sensor_daemon."""
+    async def _listen_user_presence(self):
+        """Listen for user presence detection (boolean) from sensor daemon."""
         if not self.sensor_proxy:
             return
-            
+        
         try:
-            async for door_state in self.sensor_proxy.DoorStateChanged:
+            async for presence in self.sensor_proxy.UserPresenceDetected:
                 try:
                     self.last_db_update_time = time.time()
                     data = {
-                        "type": "DOOR_STATE_UPDATE",
-                        "doorState": str(door_state),
+                        "type": "USER_PRESENCE",
+                        "presence": bool(presence),
                         "source": "raw_sensor",
                         "timestamp": int(time.time() * 1000),
                     }
                     print(json.dumps(data), flush=True)
-                    logger.debug(f"Raw door state: {door_state}")
+                    logger.debug(f"User presence (raw): {presence}")
                 except Exception as e:
-                    logger.error(f"Error processing raw door state: {e}")
+                    logger.error(f"Error processing raw user presence: {e}")
         except asyncio.CancelledError:
-            logger.debug("Raw door listener task cancelled")
+            logger.debug("User presence listener task cancelled")
         except Exception as e:
-            logger.error(f"Error in raw door listener: {e}")
+            logger.error(f"Error in raw user presence listener: {e}")
+
 
     async def attempt_reconnect(self):
         """Attempt to reconnect with exponential backoff."""

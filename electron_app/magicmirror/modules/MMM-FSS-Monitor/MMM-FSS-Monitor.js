@@ -125,7 +125,19 @@ Module.register("MMM-FSS-Monitor", {
 			return;
 		}
 
-		if (notification === "DISTANCE_ALERT") {
+        if (notification === "USER_PRESENCE") {
+          // User presence detection – currently just log; can be used to trigger UI changes
+          this.state.isUserPresenceDetected = payload.presence;
+          Log.info(`MMM-FSS-Monitor: User presence detected - ${payload.presence}`);
+          // Optionally toggle black screen based on presence (example logic)
+          if (payload.presence) {
+            this.activateBlackScreen();
+          } else {
+            this.scheduleBlackScreenDeactivation();
+          }
+          this.updateDom();
+          return;
+        } else if (notification === "DISTANCE_ALERT") {
 			// Distance data: distance in meters, withinThreshold boolean
 			this.state.distanceValue = payload.distance;
 			this.state.lastDistanceUpdate = payload.timestamp || Date.now();

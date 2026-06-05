@@ -116,7 +116,13 @@ module.exports = NodeHelper.create({
 		try {
 			const data = JSON.parse(message);
 
-			if (data.type === "DISTANCE_ALERT") {
+        if (data.type === "USER_PRESENCE") {
+          console.log(`${this.name}: Relaying user presence - ${data.presence}`);
+          this.sendSocketNotification("USER_PRESENCE", {
+            presence: data.presence,
+            timestamp: data.timestamp || Date.now(),
+          });
+        } else if (data.type === "DISTANCE_ALERT") {
 				console.log(
 					`${this.name}: Relaying distance alert - ${data.distance.toFixed(2)}m, within threshold: ${data.withinThreshold}`
 				);
