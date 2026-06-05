@@ -38,6 +38,7 @@ module.exports = NodeHelper.create({
 	socketNotificationReceived(notification, payload) {
 		if (notification === "MMM_FSS_INVENTORY_START") {
 			console.log(`${this.name}: Received start notification`);
+			this.config = payload;
 			this.startDBusListener();
 		}
 	},
@@ -111,40 +112,44 @@ module.exports = NodeHelper.create({
 	 * @param {string} message - Raw message from Python process
 	 */
 	handlePythonOutput(message) {
-		try {
-			const data = JSON.parse(message);
+		const lines = message.split("\n");
+		for (const line of lines) {
+			if (!line.trim()) continue;
+			try {
+				const data = JSON.parse(line.trim());
 
-			if (data.type === "FRT_UPDATE") {
-				// FRT detection result
-				console.log(`${this.name}: Relaying FRT update - ${data.quantity} ${data.className} (${data.action})`);
-				this.sendSocketNotification("FRT_UPDATE", {
-					foodId: data.foodId || `food_${Date.now()}`,
-					className: data.className,
-					quantity: data.quantity,
-					imagePath: data.imagePath,
-					action: data.action || "detected",
-					timestamp: data.timestamp || Date.now(),
-				});
-				// Relay to MMM-FSS-Notification
-				const actionLabel = data.action === "added" ? "to" : "from";
-				this.sendSocketNotification("FSS_NOTIFICATION", {
-					type: "food",
-					message: `📦 ${data.action} ${data.quantity} ${data.className} ${actionLabel} the fridge`
-				});
-			} else if (data.type === "FRT_APP_ENABLED") {
-				// FRT app enabled/disabled flag
-				this.frtAppEnabled = data.enabled;
-				console.log(`${this.name}: FRT App enabled = ${data.enabled}`);
-				this.sendSocketNotification("FRT_APP_ENABLED_STATUS", {
-					enabled: data.enabled,
-				});
-			} else if (data.type === "STATUS") {
-				console.log(`${this.name}: Status - ${data.message}`);
-			} else {
-				console.warn(`${this.name}: Unknown message type - ${data.type}`);
+				if (data.type === "FRT_UPDATE") {
+					// FRT detection result
+					console.log(`${this.name}: Relaying FRT update - ${data.quantity} ${data.className} (${data.action})`);
+					this.sendSocketNotification("FRT_UPDATE", {
+						foodId: data.foodId || `food_${Date.now()}`,
+						className: data.className,
+						quantity: data.quantity,
+						imagePath: data.imagePath,
+						action: data.action || "detected",
+						timestamp: data.timestamp || Date.now(),
+					});
+					// Relay to MMM-FSS-Notification
+					const actionLabel = data.action === "added" ? "to" : "from";
+					this.sendSocketNotification("FSS_NOTIFICATION", {
+						type: "food",
+						message: `📦 ${data.action} ${data.quantity} ${data.className} ${actionLabel} the fridge`
+					});
+				} else if (data.type === "FRT_APP_ENABLED") {
+					// FRT app enabled/disabled flag
+					this.frtAppEnabled = data.enabled;
+					console.log(`${this.name}: FRT App enabled = ${data.enabled}`);
+					this.sendSocketNotification("FRT_APP_ENABLED_STATUS", {
+						enabled: data.enabled,
+					});
+				} else if (data.type === "STATUS") {
+					console.log(`${this.name}: Status - ${data.message}`);
+				} else {
+					console.warn(`${this.name}: Unknown message type - ${data.type}`);
+				}
+			} catch (error) {
+				console.debug(`${this.name}: Plain text message - ${line}`);
 			}
-		} catch (error) {
-			console.debug(`${this.name}: Plain text message - ${message}`);
 		}
 	},
 

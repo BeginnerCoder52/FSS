@@ -41,7 +41,7 @@ Module.register("MMM-FSS-Inventory", {
         }
 
         this.staleTimer = null;
-        this.sendSocketNotification("MMM_FSS_INVENTORY_START", {});
+        this.sendSocketNotification("MMM_FSS_INVENTORY_START", this.config);
         setInterval(() => {
             this.updateDom();
         }, this.config.updateInterval);
