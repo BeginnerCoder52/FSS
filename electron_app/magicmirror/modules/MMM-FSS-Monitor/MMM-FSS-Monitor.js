@@ -81,7 +81,7 @@ Module.register("MMM-FSS-Monitor", {
 		doorIndicator.classList.add("fss-door-indicator");
 
 		if (this.state.doorState) {
-			const isOpen = this.state.doorState === "OPEN";
+			const isOpen = this.state.doorState === "DOOR_OPEN";
 			doorIndicator.textContent = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
 			doorIndicator.classList.toggle("door-open", isOpen);
 			doorIndicator.classList.toggle("door-closed", !isOpen);
@@ -118,6 +118,12 @@ Module.register("MMM-FSS-Monitor", {
 	 */
 	socketNotificationReceived(notification, payload) {
 		Log.debug(`MMM-FSS-Monitor received: ${notification}`, payload);
+
+		if (notification === "FSS_NOTIFICATION") {
+			// Forward to all modules via MagicMirror internal notification
+			this.sendNotification("FSS_NOTIFICATION", payload);
+			return;
+		}
 
 		if (notification === "DISTANCE_ALERT") {
 			// Distance data: distance in meters, withinThreshold boolean
@@ -156,7 +162,7 @@ Module.register("MMM-FSS-Monitor", {
 			// Update door indicator element
 			const doorIndicator = document.getElementById("fss-door-indicator");
 			if (doorIndicator) {
-				const isOpen = payload.state === "OPEN";
+				const isOpen = payload.state === "DOOR_OPEN";
 				doorIndicator.textContent = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
 				doorIndicator.classList.remove("door-open", "door-closed", "door-unknown");
 				doorIndicator.classList.toggle("door-open", isOpen);
@@ -172,7 +178,7 @@ Module.register("MMM-FSS-Monitor", {
 			}, this.config.staleDataTimeout);
 
 			// Handle door open event - trigger camera signal (external system will handle)
-			if (payload.state === "OPEN") {
+			if (payload.state === "DOOR_OPEN") {
 				Log.info("MMM-FSS-Monitor: Door opened - camera system should be notified");
 				this.sendSocketNotification("DOOR_OPENED_EVENT", { timestamp: payload.timestamp });
 			}

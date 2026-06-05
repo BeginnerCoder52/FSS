@@ -1,5 +1,12 @@
 :root {
-  --color-border: #444;
+  --color-text: #000000;
+  --color-text-dimmed: #666666;
+  --color-text-bright: #000000;
+  --color-background: #F5F5F5;
+  --color-panel-bg: #FFFFFF;
+  --color-border: #000000;
+  --font-primary: "Inter", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --gap-size: 2vw;
 }
 
 body {
@@ -24,24 +31,126 @@ body {
   display: none;
 }
 
-/* Loại bỏ override layout cũ để MagicMirror tự canh lề (float left/center/right) */
+/* --- Cấu hình Layout Lưới Không Viền Hộp (Grid Layout) --- */
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0; 
+  box-sizing: border-box;
+  background-color: var(--color-background);
+  font-family: var(--font-primary);
+  overflow: hidden;
+  position: relative;
+  border: 0.15vw solid var(--color-border); /* Viền bao quanh toàn màn hình */
+  cursor: auto !important; /* HIỂN THỊ TẠM THỜI CON TRỎ CHUỘT */
+}
 
-/* Các module được đặt vào container viền trắng */
+/* Định vị các cột với đường kẻ dọc */
+.region.left {
+  width: 20% !important;
+  left: 0 !important;
+  position: absolute !important;
+  box-sizing: border-box;
+  height: 100vh;
+  border-right: 0.15vw solid var(--color-border); /* Kẻ dọc ngăn cách trái - giữa */
+  padding: 0;
+  text-align: left;
+}
 
+.region.center {
+  width: 55% !important;
+  left: 20% !important;
+  transform: none !important; 
+  position: absolute !important;
+  box-sizing: border-box;
+  height: 100vh;
+  border-right: 0.15vw solid var(--color-border); /* Kẻ dọc ngăn cách giữa - phải */
+  padding: 0;
+}
 
-.fss-panel {
-  background: rgba(30, 30, 30, 0.9);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 15px;
+.region.right {
+  width: 25% !important;
+  right: 0 !important;
+  position: absolute !important;
+  box-sizing: border-box;
+  height: 100vh;
+  padding: 0;
+  text-align: left !important; 
+}
+
+/* Xóa khoảng cách mặc định và thêm đường kẻ ngang giữa các module */
+.module {
+  margin-bottom: 0 !important;
+  border-bottom: 0.15vw solid var(--color-border); /* Kẻ ngang ngăn cách các module */
+}
+
+/* Xóa kẻ ngang của module cuối cùng trong mỗi cột để không bị thừa ở đáy màn hình */
+.region > .container > .module:last-child {
+  border-bottom: none;
+}
+
+/* --- Xóa viền hộp của các panel, chỉ giữ lại ruột --- */
+.fss-panel, .clock, #fss-live-preview {
+  background-color: transparent !important;
+  border: none !important; /* Xóa viền 4 cạnh cũ */
+  padding: 3vh 2vw;
+  margin-bottom: 0;
+  box-sizing: border-box;
   color: var(--color-text);
 }
 
-.fss-circle-check {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid var(--color-border);
-  flex-shrink: 0;
-  margin-right: 12px;
+/* Kẻ ngang chia các panel nhỏ NẰM TRONG CÙNG 1 MODULE (ví dụ: Danh sách & Thực đơn; Ngăn trên & Ngăn dưới) */
+.fss-recommend-wrapper > .fss-panel:not(:last-child),
+.fss-env-wrapper > .fss-panel:not(:last-child) {
+  border-bottom: 0.15vw solid var(--color-border) !important;
 }
+/* -------------------------------------------------- */
+
+/* Clock Module Override (Đã gộp vào grid ở trên) */
+
+.clock .time {
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: 5vw;
+  line-height: 1;
+}
+
+.clock .date {
+  color: var(--color-text-dimmed);
+  font-size: 1.8vw;
+  font-weight: normal;
+  margin-top: 1vh;
+}
+
+/* Checkbox/Circle Icon chung */
+.fss-circle-check {
+  width: 1.2em;
+  height: 1.2em;
+  border: 0.1em solid var(--color-border);
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  background-color: transparent;
+}
+
+/* Ghi đè CSS toàn cục của MagicMirror cho phù hợp */
+header {
+  color: var(--color-text) !important;
+  border-bottom: 0.15vw solid var(--color-border);
+  text-transform: uppercase;
+  font-size: 1.5vw;
+  padding-bottom: 1vh;
+  margin-bottom: 2vh;
+  font-family: var(--font-primary);
+  font-weight: bold;
+}
+
+body, html, .module {
+  color: var(--color-text) !important;
+}
+
+.dimmed { color: var(--color-text-dimmed) !important; }
+.normal { color: var(--color-text) !important; }
+.bright { color: var(--color-text-bright) !important; }

@@ -87,6 +87,16 @@ module.exports = NodeHelper.create({
 				console.error(`${this.name} [PY ERROR]: ${error}`);
 			});
 
+			this.pythonProcess.on("error", (err) => {
+				console.error(`${this.name}: Process error - ${err.message}`);
+				this.sendSocketNotification("ENV_ERROR", {
+					error: `Process error: ${err.message}`,
+				});
+				this.pythonProcess = null;
+				this.isListening = false;
+				this.attemptReconnect();
+			});
+
 			this.pythonProcess.on("close", (code) => {
 				console.warn(`${this.name}: Python process exited with code ${code}`);
 				this.pythonProcess = null;
@@ -171,10 +181,16 @@ module.exports = NodeHelper.create({
 	 * Stop the Python process when module is stopped.
 	 */
 	stop() {
+		SessionLog.info(`[${this.name}] Node helper stopped`);
 		console.log(`${this.name}: Stopping node helper`);
 		if (this.pythonProcess) {
-			this.pythonProcess.kill();
-			this.pythonProcess = null;
+			this.pythonProcess.kill("SIGTERM");
+			setTimeout(() => {
+				if (this.pythonProcess && !this.pythonProcess.killed) {
+					this.pythonProcess.kill("SIGKILL");
+				}
+			}, 3000);
 		}
+		this.pythonProcess = null;
 	},
 });

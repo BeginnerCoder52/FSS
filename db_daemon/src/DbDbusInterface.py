@@ -249,16 +249,15 @@ class DbDbusInterface:
         self.dbus_object.CustomFoodRequest(temp_image_path, frame_crop_b64)
 
     def emit_ui_update_signal(self, food_id: str, quantity: int, 
-                               image_path: str) -> None:
+                               image_path: str, delta: int) -> None:
         """Emit signal to update UI with inventory changes."""
         try:
             if not self.is_connected or not self.dbus_object:
                 self.logger.warning("Cannot emit signal: D-Bus not connected")
                 return
             
-            # Signals in sdbus are just calling the method on the exported object
             asyncio.run_coroutine_threadsafe(
-                self._async_emit_ui_update(food_id, quantity, image_path),
+                self._async_emit_ui_update(food_id, quantity, image_path, delta),
                 self._loop
             )
             self.logger.debug(f"Queued UI update signal: {food_id}")
@@ -266,8 +265,8 @@ class DbDbusInterface:
         except Exception as e:
             self.logger.error(f"Failed to emit UI update signal: {e}")
 
-    async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str):
-        self.dbus_object.UIUpdateRequired(food_id, quantity, image_path)
+    async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str, delta: int):
+        self.dbus_object.UIUpdateRequired(food_id, quantity, image_path, delta)
 
     def emit_environment_update_signal(self, temperature: float, humidity: float) -> None:
         """Emit signal to update UI with environmental data (Sensor 1)."""
@@ -681,8 +680,8 @@ if SDBUS_AVAILABLE:
                     return json.dumps({"status": "error", "message": str(e)})
             return json.dumps({"status": "error", "message": "Requests by recipe callback not set"})
 
-        @dbus_signal_async('sis')
-        def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
+        @dbus_signal_async('sisi')
+        def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str, delta: int) -> None:
             """Signal: UI requires update with new inventory data."""
             pass
         

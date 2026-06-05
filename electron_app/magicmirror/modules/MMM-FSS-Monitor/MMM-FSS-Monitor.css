@@ -24,9 +24,9 @@
 }
 
 .fss-door-indicator {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
+    padding: 0.25em 0.8em;
+    border-radius: 0.8em;
+    font-size: 0.8em;
     font-weight: bold;
     text-align: center;
     transition: all 0.3s ease;

@@ -2,13 +2,17 @@ Module.register("MMM-FSS-Recommend", {
     defaults: {
         updateInterval: 5000
     },
+    getStyles() {
+        return ["MMM-FSS-Recommend.css"];
+    },
     start() {
         this.result = null;
         this.loading = false;
+        this.hasSearched = false;
+        this.searchedRecipes = [];
         this.accumulatedResults = [];
         this.pendingCount = 0;
-        this.hasSearched = false;
-        
+
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
             { name: "Thịt heo", qty: "500g" },
@@ -28,10 +32,14 @@ Module.register("MMM-FSS-Recommend", {
         // Khung 1: Danh sách nguyên liệu cần chuẩn bị thêm
         const shoppingPanel = document.createElement("div");
         shoppingPanel.className = "fss-panel fss-shopping-panel";
-        
+
         const shoppingTitle = document.createElement("div");
         shoppingTitle.className = "fss-panel-title";
-        shoppingTitle.innerHTML = "Danh sách<br>nguyên liệu cần<br>chuẩn bị thêm";
+        shoppingTitle.innerHTML = "DANH SÁCH ĐỀ XUẤT";
+        shoppingTitle.style.fontWeight = "bold";
+        shoppingTitle.style.textAlign = "center";
+        shoppingTitle.style.fontSize = "1.2vw";
+        shoppingTitle.style.marginBottom = "1.2em";
         shoppingPanel.appendChild(shoppingTitle);
 
         // Hiển thị dữ liệu thực hoặc mock data
@@ -42,24 +50,42 @@ Module.register("MMM-FSS-Recommend", {
                 .map(i => ({ name: i.name, qty: i.required - i.available }));
         }
 
-        ingredientsToBuy.forEach(item => {
+        ingredientsToBuy.forEach((item, index) => {
             const row = document.createElement("div");
             row.className = "fss-list-row";
-            
+
+            // Xóa viền cũ và thêm màu xen kẽ
+            row.style.border = "none";
+            row.style.backgroundColor = index % 2 === 0 ? "transparent" : "rgba(0,0,0,0.05)";
+            row.style.whiteSpace = "nowrap";
+            row.style.overflow = "hidden";
+            row.style.fontSize = "0.95em";
+
             const leftPart = document.createElement("div");
             leftPart.className = "fss-list-left";
+            leftPart.style.overflow = "hidden";
+            leftPart.style.textOverflow = "ellipsis";
+            leftPart.style.whiteSpace = "nowrap";
+            leftPart.style.flex = "1"; // Để ép chữ dài bị cắt
+
             const circle = document.createElement("div");
             circle.className = "fss-circle-check";
+            circle.style.cursor = "pointer";
+            circle.style.flexShrink = "0"; // Giữ vòng tròn không bị móp
+            circle.addEventListener("click", () => {
+                this.removeIngredient(item.name);
+            });
             leftPart.appendChild(circle);
-            
+
             const nameSpan = document.createElement("span");
             nameSpan.textContent = item.name;
             leftPart.appendChild(nameSpan);
-            
+
             const qtySpan = document.createElement("span");
             qtySpan.className = "fss-list-qty";
             qtySpan.textContent = item.qty;
-            
+            qtySpan.style.marginLeft = "1em"; // Tạo khoảng cách với tên món ăn
+
             row.appendChild(leftPart);
             row.appendChild(qtySpan);
             shoppingPanel.appendChild(row);
@@ -70,43 +96,38 @@ Module.register("MMM-FSS-Recommend", {
         // Khung 2: THỰC ĐƠN HÔM NAY
         const menuPanel = document.createElement("div");
         menuPanel.className = "fss-panel fss-menu-panel";
-        
+
         const menuTitle = document.createElement("div");
         menuTitle.className = "fss-panel-title-center";
         menuTitle.textContent = "THỰC ĐƠN HÔM NAY";
+        menuTitle.style.fontWeight = "bold";
+        menuTitle.style.textAlign = "center";
+        menuTitle.style.fontSize = "1.3vw";
+        menuTitle.style.marginBottom = "1.2em";
         menuPanel.appendChild(menuTitle);
 
-        // Danh sách các món ăn
-        let currentMenu = this.hasSearched ? [] : this.mockMenu;
-        if (this.result && this.result.recipe_name) {
-            currentMenu = this.result.recipe_name.split(',').map(s => s.trim());
-        }
-
-        currentMenu.forEach(meal => {
-            const row = document.createElement("div");
-            row.className = "fss-list-row-full";
-            
-            const circle = document.createElement("div");
-            circle.className = "fss-circle-check";
-            row.appendChild(circle);
-            
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = meal;
-            row.appendChild(nameSpan);
-            
-            menuPanel.appendChild(row);
-        });
-
-        // Nút / Input Nhập thực đơn hôm nay
+        // Nút / Input Nhập thực đơn hôm nay đặt ở ĐẦU danh sách
         const inputRow = document.createElement("div");
         inputRow.className = "fss-list-row-full fss-input-row";
-        
-        const inputCircle = document.createElement("div");
-        inputCircle.className = "fss-circle-check";
-        inputRow.appendChild(inputCircle);
-        
+        inputRow.style.cursor = "pointer";
+        inputRow.style.backgroundColor = "var(--color-panel-bg)";
+        inputRow.style.borderRadius = "2em"; // Bo góc tròn theo em
+        inputRow.style.border = "0.15vw solid var(--color-border)"; // Khung viền
+        inputRow.style.padding = "0.8em 1.5em"; // Tránh chữ bị lẹm vào góc bo tròn
+        inputRow.style.pointerEvents = "auto";
+        inputRow.style.position = "relative";
+        inputRow.style.zIndex = "10";
+
+        const searchIcon = document.createElement("i");
+        searchIcon.className = "fas fa-search";
+        searchIcon.style.width = "1.2em"; // Bằng đúng kích thước vòng tròn
+        searchIcon.style.textAlign = "center";
+        searchIcon.style.marginRight = "0.5em";
+        searchIcon.style.color = "var(--color-text-dimmed)";
+        inputRow.appendChild(searchIcon);
+
         const inputSpan = document.createElement("span");
-        inputSpan.textContent = this.loading ? "Đang phân tích..." : "Nhập thực đơn hôm nay";
+        inputSpan.textContent = "Nhập tên món ăn...";
         inputSpan.className = "fss-input-text";
         inputRow.appendChild(inputSpan);
 
@@ -120,28 +141,97 @@ Module.register("MMM-FSS-Recommend", {
         });
         menuPanel.appendChild(inputRow);
 
+        // Danh sách các món ăn
+        let currentMenu = this.hasSearched ? this.searchedRecipes : this.mockMenu;
+
+        currentMenu.forEach((meal, index) => {
+            const row = document.createElement("div");
+            row.className = "fss-list-row-full";
+            row.style.justifyContent = "space-between";
+            row.style.border = "none"; // Xóa viền thừa của các dòng
+            row.style.padding = "0.6em 1.5em"; // Bằng đúng padding của thanh input để căn lề đều tắp
+
+            const leftDiv = document.createElement("div");
+            leftDiv.style.display = "flex";
+            leftDiv.style.alignItems = "center";
+
+            // Nút Thùng rác (thay thế vòng tròn)
+            const trashIcon = document.createElement("i");
+            trashIcon.className = "fas fa-trash fss-trash-icon";
+            trashIcon.addEventListener("click", () => {
+                this.deleteRecipe(index);
+            });
+            leftDiv.appendChild(trashIcon);
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = meal;
+            leftDiv.appendChild(nameSpan);
+
+            row.appendChild(leftDiv);
+
+            menuPanel.appendChild(row);
+        });
+
         wrapper.appendChild(menuPanel);
 
         return wrapper;
     },
+
+    removeIngredient(name) {
+        if (this.hasSearched && this.result && this.result.ingredients) {
+            const target = this.result.ingredients.find(i => i.name === name);
+            if (target) {
+                target.status = 'available'; // Giả lập đã mua/chuẩn bị xong
+            }
+        } else {
+            const idx = this.mockShoppingList.findIndex(i => i.name === name);
+            if (idx > -1) {
+                this.mockShoppingList.splice(idx, 1);
+            }
+        }
+        this.updateDom();
+    },
+
+    deleteRecipe(index) {
+        if (!this.hasSearched) {
+            this.mockMenu.splice(index, 1);
+            this.updateDom();
+            return;
+        }
+
+        this.searchedRecipes.splice(index, 1);
+        if (this.searchedRecipes.length === 0) {
+            this.hasSearched = false;
+            this.result = null;
+            this.accumulatedResults = [];
+            this.updateDom();
+        } else {
+            // Cập nhật ngầm: không đặt loading = true
+            this.accumulatedResults = [];
+            this.pendingCount = this.searchedRecipes.length;
+            this.updateDom();
+            this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
+        }
+    },
+
     notificationReceived(notification, payload, sender) {
         if (notification === "RECIPE_SEARCH") {
-            this.loading = true;
             this.hasSearched = true;
-            this.result = null;
+            // Không xóa kết quả cũ (result) hay hiển thị "Đang phân tích" (loading)
+            // để giao diện cập nhật ngầm.
             this.updateDom();
             this.sendSocketNotification("RECIPE_SEARCH", payload);
         }
         if (notification === "KEYBOARD_INPUT" && payload.key === "recommendSearch") {
             const recipes = payload.message.split(",").map(s => s.trim()).filter(s => s);
             if (recipes.length === 0) return;
-            this.loading = true;
+            
             this.hasSearched = true;
-            this.result = null;
+            this.searchedRecipes = this.searchedRecipes.concat(recipes);
             this.accumulatedResults = [];
-            this.pendingCount = recipes.length;
+            this.pendingCount = this.searchedRecipes.length;
             this.updateDom();
-            recipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", {recipe: r}));
+            this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
         }
     },
     socketNotificationReceived(notification, payload) {

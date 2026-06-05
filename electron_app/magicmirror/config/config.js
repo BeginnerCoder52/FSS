@@ -86,7 +86,7 @@ let config = {
 		},
 		{
 			module: "MMM-FSS-Inventory",
-			position: "bottom_center",
+			position: "top_center",
 			config: {
 				frtAppEnabled: true,
 				showPlaceholder: false
@@ -94,6 +94,7 @@ let config = {
 		},
 		{
 			module: "MMM-FSS-Env",
+			disabled: true,
 			position: "top_right",
 			config: {
 				updateInterval: 2000,
