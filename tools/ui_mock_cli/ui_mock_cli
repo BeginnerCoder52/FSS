@@ -1,0 +1,5 @@
+#!/bin/bash
+# ui_mock_cli executable wrapper
+
+cd "$(dirname "$0")"
+exec bash run_mock.sh
