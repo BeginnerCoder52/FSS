@@ -68,7 +68,11 @@ def start_dbus_thread():
 def emit_signal(obj, method_name, *args):
     if obj and dbus_loop:
         signal = getattr(obj, method_name)
-        dbus_loop.call_soon_threadsafe(signal.emit, *args)
+        # sdbus signal.emit takes exactly 1 argument (a single value or a tuple of values)
+        payload = args[0] if len(args) == 1 else tuple(args)
+        if len(args) == 0:
+            payload = ()
+        dbus_loop.call_soon_threadsafe(signal.emit, payload)
 
 # ======================================================================
 # 2. SQLite Update Logic (Standalone)
