@@ -8,6 +8,7 @@
 #   - DBDaemon (Python)        - Data persistence layer
 #   - FRTApp Camera Core (C++) - V4L2 capture -> POSIX SHM
 #   - FRTApp AI Core (Python)  - YOLO inference on SHM frames
+#   - RecipeExtractor (Python) - NLP ingredient extraction daemon
 #   - RecommendDaemon (Python) - Business logic orchestrator
 #
 # Features:
@@ -33,6 +34,8 @@ FRT_AI_SRC="${FSS_ROOT}/frt_app/py_ai_core/src"
 FRT_AI_VENV="${FSS_VENV_FRT_AI}"
 RECOMMEND_DAEMON_SRC="${FSS_ROOT}/recommend_daemon/src"
 RECOMMEND_DAEMON_VENV="${FSS_VENV_RECOMMEND_DAEMON}"
+RECIPE_EXTRACTOR_SRC="${FSS_ROOT}/recipe_extractor/src"
+RECIPE_EXTRACTOR_VENV="${FSS_VENV_RECIPE_EXTRACTOR:-${FSS_ROOT}/recipe_extractor/venv}"
 
 log_info()  { fss_log_info "$1"; }
 log_warn()  { fss_log_warn "$1"; }
@@ -53,7 +56,7 @@ setup_log_directory() {
 
 cleanup_stale_processes() {
     log_info "Cleaning up stale daemon processes..."
-    for proc in sensor_daemon_exec camera_core_exec "db_daemon" "recommend_daemon" "frt_ai"; do
+    for proc in sensor_daemon_exec camera_core_exec "db_daemon" "recommend_daemon" "recipe_extractor" "frt_ai"; do
         pids=$(pgrep -f "$proc" 2>/dev/null || true)
         if [[ -n "$pids" ]]; then
             log_warn "Killing stale $proc (PIDs: $pids)"
@@ -129,6 +132,22 @@ start_recommend_daemon() {
     return 1
 }
 
+start_recipe_extractor() {
+    log_info "Starting RecipeExtractor..."
+    check_venv "$RECIPE_EXTRACTOR_VENV" || return 1
+    nohup sudo "${RECIPE_EXTRACTOR_VENV}/bin/python" "${RECIPE_EXTRACTOR_SRC}/recipe_extractor_main.py" \
+        >"${LOG_DIR}/recipe_extractor.log" 2>&1 &
+    local pid=$!
+    sleep 2
+    if kill -0 $pid 2>/dev/null; then
+        log_ok "RecipeExtractor started (PID: $pid)"
+        echo "$pid" > "$PID_DIR/recipe_extractor.pid"
+        return 0
+    fi
+    log_error "RecipeExtractor failed. Check ${LOG_DIR}/recipe_extractor.log"
+    return 1
+}
+
 start_frt_camera() {
     log_info "Starting FRTApp Camera Core..."
     if [[ ! -x "$FRT_CAMERA_EXEC" ]]; then
@@ -188,6 +207,7 @@ shutdown_handler() {
     stop_daemon_by_pidfile "$PID_DIR/frt_ai.pid" "FRTApp AI Core"
     stop_daemon_by_pidfile "$PID_DIR/frt_camera.pid" "FRTApp Camera Core"
     stop_daemon_by_pidfile "$PID_DIR/recommend_daemon.pid" "RecommendDaemon"
+    stop_daemon_by_pidfile "$PID_DIR/recipe_extractor.pid" "RecipeExtractor"
     stop_daemon_by_pidfile "$PID_DIR/db_daemon.pid" "DBDaemon"
     stop_daemon_by_pidfile "$PID_DIR/sensor_daemon.pid" "SensorDaemon"
     log_ok "FSS system stopped"
@@ -202,7 +222,8 @@ monitor_processes() {
             "$PID_DIR/db_daemon.pid:DBDaemon:start_db_daemon" \
             "$PID_DIR/frt_camera.pid:FRTApp Camera:start_frt_camera" \
             "$PID_DIR/frt_ai.pid:FRTApp AI:start_frt_ai" \
-            "$PID_DIR/recommend_daemon.pid:RecommendDaemon:start_recommend_daemon"; do
+            "$PID_DIR/recommend_daemon.pid:RecommendDaemon:start_recommend_daemon" \
+            "$PID_DIR/recipe_extractor.pid:RecipeExtractor:start_recipe_extractor"; do
             IFS=':' read -r pidfile name func <<< "$pair"
             if [[ -f "$pidfile" ]]; then
                 pid=$(cat "$pidfile")
@@ -228,7 +249,8 @@ print_status() {
         "$PID_DIR/db_daemon.pid:DBDaemon" \
         "$PID_DIR/frt_camera.pid:FRTApp Camera Core" \
         "$PID_DIR/frt_ai.pid:FRTApp AI Core" \
-        "$PID_DIR/recommend_daemon.pid:RecommendDaemon"; do
+        "$PID_DIR/recommend_daemon.pid:RecommendDaemon" \
+        "$PID_DIR/recipe_extractor.pid:RecipeExtractor"; do
         IFS=':' read -r pidfile name <<< "$pair"
         if [[ -f "$pidfile" ]] && kill -0 $(cat "$pidfile") 2>/dev/null; then
             echo -e "  ${GREEN}✓${NC} $name RUNNING (PID: $(cat "$pidfile"))"
@@ -248,6 +270,7 @@ start_sensor_daemon || log_warn "SensorDaemon failed to start, continuing..."
 start_db_daemon || log_warn "DBDaemon failed to start, continuing..."
 start_frt_camera || log_warn "FRTApp Camera Core skipped (no camera?)"
 start_frt_ai || log_warn "FRTApp AI Core skipped"
+start_recipe_extractor || log_warn "RecipeExtractor failed to start, continuing..."
 start_recommend_daemon || log_warn "RecommendDaemon failed to start, continuing..."
 print_status
 

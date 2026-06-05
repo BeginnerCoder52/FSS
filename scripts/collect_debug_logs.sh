@@ -5,7 +5,7 @@
 # Collects all available debug logs from:
 #   - MagicMirror modules (MMM-FSS-*)
 #   - FRTApp (AI + Camera)
-#   - RecommendSystem (NLP)
+#   - RecipeExtractor (NLP)
 #   - RecommendDaemon (Business logic)
 #   - DBDaemon (Data controller)
 #   - SensorDaemon (Hardware I/O)
@@ -256,9 +256,9 @@ fi
 
 section "7. Recommend System (NLP / Recipe Analyzer)"
 
-RS_DIR="$FSS_ROOT/recommend_system"
+RS_DIR="$FSS_ROOT/recipe_extractor"
 sub "Directory Structure"
-ls -la "$RS_DIR/src/" 2>&1 || echo "[MISS] recommend_system/src/"
+    ls -la "$RS_DIR/src/" 2>&1 || echo "[MISS] recipe_extractor/src/"
 
 sub "Trained Model"
 collect_file "$RS_DIR/models/fss_ner_crf_optimized.joblib" "models/fss_ner_crf_optimized.joblib"
@@ -272,12 +272,12 @@ else
 fi
 
 sub "D-Bus Service"
-collect_file "$RS_DIR/src/dbus_service.py" "recommend_system/dbus_service.py"
+    collect_file "$RS_DIR/src/recipe_extractor_service.py" "recipe_extractor/recipe_extractor_service.py"
 
 sub "Python venv"
 if [ -d "$RS_DIR/venv" ]; then
     echo "[OK]   venv/ exists"
-    "$RS_DIR/venv/bin/pip" freeze > "$OUTPUT_DIR/recommend_system_venv_packages.txt" 2>&1 || true
+    "$RS_DIR/venv/bin/pip" freeze > "$OUTPUT_DIR/recipe_extractor_venv_packages.txt" 2>&1 || true
 else
     echo "[MISS] venv/ (run setup_venv)"
 fi
