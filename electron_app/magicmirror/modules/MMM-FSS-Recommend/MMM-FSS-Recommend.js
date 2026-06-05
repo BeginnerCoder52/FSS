@@ -53,7 +53,7 @@ Module.register("MMM-FSS-Recommend", {
         ingredientsToBuy.forEach((item, index) => {
             const row = document.createElement("div");
             row.className = "fss-list-row";
-            
+
             // Xóa viền cũ và thêm màu xen kẽ
             row.style.border = "none";
             row.style.backgroundColor = index % 2 === 0 ? "transparent" : "rgba(0,0,0,0.05)";
@@ -67,7 +67,7 @@ Module.register("MMM-FSS-Recommend", {
             leftPart.style.textOverflow = "ellipsis";
             leftPart.style.whiteSpace = "nowrap";
             leftPart.style.flex = "1"; // Để ép chữ dài bị cắt
-            
+
             const circle = document.createElement("div");
             circle.className = "fss-circle-check";
             circle.style.cursor = "pointer";
@@ -102,7 +102,7 @@ Module.register("MMM-FSS-Recommend", {
         menuTitle.textContent = "THỰC ĐƠN HÔM NAY";
         menuTitle.style.fontWeight = "bold";
         menuTitle.style.textAlign = "center";
-        menuTitle.style.fontSize = "1.2vw";
+        menuTitle.style.fontSize = "1.3vw";
         menuTitle.style.marginBottom = "1.2em";
         menuPanel.appendChild(menuTitle);
 
@@ -125,9 +125,9 @@ Module.register("MMM-FSS-Recommend", {
         searchIcon.style.marginRight = "0.5em";
         searchIcon.style.color = "var(--color-text-dimmed)";
         inputRow.appendChild(searchIcon);
-        
+
         const inputSpan = document.createElement("span");
-        inputSpan.textContent = this.loading ? "Đang phân tích..." : "Nhập tên món ăn...";
+        inputSpan.textContent = "Nhập tên món ăn...";
         inputSpan.className = "fss-input-text";
         inputRow.appendChild(inputSpan);
 
@@ -150,33 +150,24 @@ Module.register("MMM-FSS-Recommend", {
             row.style.justifyContent = "space-between";
             row.style.border = "none"; // Xóa viền thừa của các dòng
             row.style.padding = "0.6em 1.5em"; // Bằng đúng padding của thanh input để căn lề đều tắp
-            
+
             const leftDiv = document.createElement("div");
             leftDiv.style.display = "flex";
             leftDiv.style.alignItems = "center";
 
-            const circle = document.createElement("div");
-            circle.className = "fss-circle-check";
-            leftDiv.appendChild(circle);
-            
+            // Nút Thùng rác (thay thế vòng tròn)
+            const trashIcon = document.createElement("i");
+            trashIcon.className = "fas fa-trash fss-trash-icon";
+            trashIcon.addEventListener("click", () => {
+                this.deleteRecipe(index);
+            });
+            leftDiv.appendChild(trashIcon);
+
             const nameSpan = document.createElement("span");
             nameSpan.textContent = meal;
             leftDiv.appendChild(nameSpan);
-            
-            row.appendChild(leftDiv);
 
-            // Thêm nút xóa nếu đây là danh sách thật của người dùng
-            if (this.hasSearched) {
-                const trashIcon = document.createElement("i");
-                trashIcon.className = "fas fa-trash";
-                trashIcon.style.color = "#ff4444";
-                trashIcon.style.cursor = "pointer";
-                trashIcon.style.padding = "0.3em";
-                trashIcon.addEventListener("click", () => {
-                    this.deleteRecipe(index);
-                });
-                row.appendChild(trashIcon);
-            }
+            row.appendChild(leftDiv);
 
             menuPanel.appendChild(row);
         });
@@ -185,7 +176,7 @@ Module.register("MMM-FSS-Recommend", {
 
         return wrapper;
     },
-    
+
     removeIngredient(name) {
         if (this.hasSearched && this.result && this.result.ingredients) {
             const target = this.result.ingredients.find(i => i.name === name);
@@ -202,6 +193,12 @@ Module.register("MMM-FSS-Recommend", {
     },
 
     deleteRecipe(index) {
+        if (!this.hasSearched) {
+            this.mockMenu.splice(index, 1);
+            this.updateDom();
+            return;
+        }
+
         this.searchedRecipes.splice(index, 1);
         if (this.searchedRecipes.length === 0) {
             this.hasSearched = false;
@@ -209,7 +206,7 @@ Module.register("MMM-FSS-Recommend", {
             this.accumulatedResults = [];
             this.updateDom();
         } else {
-            this.loading = true;
+            // Cập nhật ngầm: không đặt loading = true
             this.accumulatedResults = [];
             this.pendingCount = this.searchedRecipes.length;
             this.updateDom();
@@ -219,16 +216,16 @@ Module.register("MMM-FSS-Recommend", {
 
     notificationReceived(notification, payload, sender) {
         if (notification === "RECIPE_SEARCH") {
-            this.loading = true;
             this.hasSearched = true;
-            this.result = null;
+            // Không xóa kết quả cũ (result) hay hiển thị "Đang phân tích" (loading)
+            // để giao diện cập nhật ngầm.
             this.updateDom();
             this.sendSocketNotification("RECIPE_SEARCH", payload);
         }
         if (notification === "KEYBOARD_INPUT" && payload.key === "recommendSearch") {
             const recipes = payload.message.split(",").map(s => s.trim()).filter(s => s);
             if (recipes.length === 0) return;
-            this.loading = true;
+            
             this.hasSearched = true;
             this.searchedRecipes = this.searchedRecipes.concat(recipes);
             this.accumulatedResults = [];

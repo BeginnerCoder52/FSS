@@ -42,6 +42,9 @@ module.exports = NodeHelper.create({
                 } catch(e) {}
             }
         });
+        this.pythonProcess.stderr.on("data", (data) => {
+            console.error(`[MMM-FSS-Recommend] Python stderr: ${data.toString()}`);
+        });
         this.pythonProcess.on("error", (err) => {
             console.error("[MMM-FSS-Recommend] Failed to start bridge:", err);
         });
