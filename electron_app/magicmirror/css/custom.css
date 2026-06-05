@@ -2,6 +2,33 @@
   --color-border: #444;
 }
 
+body {
+  margin: 0;
+  padding: var(--gap-size);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-primary);
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Ẩn các khu vực không cần thiết hoặc setup margin bằng 0 để tận dụng tối đa */
+.region.fullscreen {
+  display: none;
+}
+.region.fullscreen.above {
+  display: block; /* Giữ cho MMM-Keyboard */
+}
+
+.region.lower.third {
+  display: none;
+}
+
+/* Loại bỏ override layout cũ để MagicMirror tự canh lề (float left/center/right) */
+
+/* Các module được đặt vào container viền trắng */
+
+
 .fss-panel {
   background: rgba(30, 30, 30, 0.9);
   border: 1px solid var(--color-border);
