@@ -117,7 +117,15 @@ int main() {
         connection->leaveEventLoop();
         
     } catch (const sdbus::Error& e) {
-        cerr << "[FATAL] D-Bus error: " << e.getMessage() << endl;
+        cerr << "\n[FATAL] D-Bus error: " << e.getMessage() << endl;
+        cerr << "--------------------------------------------------------\n";
+        cerr << "This error ('Failed to open bus') usually happens because the D-Bus system daemon is not running in your WSL or Linux environment.\n";
+        cerr << "To fix this, please start the D-Bus service by running:\n\n";
+        cerr << "    sudo service dbus start\n";
+        cerr << "       (or) sudo /etc/init.d/dbus start\n\n";
+        cerr << "If you then encounter a 'Permission denied' when requesting names, you must also allow your user to own the FSS D-Bus names.\n";
+        cerr << "Create a policy file (e.g. /etc/dbus-1/system.d/fss.conf) with <allow own=\"vn.edu.uit.FSS.DBDaemon\"/> for root.\n";
+        cerr << "--------------------------------------------------------\n";
         return 1;
     }
 

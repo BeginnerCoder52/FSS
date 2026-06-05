@@ -87,6 +87,7 @@ let config = {
 		},
 		{
 			module: "MMM-FSS-Env",
+			disabled: true,
 			position: "top_right",
 			config: {
 				updateInterval: 2000,
