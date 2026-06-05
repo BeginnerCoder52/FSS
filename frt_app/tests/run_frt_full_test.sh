@@ -12,31 +12,54 @@
 #       5. Restarts all FSS services
 #
 # Modes:
-#     --mode unit       (default) test_user_scenario_frtapp.py — 38 unit tests
-#     --mode scenario   user_scenario_pipeline.py — live check-in/check-out
+#     --mode auto      (default) main.py --bypass-door-sensor — full FRTApp
+#                        pipeline: camera → MOG2 → YOLO → ByteTrack → Boundary
+#                        Wave hand to auto-detect CHECK_IN/CHECK_OUT.
+#     --mode scenario  user_scenario_pipeline.py — live check-in/check-out
 #       --scenario check-in   S1: hand+fuit enters → YOLO detects → "added"
 #       --scenario check-out  S2: fruit leaves → YOLO detects → "removed"
+#     --mode unit      test_user_scenario_frtapp.py — 38 unit tests
 #
 # Usage:
-#     sudo bash run_frt_full_test.sh                          # default unit mode
+#     sudo bash run_frt_full_test.sh                                # default auto mode
+#     sudo bash run_frt_full_test.sh --mode auto                    # full FRTApp pipeline
 #     sudo bash run_frt_full_test.sh --mode scenario --scenario check-in
 #     sudo bash run_frt_full_test.sh --mode scenario --scenario check-out --duration 20
 #     sudo bash run_frt_full_test.sh --mode unit --duration 3
-#     sudo bash run_frt_full_test.sh --no-shm
+#     sudo bash run_frt_full_test.sh --confidence 0.85              # detection threshold
+#     sudo bash run_frt_full_test.sh --save-results                 # save to system_results/
 #     sudo bash run_frt_full_test.sh --skip-services
 #     sudo bash run_frt_full_test.sh --debug
 #     sudo bash run_frt_full_test.sh --help
 #
-# Session Directory:
+# Session Directory (common outputs):
 #     /tmp/frt_session_<YYYYMMDD_HHMMSS>/
-#       ├── full_log.txt
-#       ├── pipeline_report.json
-#       ├── annotated_result.jpg      (bbox + COCO class labels in scenario mode)
-#       ├── inference_table.csv
-#       ├── inference_table.md
-#       ├── scenario_report.json      (scenario mode only)
-#       ├── frtapp_scenario_report.json (unit mode only)
-#       └── ... (other artifacts)
+#       ├── full_log.txt              — Complete FRTApp daemon log
+#       ├── pipeline_report.json      — Structured metrics + boundary events + detections
+#       ├── boundary_events.json      — All CHECK_IN / CHECK_OUT events
+#       ├── track_trajectories.json   — Per-track trajectory data (ByteTrack)
+#       ├── pipeline_metrics.json     — FPS and latency per component
+#       ├── user_notifications.txt    — Human-readable test instructions
+#       ├── frt_session_summary.txt   — Tester-friendly session summary
+#       │
+#       ├── annotated_result.jpg      — (scenario) Best frame with YOLO bboxes + labels
+#       ├── mog2_foreground_mask.jpg  — (scenario) MOG2 foreground (green channel)
+#       ├── mog2_heatmap.jpg          — (scenario) MOG2 heatmap (COLORMAP_JET)
+#       ├── preprocess_rgb.jpg        — (scenario) BGR→RGB conversion result
+#       ├── preprocess_letterbox.jpg  — (scenario) Letterboxed 640×640 input
+#       ├── latest_frames/            — (scenario) Per-frame annotated + MOG2 viz
+#       │   ├── frame_{0..4}_annotated.jpg
+#       │   ├── frame_{0..4}_mog2_mask.jpg
+#       │   └── frame_{0..4}_mog2_heatmap.jpg
+#       │
+#       ├── sample_frame.jpg          — (unit) First captured camera frame
+#       ├── latest_preview.jpg        — (unit) LivePreview-style annotated frame
+#       ├── scenario_report.json      — (scenario) State transition report
+#       ├── frtapp_scenario_report.json (unit) Full test results
+#       └── inference_table.{csv,md}  — (scenario) Detection tabulation
+#
+# Results Archive (--save-results):
+#     <PROJECT_ROOT>/system_results/frt_session_<YYYYMMDD_HHMMSS>/
 #
 # Exit Codes:
 #     0 — All tests passed
@@ -66,10 +89,14 @@ SYNTHETIC=false
 SESSION_DIR=""
 SHM_SECONDS=3
 PIPELINE_FPS=10
-MODE="scenario"
+MODE="auto"
 SCENARIO="check-in"
+CONFIDENCE=0.85
+SAVE_RESULTS=false
+RUNTIME=0
 
 FSS_SERVICES=("fss-sensor" "fss-camera" "fss-ai" "fss-db" "fss-recommend")
+SYSTEM_RESULTS_DIR="$FSS_ROOT/system_results"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -101,6 +128,8 @@ while [[ $# -gt 0 ]]; do
         --no-shm)       NO_SHM=true; shift ;;
         --skip-services) SKIP_SERVICES=true; shift ;;
         --synthetic)    SYNTHETIC=true; shift ;;
+        --confidence)   CONFIDENCE="$2"; shift 2 ;;
+        --save-results)  SAVE_RESULTS=true; shift ;;
         --shm-seconds)  SHM_SECONDS="$2"; shift 2 ;;
         --pipeline-fps) PIPELINE_FPS="$2"; shift 2 ;;
         --debug)        DEBUG=true; shift ;;
@@ -123,6 +152,175 @@ fail()  { echo -e "  ${RED}✗${NC} $1"; }
 warn()  { echo -e "  ${YELLOW}⚠${NC} $1"; }
 info()  { echo -e "  ${CYAN}→${NC} $1"; }
 header(){ echo -e "\n${CYAN}══════════════════════════════════════════════${NC}"; echo -e "${CYAN} $1${NC}"; echo -e "${CYAN}══════════════════════════════════════════════${NC}"; }
+
+# ==============================================================================
+# POST-PROCESSING: Parse session log → structured output files
+# ==============================================================================
+
+postprocess_session() {
+    local log="$SESSION_DIR/full_log.txt"
+    [[ ! -f "$log" ]] && { warn "No full_log.txt to post-process"; return; }
+
+    info "Generating structured output files from session log..."
+
+    python3 <<-PYEOF 2>/dev/null || warn "Post-processing script failed"
+import json, re, os, statistics
+from collections import defaultdict
+
+log_path = "$log"
+session_dir = "$SESSION_DIR"
+
+with open(log_path) as f:
+    lines = f.readlines()
+
+boundary_events = []
+tracks = defaultdict(list)
+fps_samples = []
+detection_samples = []
+
+for line in lines:
+    # Boundary crossing events
+    m = re.search(r'(\d{2}:\d{2}:\d{2}\.\d+).*?CHECK_(IN|OUT).*?track_id[=:](\d+)', line)
+    if m:
+        boundary_events.append({
+            "timestamp": m.group(1),
+            "event": "CHECK_" + m.group(2),
+            "track_id": int(m.group(3))
+        })
+
+    # Trajectory data
+    m = re.search(r'track_id[=:](\d+).*?center[=:]\(?([\d.]+),\s*([\d.]+)\)?', line)
+    if m:
+        tracks[int(m.group(1))].append({
+            "x": float(m.group(2)),
+            "y": float(m.group(3))
+        })
+
+    # FPS
+    m = re.search(r'Pipeline Metrics.*?FPS:\s*([\d.]+)', line)
+    if m:
+        fps_samples.append(float(m.group(1)))
+
+    # Detections
+    m = re.search(r'Detected:\s*(\d+).*?conf:\s*([\d.]+).*?class_id[=:](\d+)', line)
+    if m:
+        detection_samples.append({
+            "count": int(m.group(1)),
+            "conf": float(m.group(2)),
+            "class_id": int(m.group(3))
+        })
+
+    # Alternative detection pattern
+    m = re.search(r'detections[=:](\d+).*?confidence[=:]([\d.]+)', line)
+    if m:
+        detection_samples.append({
+            "count": int(m.group(1)),
+            "conf": float(m.group(2)),
+            "class_id": -1
+        })
+
+# Boundary events
+be_path = os.path.join(session_dir, "boundary_events.json")
+with open(be_path, "w") as f:
+    json.dump(boundary_events, f, indent=2)
+
+# Track trajectories
+tt_path = os.path.join(session_dir, "track_trajectories.json")
+trajectories = {str(tid): pts for tid, pts in tracks.items()}
+with open(tt_path, "w") as f:
+    json.dump(trajectories, f, indent=2)
+
+# Pipeline metrics
+pm_path = os.path.join(session_dir, "pipeline_metrics.json")
+metrics = {
+    "fps_samples": fps_samples,
+    "fps_avg": round(statistics.mean(fps_samples), 2) if fps_samples else 0,
+    "fps_min": round(min(fps_samples), 2) if fps_samples else 0,
+    "fps_max": round(max(fps_samples), 2) if fps_samples else 0,
+    "fps_stdev": round(statistics.stdev(fps_samples), 2) if len(fps_samples) > 1 else 0,
+    "total_events": len(boundary_events),
+    "check_in_count": sum(1 for e in boundary_events if e["event"] == "CHECK_IN"),
+    "check_out_count": sum(1 for e in boundary_events if e["event"] == "CHECK_OUT"),
+    "unique_tracks": len(tracks),
+    "total_detections": len(detection_samples),
+    "detection_samples": detection_samples
+}
+with open(pm_path, "w") as f:
+    json.dump(metrics, f, indent=2)
+
+# Pipeline report
+pr_path = os.path.join(session_dir, "pipeline_report.json")
+report = {
+    "session": os.path.basename(session_dir),
+    "mode": "$MODE",
+    "boundary_events": boundary_events,
+    "metrics": metrics,
+    "track_count": len(tracks),
+    "fps_summary": {
+        "avg": metrics["fps_avg"],
+        "min": metrics["fps_min"],
+        "max": metrics["fps_max"],
+        "samples": len(fps_samples)
+    }
+}
+with open(pr_path, "w") as f:
+    json.dump(report, f, indent=2)
+
+# User notifications
+un_path = os.path.join(session_dir, "user_notifications.txt")
+with open(un_path, "w") as f:
+    f.write("FRTApp Session — Actionable Notifications\n")
+    f.write("=" * 45 + "\n\n")
+    if not boundary_events:
+        f.write("⚠ No boundary crossings detected.\n")
+        f.write("  Suggestion: Wave an object vertically across the frame middle.\n")
+    else:
+        f.write(f"Detected {len(boundary_events)} boundary crossing events:\n")
+        for ev in boundary_events:
+            label = "ENTER (add to inventory)" if ev["event"] == "CHECK_IN" else "LEAVE (remove from inventory)"
+            f.write(f"  [{ev['timestamp']}] Track {ev['track_id']}: {ev['event']} → {label}\n")
+    f.write("\n")
+    if fps_samples:
+        avg_fps = statistics.mean(fps_samples)
+        f.write(f"Pipeline health: {avg_fps:.1f} FPS avg\n")
+        if avg_fps < 5:
+            f.write("  WARNING: Low FPS — reduce model size or input resolution\n")
+        else:
+            f.write("  FPS is acceptable for real-time operation\n")
+    f.write("\n--- End of Notifications ---\n")
+
+# Session summary
+ss_path = os.path.join(session_dir, "frt_session_summary.txt")
+with open(ss_path, "w") as f:
+    f.write("FRTApp Session Summary\n")
+    f.write("=" * 45 + "\n\n")
+    f.write(f"Session:  {os.path.basename(session_dir)}\n")
+    f.write(f"Mode:     {"$MODE"}\n")
+    f.write(f"Duration: {"$RUNTIME"}s\n\n")
+    f.write(f"Boundary crossings: {len(boundary_events)}\n")
+    f.write(f"  CHECK_IN  (enter):  {metrics['check_in_count']}\n")
+    f.write(f"  CHECK_OUT (leave):  {metrics['check_out_count']}\n\n")
+    f.write(f"Tracks tracked:      {len(tracks)}\n")
+    f.write(f"Total detections:    {len(detection_samples)}\n\n")
+    if fps_samples:
+        f.write(f"Pipeline FPS:\n")
+        f.write(f"  Average: {metrics['fps_avg']}\n")
+        f.write(f"  Min:     {metrics['fps_min']}\n")
+        f.write(f"  Max:     {metrics['fps_max']}\n")
+        if len(fps_samples) > 1:
+            f.write(f"  StdDev:  {metrics['fps_stdev']}\n")
+    f.write("\n--- End of Summary ---\n")
+
+print(f"Generated: boundary_events.json ({len(boundary_events)} events)")
+print(f"Generated: track_trajectories.json ({len(tracks)} tracks)")
+print(f"Generated: pipeline_metrics.json ({len(fps_samples)} FPS samples)")
+print(f"Generated: pipeline_report.json")
+print(f"Generated: user_notifications.txt")
+print(f"Generated: frt_session_summary.txt")
+PYEOF
+
+    info "Post-processing complete"
+}
 
 SERVICES_STOPPED=false
 SHM_CREATED=false
@@ -164,6 +362,15 @@ cleanup() {
         pass "All services restarted"
     fi
 
+    # Archive results if --save-results
+    if $SAVE_RESULTS && [[ -d "$SESSION_DIR" ]]; then
+        mkdir -p "$SYSTEM_RESULTS_DIR"
+        local dest="$SYSTEM_RESULTS_DIR/$(basename "$SESSION_DIR")"
+        info "Archiving session to $dest/..."
+        cp -a "$SESSION_DIR" "$dest"
+        pass "Results saved: $dest/"
+    fi
+
     echo ""
     if [[ $? -eq 0 || ${1:-} -eq 0 ]]; then
         echo -e "  ${GREEN}✓ TEST SESSION COMPLETE${NC}"
@@ -181,8 +388,8 @@ trap 'cleanup $?' EXIT INT TERM
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════════════════╗"
-echo "║            FRTApp — FULL ISOLATED TEST ORCHESTRATOR                ║"
-echo "║  Stop Services → Create SHM → Run Scenario → Cleanup → Restart    ║"
+echo "║        FRTApp — FULL TEST: Camera → MOG2 → YOLO → ByteTrack       ║"
+echo "║        Boundary CHECK_IN / CHECK_OUT auto-detect                   ║"
 echo "╚══════════════════════════════════════════════════════════════════════╝"
 echo ""
 echo "  Camera:       $CAMERA_DEVICE"
@@ -192,12 +399,16 @@ echo "  Session:      $SESSION_DIR"
 echo "  Mode:         $MODE"
 if [[ "$MODE" == "scenario" ]]; then
     echo "  Scenario:     $SCENARIO"
+elif [[ "$MODE" == "auto" ]]; then
+    echo "  Pipeline:     Camera → MOG2 → YOLO → ByteTrack → Boundary"
 fi
 echo "  Synthetic:    $SYNTHETIC"
+echo "  Confidence:   $CONFIDENCE"
 echo "  Create SHM:   $([[ $NO_SHM == true ]] && echo 'no' || echo 'yes')"
 echo "  SHM seconds:  ${SHM_SECONDS}s"
 echo "  Pipeline FPS: $PIPELINE_FPS"
 echo "  Stop svcs:    $([[ $SKIP_SERVICES == true ]] && echo 'no' || echo 'yes')"
+echo "  Save results: $([[ $SAVE_RESULTS == true ]] && echo "yes → $SYSTEM_RESULTS_DIR" || echo 'no')"
 echo "  Debug:        $DEBUG"
 echo ""
 
@@ -350,7 +561,68 @@ fi
 # STEP 4: Run Test (mode: $MODE)
 # ==============================================================================
 
-if [[ "$MODE" == "unit" ]]; then
+if [[ "$MODE" == "auto" ]]; then
+    header "STEP 4: Run FRTApp Auto-Detect Mode (main.py --bypass-door-sensor)"
+
+    echo ""
+    echo "  ╔══════════════════════════════════════════════════════════════════╗"
+    echo "  ║  FRTApp AUTO-DETECT MODE                                       ║"
+    echo "  ║  Door sensor is BYPASSED — pipeline starts immediately.        ║"
+    echo "  ║  Virtual boundary line divides the frame (default: middle).     ║"
+    echo "  ║    • Top  → Bottom crossing = CHECK_IN  (object enters)        ║"
+    echo "  ║    • Bottom → Top crossing  = CHECK_OUT (object leaves)        ║"
+    echo "  ║                                                               ║"
+    echo "  ║  HOW TO TEST:                                                  ║"
+    echo "  ║  1. Hold any object (hand, fruit, can) in front of camera      ║"
+    echo "  ║  2. Move it vertically across the middle of the frame          ║"
+    echo "  ║  3. Watch terminal for CHECK_IN / CHECK_OUT notifications      ║"
+    echo "  ║  4. Press Ctrl+C to stop the test                              ║"
+    echo "  ║                                                               ║"
+    echo "  ║  Results saved to session directory with boundary log          ║"
+    echo "  ╚══════════════════════════════════════════════════════════════════╝"
+    echo ""
+
+    MAIN_SCRIPT="$FSS_ROOT/frt_app/py_ai_core/src/main.py"
+    if [[ ! -f "$MAIN_SCRIPT" ]]; then
+        fail "main.py not found: $MAIN_SCRIPT"
+        exit 2
+    fi
+
+    CMD_ARGS=(
+        "$PYTHON_CMD" "$MAIN_SCRIPT"
+        "--bypass-door-sensor"
+        "--confidence" "$CONFIDENCE"
+    )
+    if ! $SYNTHETIC; then
+        CMD_ARGS+=("--camera" "$CAMERA_DEVICE" "--model" "$MODEL_PATH")
+    fi
+    if $DEBUG; then
+        CMD_ARGS+=("--debug")
+    fi
+
+    echo "  Running: ${CMD_ARGS[*]}"
+    echo "  (auto-detect runs for ${DURATION}s via timeout, then Ctrl+C)"
+    echo ""
+
+    START_TS=$(date +%s)
+    set +e
+    FULL_LOG="$SESSION_DIR/full_log.txt"
+    timeout -s INT "$DURATION" "${CMD_ARGS[@]}" >"$FULL_LOG" 2>&1
+    TEST_EXIT=$?
+    set -e
+    END_TS=$(date +%s)
+    RUNTIME=$((END_TS - START_TS))
+
+    echo ""
+    if [[ $TEST_EXIT -eq 0 ]]; then
+        pass "FRTApp auto-detect PASSED (exit=$TEST_EXIT, ${RUNTIME}s)"
+    else
+        fail "FRTApp auto-detect FAILED (exit=$TEST_EXIT, ${RUNTIME}s)"
+    fi
+
+    postprocess_session
+
+elif [[ "$MODE" == "unit" ]]; then
     header "STEP 4: Run Unit Scenario Test (test_user_scenario_frtapp.py)"
 
     SCENARIO_SCRIPT="$SCRIPT_DIR/test_user_scenario_frtapp.py"
@@ -391,6 +663,8 @@ if [[ "$MODE" == "unit" ]]; then
         fail "Unit test FAILED (exit=$TEST_EXIT, ${RUNTIME}s)"
     fi
 
+    postprocess_session
+
 elif [[ "$MODE" == "scenario" ]]; then
     header "STEP 4: Run User Scenario Pipeline ($SCENARIO)"
 
@@ -430,11 +704,12 @@ elif [[ "$MODE" == "scenario" ]]; then
         fail "Scenario pipeline FAILED (exit=$TEST_EXIT, ${RUNTIME}s)"
     fi
 
-else
-    fail "Unknown mode: $MODE (use --mode unit or --mode scenario)"
-    exit 2
+    postprocess_session
+
 fi
 
+# ==============================================================================
+# STEP 5: Session Summary
 # ==============================================================================
 # STEP 5: Session Summary
 # ==============================================================================
@@ -450,6 +725,16 @@ echo "  Duration:  ${RUNTIME}s"
 echo "  Exit code: $TEST_EXIT"
 echo ""
 
+# Auto mode: show boundary crossing summary from log
+if [[ "$MODE" == "auto" ]] && [[ -f "$SESSION_DIR/full_log.txt" ]]; then
+    CI_COUNT=$(grep -c "CHECK_IN" "$SESSION_DIR/full_log.txt" 2>/dev/null || echo "0")
+    CO_COUNT=$(grep -c "CHECK_OUT" "$SESSION_DIR/full_log.txt" 2>/dev/null || echo "0")
+    echo "  Boundary crossings:"
+    echo "    CHECK_IN  (enter):  $CI_COUNT"
+    echo "    CHECK_OUT (leave):  $CO_COUNT"
+    echo ""
+fi
+
 # Unit mode: show report
 if [[ "$MODE" == "unit" ]] && [[ -f "$SESSION_DIR/frtapp_scenario_report.json" ]]; then
     echo "  Test report:"
@@ -461,6 +746,13 @@ res = r.get('results', {})
 print(f\"Passed: {res.get('passed', 0)}  Failed: {res.get('failed', 0)}  Skipped: {res.get('skipped', 0)}\")
 print(f\"FPS samples: {r.get('fps_samples', [])}\")
 " 2>/dev/null || echo '    (unable to parse)')"
+fi
+
+# Auto mode: show FRTApp summary from log
+if [[ "$MODE" == "auto" ]] && [[ -f "$SESSION_DIR/full_log.txt" ]]; then
+    FPS_VALS=$(grep "Pipeline Metrics" "$SESSION_DIR/full_log.txt" | tail -3 | sed 's/.*FPS: //;s/ .*//' | tr '\n' ' ')
+    echo "  Pipeline FPS samples: $FPS_VALS"
+    echo ""
 fi
 
 # Scenario mode: show pipeline summary

@@ -20,6 +20,10 @@ Output (in OUTPUT_DIR/):
   8. inference_table.md        — Formatted markdown inference table
   9. pipeline_report.json      — Structured metrics + scenario summary
   10. scenario_report.json     — Check-in/check-out state transitions
+  11. latest_frames/           — Per-frame annotated + MOG2 viz (5 frames)
+       ├── frame_{0..4}_annotated.jpg
+       ├── frame_{0..4}_mog2_mask.jpg
+       └── frame_{0..4}_mog2_heatmap.jpg
 
 Usage:
     python3 user_scenario_pipeline.py --scenario check-in --duration 15

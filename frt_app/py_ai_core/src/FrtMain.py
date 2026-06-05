@@ -92,13 +92,23 @@ class FrtMain:
     MODEL_PATH = "/opt/fss/models/yolov11n.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
-    def __init__(self):
+    def __init__(self, bypass_door_sensor: bool = True,
+                 confidence_threshold: float = 0.85,
+                 boundary_ratio: float = 0.66):
         """
         Initialize FrtMain application controller.
+
+        Args:
+            bypass_door_sensor: If True, auto-enter TRACKING on start (no MC-38 needed).
+            confidence_threshold: Min confidence for YOLO + ByteTrack high/low split.
+            boundary_ratio: Virtual boundary line position as fraction of frame height.
         """
         self.current_state: str = AppState.INIT.value
         self.is_running: bool = False
         self.loop_interval_ms: int = self.DEFAULT_LOOP_INTERVAL_MS
+
+        # Door sensor bypass flag (True = auto-TRACKING, no MC-38; False = wait for door signal)
+        self.bypass_door_sensor: bool = bypass_door_sensor
 
         # Component instances (updated for Phase 2 - now using ShmReader instead of CameraUvcDriver)
         self.shm_reader = None  # POSIX SHM reader (from C++ camera core)
@@ -122,12 +132,18 @@ class FrtMain:
         self.distance_threshold_cm: float = 60.0
         self.last_distance_cm: Optional[float] = None
 
+        # Confidence and boundary config
+        self.confidence_threshold: float = confidence_threshold
+        self.boundary_ratio: float = boundary_ratio
+        self._boundary_event_callback: Optional[Callable] = None
+
         # State management
         self.recovery_count: int = 0
         self.frame_count: int = 0
         self._inference_thread: Optional[threading.Thread] = None
 
-        logger.info("FrtMain initialized (state={})".format(self.current_state))
+        logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
+            self.current_state, self.bypass_door_sensor, self.confidence_threshold))
 
     def init_pipeline(self) -> bool:
         """Initialize AI pipeline and all component modules."""
@@ -198,7 +214,17 @@ class FrtMain:
             daemon=False
         )
         self._inference_thread.start()
-        logger.info("FRTApp daemon started (waiting for door event)")
+
+        if self.bypass_door_sensor:
+            self.current_state = AppState.TRACKING.value
+            logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
+            logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
+            if self.dbus_interface:
+                self.dbus_interface.emit_camera_state("ON")
+            if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver:
+                self.camera_driver.open_camera_stream()
+        else:
+            logger.info("FRTApp daemon started (waiting for door event)")
 
     def stop_daemon(self) -> None:
         """Stop FRTApp daemon and cleanup resources."""
@@ -208,6 +234,25 @@ class FrtMain:
         self.current_state = AppState.STOPPED.value
 
         try:
+            if hasattr(self, 'tracker') and self.tracker and hasattr(self.tracker, 'line_detector'):
+                line_det = self.tracker.line_detector
+                logger.info("=" * 60)
+                logger.info("BOUNDARY CROSSING SUMMARY")
+                logger.info("  Boundary line: {} at pos {}".format(
+                    line_det.boundary_line.get('type', '?'),
+                    int(line_det.boundary_line.get('pos', 0)),
+                ))
+                changes = line_det.get_and_clear_changes()
+                if changes:
+                    logger.info("  Net quantity changes (class_id → delta):")
+                    for cid, delta in changes.items():
+                        logger.info("    Class {}: {:+.0f}".format(cid, delta))
+                total_entries = sum(1 for v in changes.values() if v > 0) if changes else 0
+                total_exits = sum(abs(v) for v in changes.values() if v < 0) if changes else 0
+                logger.info("  Total entries (CHECK_IN):  {}".format(total_entries))
+                logger.info("  Total exits  (CHECK_OUT): {}".format(total_exits))
+                logger.info("=" * 60)
+
             if self.camera_driver:
                 self.camera_driver.release_camera()
 
@@ -222,11 +267,22 @@ class FrtMain:
         """Main inference loop: process frames and perform food detection."""
         logger.info("Starting inference loop")
 
-        from YoloPipeline import ByteTrack
-        self.tracker = ByteTrack(max_age=30)
+        from ByteTracker import ByteTracker
+        self.tracker = ByteTracker(max_age=30, high_thresh=self.confidence_threshold)
         
         from VirtualLineDetector import VirtualLineDetector
         self.virtual_line_detector = VirtualLineDetector()
+
+        # If bypass enabled and no door signal triggers AUTO_CALIBRATION,
+        # set a default boundary line so crossing detection works immediately.
+        if self.bypass_door_sensor:
+            default_y = int(480 * self.boundary_ratio)  # 480 as default frame height
+            self.tracker.line_detector.boundary_line = {
+                'type': 'horizontal',
+                'pos': default_y
+            }
+            logger.info("Default boundary line set at y={} (ratio={})".format(
+                default_y, self.boundary_ratio))
 
         frame_count = 0
         fps_start_time = time.time()
@@ -254,6 +310,17 @@ class FrtMain:
                 if frame is None:
                     time.sleep(0.033)
                     continue
+
+                # Print user instructions once at frame 5 (auto-detect mode)
+                if frame_count == 5 and self.bypass_door_sensor:
+                    logger.info("=" * 60)
+                    logger.info("FRTApp AUTO-DETECT MODE (door sensor bypassed)")
+                    logger.info("Default boundary at y={} (horizontal)".format(
+                        self.tracker.line_detector.boundary_line.get('pos', '?')))
+                    logger.info("  CHECK_IN  = object moves top → bottom (enter fridge)")
+                    logger.info("  CHECK_OUT = object moves bottom → top (leave fridge)")
+                    logger.info("Wave a hand or object past the camera to test!")
+                    logger.info("=" * 60)
                     
                 # ============================================================
                 # Phase 1: Auto-Calibration (Run OpenCV only, yield CPU)
@@ -266,20 +333,20 @@ class FrtMain:
                             self.virtual_line_ready = True
                             self.current_state = AppState.TRACKING.value
                             logger.info("Auto-Calibration complete. Virtual Line saved. Transitioning to TRACKING state.")
-                            continue # Nhường CPU, frame tiếp theo mới chạy AI
+                            continue
                         else:
                             self.frames_without_line += 1
                             if self.frames_without_line > 5:
                                 logger.warning("Auto-Calibration timeout after 5 frames, using default. Transitioning to TRACKING state.")
                                 self.virtual_line_ready = True
                                 self.current_state = AppState.TRACKING.value
-                                continue # Nhường CPU
+                                continue
                             else:
-                                time.sleep(0.01) # Chờ frame tiếp theo
-                                continue # Bỏ qua YOLO, ở lại phase Calibration
+                                time.sleep(0.01)
+                                continue
 
                 # ============================================================
-                # Phase 2: AI Vision Core (MOG2 + YOLO)
+                # Phase 2: AI Vision Core (MOG2 + YOLO + ByteTrack + Boundary)
                 # ============================================================
                 # Motion detection
                 motion_mask = self.motion_detector.apply_background_subtraction(frame)
@@ -296,15 +363,28 @@ class FrtMain:
                 self.ai_engine.invoke_inference()
                 detections = self.ai_engine.get_output_boxes()
 
-                # Tracking
+                # Tracking (ByteTrack: Kalman + 2-stage + line crossing)
                 tracked = self.tracker.update(detections)
+
+                # Log boundary crossing events for user notification
+                changes = self.tracker.get_quantity_change()
+                for cid, delta in changes.items():
+                    event_type = "CHECK_IN" if delta > 0 else "CHECK_OUT"
+                    logger.info(">>> {}: Class {} ({:+d})".format(event_type, cid, delta))
+                    if self._boundary_event_callback:
+                        self._boundary_event_callback({"event_type": event_type, "class_id": cid, "delta": delta})
 
                 # Publish
                 if self.dbus_interface and tracked:
                     self.dbus_interface.publish_tracking_results({
                         "food_items": tracked,
                         "timestamp": time.time(),
-                        "frame_id": frame_count
+                        "frame_id": frame_count,
+                        "boundary_events": [{
+                            "track_id": t.get('track_id'),
+                            "class_id": t.get('class_id'),
+                            "score": t.get('confidence'),
+                        } for t in tracked],
                     })
 
                 # Write preview frame for LivePreview UI (every 3rd frame)
@@ -344,6 +424,11 @@ class FrtMain:
 
     def on_door_event_received(self, door_state: str) -> None:
         """Handle door open/close events from SensorDaemon."""
+        # If bypass is active, ignore physical door events so MC-38 can be attached later
+        if self.bypass_door_sensor:
+            logger.debug("Door sensor bypassed — ignoring D-Bus door event")
+            return
+
         logger.info("Door event received: {}".format(door_state))
 
         if door_state.upper() == "OPEN":
@@ -390,6 +475,10 @@ class FrtMain:
 
         else:
             logger.warning("Unknown door state: {}".format(door_state))
+
+    def set_boundary_event_callback(self, callback: Callable) -> None:
+        """Register callback fired on each new boundary crossing event."""
+        self._boundary_event_callback = callback
 
     def recover_from_crash(self) -> bool:
         """Attempt to recover from inference crash or memory overflow."""
@@ -449,6 +538,8 @@ class FrtMain:
                 use_c_backend=self.use_c_backend,
                 c_precision=c_precision
             )
+            # Override confidence threshold from constructor/CLI arg
+            self.ai_engine.CONFIDENCE_THRESHOLD = self.confidence_threshold
             return self.ai_engine.load_model_mmap()
         except Exception as e:
             logger.exception("AI engine initialization failed: {}".format(e))

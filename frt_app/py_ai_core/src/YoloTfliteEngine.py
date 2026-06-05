@@ -34,7 +34,7 @@ class YoloTfliteEngine:
     DEFAULT_MODEL_PATH = "/opt/fss/models/yolov11n_fp32.tflite"
     
     # Inference parameters
-    CONFIDENCE_THRESHOLD = 0.60      # Minimum confidence for detection
+    CONFIDENCE_THRESHOLD = 0.85      # Minimum confidence for detection
     IOU_THRESHOLD = 0.45             # NMS IoU threshold
     
     def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,

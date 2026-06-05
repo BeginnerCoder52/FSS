@@ -110,7 +110,15 @@ def main():
                        help="Disable distance sensor dependency - camera activates on door open alone")
     parser.add_argument("--distance-threshold", type=float, default=60.0,
                        help="Distance threshold in cm (default: 60.0)")
-    
+    parser.add_argument("--bypass-door-sensor", action="store_true",
+                       help="Bypass MC-38 door sensor (auto-enter TRACKING on start)")
+    parser.add_argument("--no-bypass-door-sensor", action="store_true",
+                       help="Disable bypass (wait for MC-38 door open signal)")
+    parser.add_argument("--confidence", type=float, default=0.85,
+                       help="Detection confidence threshold (0.0-1.0, default: 0.85)")
+    parser.add_argument("--boundary-y", type=float, default=0.66,
+                       help="Virtual boundary as fraction of frame height (default: 0.66)")
+
     args = parser.parse_args()
     
     # ========================================================================
@@ -158,6 +166,10 @@ def main():
     logger.info("C backend: {}".format("ON" if args.use_c_backend else "OFF"))
     logger.info("Distance sensor: {}".format("OFF (debug)" if args.debug_no_distance else "ON"))
     logger.info("Distance threshold: {} cm".format(args.distance_threshold))
+    bypass = args.bypass_door_sensor and not args.no_bypass_door_sensor
+    logger.info("Door sensor bypass: {}".format("ON (auto-TRACKING)" if bypass else "OFF (wait for MC-38)"))
+    logger.info("Confidence threshold: {}".format(args.confidence))
+    logger.info("Boundary Y ratio: {}".format(args.boundary_y))
     
     # ========================================================================
     # SIGNAL HANDLERS
@@ -175,7 +187,9 @@ def main():
     
     try:
         logger.info("Creating FrtMain instance...")
-        app_instance = FrtMain()
+        app_instance = FrtMain(bypass_door_sensor=bypass,
+                               confidence_threshold=args.confidence,
+                               boundary_ratio=args.boundary_y)
         
         # Override camera device if provided
         app_instance.CAMERA_DEVICE = args.camera

@@ -268,7 +268,7 @@ class ByteTracker:
     1. High confidence detections matched via Kalman + IoU.
     2. Low confidence detections matched to remaining tracks via IoU to handle occlusion.
     """
-    def __init__(self, max_age: int = 30, high_thresh: float = 0.5, match_thresh: float = 0.8):
+    def __init__(self, max_age: int = 30, high_thresh: float = 0.85, match_thresh: float = 0.8):
         self.max_age = max_age
         self.high_thresh = high_thresh
         self.match_thresh = match_thresh
