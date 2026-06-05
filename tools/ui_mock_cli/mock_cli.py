@@ -17,8 +17,8 @@ except ImportError:
 # 1. Mock D-Bus Classes
 # ======================================================================
 class MockDbDaemon(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
-    @dbus_signal_async('sis')
-    def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
+    @dbus_signal_async('sisi')
+    def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str, delta: int) -> None:
         pass
 
     @dbus_signal_async('sd')
@@ -151,7 +151,7 @@ def process_food(food_id: str, quantity_delta: int):
     print(f" -> [SQLite] Cập nhật thành công: {food_id} tổng = {total_qty}")
     
     # 3. Phát tín hiệu DBDaemon (UIUpdateRequired)
-    emit_signal(db_daemon_obj, "UIUpdateRequired", food_id, total_qty, "")
+    emit_signal(db_daemon_obj, "UIUpdateRequired", food_id, total_qty, "", quantity_delta)
     print(" -> [D-Bus] Phát tín hiệu DBDaemon (UIUpdateRequired)\n")
 
 def print_menu():
