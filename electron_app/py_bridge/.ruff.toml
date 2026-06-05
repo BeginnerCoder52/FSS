@@ -1,0 +1,17 @@
+# Ruff configuration for FSS Python Bridge
+
+line-length = 120
+target-version = "py38"
+
+[lint]
+select = ["E", "F", "W", "B", "UP"]
+ignore = []
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"test_*.py" = ["PLR", "B011"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false

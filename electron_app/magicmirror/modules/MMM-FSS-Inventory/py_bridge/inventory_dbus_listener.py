@@ -20,12 +20,24 @@ import os
 from typing import Optional, Dict, Any, List
 
 def get_dbus_config():
-    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../config.json"))
-    try:
-        with open(config_path, "r") as f:
-            return json.load(f).get("dbus", {})
-    except Exception:
-        return {}
+    config_path = os.environ.get("FSS_CONFIG_PATH", "")
+    if not config_path:
+        candidates = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../config.json")),
+            "/opt/fss/config.json",
+            "/etc/fss/config.json",
+        ]
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                config_path = candidate
+                break
+    if config_path:
+        try:
+            with open(config_path, "r") as f:
+                return json.load(f).get("dbus", {})
+        except Exception as e:
+            logging.warning(f"Failed to load config from {config_path}: {e}")
+    return {}
 
 dbus_config = get_dbus_config()
 
