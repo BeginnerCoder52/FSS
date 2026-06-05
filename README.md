@@ -82,7 +82,7 @@ FSS/
 │       ├── DiskFileManager.py
 │       └── DbDbusInterface.py
 │
-├── recommend_system/           # [Python] NLP/Recipe Analysis Library (CRF-based NER)
+├── recipe_extractor/           # [Python] NLP/Recipe Analysis Library (CRF-based NER)
 │   ├── requirements.txt
 │   ├── data/
 │   │   └── recipes/            # ~250 Vietnamese recipes

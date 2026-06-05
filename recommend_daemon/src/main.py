@@ -16,9 +16,9 @@ FSS_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if FSS_ROOT not in sys.path:
     sys.path.insert(0, FSS_ROOT)
 
-NLP_MODEL_PATH = os.path.join(FSS_ROOT, "recommend_system", "models",
+NLP_MODEL_PATH = os.path.join(FSS_ROOT, "recipe_extractor", "models",
                               "fss_ner_crf_optimized.joblib")
-NLP_RECIPE_DB_PATH = os.path.join(FSS_ROOT, "recommend_system", "data", "recipes")
+NLP_RECIPE_DB_PATH = os.path.join(FSS_ROOT, "recipe_extractor", "data", "recipes")
 DB_DIR = "/opt/fss/data"
 
 
@@ -61,7 +61,7 @@ def setup_logging(log_dir: str = "/var/log/fss") -> None:
 
 def _lazy_load_nlp_engine():
     try:
-        from recommend_system.src.RecipeAnalyzerAPI import RecipeAnalyzerEngine
+        from recipe_extractor.src.RecipeAnalyzerAPI import RecipeAnalyzerEngine
         engine = RecipeAnalyzerEngine(
             model_path=NLP_MODEL_PATH,
             recipe_db_path=NLP_RECIPE_DB_PATH

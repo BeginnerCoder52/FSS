@@ -24,14 +24,14 @@
     <allow send_destination="vn.edu.uit.FSS.FRTApp"/>
     <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
     <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
-    <allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
 
     <!-- Allow all users to receive signals from FSS services -->
     <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
     <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
     <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
     <allow receive_sender="vn.edu.uit.FSS.RecommendDaemon"/>
-    <allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
   </policy>
 
   <!-- Root can do everything (for debugging with sudo) -->
@@ -40,7 +40,7 @@
     <allow own="vn.edu.uit.FSS.FRTApp"/>
     <allow own="vn.edu.uit.FSS.DBDaemon"/>
     <allow own="vn.edu.uit.FSS.RecommendDaemon"/>
-    <allow own="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow own="vn.edu.uit.FSS.RecipeExtractor"/>
     <allow send_destination="*"/>
     <allow receive_sender="*"/>
   </policy>
@@ -52,7 +52,7 @@
     <allow own="vn.edu.uit.FSS.FRTApp"/>
     <allow own="vn.edu.uit.FSS.DBDaemon"/>
     <allow own="vn.edu.uit.FSS.RecommendDaemon"/>
-    <allow own="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow own="vn.edu.uit.FSS.RecipeExtractor"/>
 
     <!-- Allow talking to D-Bus daemon -->
     <allow send_destination="org.freedesktop.DBus"/>
@@ -62,14 +62,14 @@
     <allow send_destination="vn.edu.uit.FSS.FRTApp"/>
     <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
     <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
-    <allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
 
     <!-- Allow receiving from all FSS services -->
     <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
     <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
     <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
     <allow receive_sender="vn.edu.uit.FSS.RecommendDaemon"/>
-    <allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
   </policy>
 
 </busconfig>

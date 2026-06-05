@@ -101,7 +101,7 @@ npm run start:x11  # Or use systemd service
 python tests/run_phase1_tests.py
 
 # Recommend system NLP validation
-pytest recommend_system/tests/test_recipe_analyzer.py -v
+pytest recipe_extractor/tests/test_recipe_analyzer.py -v
 ```
 
 ### Integration Tests
@@ -301,9 +301,9 @@ component_name/
 **Performance**: F1-Score 95.03%, latency ~3.2ms (Pi 4B)
 
 **Key Files**:
-- [recommend_system/src/RecipeAnalyzerAPI.py](recommend_system/src/RecipeAnalyzerAPI.py)
-- [recommend_system/src/RecipeProcessor.py](recommend_system/src/RecipeProcessor.py)
-- Full inventory: [/memories/repo/recommend_system_inventory.md](/memories/repo/recommend_system_inventory.md)
+- [recipe_extractor/src/RecipeAnalyzerAPI.py](recipe_extractor/src/RecipeAnalyzerAPI.py)
+- [recipe_extractor/src/RecipeProcessor.py](recipe_extractor/src/RecipeProcessor.py)
+- Full inventory: [/memories/repo/recipe_extractor_inventory.md](/memories/repo/recipe_extractor_inventory.md)
 
 ### RecommendDaemon (Python)
 
@@ -313,7 +313,7 @@ component_name/
 
 **Data Flow**:
 1. User enters recipe in UI → D-Bus call to `RecommendDaemon.GenerateShoppingList(recipe)`
-2. Calls `RecipeAnalyzerEngine` from `recommend_system/` to extract ingredients (NLP)
+2. Calls `RecipeAnalyzerEngine` from `recipe_extractor/` to extract ingredients (NLP)
 3. Queries DBDaemon `GetInventory()` via D-Bus for current stock
 4. Runs Bù Trừ comparison: each ingredient → available/in-stock/missing
 5. Persists result to `FSS-Recommend.db` (own database)
@@ -393,7 +393,7 @@ python -c "import sdbus; print(sdbus.__file__)"
 - **System Architecture**: [docs/FSS_SoftwareDetailedDesign_v1.1.0.txt](docs/FSS_SoftwareDetailedDesign_v1.1.0.txt)
 - **Test Reports**: [tests/PHASE1_TEST_REPORT.md](tests/PHASE1_TEST_REPORT.md)
 - **Sensor Pinouts**: [drivers/sensor/README_PINOUT.md](drivers/sensor/README_PINOUT.md)
-- **Recommend System Details**: [/memories/repo/recommend_system_inventory.md](/memories/repo/recommend_system_inventory.md)
+- **Recipe Extractor Details**: [/memories/repo/recipe_extractor_inventory.md](/memories/repo/recipe_extractor_inventory.md)
 - **Handover Notes**: [HANDOVER_CHAT.md](HANDOVER_CHAT.md)
 
 ---
@@ -422,7 +422,7 @@ python -c "import sdbus; print(sdbus.__file__)"
 1. Implement Bù Trừ algorithm in `recommend_daemon/src/RecommendEngine.py`
 2. Register D-Bus methods in `recommend_daemon/src/DbusInterface.py` (`GenerateShoppingList`, `GetAvailableRecipes`, etc.)
 3. Add `FSS-Recommend.db` schema in `recommend_daemon/src/RecommendDbManager.py`
-4. Wire in `recommend_daemon/src/main.py` with lazy NLP engine loading from `recommend_system/`
+4. Wire in `recommend_daemon/src/main.py` with lazy NLP engine loading from `recipe_extractor/`
 5. Test: `pytest recommend_daemon/tests/test_recommend_engine.py -v`
 
 ---
@@ -506,9 +506,9 @@ sudo systemctl start fss-sensor fss-camera fss-ai fss-db fss-recommend
 # Phase 1 schema validation
 python tests/run_phase1_tests.py
 
-# Recommend system NLP (use its own venv)
-source recommend_system/venv/bin/activate
-pytest recommend_system/tests/test_recipe_analyzer.py -v
+# Recipe extractor NLP (use its own venv)
+source recipe_extractor/venv/bin/activate
+pytest recipe_extractor/tests/test_recipe_analyzer.py -v
 
 # Recommend daemon
 source recommend_daemon/venv/bin/activate
@@ -529,14 +529,14 @@ pip install -r requirements.txt
 ```
 
 ### Cross-Component Imports
-When one component needs to import another (e.g., RecommendDaemon imports recommend_system):
+When one component needs to import another (e.g., RecommendDaemon imports recipe_extractor):
 ```python
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../recommend_system/src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../recipe_extractor/src'))
 ```
 Or install as editable:
 ```bash
-pip install -e ../../recommend_system/
+pip install -e ../../recipe_extractor/
 ```
 
 ### Common Issues
@@ -856,15 +856,15 @@ Use this AGENTS.md when:
 
 ---
 
-## 🔌 Recommend System D-Bus Service
+## 🔌 RecipeExtractor D-Bus Service
 
-**Service Name**: `vn.edu.uit.FSS.RecommendSystem`
-**Object Path**: `/vn/edu/uit/FSS/RecommendSystem`
-**Interface**: `vn.edu.uit.FSS.RecommendSystem`
+**Service Name**: `vn.edu.uit.FSS.RecipeExtractor`
+**Object Path**: `/vn/edu/uit/FSS/RecipeExtractor`
+**Interface**: `vn.edu.uit.FSS.RecipeExtractor`
 
 ### Files
-- `recommend_system/src/dbus_service.py` — D-Bus service implementation
-- `recommend_system/src/main.py` — Entry point with lazy NLP engine loading
+- `recipe_extractor/src/recipe_extractor_service.py` — D-Bus service implementation
+- `recipe_extractor/src/recipe_extractor_main.py` — Entry point with lazy NLP engine loading
 
 ### Method
 | Method | Signature | Returns | Description |
@@ -882,9 +882,9 @@ Use this AGENTS.md when:
 ### D-Bus Config
 Policy added to `dbus_config/vn.edu.uit.FSS.conf`:
 ```xml
-<allow own="vn.edu.uit.FSS.RecommendSystem"/>
-<allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
-<allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+<allow own="vn.edu.uit.FSS.RecipeExtractor"/>
+<allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
+<allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
 ```
 
 ---
