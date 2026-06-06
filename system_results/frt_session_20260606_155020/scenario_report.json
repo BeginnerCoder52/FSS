@@ -1,0 +1,80 @@
+{
+  "timestamp": "2026-06-06T15:50:36.205023",
+  "scenario": "check-in",
+  "duration_sec": 5,
+  "state_transitions": [
+    {
+      "timestamp": 1780735830.1519995,
+      "from": "IDLE",
+      "to": "FRUIT_DETECTED",
+      "notification": "tomato, lemon detected! Ready for check-in"
+    }
+  ],
+  "notifications": [
+    {
+      "timestamp": 1780735830.1519995,
+      "state": "FRUIT_DETECTED",
+      "message": "tomato, lemon detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780735831.798959,
+      "state": "FRUIT_DETECTED",
+      "message": "egg, tomato, lemon detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780735833.2008553,
+      "state": "FRUIT_DETECTED",
+      "message": "carrot, egg, tomato, lemon detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780735834.7481475,
+      "state": "FRUIT_DETECTED",
+      "message": "lemon, tomato, egg detected! Ready for check-in"
+    }
+  ],
+  "inferences_run": 4,
+  "total_detections": 34,
+  "class_labels": [
+    "apple",
+    "carrot",
+    "egg",
+    "lemon",
+    "tomato"
+  ],
+  "alarms": {
+    "scan_timeout_sec": 10,
+    "action_timeout_sec": 5,
+    "scan_alarm_triggered": false,
+    "action_alarm_triggered": false
+  },
+  "detection_summary": {
+    "tomato": {
+      "count": 21,
+      "class_ids": [
+        4
+      ],
+      "max_conf": 0.9936834573745728
+    },
+    "lemon": {
+      "count": 7,
+      "class_ids": [
+        3
+      ],
+      "max_conf": 0.9942073822021484
+    },
+    "egg": {
+      "count": 5,
+      "class_ids": [
+        2
+      ],
+      "max_conf": 0.9940036535263062
+    },
+    "carrot": {
+      "count": 1,
+      "class_ids": [
+        1
+      ],
+      "max_conf": 0.9949991703033447
+    }
+  }
+}

@@ -32,9 +32,9 @@
 #     sudo bash run_frt_full_test.sh --debug
 #     sudo bash run_frt_full_test.sh --help
 #
-# Session Directory (common outputs):
-#     /tmp/frt_session_<YYYYMMDD_HHMMSS>/
-#       ├── full_log.txt              — Complete FRTApp daemon log
+# Session Directory (default output):
+#     <PROJECT_ROOT>/system_results/frt_session_<YYYYMMDD_HHMMSS>/
+#       ├── full_log.txt              — Complete FRTApp daemon log (also on terminal)
 #       ├── pipeline_report.json      — Structured metrics + boundary events + detections
 #       ├── boundary_events.json      — All CHECK_IN / CHECK_OUT events
 #       ├── track_trajectories.json   — Per-track trajectory data (ByteTrack)
@@ -58,8 +58,7 @@
 #       ├── frtapp_scenario_report.json (unit) Full test results
 #       └── inference_table.{csv,md}  — (scenario) Detection tabulation
 #
-# Results Archive (--save-results):
-#     <PROJECT_ROOT>/system_results/frt_session_<YYYYMMDD_HHMMSS>/
+# Custom session dir (--session-dir) is used as-is; no copy to system_results.
 #
 # Exit Codes:
 #     0 — All tests passed
@@ -80,7 +79,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 FSS_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 CAMERA_DEVICE="/dev/video0"
-MODEL_PATH="/opt/fss/models/yolov11n.tflite"
+MODEL_PATH="/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
 DURATION=15
 DEBUG=false
 NO_SHM=false
@@ -140,7 +139,8 @@ done
 
 # Generate timestamped session directory if not provided
 if [[ -z "$SESSION_DIR" ]]; then
-    SESSION_DIR="/tmp/frt_session_$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$SYSTEM_RESULTS_DIR"
+    SESSION_DIR="$SYSTEM_RESULTS_DIR/frt_session_$(date +%Y%m%d_%H%M%S)"
 fi
 
 # ==============================================================================
@@ -338,11 +338,15 @@ cleanup() {
         pass "camera_core_exec killed"
     fi
 
-    # Remove SHM if we created it
+    # Remove SHM if we created it (needs sudo for /dev/shm)
     if $SHM_CREATED && [[ -f "/dev/shm/fss_video_frame" ]]; then
-        info "Removing SHM /dev/shm/fss_video_frame..."
-        rm -f "/dev/shm/fss_video_frame"
-        pass "SHM removed"
+        info "Removing SHM /dev/shm/fss_video_frame (with sudo)..."
+        sudo rm -f "/dev/shm/fss_video_frame"
+        if [[ ! -f "/dev/shm/fss_video_frame" ]]; then
+            pass "SHM removed"
+        else
+            warn "SHM could not be removed — try: sudo rm -f /dev/shm/fss_video_frame"
+        fi
     fi
 
     # Restart services if we stopped them
@@ -362,13 +366,17 @@ cleanup() {
         pass "All services restarted"
     fi
 
-    # Archive results if --save-results
+    # Archive results if --save-results (skip if already in system_results)
     if $SAVE_RESULTS && [[ -d "$SESSION_DIR" ]]; then
-        mkdir -p "$SYSTEM_RESULTS_DIR"
-        local dest="$SYSTEM_RESULTS_DIR/$(basename "$SESSION_DIR")"
-        info "Archiving session to $dest/..."
-        cp -a "$SESSION_DIR" "$dest"
-        pass "Results saved: $dest/"
+        if [[ "$SESSION_DIR" == "$SYSTEM_RESULTS_DIR"/* ]]; then
+            pass "Results already in system_results: $SESSION_DIR/"
+        else
+            mkdir -p "$SYSTEM_RESULTS_DIR"
+            local dest="$SYSTEM_RESULTS_DIR/$(basename "$SESSION_DIR")"
+            info "Archiving session to $dest/..."
+            cp -a "$SESSION_DIR" "$dest"
+            pass "Results saved: $dest/"
+        fi
     fi
 
     echo ""
@@ -408,7 +416,7 @@ echo "  Create SHM:   $([[ $NO_SHM == true ]] && echo 'no' || echo 'yes')"
 echo "  SHM seconds:  ${SHM_SECONDS}s"
 echo "  Pipeline FPS: $PIPELINE_FPS"
 echo "  Stop svcs:    $([[ $SKIP_SERVICES == true ]] && echo 'no' || echo 'yes')"
-echo "  Save results: $([[ $SAVE_RESULTS == true ]] && echo "yes → $SYSTEM_RESULTS_DIR" || echo 'no')"
+echo "  Output dir:   $SYSTEM_RESULTS_DIR/"
 echo "  Debug:        $DEBUG"
 echo ""
 
@@ -511,7 +519,11 @@ if ! $SKIP_SERVICES; then
                 exit 3
             fi
         fi
-        pass "Camera $CAMERA_DEVICE is free"
+        echo ""
+        echo -e "  ${GREEN}╔══════════════════════════════════════════════════════╗${NC}"
+        echo -e "  ${GREEN}║  ✅ Camera $CAMERA_DEVICE is FREE — ready for test  ║${NC}"
+        echo -e "  ${GREEN}╚══════════════════════════════════════════════════════╝${NC}"
+        echo ""
     fi
     echo ""
     pass "All services stopped, camera is free"
@@ -575,8 +587,9 @@ if [[ "$MODE" == "auto" ]]; then
     echo "  ║  HOW TO TEST:                                                  ║"
     echo "  ║  1. Hold any object (hand, fruit, can) in front of camera      ║"
     echo "  ║  2. Move it vertically across the middle of the frame          ║"
-    echo "  ║  3. Watch terminal for CHECK_IN / CHECK_OUT notifications      ║"
-    echo "  ║  4. Press Ctrl+C to stop the test                              ║"
+    echo "  ║  3. WATCH TERMINAL for CHECK_IN / CHECK_OUT notifications      ║"
+    echo "  ║  4. Output also saved to full_log.txt in session dir           ║"
+    echo "  ║  5. Press Ctrl+C to stop the test                              ║"
     echo "  ║                                                               ║"
     echo "  ║  Results saved to session directory with boundary log          ║"
     echo "  ╚══════════════════════════════════════════════════════════════════╝"
@@ -606,9 +619,11 @@ if [[ "$MODE" == "auto" ]]; then
 
     START_TS=$(date +%s)
     set +e
+    set +o pipefail
     FULL_LOG="$SESSION_DIR/full_log.txt"
-    timeout -s INT "$DURATION" "${CMD_ARGS[@]}" >"$FULL_LOG" 2>&1
-    TEST_EXIT=$?
+    timeout -s INT "$DURATION" "${CMD_ARGS[@]}" 2>&1 | tee -a "$FULL_LOG"
+    TEST_EXIT=${PIPESTATUS[0]}
+    set -o pipefail
     set -e
     END_TS=$(date +%s)
     RUNTIME=$((END_TS - START_TS))
@@ -680,6 +695,7 @@ elif [[ "$MODE" == "scenario" ]]; then
         "--camera" "$CAMERA_DEVICE"
         "--model" "$MODEL_PATH"
         "--duration" "$DURATION"
+        "--confidence" "$CONFIDENCE"
         "--output-dir" "$SESSION_DIR"
     )
     if $DEBUG; then

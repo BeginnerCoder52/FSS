@@ -31,16 +31,19 @@ class YoloTfliteEngine:
     YOLOv11 TFLite Inference Engine
     """
     
-    DEFAULT_MODEL_PATH = "/opt/fss/models/yolov11n_fp32.tflite"
+    DEFAULT_MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
     
-    # Inference parameters
-    CONFIDENCE_THRESHOLD = 0.85      # Minimum confidence for detection
+    # Default inference parameters (overridable via constructor)
+    CONFIDENCE_THRESHOLD = 0.60      # Minimum confidence for detection
     IOU_THRESHOLD = 0.45             # NMS IoU threshold
     
     def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
-                 c_precision: int = 2):
+                 c_precision: int = 2, confidence_threshold: float = None):
         """
         Initialize YOLO TFLite engine.
+        
+        Args:
+            confidence_threshold: Override default confidence threshold (default: 0.35)
         """
         self.model_path = model_path
         self.interpreter = None
@@ -52,6 +55,10 @@ class YoloTfliteEngine:
         self._c_reader = None
         self._c_input_size = 0
         self._input_tensor = None
+        
+        # Override confidence threshold if provided
+        if confidence_threshold is not None:
+            self.CONFIDENCE_THRESHOLD = confidence_threshold
         
         # Class names (example for food items)
         self.classes = ["food_item"] # To be updated with actual model classes

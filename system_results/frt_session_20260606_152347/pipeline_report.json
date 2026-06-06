@@ -1,0 +1,25 @@
+{
+  "session": "frt_session_20260606_152347",
+  "mode": "scenario",
+  "boundary_events": [],
+  "metrics": {
+    "fps_samples": [],
+    "fps_avg": 0,
+    "fps_min": 0,
+    "fps_max": 0,
+    "fps_stdev": 0,
+    "total_events": 0,
+    "check_in_count": 0,
+    "check_out_count": 0,
+    "unique_tracks": 0,
+    "total_detections": 0,
+    "detection_samples": []
+  },
+  "track_count": 0,
+  "fps_summary": {
+    "avg": 0,
+    "min": 0,
+    "max": 0,
+    "samples": 0
+  }
+}
