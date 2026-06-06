@@ -592,8 +592,9 @@ class FrtMain:
                 use_c_backend=self.use_c_backend,
                 c_precision=c_precision
             )
-            # Override confidence threshold from constructor/CLI arg
-            self.ai_engine.CONFIDENCE_THRESHOLD = self.confidence_threshold
+            # DO NOT override YOLO's threshold with ByteTrack's high threshold!
+            # Let YOLO use its internal threshold (e.g. 0.2) to pass low-confidence boxes to ByteTrack.
+            # self.ai_engine.CONFIDENCE_THRESHOLD = self.confidence_threshold
             return self.ai_engine.load_model_mmap()
         except Exception as e:
             logger.exception("AI engine initialization failed: {}".format(e))

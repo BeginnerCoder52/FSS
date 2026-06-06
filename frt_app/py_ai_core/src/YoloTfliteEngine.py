@@ -34,7 +34,7 @@ class YoloTfliteEngine:
     DEFAULT_MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
     
     # Default inference parameters (overridable via constructor)
-    CONFIDENCE_THRESHOLD = 0.60      # Minimum confidence for detection
+    CONFIDENCE_THRESHOLD = 0.2      # Minimum confidence for detection
     IOU_THRESHOLD = 0.45             # NMS IoU threshold
     
     def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
@@ -299,15 +299,25 @@ class YoloTfliteEngine:
             results = []
             for i in range(len(boxes)):
                 xc, yc, w, h = boxes[i]
-                x1 = (xc - w/2) * inv_size
-                y1 = (yc - h/2) * inv_size
-                x2 = (xc + w/2) * inv_size
-                y2 = (yc + h/2) * inv_size
+                x1 = float((xc - w/2) * inv_size)
+                y1 = float((yc - h/2) * inv_size)
+                x2 = float((xc + w/2) * inv_size)
+                y2 = float((yc + h/2) * inv_size)
+                
+                # Clip coordinates to standard image ratio [0.0, 1.0]
+                x1 = max(0.0, min(1.0, x1))
+                y1 = max(0.0, min(1.0, y1))
+                x2 = max(0.0, min(1.0, x2))
+                y2 = max(0.0, min(1.0, y2))
+                
+                # Skip collapsed bounding boxes
+                if x2 <= x1 or y2 <= y1:
+                    continue
 
                 results.append({
                     "class_id": int(class_ids[i]),
                     "confidence": float(max_scores[i]),
-                    "bbox": [float(x1), float(y1), float(x2), float(y2)],
+                    "bbox": [x1, y1, x2, y2],
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
 
@@ -380,15 +390,25 @@ class YoloTfliteEngine:
             results = []
             for i in range(len(boxes)):
                 xc, yc, w, h = boxes[i]
-                x1 = (xc - w/2) * inv_size
-                y1 = (yc - h/2) * inv_size
-                x2 = (xc + w/2) * inv_size
-                y2 = (yc + h/2) * inv_size
+                x1 = float((xc - w/2) * inv_size)
+                y1 = float((yc - h/2) * inv_size)
+                x2 = float((xc + w/2) * inv_size)
+                y2 = float((yc + h/2) * inv_size)
+                
+                # Clip coordinates to standard image ratio [0.0, 1.0]
+                x1 = max(0.0, min(1.0, x1))
+                y1 = max(0.0, min(1.0, y1))
+                x2 = max(0.0, min(1.0, x2))
+                y2 = max(0.0, min(1.0, y2))
+                
+                # Skip collapsed bounding boxes
+                if x2 <= x1 or y2 <= y1:
+                    continue
                 
                 results.append({
                     "class_id": int(class_ids[i]),
                     "confidence": float(max_scores[i]),
-                    "bbox": [float(x1), float(y1), float(x2), float(y2)],
+                    "bbox": [x1, y1, x2, y2],
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
             
