@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-06-07T01:47:44.263731",
+  "scenario": "check-in",
+  "duration_sec": 5,
+  "state_transitions": [],
+  "notifications": [
+    {
+      "timestamp": 1780771658.9775937,
+      "state": "IDLE",
+      "message": "Waiting for item..."
+    }
+  ],
+  "inferences_run": 7,
+  "total_detections": 0,
+  "class_labels": [
+    "apple",
+    "carrot",
+    "egg",
+    "lemon",
+    "tomato"
+  ],
+  "alarms": {
+    "scan_timeout_sec": 10,
+    "action_timeout_sec": 5,
+    "scan_alarm_triggered": false,
+    "action_alarm_triggered": false
+  },
+  "detection_summary": {}
+}

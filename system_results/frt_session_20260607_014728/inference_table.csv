@@ -1,0 +1,1 @@
+frame_id,class_id,actual_label,is_food,confidence,mog2_time_ms,preprocess_time_ms,yolo_time_ms,bbox_x1,bbox_y1,bbox_x2,bbox_y2
