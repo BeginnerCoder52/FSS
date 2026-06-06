@@ -1,0 +1,114 @@
+{
+  "timestamp": "2026-06-06T15:21:13.934698",
+  "scenario": "check-in",
+  "duration_sec": 15,
+  "state_transitions": [
+    {
+      "timestamp": 1780734058.2394211,
+      "from": "IDLE",
+      "to": "FRUIT_DETECTED",
+      "notification": "lemon, carrot, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734061.4120886,
+      "from": "FRUIT_DETECTED",
+      "to": "CHECKING_IN",
+      "notification": "egg, lemon, carrot, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734061.9515262,
+      "from": "CHECKING_IN",
+      "to": "CONFIRMED",
+      "notification": "5 tomato has added"
+    }
+  ],
+  "notifications": [
+    {
+      "timestamp": 1780734058.2394211,
+      "state": "FRUIT_DETECTED",
+      "message": "lemon, carrot, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734059.194105,
+      "state": "FRUIT_DETECTED",
+      "message": "lemon, carrot, apple, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734059.8141594,
+      "state": "FRUIT_DETECTED",
+      "message": "lemon, apple, egg, carrot, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734060.3595045,
+      "state": "FRUIT_DETECTED",
+      "message": "lemon, apple, egg, tomato, carrot detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734060.890804,
+      "state": "FRUIT_DETECTED",
+      "message": "lemon, apple, carrot, tomato, egg detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734061.4120886,
+      "state": "CHECKING_IN",
+      "message": "egg, lemon, carrot, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780734061.9515262,
+      "state": "CONFIRMED",
+      "message": "5 tomato has added"
+    }
+  ],
+  "inferences_run": 28,
+  "total_detections": 329,
+  "class_labels": [
+    "apple",
+    "carrot",
+    "egg",
+    "lemon",
+    "tomato"
+  ],
+  "alarms": {
+    "scan_timeout_sec": 10,
+    "action_timeout_sec": 5,
+    "scan_alarm_triggered": false,
+    "action_alarm_triggered": false
+  },
+  "detection_summary": {
+    "lemon": {
+      "count": 53,
+      "class_ids": [
+        3
+      ],
+      "max_conf": 0.8391476273536682
+    },
+    "carrot": {
+      "count": 41,
+      "class_ids": [
+        1
+      ],
+      "max_conf": 0.8391476273536682
+    },
+    "tomato": {
+      "count": 148,
+      "class_ids": [
+        4
+      ],
+      "max_conf": 0.8391476273536682
+    },
+    "apple": {
+      "count": 53,
+      "class_ids": [
+        0
+      ],
+      "max_conf": 0.8391476273536682
+    },
+    "egg": {
+      "count": 34,
+      "class_ids": [
+        2
+      ],
+      "max_conf": 0.8391476273536682
+    }
+  }
+}

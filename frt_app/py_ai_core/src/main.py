@@ -95,15 +95,15 @@ def main():
                        help="Enable debug logging")
     parser.add_argument("--camera", default="/dev/video0",
                        help="Camera device path (default: /dev/video0)")
-    parser.add_argument("--model", default="/opt/fss/models/yolov11n.tflite",
-                       help="YOLO model path (default: /opt/fss/models/yolov11n.tflite)")
+    parser.add_argument("--model", default="/opt/fss/models/YOLOv11n_260518_best_int8.tflite",
+                       help="YOLO model path (default: YOLOv11n_260518_best_int8.tflite)")
     parser.add_argument("--log-level", default="INFO",
                        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                        help="Logging level (default: INFO)")
     parser.add_argument("--use-c-backend", action="store_true",
                        help="Use C TFLite reader for inference (faster on Pi 4B)")
-    parser.add_argument("--c-model-path", default="/opt/fss/models/yolov11n.tflite",
-                       help="Model path for C reader (default: /opt/fss/models/yolov11n.tflite)")
+    parser.add_argument("--c-model-path", default="/opt/fss/models/YOLOv11n_260518_best_int8.tflite",
+                       help="Model path for C reader (default: YOLOv11n_260518_best_int8.tflite)")
     parser.add_argument("--model-precision", choices=["fp32", "fp16", "int8"], default="int8",
                        help="Model quantization precision (default: int8)")
     parser.add_argument("--debug-no-distance", action="store_true",

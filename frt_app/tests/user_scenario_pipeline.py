@@ -103,10 +103,12 @@ class UserScenarioPipeline:
         output_dir: str,
         duration: int = 15,
         debug: bool = False,
+        confidence: float = 0.35,
     ):
         self.camera_device = camera_device
         self.model_path = model_path
         self.scenario = scenario.lower()
+        self.confidence = confidence
         assert self.scenario in ("check-in", "check-out"), \
             f"Scenario must be 'check-in' or 'check-out', got {scenario}"
         self.output_dir = Path(output_dir)
@@ -390,18 +392,20 @@ class UserScenarioPipeline:
             self._log(f"Camera opened: 640x480 @ 30 FPS")
 
         preprocessor = ImagePreprocessor(640, 640)
-        detector = MotionDetector(threshold_percent=0.5)
+        detector = MotionDetector(threshold_percent=self.confidence)
         detector.MOG2_HISTORY = 100
         detector.MOG2_THRESHOLD = 8.0
         detector.init_mog2()
+        self._log(f"MotionDetector threshold: {self.confidence}% (tied to YOLO confidence)")
 
         engine = YoloTfliteEngine(
             self.model_path,
             use_c_backend=True,
             c_precision=2,
+            confidence_threshold=self.confidence,
         )
         engine.load_model_mmap()
-        self._log(f"YOLO engine loaded: C backend={engine.use_c_backend}")
+        self._log(f"YOLO engine loaded: C backend={engine.use_c_backend}, threshold={self.confidence}")
 
         self._log("")
         self._log("─" * 60)
@@ -760,13 +764,15 @@ def main():
     )
     parser.add_argument("--camera", default="/dev/video0",
                         help="Camera device (default: /dev/video0)")
-    parser.add_argument("--model", default="/opt/fss/models/yolov11n_fp32.tflite",
-                        help="YOLO model path")
+    parser.add_argument("--model", default="/opt/fss/models/YOLOv11n_260518_best_int8.tflite",
+                        help="YOLO model path (default: YOLOv11n_260518_best_int8.tflite)")
     parser.add_argument("--scenario", required=True,
                         choices=["check-in", "check-out"],
                         help="Scenario mode")
     parser.add_argument("--duration", type=int, default=15,
                         help="Capture duration in seconds (default: 15)")
+    parser.add_argument("--confidence", type=float, default=0.35,
+                        help="YOLO confidence threshold (default: 0.35)")
     parser.add_argument("--output-dir", default="",
                         help="Output directory (default: /tmp/fss_scenario_<timestamp>)")
     parser.add_argument("--debug", action="store_true",
@@ -787,6 +793,7 @@ def main():
         output_dir=output_dir,
         duration=args.duration,
         debug=args.debug,
+        confidence=args.confidence,
     )
 
     pipeline.image_mode = bool(args.image)

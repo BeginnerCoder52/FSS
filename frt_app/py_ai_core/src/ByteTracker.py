@@ -10,6 +10,21 @@ from scipy.optimize import linear_sum_assignment
 from loguru import logger
 from typing import List, Dict, Tuple, Optional
 
+# Food class name lookup (standalone fallback; overridden by FrtMain if available)
+FOOD_CLASS_NAMES = {
+    0: "apple", 1: "carrot", 2: "egg", 3: "lemon", 4: "tomato",
+    5: "banana", 6: "orange", 7: "bottle", 8: "cup", 9: "bowl",
+    10: "cake", 11: "donut", 12: "sandwich", 13: "broccoli",
+    14: "pizza", 15: "hot dog", 16: "milk", 17: "juice",
+    18: "yogurt", 19: "cheese", 20: "meat", 21: "fish",
+    22: "bread", 23: "rice", 24: "noodles", 25: "cookie",
+}
+
+
+def _get_food_name(class_id: int) -> str:
+    """Resolve numeric class_id to human-readable food name."""
+    return FOOD_CLASS_NAMES.get(class_id, "food_class_{}".format(class_id))
+
 class KalmanFilter:
     """
     A simple Kalman filter for tracking bounding boxes in image space.
@@ -240,18 +255,20 @@ class LineCrossDetector:
         # Outside to Inside (Entry)
         if start_pos < pos and end_pos >= pos and not track.entry_counted:
             class_id = track.class_id
+            food_name = _get_food_name(class_id)
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) + 1
             track.entry_counted = True
             track.exit_counted = False # Reset if it changes direction
-            logger.info(f"Entry detected! Track ID {track.track_id}, Class {class_id} (+1) via {line_type} line")
+            logger.info(f">>> notify: Track ID {track.track_id} crossed IN → '"+food_name+f"' (class={class_id}, +1) via {line_type} line")
             
         # Inside to Outside (Exit)
         elif start_pos > pos and end_pos <= pos and not track.exit_counted:
             class_id = track.class_id
+            food_name = _get_food_name(class_id)
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) - 1
             track.exit_counted = True
             track.entry_counted = False # Reset if it changes direction
-            logger.info(f"Exit detected! Track ID {track.track_id}, Class {class_id} (-1) via {line_type} line")
+            logger.info(f">>> notify: Track ID {track.track_id} crossed OUT → '"+food_name+f"' (class={class_id}, -1) via {line_type} line")
 
     def get_and_clear_changes(self) -> Dict[int, int]:
         """Return the net changes and clear the buffer."""
@@ -305,6 +322,8 @@ class ByteTracker:
             track.mean, track.covariance = self.kf.initiate(bbox_to_xyah(det['bbox']))
             self.tracks.append(track)
             self.next_track_id += 1
+            logger.info(">>> notify start tracking: new Track ID {} for '{}' (class_id={}, conf={:.2f})".format(
+                track.track_id, _get_food_name(det['class_id']), det['class_id'], det['confidence']))
             
         # Handle lost tracks
         active_tracks = []

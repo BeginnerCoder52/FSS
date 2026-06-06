@@ -1,0 +1,58 @@
+[15:23:52.950825] UserScenarioPipeline initialized
+[15:23:52.951379]   Camera:   /dev/video0
+[15:23:52.951773]   Model:    /opt/fss/models/yolov11n.tflite
+[15:23:52.952055]   Scenario: check-in
+[15:23:52.952311]   Duration: 15s
+[15:23:52.952561]   Output:   /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347
+[15:23:52.956481] 
+[15:23:52.956837] ============================================================
+[15:23:52.957156] USER SCENARIO: CHECK-IN
+[15:23:52.957412] ============================================================
+[15:23:52.957672]   Food labels (5): ['apple', 'carrot', 'egg', 'lemon', 'tomato']
+[15:23:52.957916] 
+[15:23:53.139019] Camera opened: 640x480 @ 30 FPS
+[15:23:53.163267] YOLO engine loaded: C backend=True, threshold=0.5
+[15:23:53.163550] 
+[15:23:53.163798] ────────────────────────────────────────────────────────────
+[15:23:53.164025] Pipeline running — scanning for items...
+[15:23:53.164256] ────────────────────────────────────────────────────────────
+[15:23:54.116457] State: IDLE → FRUIT_DETECTED
+[15:23:54.116889] [NOTIFY] lemon, tomato, apple, carrot detected! Ready for check-in
+[15:23:54.663833] [NOTIFY] lemon, egg, apple, tomato detected! Ready for check-in
+[15:23:55.197929] [NOTIFY] lemon, carrot, apple, tomato detected! Ready for check-in
+[15:23:55.756161] [NOTIFY] lemon, apple, carrot, egg, tomato detected! Ready for check-in
+[15:23:56.287652] [NOTIFY] lemon, carrot, apple, egg, tomato detected! Ready for check-in
+[15:23:56.827031] State: FRUIT_DETECTED → CHECKING_IN
+[15:23:56.827466] [NOTIFY] egg, carrot, lemon, tomato detected! Ready for check-in
+[15:23:57.371924] [CHECK-IN] 6 tomato has added
+[15:23:57.372365] State: CHECKING_IN → CONFIRMED
+[15:23:57.372726] [NOTIFY] 6 tomato has added
+[15:24:08.607223] 
+[15:24:08.607891] ────────────────────────────────────────────────────────────
+[15:24:08.608565] Capture complete — generating output artifacts...
+[15:24:08.609389] ────────────────────────────────────────────────────────────2026-06-06 15:24:08.616 | INFO     | Log saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/full_log.txt
+2026-06-06 15:24:08.626 | INFO     | Annotated image saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/annotated_result.jpg (65 KB)
+2026-06-06 15:24:08.636 | INFO     | MOG2 mask saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/mog2_foreground_mask.jpg
+2026-06-06 15:24:08.643 | INFO     | MOG2 heatmap saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/mog2_heatmap.jpg
+2026-06-06 15:24:08.673 | INFO     |   Latest frame 0: 10 dets, top: lemon (0.84)
+2026-06-06 15:24:08.697 | INFO     |   Latest frame 1: 12 dets, top: lemon (0.84)
+2026-06-06 15:24:08.718 | INFO     |   Latest frame 2: 11 dets, top: lemon (0.84)
+2026-06-06 15:24:08.741 | INFO     |   Latest frame 3: 13 dets, top: lemon (0.84)
+2026-06-06 15:24:08.767 | INFO     |   Latest frame 4: 13 dets, top: tomato (0.84)
+2026-06-06 15:24:08.768 | INFO     | Latest 5 frame visualizations saved to /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/latest_frames/
+2026-06-06 15:24:08.774 | INFO     | RGB preview saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/preprocess_rgb.jpg
+2026-06-06 15:24:08.783 | INFO     | Letterbox preview saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/preprocess_letterbox.jpg
+2026-06-06 15:24:08.796 | INFO     | Inference CSV saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/inference_table.csv (341 rows)
+2026-06-06 15:24:08.799 | INFO     | Inference MD saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/inference_table.md
+2026-06-06 15:24:08.802 | INFO     | Pipeline report saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/pipeline_report.json
+2026-06-06 15:24:08.805 | INFO     | Scenario report saved: /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/scenario_report.json
+2026-06-06 15:24:08.806 | INFO     | 
+2026-06-06 15:24:08.806 | INFO     | ============================================================
+2026-06-06 15:24:08.807 | INFO     | SCENARIO CHECK-IN COMPLETE
+2026-06-06 15:24:08.807 | INFO     |   Frames:     28
+2026-06-06 15:24:08.808 | INFO     |   Inferences: 28
+2026-06-06 15:24:08.809 | INFO     |   Detections: 341
+2026-06-06 15:24:08.811 | INFO     |   Best conf:  0.8391
+2026-06-06 15:24:08.812 | INFO     |   Elapsed:    15.6s
+2026-06-06 15:24:08.813 | INFO     |   Output:     /home/richardmelvin52/FSS/system_results/frt_session_20260606_152347/
+2026-06-06 15:24:08.814 | INFO     | ============================================================

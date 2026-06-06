@@ -46,6 +46,37 @@ from FrtDbusInterface import FrtDbusInterface
 from CameraUvcDriver import CameraUvcDriver
 
 # ============================================================================
+# FOOD CLASS NAME RESOLUTION
+# ============================================================================
+
+# Default food class names (COCO-compatible subset + FSS custom classes)
+DEFAULT_FOOD_NAMES = {
+    0: "apple", 1: "carrot", 2: "egg", 3: "lemon", 4: "tomato",
+    5: "banana", 6: "orange", 7: "bottle", 8: "cup", 9: "bowl",
+    10: "cake", 11: "donut", 12: "sandwich", 13: "broccoli",
+    14: "pizza", 15: "hot dog", 16: "milk", 17: "juice",
+    18: "yogurt", 19: "cheese", 20: "meat", 21: "fish",
+    22: "bread", 23: "rice", 24: "noodles", 25: "cookie",
+}
+
+CLASS_YAML_PATH = "/opt/fss/models/class.yaml"
+
+def _load_class_labels() -> dict:
+    """Load food class names from class.yaml, fallback to DEFAULT_FOOD_NAMES."""
+    try:
+        import yaml
+        if os.path.exists(CLASS_YAML_PATH):
+            with open(CLASS_YAML_PATH) as f:
+                data = yaml.safe_load(f)
+            names = data.get("names", {})
+            if names:
+                return {int(k): v for k, v in names.items()}
+    except Exception:
+        pass
+    return dict(DEFAULT_FOOD_NAMES)
+
+
+# ============================================================================
 # APPLICATION STATE ENUMERATION (ASPICE-compliant state machine)
 # ============================================================================
 class AppState(Enum):
@@ -89,7 +120,7 @@ class FrtMain:
     # ========================================================================
     DEFAULT_LOOP_INTERVAL_MS = 33      # ~30 FPS target frame rate
     MAX_RECOVERY_ATTEMPTS = 3          # Maximum crash recovery attempts
-    MODEL_PATH = "/opt/fss/models/yolov11n.tflite"  # Model location
+    MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
     def __init__(self, bypass_door_sensor: bool = True,
@@ -124,7 +155,7 @@ class FrtMain:
 
         # C backend configuration (Phase 1 upgrade)
         self.use_c_backend: bool = True
-        self.c_model_path: str = "/opt/fss/models/yolov11n.tflite"
+        self.c_model_path: str = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
         self.model_precision: str = "int8"
 
         # Distance sensor configuration (Phase 1 upgrade)
@@ -137,6 +168,9 @@ class FrtMain:
         self.boundary_ratio: float = boundary_ratio
         self._boundary_event_callback: Optional[Callable] = None
 
+        # Food class name lookup (from class.yaml or built-in defaults)
+        self.class_names: dict = _load_class_labels()
+
         # State management
         self.recovery_count: int = 0
         self.frame_count: int = 0
@@ -144,6 +178,12 @@ class FrtMain:
 
         logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
             self.current_state, self.bypass_door_sensor, self.confidence_threshold))
+        logger.info("  Food classes loaded: {} names (from {})".format(
+            len(self.class_names), CLASS_YAML_PATH if os.path.exists(CLASS_YAML_PATH) else "built-in defaults"))
+
+    def _get_food_name(self, class_id: int) -> str:
+        """Resolve a numeric class_id to a human-readable food name."""
+        return self.class_names.get(class_id, "food_class_{}".format(class_id))
 
     def init_pipeline(self) -> bool:
         """Initialize AI pipeline and all component modules."""
@@ -218,6 +258,8 @@ class FrtMain:
         if self.bypass_door_sensor:
             self.current_state = AppState.TRACKING.value
             logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
+            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={})".format(
+                int(480 * self.boundary_ratio)))
             logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
             if self.dbus_interface:
                 self.dbus_interface.emit_camera_state("ON")
@@ -333,6 +375,8 @@ class FrtMain:
                             self.virtual_line_ready = True
                             self.current_state = AppState.TRACKING.value
                             logger.info("Auto-Calibration complete. Virtual Line saved. Transitioning to TRACKING state.")
+                            logger.info(">>> notify start tracking: ByteTrack activated (virtual line at {})".format(
+                                line_info.get('pos', '?')))
                             continue
                         else:
                             self.frames_without_line += 1
@@ -340,6 +384,7 @@ class FrtMain:
                                 logger.warning("Auto-Calibration timeout after 5 frames, using default. Transitioning to TRACKING state.")
                                 self.virtual_line_ready = True
                                 self.current_state = AppState.TRACKING.value
+                                logger.info(">>> notify start tracking: ByteTrack activated (default boundary)")
                                 continue
                             else:
                                 time.sleep(0.01)
@@ -370,7 +415,16 @@ class FrtMain:
                 changes = self.tracker.get_quantity_change()
                 for cid, delta in changes.items():
                     event_type = "CHECK_IN" if delta > 0 else "CHECK_OUT"
-                    logger.info(">>> {}: Class {} ({:+d})".format(event_type, cid, delta))
+                    food_name = self._get_food_name(cid)
+                    abs_delta = abs(delta)
+                    if delta > 0:
+                        logger.info(">>> ✅ CHECK_IN: {} x {} has been added to inventory".format(
+                            abs_delta, food_name))
+                    else:
+                        logger.info(">>> ✅ CHECK_OUT: {} x {} has been removed from inventory".format(
+                            abs_delta, food_name))
+                    logger.info(">>> real detected checkout: {} {} (class_id={}, delta={:+d})".format(
+                        abs_delta, food_name, cid, delta))
                     if self._boundary_event_callback:
                         self._boundary_event_callback({"event_type": event_type, "class_id": cid, "delta": delta})
 
