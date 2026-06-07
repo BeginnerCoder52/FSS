@@ -285,11 +285,11 @@ class MonitorListener:
             logger.info("Connected to Sensor Daemon - listening for raw signals")
             print(json.dumps({"type": "STATUS", "message": "Switched to raw sensor signals"}), flush=True)
 
-        tasks = [
-            asyncio.create_task(self._listen_sensor_distance()),
-            asyncio.create_task(self._listen_sensor_door()),
-            asyncio.create_task(self._listen_user_presence()),
-        ]
+            tasks = [
+                asyncio.create_task(self._listen_sensor_distance()),
+                asyncio.create_task(self._listen_sensor_door()),
+                asyncio.create_task(self._listen_user_presence()),
+            ]
 
             self.signal_tasks.extend(tasks)
 

@@ -83,7 +83,7 @@ class RecipeExtractorDbusService:
             sdbus.set_default_bus(sdbus.sd_bus_open_system())
             await sdbus.request_default_bus_name_async(
                 self.SERVICE_NAME,
-                sdbus.sd_bus_internals.NameReplaceExistingFlag
+                replace_existing=True
             )
             self.dbus_object = RecipeExtractorDbusObject()
             self.dbus_object.set_service_instance(self)

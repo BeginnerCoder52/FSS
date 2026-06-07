@@ -338,6 +338,11 @@ class YoloTfliteEngine:
                 for i in indices.flatten():
                     final_results.append(results[i])
 
+            nms_log = "NMS: before={} after={} iou={} conf={}".format(
+                len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
+            )
+            logger.info(nms_log)
+
             return final_results
 
         except Exception as e:
@@ -428,9 +433,14 @@ class YoloTfliteEngine:
             if len(indices) > 0:
                 for i in indices.flatten():
                     final_results.append(results[i])
-            
+
+            nms_log = "NMS: before={} after={} iou={} conf={}".format(
+                len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
+            )
+            logger.info(nms_log)
+
             return final_results
-            
+
         except Exception as e:
             logger.exception("Error extracting output boxes: {}".format(e))
             return []

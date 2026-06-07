@@ -177,7 +177,7 @@ class FrtDbusInterface:
             # Request bus name
             await sdbus.request_default_bus_name_async(
                 self.SERVICE_NAME,
-                sdbus.sd_bus_internals.NameReplaceExistingFlag
+                replace_existing=True
             )
             
             # Create and export D-Bus object
