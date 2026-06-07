@@ -1,9 +1,13 @@
 #include "TfliteReader.h"
 #include "tensorflow/lite/c/c_api.h"
+#ifdef HAVE_XNNPACK
+#include "tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 struct TfliteReader {
     TfLiteModel* model;
@@ -12,6 +16,10 @@ struct TfliteReader {
     ModelPrecision precision;
     float* output_buffer;
     int output_size;
+    TfLiteDelegate* xnnpack_delegate;
+    int input_width;
+    int input_height;
+    TfLiteType input_type;
 };
 
 static void log_error(const char* msg) {
@@ -33,6 +41,7 @@ TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precis
     reader->precision = precision;
     reader->output_buffer = NULL;
     reader->output_size = 0;
+    reader->xnnpack_delegate = NULL;
 
     reader->model = TfLiteModelCreateFromFile(model_path);
     if (!reader->model) {
@@ -49,7 +58,19 @@ TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precis
         return NULL;
     }
 
-    TfLiteInterpreterOptionsSetNumThreads(reader->options, 2);
+    TfLiteInterpreterOptionsSetNumThreads(reader->options, 4);
+
+#ifdef HAVE_XNNPACK
+    TfLiteXNNPackDelegateOptions xnnpack_opts = TfLiteXNNPackDelegateOptionsDefault();
+    reader->xnnpack_delegate = TfLiteXNNPackDelegateCreate(&xnnpack_opts);
+    if (reader->xnnpack_delegate) {
+        TfLiteInterpreterOptionsAddDelegate(reader->options, reader->xnnpack_delegate);
+    } else {
+        fprintf(stderr, "TfliteReader: XNNPACK delegate not available, using fallback\n");
+    }
+#else
+    fprintf(stderr, "TfliteReader: XNNPACK not compiled, using fallback CPU kernels\n");
+#endif
 
     reader->interpreter = TfLiteInterpreterCreate(reader->model, reader->options);
     if (!reader->interpreter) {
@@ -64,6 +85,13 @@ TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precis
         log_error("failed to allocate tensors");
         tflite_reader_destroy(reader);
         return NULL;
+    }
+
+    const TfLiteTensor* input_tensor = TfLiteInterpreterGetInputTensor(reader->interpreter, 0);
+    if (input_tensor) {
+        reader->input_height = TfLiteTensorDim(input_tensor, 1);
+        reader->input_width  = TfLiteTensorDim(input_tensor, 2);
+        reader->input_type   = TfLiteTensorType(input_tensor);
     }
 
     return reader;
@@ -177,7 +205,7 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
         }
         TfLiteTensorCopyToBuffer(output_tensor, reader->output_buffer, output_byte_size);
         reader->output_size = num_floats;
-    } else if (output_type == kTfLiteInt8 || output_type == kTfLiteUInt8) {
+    } else if (output_type == kTfLiteUInt8) {
         TfLiteQuantizationParams quant_params = TfLiteTensorQuantizationParams(output_tensor);
         float scale = quant_params.scale;
         int zero_point = quant_params.zero_point;
@@ -185,7 +213,35 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
         int num_elements = (int)(output_byte_size / sizeof(uint8_t));
         uint8_t* quantized = (uint8_t*)malloc(output_byte_size);
         if (!quantized) {
-            log_error("failed to allocate quantized buffer");
+            log_error("failed to allocate uint8 buffer");
+            return -1;
+        }
+
+        TfLiteTensorCopyToBuffer(output_tensor, quantized, output_byte_size);
+
+        reader->output_buffer = (float*)malloc((size_t)num_elements * sizeof(float));
+        if (!reader->output_buffer) {
+            log_error("failed to allocate dequantized buffer");
+            free(quantized);
+            return -1;
+        }
+
+        for (int i = 0; i < num_elements; i++) {
+            reader->output_buffer[i] = (float)((int)quantized[i] - zero_point) * scale;
+        }
+
+        free(quantized);
+        reader->output_size = num_elements;
+
+    } else if (output_type == kTfLiteInt8) {
+        TfLiteQuantizationParams quant_params = TfLiteTensorQuantizationParams(output_tensor);
+        float scale = quant_params.scale;
+        int zero_point = quant_params.zero_point;
+
+        int num_elements = (int)(output_byte_size / sizeof(int8_t));
+        int8_t* quantized = (int8_t*)malloc(output_byte_size);
+        if (!quantized) {
+            log_error("failed to allocate int8 buffer");
             return -1;
         }
 
@@ -237,6 +293,108 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
     return 0;
 }
 
+int tflite_reader_preprocess_and_run(
+    TfliteReader* reader,
+    const unsigned char* bgr_frame,
+    int frame_width,
+    int frame_height)
+{
+    if (!reader || !reader->interpreter || !bgr_frame || frame_width <= 0 || frame_height <= 0) {
+        log_error("invalid arguments for preprocess_and_run");
+        return -1;
+    }
+
+    int target_w = reader->input_width;
+    int target_h = reader->input_height;
+    if (target_w <= 0 || target_h <= 0) {
+        log_error("model input dimensions not initialized");
+        return -1;
+    }
+
+    float scale = (float)target_w / (float)frame_width;
+    float scale_h = (float)target_h / (float)frame_height;
+    if (scale_h < scale) scale = scale_h;
+
+    int resized_w = (int)(frame_width * scale);
+    int resized_h = (int)(frame_height * scale);
+    if (resized_w < 1) resized_w = 1;
+    if (resized_h < 1) resized_h = 1;
+
+    int pad_top  = (target_h - resized_h) / 2;
+    int pad_left = (target_w - resized_w) / 2;
+
+    unsigned char* canvas = (unsigned char*)malloc((size_t)target_w * target_h * 3);
+    if (!canvas) {
+        log_error("failed to allocate canvas for preprocessing");
+        return -1;
+    }
+
+    memset(canvas, 114, (size_t)target_w * target_h * 3);
+
+    for (int y = 0; y < resized_h; y++) {
+        float src_y = (float)y / scale;
+        int src_y0 = (int)src_y;
+        int src_y1 = src_y0 + 1;
+        if (src_y1 >= frame_height) src_y1 = frame_height - 1;
+        float fy = src_y - src_y0;
+
+        for (int x = 0; x < resized_w; x++) {
+            float src_x = (float)x / scale;
+            int src_x0 = (int)src_x;
+            int src_x1 = src_x0 + 1;
+            if (src_x1 >= frame_width) src_x1 = frame_width - 1;
+            float fx = src_x - src_x0;
+
+            int dst_idx = ((pad_top + y) * target_w + (pad_left + x)) * 3;
+
+            for (int c = 0; c < 3; c++) {
+                int src_c = 2 - c;
+                float v00 = bgr_frame[(src_y0 * frame_width + src_x0) * 3 + src_c];
+                float v10 = bgr_frame[(src_y0 * frame_width + src_x1) * 3 + src_c];
+                float v01 = bgr_frame[(src_y1 * frame_width + src_x0) * 3 + src_c];
+                float v11 = bgr_frame[(src_y1 * frame_width + src_x1) * 3 + src_c];
+
+                float top = v00 + (v10 - v00) * fx;
+                float bot = v01 + (v11 - v01) * fx;
+                float val = top + (bot - top) * fy;
+
+                canvas[dst_idx + c] = (unsigned char)(val + 0.5f);
+            }
+        }
+    }
+
+    const TfLiteTensor* input_tensor = TfLiteInterpreterGetInputTensor(reader->interpreter, 0);
+    if (!input_tensor) {
+        log_error("failed to get input tensor");
+        free(canvas);
+        return -1;
+    }
+
+    size_t expected = (size_t)TfLiteTensorByteSize(input_tensor);
+    int ret = -1;
+
+    if (reader->input_type == kTfLiteFloat32) {
+        size_t num_pixels = (size_t)target_w * target_h * 3;
+        float* float_input = (float*)malloc(num_pixels * sizeof(float));
+        if (!float_input) {
+            log_error("failed to allocate float input buffer");
+            free(canvas);
+            return -1;
+        }
+        for (size_t i = 0; i < num_pixels; i++) {
+            float_input[i] = canvas[i] * (1.0f / 255.0f);
+        }
+        ret = tflite_reader_run_inference(reader, float_input, num_pixels * sizeof(float));
+        free(float_input);
+    } else {
+        ret = tflite_reader_run_inference(reader, canvas, (size_t)target_w * target_h * 3);
+    }
+
+    free(canvas);
+    return ret;
+}
+
+
 const float* tflite_reader_get_output(TfliteReader* reader, int* num_detections_out) {
     if (!reader || !num_detections_out) {
         log_error("invalid arguments for get_output");
@@ -276,6 +434,11 @@ void tflite_reader_destroy(TfliteReader* reader) {
     if (reader->output_buffer) {
         free(reader->output_buffer);
     }
+#ifdef HAVE_XNNPACK
+    if (reader->xnnpack_delegate) {
+        TfLiteXNNPackDelegateDelete(reader->xnnpack_delegate);
+    }
+#endif
 
     free(reader);
 }

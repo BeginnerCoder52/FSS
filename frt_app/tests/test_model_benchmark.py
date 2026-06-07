@@ -81,32 +81,52 @@ def main():
         print(json.dumps(result))
         return 1
 
-    # 3. Preprocess
-    try:
-        tensor = pre.prepare_tensor_input(frame)
-        if tensor is None:
-            raise RuntimeError("prepare_tensor_input returned None")
-        expected = (1, 640, 640, 3)
-        if tensor.shape != expected:
-            raise RuntimeError(f"tensor shape {tensor.shape} != {expected}")
-    except Exception as e:
-        result["errors"].append(f"preprocess: {e}")
-        print(json.dumps(result))
-        return 1
+    # 3. Preprocess + inference path
+    use_c_preprocess = (use_c and engine._c_reader and engine._has_preprocess)
 
-    # 4. Warmup
-    for _ in range(WARMUP_RUNS):
-        engine.set_input_tensor(tensor)
-        engine.invoke_inference()
-    engine.get_output_boxes()
+    if use_c_preprocess:
+        # C backend handles: resize (640x480 -> 640x640) + BGR->RGB + normalize
+        tensor = None
+        for _ in range(WARMUP_RUNS):
+            if not engine.preprocess_and_run(frame):
+                raise RuntimeError("C preprocess_and_run failed during warmup")
+        engine.get_output_boxes()
 
-    # 5. Benchmark
-    latencies = []
-    for _ in range(BENCHMARK_RUNS):
-        engine.set_input_tensor(tensor)
-        t0 = time.perf_counter()
-        engine.invoke_inference()
-        latencies.append((time.perf_counter() - t0) * 1000)
+        latencies = []
+        for _ in range(BENCHMARK_RUNS):
+            t0 = time.perf_counter()
+            if not engine.preprocess_and_run(frame):
+                raise RuntimeError("C preprocess_and_run failed")
+            latencies.append((time.perf_counter() - t0) * 1000)
+
+        tensor_shape = [1, 640, 640, 3]
+    else:
+        # Python preprocessing: BGR->RGB + letterbox 640x640 + normalize + batch dim
+        try:
+            tensor = pre.prepare_tensor_input(frame)
+            if tensor is None:
+                raise RuntimeError("prepare_tensor_input returned None")
+            expected = (1, 640, 640, 3)
+            if tensor.shape != expected:
+                raise RuntimeError(f"tensor shape {tensor.shape} != {expected}")
+        except Exception as e:
+            result["errors"].append(f"preprocess: {e}")
+            print(json.dumps(result))
+            return 1
+
+        for _ in range(WARMUP_RUNS):
+            engine.set_input_tensor(tensor)
+            engine.invoke_inference()
+        engine.get_output_boxes()
+
+        latencies = []
+        for _ in range(BENCHMARK_RUNS):
+            engine.set_input_tensor(tensor)
+            t0 = time.perf_counter()
+            engine.invoke_inference()
+            latencies.append((time.perf_counter() - t0) * 1000)
+
+        tensor_shape = list(tensor.shape) if tensor is not None else []
 
     # 6. Get detections
     dets = engine.get_output_boxes()
@@ -115,13 +135,15 @@ def main():
     max_latency = max(latencies)
 
     # 7. Build output
+    preprocess_path = "c_backend" if use_c_preprocess else "python"
     result["status"] = "pass" if (len(dets) >= 0 and avg_latency < LATENCY_TARGET_MS * 2) else "warn"
     result["metrics"] = {
         "backend": "c" if (use_c and engine._c_reader) else "python",
+        "preprocess": preprocess_path,
         "model": args.model,
         "input_image": args.image or "synthetic",
-        "input_shape": frame.shape[:2],
-        "tensor_shape": list(tensor.shape),
+        "input_shape": list(frame.shape[:2]),
+        "tensor_shape": tensor_shape,
         "latency_ms_avg": round(avg_latency, 2),
         "latency_ms_min": round(min_latency, 2),
         "latency_ms_max": round(max_latency, 2),

@@ -54,6 +54,7 @@ class YoloTfliteEngine:
         self._c_lib = None
         self._c_reader = None
         self._c_input_size = 0
+        self._has_preprocess = False
         self._input_tensor = None
         
         # Override confidence threshold if provided
@@ -90,6 +91,14 @@ class YoloTfliteEngine:
                 ctypes.c_void_p, ctypes.c_void_p, ctypes.c_size_t
             ]
             self._c_lib.tflite_reader_run_inference.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_preprocess_and_run.argtypes = [
+                ctypes.c_void_p,
+                ctypes.POINTER(ctypes.c_ubyte),
+                ctypes.c_int, ctypes.c_int
+            ]
+            self._c_lib.tflite_reader_preprocess_and_run.restype = ctypes.c_int
+            self._has_preprocess = True
 
             self._c_lib.tflite_reader_get_output.argtypes = [
                 ctypes.c_void_p, ctypes.POINTER(ctypes.c_int)
@@ -445,6 +454,20 @@ class YoloTfliteEngine:
             logger.exception("Error extracting output boxes: {}".format(e))
             return []
     
+    def preprocess_and_run(self, bgr_frame: np.ndarray) -> bool:
+        if not self.is_initialized or not self.use_c_backend or not self._has_preprocess:
+            return False
+        try:
+            h, w = bgr_frame.shape[:2]
+            frame_ptr = bgr_frame.ctypes.data_as(ctypes.POINTER(ctypes.c_ubyte))
+            ret = self._c_lib.tflite_reader_preprocess_and_run(
+                self._c_reader, frame_ptr, w, h
+            )
+            return ret == 0
+        except Exception as e:
+            logger.warning("preprocess_and_run failed ({}), falling back".format(e))
+            return False
+
     def handle_tensor_allocation_error(self) -> None:
         """
         Handle tensor allocation/inference errors.

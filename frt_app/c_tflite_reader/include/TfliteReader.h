@@ -19,6 +19,13 @@ int tflite_reader_get_input_size(TfliteReader* reader);
 
 int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, size_t input_size);
 
+int tflite_reader_preprocess_and_run(
+    TfliteReader* reader,
+    const unsigned char* bgr_frame,
+    int frame_width,
+    int frame_height
+);
+
 const float* tflite_reader_get_output(TfliteReader* reader, int* num_detections_out);
 
 ModelPrecision tflite_reader_get_precision(TfliteReader* reader);
