@@ -1,0 +1,59 @@
+======================================================================
+FSS-REQUEST COMMUNICATION VALIDATION
+======================================================================
+
+# FSS-REQUEST COMMUNICATION VALIDATION
+
+Generated: 2026-06-07 16:30:03.585202
+
+Iterations: 5
+
+
+## Kết quả xác thực Schema
+
+  Tổng checks:         100
+  Schema hợp lệ:       100 (100.0%)
+  Schema vi phạm:      0
+  Món không trích xuất được nguyên liệu: 0
+
+## Mẫu payload gửi đến DBDaemon (InsertRequest)
+
+  D-Bus Method: InsertRequest(recipe_name, ingredients_json, batch_id)
+  Sample payload:
+    recipe_name:       'Cơm Chiên Dương Châu'
+    ingredient_count:  15
+    batch_id:          'test_batch_1_cơm chiên '
+    processing_time_ms: 2.43
+
+    ingredients_json (preview):
+      [0] Xá xíu:                        x1
+      [1] Đậu Hà Lan:                    x1
+      [2] Cơm trắng: chén                x4
+      [3] Lạp xưởng:                     x1
+      [4] Cà rốt:                        x1
+      ... +10 more
+
+## Chi tiết trích xuất từng món (top 5 mẫu)
+
+Recipe                      | Status  | #Ingredients | Mean(ms)
+----------------------------+---------+--------------+---------
+bánh xèo nhật bản           | SUCCESS | 12           | 1.96    
+bò xào nấm mỡ               | SUCCESS | 14           | 1.92    
+bún thịt nướng              | SUCCESS | 19           | 2.17    
+canh chua cá lóc            | SUCCESS | 15           | 2.00    
+chè bà ba                   | SUCCESS | 11           | 1.64    
+cá bông lau kho tộ          | SUCCESS | 10           | 1.44    
+cá lóc kho củ cải           | SUCCESS | 12           | 1.45    
+cơm chiên dương châu        | SUCCESS | 15           | 2.09    
+cơm tấm sườn cây            | SUCCESS | 20           | 2.41    
+giò heo hầm tứ quý          | SUCCESS | 16           | 2.18    
+gỏi đu đủ                   | SUCCESS | 11           | 1.52    
+lẩu thái                    | SUCCESS | 15           | 2.10    
+mì quảng                    | SUCCESS | 23           | 3.01    
+mực xào chua cay            | SUCCESS | 21           | 2.98    
+phở bò                      | SUCCESS | 24           | 2.77    
+súp cua vị thái             | SUCCESS | 10           | 1.59    
+sườn non kho dưa cải        | SUCCESS | 15           | 1.92    
+thịt kho nước dừa           | SUCCESS | 7            | 1.38    
+trứng chiên đậu hủ thịt cua | SUCCESS | 8            | 1.22    
+tôm rang dừa                | SUCCESS | 9            | 1.33    
