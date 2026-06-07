@@ -1,0 +1,123 @@
+======================================================================
+DATA PROFILING REPORT
+======================================================================
+
+# DATA PROFILING REPORT
+
+Generated: 2026-06-07 16:06:41.604256
+
+## 1A. Tổng quan tập dữ liệu (Dataset Overview)
+
+  Tổng số công thức (Recipes):       2470
+  Tổng số chuỗi nguyên liệu thô:    26276
+  Tổng số file JSON:                 2470
+  Trung bình nguyên liệu/công thức:  10.6
+
+## 1B. Phân phối độ dài chuỗi (Sequence Length Distribution)
+
+  Mean ± Std:     4.81 ± 2.34 tokens
+  Median:         4
+  Min / Max:      1 / 33
+  P95 / P99:      9 / 15
+
+  Histogram (token length → count):
+      1 |     28  
+      2 |    725  ██████████████
+      3 |   5683  ████████████████████████████████████████████████████████████████████████████████
+      4 |   9403  ████████████████████████████████████████████████████████████████████████████████
+      5 |   4109  ████████████████████████████████████████████████████████████████████████████████
+      6 |   2818  ████████████████████████████████████████████████████████
+      7 |   1183  ███████████████████████
+      8 |    754  ███████████████
+      9 |    448  ████████
+     10 |    307  ██████
+     11 |    217  ████
+     12 |    133  ██
+     13 |    116  ██
+     14 |     87  █
+     15 |     65  █
+     16 |     42  
+     17 |     35  
+     18 |     34  
+     19 |     20  
+     20 |     17  
+     21 |     18  
+     22 |      8  
+     23 |      6  
+     24 |      4  
+     25 |      5  
+     26 |      3  
+     27 |      4  
+     28 |      2  
+     30 |      1  
+     33 |      1  
+
+## 1C. Phân phối độ dài tên món (Recipe Name Length)
+
+  Mean ± Std: 4.49 ± 1.20 words
+  Min / Max:  1 / 13
+
+## 1D. Phân phối thể loại món ăn (Category Distribution)
+
+  Khác (Other)                     407 ( 16.5%) ████████
+  Chiên (Deep-fry)                 240 (  9.7%) ████
+  Xào (Stir-fry)                   239 (  9.7%) ████
+  Kho (Braised)                    227 (  9.2%) ████
+  Canh (Soup)                      217 (  8.8%) ████
+  Bánh (Cakes/Pastries)            144 (  5.8%) ██
+  Cá (Fish)                        128 (  5.2%) ██
+  Lẩu (Hotpot)                     104 (  4.2%) ██
+  Mì (Noodles)                     100 (  4.0%) ██
+  Gỏi (Salad)                       95 (  3.8%) █
+  Gà (Chicken)                      85 (  3.4%) █
+  Cơm (Rice)                        73 (  3.0%) █
+  Tôm (Shrimp)                      56 (  2.3%) █
+  Thịt (Meat)                       54 (  2.2%) █
+  Bò (Beef)                         48 (  1.9%) 
+  Bún (Vermicelli)                  44 (  1.8%) 
+  Súp (Soup)                        40 (  1.6%) 
+  Cuốn (Roll)                       32 (  1.3%) 
+  Trứng (Egg)                       30 (  1.2%) 
+  Xôi (Sticky Rice)                 24 (  1.0%) 
+  Rim (Caramelized)                 19 (  0.8%) 
+  Phở (Noodle Soup)                 16 (  0.6%) 
+  Rang (Fried)                      15 (  0.6%) 
+  Hải sản (Seafood)                 11 (  0.4%) 
+  Hầm (Stewed)                      10 (  0.4%) 
+  Nộm (Salad)                        4 (  0.2%) 
+  Nem (Spring Roll)                  4 (  0.2%) 
+  Rán (Pan-fry)                      2 (  0.1%) 
+  Chè (Dessert Soup)                 2 (  0.1%) 
+
+## 1E. Phân tích nhiễu thương hiệu (Brand Pattern Analysis)
+
+  Tổng số pattern thương hiệu tìm thấy: 3006
+    AJI-NGON                        1445 lần
+    AJI-NO-MOTO                      982 lần
+    AJINOMOTO                        478 lần
+    LISA                             101 lần
+
+## 1F. Top 20 nguyên liệu xuất hiện nhiều nhất
+
+  Rank  Token                     Count   
+  ----------------------------------------
+  1     hành                      2687    
+  2     nước                      2559    
+  3     1                         2533    
+  4     bột                       2403    
+  5     dầu                       2381    
+  6     ớt                        2241    
+  7     ăn                        2182    
+  8     nêm                       1990    
+  9     băm                       1951    
+  10    hạt                       1814    
+  11    vị                        1790    
+  12    lá                        1617    
+  13    đường                     1594    
+  14    trái                      1561    
+  15    tiêu                      1546    
+  16    1m                        1503    
+  17    100g                      1472    
+  18    tương                     1437    
+  19    aji-ngon®                 1434    
+  20    cà                        1433    

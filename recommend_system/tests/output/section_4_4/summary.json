@@ -1,0 +1,76 @@
+{
+  "data_profiling": {
+    "total_recipes": 2470,
+    "total_ingredient_strings": 26276,
+    "avg_seq_length": 4.814583650479525,
+    "p95_seq_length": 9,
+    "categories": {
+      "Khác (Other)": 407,
+      "Chiên (Deep-fry)": 240,
+      "Xào (Stir-fry)": 239,
+      "Kho (Braised)": 227,
+      "Canh (Soup)": 217,
+      "Bánh (Cakes/Pastries)": 144,
+      "Cá (Fish)": 128,
+      "Lẩu (Hotpot)": 104,
+      "Mì (Noodles)": 100,
+      "Gỏi (Salad)": 95,
+      "Gà (Chicken)": 85,
+      "Cơm (Rice)": 73,
+      "Tôm (Shrimp)": 56,
+      "Thịt (Meat)": 54,
+      "Bò (Beef)": 48,
+      "Bún (Vermicelli)": 44,
+      "Súp (Soup)": 40,
+      "Cuốn (Roll)": 32,
+      "Trứng (Egg)": 30,
+      "Xôi (Sticky Rice)": 24,
+      "Rim (Caramelized)": 19,
+      "Phở (Noodle Soup)": 16,
+      "Rang (Fried)": 15,
+      "Hải sản (Seafood)": 11,
+      "Hầm (Stewed)": 10,
+      "Nộm (Salad)": 4,
+      "Nem (Spring Roll)": 4,
+      "Rán (Pan-fry)": 2,
+      "Chè (Dessert Soup)": 2
+    },
+    "brand_patterns": {
+      "AJI-NGON": 1445,
+      "AJI-NO-MOTO": 982,
+      "AJINOMOTO": 478,
+      "LISA": 101
+    }
+  },
+  "classification": {
+    "overall_precision": 0.8541,
+    "overall_recall": 0.6833,
+    "overall_f1": 0.7583,
+    "precision_std": 0.0,
+    "recall_std": 0.0,
+    "f1_std": 0.0,
+    "iterations": 5
+  },
+  "latency": {
+    "overall_latency_ms": 0.49,
+    "latency_std_ms": 0.14,
+    "latency_min_ms": 0.29,
+    "latency_max_ms": 0.81,
+    "determinism_score": 100.0,
+    "model_size_kb": 197,
+    "num_samples": 200
+  },
+  "fss_request": {
+    "total_checks": 100,
+    "schema_ok": 100,
+    "schema_violations": 0,
+    "empty_ingredients": 0,
+    "sample_payload": {
+      "recipe_name": "Cơm Chiên Dương Châu",
+      "ingredients_json": "[{\"ingredient\": \"Xá xíu:\", \"quantity\": \"1\"}, {\"ingredient\": \"Đậu Hà Lan:\", \"quantity\": \"1\"}, {\"ingredient\": \"Cơm trắng: chén\", \"quantity\": \"4\"}, {\"ingredient\": \"Lạp xưởng:\", \"quantity\": \"1\"}, {\"ingredient\": \"Cà rốt:\", \"quantity\": \"1\"}, {\"ingredient\": \"Trứng gà:\", \"quantity\": \"2\"}, {\"ingredient\": \"Tôm khô:\", \"quantity\": \"1\"}, {\"ingredient\": \"Tỏi băm\", \"quantity\": \"1\"}, {\"ingredient\": \"hành lá\", \"quantity\": \"1\"}, {\"ingredient\": \"ngò rí\", \"quantity\": \"1\"}, {\"ingredient\": \"dầu ăn\", \"quantity\": \"1\"}, {\"ingredient\": \"Dầu điều\", \"quantity\": \"1\"}, {\"ingredient\": \"xốt cà chua\", \"quantity\": \"1\"}, {\"ingredient\": \"Hạt nêm Heo\", \"quantity\": \"1\"}, {\"ingredient\": \"Nước tương Phú Sĩ\", \"quantity\": \"1\"}]",
+      "batch_id": "test_batch_1_cơm chiên ",
+      "ingredient_count": 15,
+      "processing_time_ms": 0.71
+    }
+  }
+}

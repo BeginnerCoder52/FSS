@@ -1,0 +1,52 @@
+======================================================================
+CLASSIFICATION REPORT & F1-SCORE
+======================================================================
+
+# CLASSIFICATION REPORT & MACRO F1-SCORE
+
+Generated: 2026-06-07 16:02:56.285600
+
+Iterations: 5
+
+Recipes evaluated: 20
+
+- Iter  1:  P=0.8541  R=0.6833  F1=0.7583
+- Iter  2:  P=0.8541  R=0.6833  F1=0.7583
+- Iter  3:  P=0.8541  R=0.6833  F1=0.7583
+- Iter  4:  P=0.8541  R=0.6833  F1=0.7583
+- Iter  5:  P=0.8541  R=0.6833  F1=0.7583
+
+
+## Kết quả tổng hợp (Aggregated Results)
+
+  Precision (Micro):  0.8541 ± 0.0000
+  Recall    (Micro):  0.6833 ± 0.0000
+  F1-Score  (Micro):  0.7583 ± 0.0000
+  Macro F1 (reported in thesis): ~95.03%
+  F1 đạt: 75.83%  (proxy evaluation trên recipe DB)
+  Iterations: 5
+
+## Chi tiết từng món (Per-Recipe Average)
+
+Recipe                      | Avg F1
+----------------------------+-------
+Bánh Xèo Nhật Bản           | 0.8780
+Bò Xào Nấm Mỡ               | 0.8916
+Bún Thịt Nướng              | 0.7755
+Canh Chua Cá Lóc            | 0.7838
+Chè Bà Ba                   | 0.8235
+Cá Bông Lau Kho Tộ          | 0.6316
+Cá Lóc Kho Củ Cải           | 0.7742
+Cơm Chiên Dương Châu        | 0.6250
+Cơm Tấm Sườn Cây            | 0.8283
+Giò Heo Hầm Tứ Quý          | 0.8000
+Gỏi Đu Đủ                   | 0.8000
+Lẩu Thái                    | 0.6265
+Mì Quảng                    | 0.8496
+Mực Xào Chua Cay            | 0.7234
+Phở Bò                      | 0.8980
+Súp Cua Vị Thái             | 0.6562
+Sườn Non Kho Dưa Cải        | 0.7013
+Thịt Kho Nước Dừa           | 0.5500
+Trứng Chiên Đậu Hủ Thịt Cua | 0.8261
+Tôm Rang Dừa                | 0.7234

@@ -1,0 +1,68 @@
+======================================================================
+QUANTIZATION LOSS CHECK & LATENCY
+======================================================================
+
+# QUANTIZATION LOSS CHECK & END-TO-END LATENCY
+
+Generated: 2026-06-07 16:06:28.647611
+
+Platform: Linux-7.0.11-1-cachyos-x86_64-with-glibc2.43
+
+Processor: N/A
+
+Python: 3.14.5 (main, May 21 2026, 23:23:37) [GCC 16.1.1 20260430]
+
+Runs per recipe: 5
+
+Recipes: 20
+
+## 3A. Khởi tạo Engine (Cold-start)
+
+  Trial 1: 76.73 ms  (model load + recipe DB load)
+  Trial 2: 81.28 ms  (model load + recipe DB load)
+  Trial 3: 77.71 ms  (model load + recipe DB load)
+
+## 3B. Độ trễ suy luận (Inference Latency) — Warm Cache
+
+Recipe                      | Mean(ms) | Std(ms) | Min  | Max  | P95 
+----------------------------+----------+---------+------+------+-----
+bánh xèo nhật bản           | 0.54     | 0.07    | 0.46 | 0.63 | 0.63
+bò xào nấm mỡ               | 0.58     | 0.11    | 0.49 | 0.77 | 0.77
+bún thịt nướng              | 0.72     | 0.14    | 0.59 | 0.88 | 0.88
+canh chua cá lóc            | 0.50     | 0.05    | 0.44 | 0.58 | 0.58
+chè bà ba                   | 0.58     | 0.16    | 0.43 | 0.77 | 0.77
+cá bông lau kho tộ          | 0.37     | 0.01    | 0.36 | 0.38 | 0.38
+cá lóc kho củ cải           | 0.49     | 0.10    | 0.39 | 0.59 | 0.59
+cơm chiên dương châu        | 0.71     | 0.10    | 0.58 | 0.82 | 0.82
+cơm tấm sườn cây            | 0.64     | 0.03    | 0.61 | 0.70 | 0.70
+giò heo hầm tứ quý          | 0.63     | 0.04    | 0.60 | 0.68 | 0.68
+gỏi đu đủ                   | 0.39     | 0.01    | 0.38 | 0.40 | 0.40
+lẩu thái                    | 0.61     | 0.05    | 0.56 | 0.68 | 0.68
+mì quảng                    | 0.95     | 0.26    | 0.80 | 1.40 | 1.40
+mực xào chua cay            | 0.69     | 0.01    | 0.68 | 0.72 | 0.72
+phở bò                      | 0.84     | 0.10    | 0.76 | 0.97 | 0.97
+súp cua vị thái             | 0.44     | 0.01    | 0.42 | 0.45 | 0.45
+sườn non kho dưa cải        | 0.57     | 0.05    | 0.52 | 0.66 | 0.66
+thịt kho nước dừa           | 0.33     | 0.04    | 0.30 | 0.40 | 0.40
+trứng chiên đậu hủ thịt cua | 0.49     | 0.05    | 0.42 | 0.55 | 0.55
+tôm rang dừa                | 0.33     | 0.03    | 0.30 | 0.37 | 0.37
+
+  Overall: 0.57 ± 0.18 ms  [0.30 – 1.40]
+  Mẫu (N): 100
+
+  Histogram latency (ms):
+
+  0    –1     │   99  █████████████████████████████████████████████████
+  1    –2     │    1  
+
+## 3C. Kiểm tra tính nhất quán (Determinism Check)
+
+  So sánh 80 cặp kết quả qua 5 lần chạy:
+  Tính nhất quán: 100.00%  (80/80 khớp)
+  Kết luận: Mô hình CRF là tất định (deterministic) — ✓
+
+## Phụ lục: Dung lượng mô hình
+
+  Model file: fss_ner_crf_optimized.joblib
+  Kích thước: 197 KB (0.19 MB)
+  Định dạng: joblib (lossless compression)
