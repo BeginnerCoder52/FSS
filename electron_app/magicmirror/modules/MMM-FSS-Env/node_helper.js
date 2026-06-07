@@ -122,34 +122,36 @@ module.exports = NodeHelper.create({
 	 * @param {string} message - Raw message from Python process
 	 */
 	handlePythonOutput(message) {
-		try {
-			// Try to parse as JSON
-			const data = JSON.parse(message);
+		const lines = message.split("\n");
+		for (const line of lines) {
+			if (!line.trim()) continue;
+			try {
+				const data = JSON.parse(line.trim());
 
-			if (data.type === "ENVIRONMENT_UPDATE") {
-				// Sensor 1 data
-				console.log(`${this.name}: Relaying Sensor 1 update - Temp: ${data.temperature}°C, Humidity: ${data.humidity}%`);
-				this.sendSocketNotification("ENVIRONMENT_UPDATE", {
-					temperature: data.temperature,
-					humidity: data.humidity,
-					timestamp: data.timestamp || Date.now(),
-				});
-			} else if (data.type === "SECONDARY_ENVIRONMENT_UPDATE") {
-				// Sensor 2 data
-				console.log(`${this.name}: Relaying Sensor 2 update - Temp: ${data.temperature}°C, Humidity: ${data.humidity}%`);
-				this.sendSocketNotification("SECONDARY_ENVIRONMENT_UPDATE", {
-					temperature: data.temperature,
-					humidity: data.humidity,
-					timestamp: data.timestamp || Date.now(),
-				});
-			} else if (data.type === "STATUS") {
-				console.log(`${this.name}: Status - ${data.message}`);
-			} else {
-				console.warn(`${this.name}: Unknown message type - ${data.type}`);
+				if (data.type === "ENVIRONMENT_UPDATE") {
+					// Sensor 1 data
+					console.log(`${this.name}: Relaying Sensor 1 update - Temp: ${data.temperature}°C, Humidity: ${data.humidity}%`);
+					this.sendSocketNotification("ENVIRONMENT_UPDATE", {
+						temperature: data.temperature,
+						humidity: data.humidity,
+						timestamp: data.timestamp || Date.now(),
+					});
+				} else if (data.type === "SECONDARY_ENVIRONMENT_UPDATE") {
+					// Sensor 2 data
+					console.log(`${this.name}: Relaying Sensor 2 update - Temp: ${data.temperature}°C, Humidity: ${data.humidity}%`);
+					this.sendSocketNotification("SECONDARY_ENVIRONMENT_UPDATE", {
+						temperature: data.temperature,
+						humidity: data.humidity,
+						timestamp: data.timestamp || Date.now(),
+					});
+				} else if (data.type === "STATUS") {
+					console.log(`${this.name}: Status - ${data.message}`);
+				} else {
+					console.warn(`${this.name}: Unknown message type - ${data.type}`);
+				}
+			} catch (error) {
+				console.debug(`${this.name}: Plain text message - ${line}`);
 			}
-		} catch (error) {
-			// If not JSON, log as plain text
-			console.debug(`${this.name}: Plain text message - ${message}`);
 		}
 	},
 
