@@ -492,24 +492,21 @@ while true; do
             printf "\033[%dA" 11
         fi
 
-        local elapsed=$(( $(date +%s) - START_TIME ))
+        elapsed=$(( $(date +%s) - START_TIME ))
         echo "  Elapsed: ${elapsed}s | Interval: ${INTERVAL}s | Samples: $((LOOP_COUNT + 1))"
         print_table_header
 
         for i in "${!FSS_PATTERNS[@]}"; do
-            local pattern="${FSS_PATTERNS[$i]}"
-            local label="${FSS_LABELS[$i]}"
-            local pids
+            pattern="${FSS_PATTERNS[$i]}"
+            label="${FSS_LABELS[$i]}"
             pids=$(find_daemon_pids "$pattern")
-            local pid_display="0"
-            local cpu_val=0
-            local mem_val=0
-            local rss_val=0
-            local vsz_val=0
+            pid_display="0"
+            cpu_val=0
+            mem_val=0
+            rss_val=0
+            vsz_val=0
 
             if [[ -n "$pids" ]]; then
-                # Get the latest from CSV (last line for this daemon)
-                local line
                 line=$(grep ",${label}," "$CSV_FILE" | tail -1 2>/dev/null || echo "")
                 if [[ -n "$line" ]]; then
                     pid_display=$(echo "$line" | cut -d',' -f4)
