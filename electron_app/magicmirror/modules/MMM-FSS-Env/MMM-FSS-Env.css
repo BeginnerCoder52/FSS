@@ -1,21 +1,18 @@
-/* Cập nhật CSS cho MMM-FSS-Env theo mockup (nền sáng, viền đen) */
-
 .fss-env-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.2em;
+    gap: 1.5vh;
     width: 100%;
 }
 
 .fss-env-box {
-    /* Được thừa hưởng từ custom.css .fss-panel */
-    padding: 1.2em;
+    padding: 1.5vh 1.5vw;
 }
 
 .fss-env-title {
-    font-size: 1.5em;
+    font-size: 1.8vw;
     font-weight: 500;
-    margin-bottom: 1.2em;
+    margin-bottom: 1.2vh;
     text-transform: none;
 }
 
@@ -28,23 +25,22 @@
 .fss-env-data-item {
     display: flex;
     align-items: center;
-    gap: 1em;
-    font-size: 1.5em;
+    gap: 0.8vw;
+    font-size: 1.8vw;
     font-weight: 500;
 }
 
 .fss-env-icon-temp,
 .fss-env-icon-humid {
-    font-size: 2em;
+    font-size: 2.4vw;
 }
 
-/* Các tuỳ chỉnh nhỏ cho icon nếu cần */
 .fss-env-icon-temp {
-    color: var(--color-text); /* Mockup cho màu đen hoặc xám */
+    color: var(--color-text);
 }
 
 .fss-env-icon-humid {
-    color: var(--color-text); /* Mockup cho màu đen hoặc xám */
+    color: var(--color-text);
 }
 
 .stale {

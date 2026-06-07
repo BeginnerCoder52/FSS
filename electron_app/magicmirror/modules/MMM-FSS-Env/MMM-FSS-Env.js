@@ -18,8 +18,8 @@ Module.register("MMM-FSS-Env", {
 
     start() {
         this.sensorData = {
-            sensor1: { temperature: 12.0, humidity: 60.0, timestamp: Date.now(), isStale: false },
-            sensor2: { temperature: -1.0, humidity: 20.0, timestamp: Date.now(), isStale: false },
+            sensor1: { temperature: null, humidity: null, timestamp: null, isStale: false },
+            sensor2: { temperature: null, humidity: null, timestamp: null, isStale: false },
         };
 
         this.staleTimer1 = null;
