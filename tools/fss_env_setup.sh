@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Helper script to generate systemd services for FSS production mode.
-# Called by setup.sh when FSS_MODE=production
+# Called by FSS_SETUP.sh when FSS_MODE=production
 # ==============================================================================
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${SCRIPT_DIR}/fss_profile.conf"
+FSS_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+. "${FSS_ROOT}/fss_profile.conf"
 
 if [[ "${1:-}" != "--generate-systemd" ]]; then
     fss_log_error "This script is a helper and should be called by setup.sh in production mode."

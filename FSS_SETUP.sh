@@ -183,7 +183,7 @@ fi
 # ==============================================================================
 if [[ "$FSS_MODE" == "production" ]]; then
     fss_log_info "--- Step 9: Generating systemd services ---"
-    bash "${FSS_ROOT}/fss_env_setup.sh" --generate-systemd
+    bash "${FSS_ROOT}/tools/fss_env_setup.sh" --generate-systemd
     fss_log_ok "Systemd services generated"
 fi
 

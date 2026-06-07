@@ -21,7 +21,7 @@ pass() { PASS=$((PASS + 1)); echo -e "${GREEN}  ✓${NC} $1"; }
 fail() { FAIL=$((FAIL + 1)); echo -e "${RED}  ✗${NC} $1"; }
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-FSS_ROOT="$SCRIPT_DIR"
+FSS_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 . "${FSS_ROOT}/fss_profile.conf" 2>/dev/null || true
 
 check_file() {
