@@ -54,8 +54,35 @@ setup_log_directory() {
     log_ok "Log directory: $LOG_DIR"
 }
 
+wait_for_dbus_name_release() {
+    local service_name="$1"
+    local max_wait=5
+    local waited=0
+    while [[ $waited -lt $max_wait ]]; do
+        if ! dbus-send --system --dest=org.freedesktop.DBus \
+            /org/freedesktop/DBus org.freedesktop.DBus.NameHasOwner \
+            string:"$service_name" 2>/dev/null | grep -q "boolean true"; then
+            return 0
+        fi
+        sleep 1
+        waited=$((waited + 1))
+    done
+    log_warn "D-Bus name $service_name still held after ${max_wait}s, continuing..."
+    return 1
+}
+
 cleanup_stale_processes() {
     log_info "Cleaning up stale daemon processes..."
+
+    # Stop systemd services first (if running in production mode)
+    for svc in fss-sensor fss-camera fss-ai fss-db fss-recommend; do
+        if systemctl is-active --quiet "$svc" 2>/dev/null; then
+            log_warn "Stopping systemd service $svc..."
+            sudo systemctl stop "$svc" 2>/dev/null || true
+            sleep 1
+        fi
+    done
+
     for proc in sensor_daemon_exec camera_core_exec "db_daemon" "recommend_daemon" "recipe_extractor" "frt_ai"; do
         pids=$(pgrep -f "$proc" 2>/dev/null || true)
         if [[ -n "$pids" ]]; then
@@ -72,6 +99,12 @@ cleanup_stale_processes() {
     # Remove stale PID files
     rm -f "$PID_DIR"/*.pid 2>/dev/null || true
     log_ok "Stale processes cleaned"
+
+    # Wait for D-Bus names to be released
+    log_info "Waiting for D-Bus name release..."
+    for svc in vn.edu.uit.FSS.DBDaemon vn.edu.uit.FSS.RecommendDaemon vn.edu.uit.FSS.FRTApp; do
+        wait_for_dbus_name_release "$svc"
+    done
 }
 
 check_venv() {
@@ -238,9 +271,9 @@ monitor_processes() {
 
 print_status() {
     echo ""
-    echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║  FSS System Status${NC}"
-    echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${_FSS_GREEN}╔══════════════════════════════════════════════════════════╗${_FSS_NC}"
+    echo -e "${_FSS_GREEN}║  FSS System Status${_FSS_NC}"
+    echo -e "${_FSS_GREEN}╚══════════════════════════════════════════════════════════╝${_FSS_NC}"
     echo "  Root: $FSS_ROOT"
     echo "  Logs: $LOG_DIR"
     echo ""
@@ -253,9 +286,9 @@ print_status() {
         "$PID_DIR/recipe_extractor.pid:RecipeExtractor"; do
         IFS=':' read -r pidfile name <<< "$pair"
         if [[ -f "$pidfile" ]] && kill -0 $(cat "$pidfile") 2>/dev/null; then
-            echo -e "  ${GREEN}✓${NC} $name RUNNING (PID: $(cat "$pidfile"))"
+            echo -e "  ${_FSS_GREEN}✓${_FSS_NC} $name RUNNING (PID: $(cat "$pidfile"))"
         else
-            echo -e "  ${RED}✗${NC} $name STOPPED"
+            echo -e "  ${_FSS_RED}✗${_FSS_NC} $name STOPPED"
         fi
     done
     echo ""

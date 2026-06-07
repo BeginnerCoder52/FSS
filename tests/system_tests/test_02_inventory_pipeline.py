@@ -38,7 +38,7 @@ class MockFrt(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.FRTApp"):
 
 async def main():
     set_default_bus(sd_bus_open_system())
-    await request_default_bus_name_async("vn.edu.uit.FSS.FRTApp.TestRunner", sd_bus_internals.NameReplaceExistingFlag)
+    await request_default_bus_name_async("vn.edu.uit.FSS.FRTApp.TestRunner", replace_existing=True)
     mock = MockFrt()
     mock.export_to_dbus("/vn/edu/uit/FSS/FRTApp")
     

@@ -40,7 +40,7 @@ async def main():
     # Đăng ký tên dịch vụ D-Bus
     await request_default_bus_name_async(
         SERVICE_NAME,
-        sd_bus_internals.NameReplaceExistingFlag
+        replace_existing=True
     )
 
     # Xuất object ra D-Bus

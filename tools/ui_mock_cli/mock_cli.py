@@ -45,14 +45,14 @@ async def setup_dbus_async():
     
     # 1. Register DBDaemon Mock
     await sdbus.request_default_bus_name_async(
-        "vn.edu.uit.FSS.DBDaemon", sdbus.sd_bus_internals.NameReplaceExistingFlag
+        "vn.edu.uit.FSS.DBDaemon", replace_existing=True
     )
     db_daemon_obj = MockDbDaemon()
     db_daemon_obj.export_to_dbus("/vn/edu/uit/FSS/DBDaemon")
 
     # 2. Register FRTApp Mock
     await sdbus.request_default_bus_name_async(
-        "vn.edu.uit.FSS.FRTApp", sdbus.sd_bus_internals.NameReplaceExistingFlag
+        "vn.edu.uit.FSS.FRTApp", replace_existing=True
     )
     frt_app_obj = MockFrtApp()
     frt_app_obj.export_to_dbus("/vn/edu/uit/FSS/FRTApp")
