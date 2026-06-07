@@ -3,12 +3,13 @@
 # FSS_RUN.sh — FSS Full System Runner
 #
 # Starts ALL FSS daemons in correct dependency order:
-#   1. SensorDaemon   (C++ hardware I/O)
-#   2. DBDaemon       (Python data controller)
+#   1. SensorDaemon    (C++ hardware I/O)
+#   2. DBDaemon        (Python data controller)
 #   3. FRT Camera Core (C++ V4L2 → POSIX SHM)
-#   4. FRT AI Core    (Python YOLO inference)
-#   5. RecipeExtractor (Python NLP)
-#   6. RecommendDaemon (Python business logic)
+#   4. FRT AI Core     (Python YOLO inference)
+#   5. RecipeExtractor  (Python NLP)
+#   6. RecommendDaemon  (Python business logic)
+#   7. MagicMirror UI   (Node.js Electron via PM2)
 #
 # Features:
 #   - Auto-detects if daemons are already running via systemd
@@ -53,6 +54,7 @@ DAEMON_MAP=(
     ["ai"]="FRTApp AI:ai"
     ["recipe"]="RecipeExtractor:recipe"
     ["recommend"]="RecommendDaemon:recommend"
+    ["magicmirror"]="MagicMirror:magicmirror"
 )
 
 declare -A DAEMON_NAMES
@@ -63,6 +65,7 @@ DAEMON_NAMES=(
     ["ai"]="FRTApp AI Core"
     ["recipe"]="RecipeExtractor"
     ["recommend"]="RecommendDaemon"
+    ["magicmirror"]="MagicMirror UI"
 )
 
 declare -A DAEMON_CMDS
@@ -73,6 +76,7 @@ DAEMON_CMDS=(
     ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend"
     ["recipe"]="sudo ${FSS_VENV_RECIPE_EXTRACTOR}/bin/python ${FSS_ROOT}/recipe_extractor/src/recipe_extractor_main.py"
     ["recommend"]="sudo ${FSS_VENV_RECOMMEND_DAEMON}/bin/python ${FSS_ROOT}/recommend_daemon/src/main.py"
+    ["magicmirror"]="pm2"
 )
 
 declare -A DAEMON_LOGS
@@ -83,6 +87,7 @@ DAEMON_LOGS=(
     ["ai"]="${LOG_DIR}/frt_ai.log"
     ["recipe"]="${LOG_DIR}/recipe_extractor.log"
     ["recommend"]="${LOG_DIR}/recommend_daemon.log"
+    ["magicmirror"]="${LOG_DIR}/magicmirror.log"
 )
 
 declare -A DAEMON_CHECKS
@@ -93,6 +98,7 @@ DAEMON_CHECKS=(
     ["ai"]="check_venv"
     ["recipe"]="check_venv"
     ["recommend"]="check_venv"
+    ["magicmirror"]="check_pm2"
 )
 
 # ==============================================================================
@@ -142,6 +148,18 @@ setup_log_directory() {
         mkdir -p "$LOG_DIR" 2>/dev/null || true
     fi
     mkdir -p "$PID_DIR"
+}
+
+check_pm2() {
+    if ! command -v pm2 &>/dev/null; then
+        fss_log_error "PM2 not found. Install Node.js/PM2 first."
+        return 1
+    fi
+    if [[ ! -d "${FSS_ROOT}/electron_app/magicmirror/node_modules" ]]; then
+        fss_log_error "MagicMirror node_modules missing. Run FSS_SETUP.sh first."
+        return 1
+    fi
+    return 0
 }
 
 check_file_exec() {
@@ -200,6 +218,23 @@ start_daemon() {
 
     "$check" "$key" || return 1
 
+    if [[ "$key" == "magicmirror" ]]; then
+        cd "${FSS_ROOT}/electron_app/magicmirror"
+        pm2 start npm --name "MagicMirror" -- run start >> "$log" 2>&1
+        cd "${FSS_ROOT}"
+        sleep 3
+        local pid
+        pid=$(pm2 pid MagicMirror 2>/dev/null || echo "")
+        if [[ -n "$pid" && "$pid" != "0" ]]; then
+            fss_log_ok "${name} started via PM2 (PID: ${pid})"
+            echo "$pid" > "$pidfile"
+            return 0
+        fi
+        fss_log_error "${name} failed to start via PM2. Check ${log}"
+        pm2 status MagicMirror >> "$log" 2>&1 || true
+        return 1
+    fi
+
     nohup $cmd >"$log" 2>&1 &
     local pid=$!
 
@@ -226,7 +261,12 @@ stop_daemon() {
     if [[ -f "$pidfile" ]]; then
         local pid
         pid=$(cat "$pidfile")
-        if kill -0 "$pid" 2>/dev/null; then
+        if [[ "$key" == "magicmirror" ]]; then
+            fss_log_info "Stopping ${name} via PM2..."
+            pm2 stop MagicMirror >> "${LOG_DIR}/magicmirror.log" 2>&1 || true
+            pm2 delete MagicMirror >> "${LOG_DIR}/magicmirror.log" 2>&1 || true
+            fss_log_ok "${name} stopped"
+        elif kill -0 "$pid" 2>/dev/null; then
             fss_log_info "Stopping ${name} (PID: ${pid})..."
             kill -SIGTERM "$pid" 2>/dev/null
             sleep 2
@@ -241,8 +281,7 @@ stop_daemon() {
 
 stop_all() {
     fss_log_info "Shutting down all daemons..."
-    # Stop in reverse dependency order
-    for key in recommend recipe ai camera db sensor; do
+    for key in magicmirror recommend recipe ai camera db sensor; do
         stop_daemon "$key"
     done
     fss_log_ok "All daemons stopped"
@@ -259,7 +298,7 @@ stop_all() {
 cleanup_stale() {
     fss_log_info "Cleaning up stale processes..."
 
-    for svc in fss-sensor fss-camera fss-ai fss-db fss-recommend; do
+    for svc in fss-sensor fss-camera fss-ai fss-db fss-recommend fss-magicmirror; do
         if systemctl is-active --quiet "$svc" 2>/dev/null; then
             fss_log_warn "Stopping systemd service $svc..."
             sudo systemctl stop "$svc" 2>/dev/null || true
@@ -267,8 +306,15 @@ cleanup_stale() {
         fi
     done
 
+    # Kill PM2 MagicMirror if running
+    if command -v pm2 &>/dev/null && pm2 pid MagicMirror 2>/dev/null | grep -qE '[0-9]+'; then
+        fss_log_warn "Stopping PM2 MagicMirror..."
+        pm2 stop MagicMirror 2>/dev/null || true
+        pm2 delete MagicMirror 2>/dev/null || true
+    fi
+
     for proc in sensor_daemon_exec camera_core_exec db_daemon recommend_daemon \
-                recipe_extractor frt_ai; do
+                recipe_extractor frt_ai magicmirror; do
         pids=$(pgrep -f "$proc" 2>/dev/null || true)
         if [[ -n "$pids" ]]; then
             fss_log_warn "Killing stale $proc (PIDs: $pids)"
@@ -290,7 +336,7 @@ cleanup_stale() {
 monitor_daemons() {
     while true; do
         sleep 5
-        for key in sensor db camera ai recipe recommend; do
+        for key in sensor db camera ai recipe recommend magicmirror; do
             local pidfile="${PID_DIR}/${key}.pid"
             local name="${DAEMON_NAMES[$key]}"
             if [[ -f "$pidfile" ]]; then
@@ -315,7 +361,7 @@ print_status() {
     echo "║  FSS Daemon Status                        ║"
     echo "╚════════════════════════════════════════════╝"
     echo ""
-    for key in sensor db camera ai recipe recommend; do
+    for key in sensor db camera ai recipe recommend magicmirror; do
         local name="${DAEMON_NAMES[$key]}"
         local pidfile="${PID_DIR}/${key}.pid"
         if [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
@@ -368,7 +414,7 @@ cleanup_stale
 
 # Determine which daemons to start
 if [[ -z "$SELECTED_DAEMONS" ]]; then
-    DAEMON_ORDER=("sensor" "db" "camera" "ai" "recipe" "recommend")
+    DAEMON_ORDER=("sensor" "db" "camera" "ai" "recipe" "recommend" "magicmirror")
 else
     IFS=',' read -ra DAEMON_ORDER <<< "$SELECTED_DAEMONS"
 fi

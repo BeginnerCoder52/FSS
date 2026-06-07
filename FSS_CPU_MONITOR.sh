@@ -53,9 +53,10 @@ FSS_PATTERNS=(
     "sensor_daemon_exec"
     "camera_core_exec"
     "db_daemon/src/main.py"
-    "frt_ai/src/main.py"
+    "frt_app/py_ai_core/src/main.py"
     "recipe_extractor_main.py"
     "recommend_daemon/src/main.py"
+    "electron_app/magicmirror"
 )
 
 FSS_LABELS=(
@@ -65,6 +66,7 @@ FSS_LABELS=(
     "FRT_AI"
     "RecipeExtractor"
     "RecommendDaemon"
+    "MagicMirror"
 )
 
 # ==============================================================================
@@ -487,9 +489,9 @@ while true; do
     if [[ "$LIVE_DISPLAY" == true ]]; then
         # Clear previous table (move cursor up)
         if [[ "$LOOP_COUNT" -gt 0 ]]; then
-            # Move up: header (2) + daemon lines (6) + global (1) + blank (1) = 10 lines
+            # Move up: header (2) + daemon lines (7) + global (1) + blank (1) = 11 lines
             # Plus elapsed header
-            printf "\033[%dA" 11
+            printf "\033[%dA" 12
         fi
 
         elapsed=$(( $(date +%s) - START_TIME ))
