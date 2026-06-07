@@ -12,16 +12,53 @@
 #include <thread>
 #include <chrono>
 #include <cstring>
-#include <mutex>
+#include <pthread.h>
+#include <signal.h>
 
 extern "C"
 {
 #include "driver_sht31.h"
 }
 
-/* Global state for C driver */
-static std::mutex g_driver_mutex;
+/* Global state for C driver
+ *
+ * Note: pthread mutex is used instead of std::mutex so it can be
+ * safely re-initialised after a signal-level crash recovery.
+ */
+static pthread_mutex_t g_driver_mutex = PTHREAD_MUTEX_INITIALIZER;
 static I2cHandler* g_active_i2c = nullptr;
+
+/*
+ * Call after a siglongjmp recovery from a SHT3x crash to reset
+ * the mutex and prevent deadlock on the next operation.
+ */
+void sht3x_recover_mutex()
+{
+    /* If the mutex is locked (leaked by the crash), unlock it. */
+    if (pthread_mutex_trylock(&g_driver_mutex) != 0)
+    {
+        pthread_mutex_unlock(&g_driver_mutex);
+    }
+    else
+    {
+        /* Wasn't locked – release the try-lock immediately. */
+        pthread_mutex_unlock(&g_driver_mutex);
+    }
+}
+
+/* RAII lock guard for the pthread mutex
+ * (unlike std::lock_guard, the underlying mutex type can be
+ *  recovered after a signal-longjmp via sht3x_recover_mutex()) */
+class Sht3xMutexLock {
+    pthread_mutex_t *m;
+public:
+    explicit Sht3xMutexLock(pthread_mutex_t &mtx) : m(&mtx) {
+        pthread_mutex_lock(m);
+    }
+    ~Sht3xMutexLock() {
+        pthread_mutex_unlock(m);
+    }
+};
 
 /* Bridge functions for LibDriver C API */
 extern "C"
@@ -142,7 +179,7 @@ Sht3xDriver::~Sht3xDriver()
 
 bool Sht3xDriver::init_driver()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
 
     /* CRITICAL FIX: Do not re-initialize if already running to prevent loop crashing */
     if (m_is_connected) {
@@ -220,7 +257,7 @@ bool Sht3xDriver::init_driver()
 
 bool Sht3xDriver::deinit_driver()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -240,13 +277,15 @@ bool Sht3xDriver::deinit_driver()
 
 bool Sht3xDriver::single_read(bool clock_stretching)
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
-        return false;
+        /* Auto-reconnect: try to re-initialize on next read */
+        init_driver();
+        if (!m_is_connected) return false;
     }
 
     uint16_t temperature_raw, humidity_raw;
@@ -275,7 +314,7 @@ bool Sht3xDriver::single_read(bool clock_stretching)
 
 bool Sht3xDriver::start_continuous_read(float rate)
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -319,7 +358,7 @@ bool Sht3xDriver::start_continuous_read(float rate)
 
 bool Sht3xDriver::stop_continuous_read()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -333,13 +372,15 @@ bool Sht3xDriver::stop_continuous_read()
 
 bool Sht3xDriver::continuous_read()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
     if (!m_is_connected)
     {
-        return false;
+        /* Auto-reconnect: try to re-initialize on next read */
+        init_driver();
+        if (!m_is_connected) return false;
     }
 
     uint16_t temperature_raw, humidity_raw;
@@ -381,7 +422,7 @@ bool Sht3xDriver::check_connection() const
 
 bool Sht3xDriver::soft_reset()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -401,7 +442,7 @@ bool Sht3xDriver::soft_reset()
 
 bool Sht3xDriver::set_repeatability(uint8_t repeatability)
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -430,7 +471,7 @@ bool Sht3xDriver::set_repeatability(uint8_t repeatability)
 
 bool Sht3xDriver::get_repeatability(uint8_t *repeatability)
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -464,7 +505,7 @@ bool Sht3xDriver::get_repeatability(uint8_t *repeatability)
 
 bool Sht3xDriver::set_heater(bool enable)
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -479,7 +520,7 @@ bool Sht3xDriver::set_heater(bool enable)
 
 uint16_t Sht3xDriver::get_status()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -495,7 +536,7 @@ uint16_t Sht3xDriver::get_status()
 
 bool Sht3xDriver::clear_status()
 {
-    std::lock_guard<std::mutex> lock(g_driver_mutex);
+    Sht3xMutexLock lock(g_driver_mutex);
     g_active_i2c = m_i2c.get(); 
     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 
@@ -509,7 +550,7 @@ bool Sht3xDriver::clear_status()
 
 // bool Sht3xDriver::get_serial_number(uint8_t sn[4])
 // {
-//     std::lock_guard<std::mutex> lock(g_driver_mutex);
+//     Sht3xMutexLock lock(g_driver_mutex);
 //     g_active_i2c = m_i2c.get(); 
 //     sht31_handle_t* g_sht31_handle = static_cast<sht31_handle_t*>(m_driver_handle);
 

@@ -54,6 +54,10 @@ bool SensorDaemonMain::init_app() {
         std::cerr << "init_app exception: " << e.what() << std::endl;
         current_state = "ERROR";
         return false;
+    } catch (...) {
+        std::cerr << "init_app unknown exception" << std::endl;
+        current_state = "ERROR";
+        return false;
     }
 }
 
@@ -78,6 +82,10 @@ bool SensorDaemonMain::start_app() {
         std::cerr << "start_app exception: " << e.what() << std::endl;
         current_state = "ERROR";
         return false;
+    } catch (...) {
+        std::cerr << "start_app unknown exception" << std::endl;
+        current_state = "ERROR";
+        return false;
     }
 }
 
@@ -88,6 +96,8 @@ void SensorDaemonMain::stop_app() {
         watchdog->notify_stopping();
     } catch (const std::exception& e) {
         std::cerr << "stop_app exception: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "stop_app unknown exception" << std::endl;
     }
 }
 
@@ -140,6 +150,13 @@ void SensorDaemonMain::run_main_loop() {
                 std::cerr << "Recovery failed, stopping daemon" << std::endl;
                 is_running = false;
             }
+        } catch (...) {
+            std::cerr << "Unknown exception in main loop" << std::endl;
+            current_state = "ERROR";
+            if (!recover_from_fault()) {
+                std::cerr << "Recovery failed, stopping daemon" << std::endl;
+                is_running = false;
+            }
         }
     }
 
@@ -152,6 +169,9 @@ void SensorDaemonMain::process_environment_data() {
         output_processor->broadcast_system_events(data);
     } catch (const std::exception& e) {
         std::cerr << "process_environment_data exception: " << e.what() << std::endl;
+        watchdog->report_error_status("Failed to process environment data");
+    } catch (...) {
+        std::cerr << "process_environment_data unknown exception" << std::endl;
         watchdog->report_error_status("Failed to process environment data");
     }
 }
@@ -200,6 +220,9 @@ bool SensorDaemonMain::recover_from_fault() {
         return true;
     } catch (const std::exception& e) {
         std::cerr << "recover_from_fault exception: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "recover_from_fault unknown exception" << std::endl;
         return false;
     }
 }
@@ -251,5 +274,7 @@ void SensorDaemonMain::log_system_status() {
         }
     } catch (const std::exception& e) {
         std::cerr << "log_system_status exception: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "log_system_status unknown exception" << std::endl;
     }
 }

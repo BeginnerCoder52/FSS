@@ -40,6 +40,11 @@ bool Vl53l0xDriver::init_driver() {
 }
 
 float Vl53l0xDriver::read_distance_meters() {
+    /* Auto-reconnect on next read when disconnected */
+    if (!m_is_connected) {
+        init_driver();
+    }
+
     uint16_t dist_mm;
     vl53l0x_error_t err;
     
