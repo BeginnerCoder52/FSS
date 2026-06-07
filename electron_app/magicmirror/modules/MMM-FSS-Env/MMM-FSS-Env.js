@@ -66,7 +66,7 @@ Module.register("MMM-FSS-Env", {
 
         const tempValue = document.createElement("span");
         if (data.temperature !== null) {
-            const tempDisplay = this.config.roundTemperature ? Math.round(data.temperature) : data.temperature.toFixed(1);
+            const tempDisplay = this.config.roundTemperature ? Math.round(data.temperature) : data.temperature.toFixed(2);
             const unit = this.config.displayUnits ? `°${this.config.temperatureFormat}` : "";
             tempValue.textContent = `${tempDisplay}${unit}`;
         } else {
@@ -85,7 +85,7 @@ Module.register("MMM-FSS-Env", {
 
         const humidValue = document.createElement("span");
         if (data.humidity !== null) {
-            const humidDisplay = this.config.roundHumidity ? Math.round(data.humidity) : data.humidity.toFixed(0);
+            const humidDisplay = this.config.roundHumidity ? Math.round(data.humidity) : data.humidity.toFixed(1);
             humidValue.textContent = this.config.displayUnits ? `${humidDisplay}%` : humidDisplay;
         } else {
             humidValue.textContent = "--%";
