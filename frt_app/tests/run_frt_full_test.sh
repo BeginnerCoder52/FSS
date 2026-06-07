@@ -38,7 +38,8 @@
 #       ├── pipeline_report.json      — Structured metrics + boundary events + detections
 #       ├── boundary_events.json      — All CHECK_IN / CHECK_OUT events
 #       ├── track_trajectories.json   — Per-track trajectory data (ByteTrack)
-#       ├── pipeline_metrics.json     — FPS and latency per component
+#       ├── pipeline_metrics.json     — FPS, latency, NMS stats per component
+#       ├── nms_stats.json           — Per-inference NMS before/after box counts
 #       ├── user_notifications.txt    — Human-readable test instructions
 #       ├── frt_session_summary.txt   — Tester-friendly session summary
 #       │
@@ -177,6 +178,7 @@ boundary_events = []
 tracks = defaultdict(list)
 fps_samples = []
 detection_samples = []
+nms_samples = []
 
 for line in lines:
     # Boundary crossing events
@@ -219,6 +221,16 @@ for line in lines:
             "class_id": -1
         })
 
+    # NMS stats
+    m = re.search(r'NMS:\s*before=(\d+)\s*after=(\d+)\s*iou=([\d.]+)\s*conf=([\d.]+)', line)
+    if m:
+        nms_samples.append({
+            "before": int(m.group(1)),
+            "after": int(m.group(2)),
+            "iou_threshold": float(m.group(3)),
+            "confidence_threshold": float(m.group(4))
+        })
+
 # Boundary events
 be_path = os.path.join(session_dir, "boundary_events.json")
 with open(be_path, "w") as f:
@@ -232,6 +244,8 @@ with open(tt_path, "w") as f:
 
 # Pipeline metrics
 pm_path = os.path.join(session_dir, "pipeline_metrics.json")
+nms_before = [s["before"] for s in nms_samples]
+nms_after = [s["after"] for s in nms_samples]
 metrics = {
     "fps_samples": fps_samples,
     "fps_avg": round(statistics.mean(fps_samples), 2) if fps_samples else 0,
@@ -243,10 +257,42 @@ metrics = {
     "check_out_count": sum(1 for e in boundary_events if e["event"] == "CHECK_OUT"),
     "unique_tracks": len(tracks),
     "total_detections": len(detection_samples),
-    "detection_samples": detection_samples
+    "detection_samples": detection_samples,
+    "nms": {
+        "total_inferences": len(nms_samples),
+        "boxes_before_nms_total": sum(nms_before),
+        "boxes_after_nms_total": sum(nms_after),
+        "boxes_before_nms_avg": round(statistics.mean(nms_before), 2) if nms_before else 0,
+        "boxes_after_nms_avg": round(statistics.mean(nms_after), 2) if nms_after else 0,
+        "boxes_before_nms_min": min(nms_before) if nms_before else 0,
+        "boxes_before_nms_max": max(nms_before) if nms_before else 0,
+        "boxes_after_nms_min": min(nms_after) if nms_after else 0,
+        "boxes_after_nms_max": max(nms_after) if nms_after else 0,
+        "iou_threshold": nms_samples[0]["iou_threshold"] if nms_samples else 0,
+        "confidence_threshold": nms_samples[0]["confidence_threshold"] if nms_samples else 0,
+        "suppression_rate_avg": round(
+            (1 - statistics.mean(nms_after) / statistics.mean(nms_before)) * 100, 2
+        ) if nms_before and statistics.mean(nms_before) > 0 else 0
+    }
 }
 with open(pm_path, "w") as f:
     json.dump(metrics, f, indent=2)
+
+# NMS stats
+nms_path = os.path.join(session_dir, "nms_stats.json")
+nms_stats = {
+    "nms_samples": nms_samples,
+    "summary": {
+        "total_inferences": metrics["nms"]["total_inferences"],
+        "boxes_before_nms_avg": metrics["nms"]["boxes_before_nms_avg"],
+        "boxes_after_nms_avg": metrics["nms"]["boxes_after_nms_avg"],
+        "suppression_rate_avg": metrics["nms"]["suppression_rate_avg"],
+        "iou_threshold": metrics["nms"]["iou_threshold"],
+        "confidence_threshold": metrics["nms"]["confidence_threshold"]
+    }
+}
+with open(nms_path, "w") as f:
+    json.dump(nms_stats, f, indent=2)
 
 # Pipeline report
 pr_path = os.path.join(session_dir, "pipeline_report.json")
@@ -261,7 +307,8 @@ report = {
         "min": metrics["fps_min"],
         "max": metrics["fps_max"],
         "samples": len(fps_samples)
-    }
+    },
+    "nms_summary": metrics["nms"]
 }
 with open(pr_path, "w") as f:
     json.dump(report, f, indent=2)
@@ -287,6 +334,16 @@ with open(un_path, "w") as f:
             f.write("  WARNING: Low FPS — reduce model size or input resolution\n")
         else:
             f.write("  FPS is acceptable for real-time operation\n")
+    if nms_samples:
+        avg_before = metrics["nms"]["boxes_before_nms_avg"]
+        avg_after = metrics["nms"]["boxes_after_nms_avg"]
+        sr = metrics["nms"]["suppression_rate_avg"]
+        f.write(f"\nNMS stats ({len(nms_samples)} inferences):\n")
+        f.write(f"  Avg boxes before NMS: {avg_before:.1f}\n")
+        f.write(f"  Avg boxes after NMS:  {avg_after:.1f}\n")
+        f.write(f"  Suppression rate:     {sr:.1f}%\n")
+        f.write(f"  IoU threshold:        {nms_samples[0]['iou_threshold']}\n")
+        f.write(f"  Confidence threshold: {nms_samples[0]['confidence_threshold']}\n")
     f.write("\n--- End of Notifications ---\n")
 
 # Session summary
@@ -309,11 +366,20 @@ with open(ss_path, "w") as f:
         f.write(f"  Max:     {metrics['fps_max']}\n")
         if len(fps_samples) > 1:
             f.write(f"  StdDev:  {metrics['fps_stdev']}\n")
+    if nms_samples:
+        f.write(f"\nNMS (Non-Maximum Suppression):\n")
+        f.write(f"  Inferences with NMS:    {len(nms_samples)}\n")
+        f.write(f"  Avg boxes before NMS:   {metrics['nms']['boxes_before_nms_avg']}\n")
+        f.write(f"  Avg boxes after NMS:    {metrics['nms']['boxes_after_nms_avg']}\n")
+        f.write(f"  Suppression rate:       {metrics['nms']['suppression_rate_avg']}%\n")
+        f.write(f"  IoU threshold:          {metrics['nms']['iou_threshold']}\n")
+        f.write(f"  Confidence threshold:   {metrics['nms']['confidence_threshold']}\n")
     f.write("\n--- End of Summary ---\n")
 
 print(f"Generated: boundary_events.json ({len(boundary_events)} events)")
 print(f"Generated: track_trajectories.json ({len(tracks)} tracks)")
 print(f"Generated: pipeline_metrics.json ({len(fps_samples)} FPS samples)")
+print(f"Generated: nms_stats.json ({len(nms_samples)} NMS samples)")
 print(f"Generated: pipeline_report.json")
 print(f"Generated: user_notifications.txt")
 print(f"Generated: frt_session_summary.txt")
@@ -396,7 +462,7 @@ trap 'cleanup $?' EXIT INT TERM
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════════════════╗"
-echo "║        FRTApp — FULL TEST: Camera → MOG2 → YOLO → ByteTrack       ║"
+echo "║     FRTApp — FULL TEST: Camera → MOG2 → YOLO(NMS) → ByteTrack     ║"
 echo "║        Boundary CHECK_IN / CHECK_OUT auto-detect                   ║"
 echo "╚══════════════════════════════════════════════════════════════════════╝"
 echo ""
@@ -408,7 +474,7 @@ echo "  Mode:         $MODE"
 if [[ "$MODE" == "scenario" ]]; then
     echo "  Scenario:     $SCENARIO"
 elif [[ "$MODE" == "auto" ]]; then
-    echo "  Pipeline:     Camera → MOG2 → YOLO → ByteTrack → Boundary"
+    echo "  Pipeline:     Camera → MOG2 → YOLO(NMS) → ByteTrack → Boundary"
 fi
 echo "  Synthetic:    $SYNTHETIC"
 echo "  Confidence:   $CONFIDENCE"
@@ -578,7 +644,7 @@ if [[ "$MODE" == "auto" ]]; then
 
     echo ""
     echo "  ╔══════════════════════════════════════════════════════════════════╗"
-    echo "  ║  FRTApp AUTO-DETECT MODE                                       ║"
+    echo "  ║  FRTApp AUTO-DETECT MODE (with NMS post-processing)            ║"
     echo "  ║  Door sensor is BYPASSED — pipeline starts immediately.        ║"
     echo "  ║  Virtual boundary line divides the frame (default: middle).     ║"
     echo "  ║    • Top  → Bottom crossing = CHECK_IN  (object enters)        ║"
@@ -768,6 +834,12 @@ fi
 if [[ "$MODE" == "auto" ]] && [[ -f "$SESSION_DIR/full_log.txt" ]]; then
     FPS_VALS=$(grep "Pipeline Metrics" "$SESSION_DIR/full_log.txt" | tail -3 | sed 's/.*FPS: //;s/ .*//' | tr '\n' ' ')
     echo "  Pipeline FPS samples: $FPS_VALS"
+    echo ""
+    NMS_COUNT=$(grep -c "NMS:" "$SESSION_DIR/full_log.txt" 2>/dev/null || echo "0")
+    NMS_BEFORE=$(grep "NMS:" "$SESSION_DIR/full_log.txt" | head -1 | sed 's/.*before=//;s/ .*//' 2>/dev/null || echo "?")
+    NMS_AFTER=$(grep "NMS:" "$SESSION_DIR/full_log.txt" | head -1 | sed 's/.*after=//;s/ .*//' 2>/dev/null || echo "?")
+    echo "  NMS inferences:  $NMS_COUNT"
+    echo "  NMS suppression: $NMS_BEFORE → $NMS_AFTER boxes (first frame)"
     echo ""
 fi
 
