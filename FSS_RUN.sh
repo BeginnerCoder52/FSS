@@ -42,6 +42,18 @@ LOG_DIR="${FSS_LOG_DIR:-/var/log/fss}"
 PID_DIR="/tmp/fss"
 MONITOR=true
 SELECTED_DAEMONS=""
+MAX_RETRIES=5
+
+declare -A DAEMON_RETRIES
+DAEMON_RETRIES=(
+    ["sensor"]=0
+    ["db"]=0
+    ["camera"]=0
+    ["ai"]=0
+    ["recipe"]=0
+    ["recommend"]=0
+    ["magicmirror"]=0
+)
 
 # ==============================================================================
 # Daemon registry: defines all daemons with their metadata
@@ -219,15 +231,22 @@ start_daemon() {
     "$check" "$key" || return 1
 
     if [[ "$key" == "magicmirror" ]]; then
+        # Fix PM2 version mismatch and clean old instances
+        pm2 update 2>/dev/null || true
+        pm2 delete MagicMirror 2>/dev/null || true
+        sleep 1
         cd "${FSS_ROOT}/electron_app/magicmirror"
         pm2 start npm --name "MagicMirror" -- run start >> "$log" 2>&1
         cd "${FSS_ROOT}"
         sleep 3
+        local raw_pid
+        raw_pid=$(pm2 pid MagicMirror 2>/dev/null | tail -1 || echo "")
         local pid
-        pid=$(pm2 pid MagicMirror 2>/dev/null || echo "")
+        pid=$(echo "$raw_pid" | grep -oE '[0-9]+' | head -1 || echo "")
         if [[ -n "$pid" && "$pid" != "0" ]]; then
             fss_log_ok "${name} started via PM2 (PID: ${pid})"
             echo "$pid" > "$pidfile"
+            DAEMON_RETRIES["$key"]=0
             return 0
         fi
         fss_log_error "${name} failed to start via PM2. Check ${log}"
@@ -341,9 +360,15 @@ monitor_daemons() {
             local name="${DAEMON_NAMES[$key]}"
             if [[ -f "$pidfile" ]]; then
                 local pid
-                pid=$(cat "$pidfile")
+                pid=$(cat "$pidfile" | head -1)
                 if ! kill -0 "$pid" 2>/dev/null; then
-                    fss_log_warn "${name} died. Restarting..."
+                    local retries=${DAEMON_RETRIES["$key"]}
+                    if [[ "$retries" -ge "$MAX_RETRIES" ]]; then
+                        fss_log_error "${name} has failed ${MAX_RETRIES} times. Giving up."
+                        continue
+                    fi
+                    DAEMON_RETRIES["$key"]=$((retries + 1))
+                    fss_log_warn "${name} died. Restarting (attempt $((retries + 1))/${MAX_RETRIES})..."
                     start_daemon "$key" || fss_log_error "Failed to restart ${name}"
                 fi
             fi
