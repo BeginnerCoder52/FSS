@@ -1,0 +1,8 @@
+FRTApp Session — Actionable Notifications
+=============================================
+
+⚠ No boundary crossings detected.
+  Suggestion: Wave an object vertically across the frame middle.
+
+
+--- End of Notifications ---
