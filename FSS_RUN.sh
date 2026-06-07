@@ -67,12 +67,12 @@ DAEMON_NAMES=(
 
 declare -A DAEMON_CMDS
 DAEMON_CMDS=(
-    ["sensor"]="sudo '${FSS_SENSOR_EXEC}'"
-    ["db"]="sudo '${FSS_VENV_DB_DAEMON}/bin/python' '${FSS_ROOT}/db_daemon/src/main.py'"
-    ["camera"]="sudo '${FSS_CAMERA_EXEC}'"
-    ["ai"]="sudo '${FSS_VENV_FRT_AI}/bin/python' '${FSS_ROOT}/frt_app/py_ai_core/src/main.py' --use-c-backend"
-    ["recipe"]="sudo '${FSS_VENV_RECIPE_EXTRACTOR}/bin/python' '${FSS_ROOT}/recipe_extractor/src/recipe_extractor_main.py'"
-    ["recommend"]="sudo '${FSS_VENV_RECOMMEND_DAEMON}/bin/python' '${FSS_ROOT}/recommend_daemon/src/main.py'"
+    ["sensor"]="sudo ${FSS_SENSOR_EXEC}"
+    ["db"]="sudo ${FSS_VENV_DB_DAEMON}/bin/python ${FSS_ROOT}/db_daemon/src/main.py"
+    ["camera"]="sudo ${FSS_CAMERA_EXEC}"
+    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend"
+    ["recipe"]="sudo ${FSS_VENV_RECIPE_EXTRACTOR}/bin/python ${FSS_ROOT}/recipe_extractor/src/recipe_extractor_main.py"
+    ["recommend"]="sudo ${FSS_VENV_RECOMMEND_DAEMON}/bin/python ${FSS_ROOT}/recommend_daemon/src/main.py"
 )
 
 declare -A DAEMON_LOGS
@@ -148,7 +148,7 @@ check_file_exec() {
     local key="$1"
     local cmd="${DAEMON_CMDS[$key]}"
     local exec_path
-    exec_path=$(echo "$cmd" | awk -F"'" '{print $2}')
+    exec_path=$(echo "$cmd" | awk '{print $2}')
     if [[ ! -x "$exec_path" ]]; then
         fss_log_error "${DAEMON_NAMES[$key]} not found at $exec_path. Run FSS_SETUP.sh first."
         return 1
@@ -160,7 +160,7 @@ check_venv() {
     local key="$1"
     local cmd="${DAEMON_CMDS[$key]}"
     local python_path
-    python_path=$(echo "$cmd" | awk -F"'" '{print $2}')
+    python_path=$(echo "$cmd" | awk '{print $2}')
     if [[ ! -f "$python_path" ]]; then
         fss_log_error "Virtual env for ${DAEMON_NAMES[$key]} not found. Run FSS_SETUP.sh first."
         return 1
