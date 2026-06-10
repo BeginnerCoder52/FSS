@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Bridge: listen for RECIPE_SEARCH, call RecipeExtractor D-Bus, relay results."""
-import sys, json, asyncio, uuid, os, time, logging, traceback
+"""Bridge: listen for RECIPE_SEARCH, call RecommendDaemon.GenerateShoppingList D-Bus, relay results."""
+import sys, json, uuid, os, time, logging
 
 proxy = None
 
@@ -28,48 +28,18 @@ try:
         return {}
 
     dbus_config = get_dbus_config()
-    RECIPE_EXTRACTOR_SERVICE = dbus_config.get("recipe_extractor_service", "vn.edu.uit.FSS.RecipeExtractor")
-    RECIPE_EXTRACTOR_INTERFACE = dbus_config.get("recipe_extractor_interface", "vn.edu.uit.FSS.RecipeExtractor")
-    RECIPE_EXTRACTOR_PATH = dbus_config.get("recipe_extractor_path", "/vn/edu/uit/FSS/RecipeExtractor")
+    RECOMMEND_SERVICE = dbus_config.get("recommend_daemon_service", "vn.edu.uit.FSS.RecommendDaemon")
+    RECOMMEND_INTERFACE = dbus_config.get("recommend_daemon_interface", "vn.edu.uit.FSS.RecommendDaemon")
+    RECOMMEND_PATH = dbus_config.get("recommend_daemon_path", "/vn/edu/uit/FSS/RecommendDaemon")
 
-    class RecipeExtractorInterface(DbusInterfaceCommon, interface_name=RECIPE_EXTRACTOR_INTERFACE):
-        @dbus_method('s', 's')
-        def ExtractAndPersistRecipe(self, recipe_name: str) -> str:
+    class RecommendDaemonInterface(DbusInterfaceCommon, interface_name=RECOMMEND_INTERFACE):
+        @dbus_method('ss', 's')
+        def GenerateShoppingList(self, recipe_name: str, batch_id: str) -> str:
             pass
 
-    proxy = RecipeExtractorInterface.new_proxy(RECIPE_EXTRACTOR_SERVICE, RECIPE_EXTRACTOR_PATH)
+    proxy = RecommendDaemonInterface.new_proxy(RECOMMEND_SERVICE, RECOMMEND_PATH)
 except Exception as e:
     print(f"Warning: D-Bus not available ({e}). Running in MOCK mode.", file=sys.stderr)
-
-
-def transform_ingredients(result: dict) -> dict:
-    """Transform RecipeExtractor format to frontend format.
-
-    RecipeExtractor returns:
-        {ingredient: "...", quantity: "500g"}
-
-    Frontend expects:
-        {name: "...", required: "500g", available: 0, status: "missing"}
-    """
-    raw_ingredients = result.get("ingredients", [])
-    transformed = []
-    for item in raw_ingredients:
-        transformed.append({
-            "name": item.get("ingredient", ""),
-            "required": item.get("quantity", "1"),
-            "available": 0,
-            "status": "missing"
-        })
-
-    return {
-        "recipe_name": result.get("dish", ""),
-        "ingredients": transformed,
-        "total_items": len(transformed),
-        "available_count": 0,
-        "needed_count": 0,
-        "missing_count": len(transformed),
-        "summary": f"Cần mua thêm {len(transformed)} nguyên liệu" if transformed else "Đã có đủ nguyên liệu!"
-    }
 
 
 for line in sys.stdin:
@@ -80,27 +50,32 @@ for line in sys.stdin:
         if msg.get("type") == "SEARCH":
             recipe = msg["recipe"]
             if recipe.lower() in ["test", "dev"]:
-                # Mock Mode logic
                 mock_data = {
-                    "dish": recipe,
+                    "status": "SUCCESS",
+                    "recipe_name": recipe,
+                    "batch_id": "mock-batch-id",
+                    "total_items": 3,
+                    "available_count": 0,
+                    "needed_count": 0,
+                    "missing_count": 3,
                     "ingredients": [
-                        {"ingredient": "Gạo", "quantity": "1"},
-                        {"ingredient": "Mắm", "quantity": "1"},
-                        {"ingredient": "Thịt", "quantity": "2"}
-                    ]
+                        {"name": "Gạo", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
+                        {"name": "Mắm", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
+                        {"name": "Thịt", "required": "2", "available": 0, "shortage": 2, "status": "missing"},
+                    ],
+                    "summary": "\u274c Còn thiếu 3 nguyên liệu"
                 }
                 time.sleep(1.5)
-                result = transform_ingredients(mock_data)
-                print(json.dumps({"type": "RESULT", "data": result}), flush=True)
+                print(json.dumps({"type": "RESULT", "data": mock_data}), flush=True)
             else:
                 if proxy is None:
                     raise Exception("D-Bus proxy is not initialized. Cannot process production request.")
-                raw_result = proxy.ExtractAndPersistRecipe(recipe)
+                batch_id = str(uuid.uuid4())
+                raw_result = proxy.GenerateShoppingList(recipe, batch_id)
                 parsed = json.loads(raw_result)
                 if parsed.get("status") == "ERROR":
                     print(json.dumps({"type": "ERROR", "message": parsed.get("error", "Unknown error")}), flush=True)
                 else:
-                    result = transform_ingredients(parsed)
-                    print(json.dumps({"type": "RESULT", "data": result}), flush=True)
+                    print(json.dumps({"type": "RESULT", "data": parsed}), flush=True)
     except Exception as e:
         print(json.dumps({"type": "ERROR", "message": str(e)}), flush=True)
