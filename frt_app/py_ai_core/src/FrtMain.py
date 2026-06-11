@@ -36,6 +36,7 @@ import threading
 from enum import Enum
 from typing import Optional, Callable
 from loguru import logger
+import cv2
 
 # Import all required modules
 from ShmReader import ShmReader
@@ -120,12 +121,14 @@ class FrtMain:
     # ========================================================================
     DEFAULT_LOOP_INTERVAL_MS = 33      # ~30 FPS target frame rate
     MAX_RECOVERY_ATTEMPTS = 3          # Maximum crash recovery attempts
+    CAMERA_IDLE_TIMEOUT = 5.0          # Auto shut down camera after 5s idle (safety fallback)
     MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
     def __init__(self, bypass_door_sensor: bool = True,
                  confidence_threshold: float = 0.85,
-                 boundary_ratio: float = 0.66):
+                 boundary_ratio: float = 0.66,
+                 debug_mode: bool = True):
         """
         Initialize FrtMain application controller.
 
@@ -171,10 +174,14 @@ class FrtMain:
         # Food class name lookup (from class.yaml or built-in defaults)
         self.class_names: dict = _load_class_labels()
 
+        # Debug mode — detailed per-frame metrics logging
+        self.debug_mode: bool = debug_mode
+
         # State management
         self.recovery_count: int = 0
         self.frame_count: int = 0
         self._inference_thread: Optional[threading.Thread] = None
+        self._last_active_time: float = 0.0
 
         logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
             self.current_state, self.bypass_door_sensor, self.confidence_threshold))
@@ -257,6 +264,7 @@ class FrtMain:
 
         if self.bypass_door_sensor:
             self.current_state = AppState.TRACKING.value
+            self._last_active_time = time.time()
             logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
             logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={})".format(
                 int(480 * self.boundary_ratio)))
@@ -328,6 +336,13 @@ class FrtMain:
 
         frame_count = 0
         fps_start_time = time.time()
+        metrics_buf = []
+
+        # Debug header
+        if self.debug_mode:
+            logger.debug("=" * 120)
+            logger.debug("        FRAME | STATE |   CAPTURE |  MOTION |  PREPROC |  INFER | NMS | TRACK |  TOTAL | LOOP FPS | DET|TRK| CLS_BREAKDOWN")
+            logger.debug("-" * 120)
 
         while self.is_running:
             try:
@@ -337,36 +352,41 @@ class FrtMain:
                     time.sleep(0.1)
                     continue
 
-                # Capture frame
+                if self.current_state == AppState.TRACKING.value:
+                    idle_time = time.time() - self._last_active_time
+                    if idle_time > self.CAMERA_IDLE_TIMEOUT:
+                        logger.info("State: TRACKING → IDLE (idle timeout {:.1f}s > {}s)".format(
+                            idle_time, self.CAMERA_IDLE_TIMEOUT))
+                        self._shutdown_camera_and_tracking()
+                        continue
+
+                # ====================================================================
+                # CAPTURE FRAME
+                # ====================================================================
+                capture_start = time.time()
                 frame = None
                 if self.shm_reader and self.shm_reader.is_ready():
                     frame = self.shm_reader.read_frame()
                 
-                # Fallback to direct USB camera if SHM is not available
                 if frame is None and self.camera_driver and self.camera_driver.is_camera_open:
                     frame = self.camera_driver.read_frame()
                 elif frame is None and self.camera_driver and not self.camera_driver.is_camera_open:
                     self.camera_driver.open_camera_stream()
                     frame = self.camera_driver.read_frame()
                     
+                capture_time = (time.time() - capture_start) * 1000
+
                 if frame is None:
+                    if self.debug_mode and frame_count % 30 == 0:
+                        logger.debug("Frame #{} capture returned None — waiting for camera".format(frame_count))
                     time.sleep(0.033)
                     continue
 
-                # Print user instructions once at frame 5 (auto-detect mode)
-                if frame_count == 5 and self.bypass_door_sensor:
-                    logger.info("=" * 60)
-                    logger.info("FRTApp AUTO-DETECT MODE (door sensor bypassed)")
-                    logger.info("Default boundary at y={} (horizontal)".format(
-                        self.tracker.line_detector.boundary_line.get('pos', '?')))
-                    logger.info("  CHECK_IN  = object moves top → bottom (enter fridge)")
-                    logger.info("  CHECK_OUT = object moves bottom → top (leave fridge)")
-                    logger.info("Wave a hand or object past the camera to test!")
-                    logger.info("=" * 60)
-                    
-                # ============================================================
-                # Phase 1: Auto-Calibration (Run OpenCV only, yield CPU)
-                # ============================================================
+                frame_count += 1
+
+                # ====================================================================
+                # AUTO-CALIBRATION PHASE
+                # ====================================================================
                 if self.current_state == AppState.AUTO_CALIBRATION.value:
                     if self.virtual_line_detector is not None:
                         line_info = self.virtual_line_detector.detect_virtual_line(frame)
@@ -374,90 +394,123 @@ class FrtMain:
                             self.tracker.line_detector.set_virtual_line(line_info)
                             self.virtual_line_ready = True
                             self.current_state = AppState.TRACKING.value
-                            logger.info("Auto-Calibration complete. Virtual Line saved. Transitioning to TRACKING state.")
-                            logger.info(">>> notify start tracking: ByteTrack activated (virtual line at {})".format(
+                            self._last_active_time = time.time()
+                            logger.info("State: AUTO_CALIBRATION → TRACKING (line found at pos={})".format(
                                 line_info.get('pos', '?')))
                             continue
                         else:
                             self.frames_without_line += 1
                             if self.frames_without_line > 5:
-                                logger.warning("Auto-Calibration timeout after 5 frames, using default. Transitioning to TRACKING state.")
+                                logger.warning("State: AUTO_CALIBRATION → TRACKING (timeout after {} frames, using default)".format(self.frames_without_line))
                                 self.virtual_line_ready = True
                                 self.current_state = AppState.TRACKING.value
-                                logger.info(">>> notify start tracking: ByteTrack activated (default boundary)")
+                                self._last_active_time = time.time()
                                 continue
                             else:
+                                if self.debug_mode:
+                                    logger.debug("Calib frame #{} — no line detected ({}/5)".format(frame_count, self.frames_without_line))
                                 time.sleep(0.01)
                                 continue
+                    else:
+                        self.current_state = AppState.TRACKING.value
+                        self._last_active_time = time.time()
+                        logger.info("State: AUTO_CALIBRATION → TRACKING (no detector)")
+                        continue
 
-                # ============================================================
-                # Phase 2: AI Vision Core (MOG2 + YOLO + ByteTrack + Boundary)
-                # ============================================================
-                # Motion detection
+                # ====================================================================
+                # AI VISION CORE (MOG2 → YOLO → ByteTrack → Boundary)
+                # ====================================================================
+
+                # --- Motion Detection ---
+                motion_start = time.time()
                 motion_mask = self.motion_detector.apply_background_subtraction(frame)
-                if not self.motion_detector.is_motion_detected(motion_mask):
+                motion_pixels = int(cv2.countNonZero(motion_mask)) if motion_mask is not None else 0
+                motion_time = (time.time() - motion_start) * 1000
+                motion_detected = self.motion_detector.is_motion_detected(motion_mask)
+
+                if self.debug_mode:
+                    logger.debug("Frame #{} | MOTION | mask_px={:>6d} | motion={} | {}ms".format(
+                        frame_count, motion_pixels, motion_detected, "{:.2f}".format(motion_time)))
+
+                if not motion_detected:
                     continue
 
-                # Preprocess
+                self._last_active_time = time.time()
+
+                # --- Preprocessing ---
+                pre_start = time.time()
                 tensor_input = self.preprocessor.prepare_tensor_input(frame)
+                pre_time = (time.time() - pre_start) * 1000
+
                 if tensor_input is None:
+                    if self.debug_mode:
+                        logger.debug("Frame #{} preprocessor returned None — skipping".format(frame_count))
                     continue
 
-                # Inference
+                # --- Inference ---
+                infer_start = time.time()
                 self.ai_engine.set_input_tensor(tensor_input)
                 self.ai_engine.invoke_inference()
                 detections = self.ai_engine.get_output_boxes()
+                infer_time = (time.time() - infer_start) * 1000
 
-                # Tracking (ByteTrack: Kalman + 2-stage + line crossing)
+                # Detection breakdown by class
+                class_counts = {}
+                for d in detections:
+                    cid = d["class_id"]
+                    class_counts[cid] = class_counts.get(cid, 0) + 1
+                class_breakdown = ", ".join(
+                    "{}:{}".format(self._get_food_name(cid), cnt)
+                    for cid, cnt in sorted(class_counts.items())
+                ) if class_counts else "none"
+
+                # --- Tracking (ByteTrack) ---
+                track_start = time.time()
                 tracked = self.tracker.update(detections)
+                track_time = (time.time() - track_start) * 1000
 
-                # Log boundary crossing events for user notification
+                # --- Boundary Crossing Events ---
                 changes = self.tracker.get_quantity_change()
                 for cid, delta in changes.items():
                     event_type = "CHECK_IN" if delta > 0 else "CHECK_OUT"
                     food_name = self._get_food_name(cid)
                     abs_delta = abs(delta)
-                    if delta > 0:
-                        logger.info(">>> ✅ CHECK_IN: {} x {} has been added to inventory".format(
-                            abs_delta, food_name))
-                    else:
-                        logger.info(">>> ✅ CHECK_OUT: {} x {} has been removed from inventory".format(
-                            abs_delta, food_name))
-                    logger.info(">>> real detected checkout: {} {} (class_id={}, delta={:+d})".format(
-                        abs_delta, food_name, cid, delta))
+                    logger.info(">>> {}: {} x {} (class_id={})".format(
+                        event_type, abs_delta, food_name, cid))
                     if self._boundary_event_callback:
                         self._boundary_event_callback({"event_type": event_type, "class_id": cid, "delta": delta})
 
-                # Publish
-                if self.dbus_interface and tracked:
-                    self.dbus_interface.publish_tracking_results({
-                        "food_items": tracked,
-                        "timestamp": time.time(),
-                        "frame_id": frame_count,
-                        "boundary_events": [{
-                            "track_id": t.get('track_id'),
-                            "class_id": t.get('class_id'),
-                            "score": t.get('confidence'),
-                        } for t in tracked],
-                    })
+                # --- Per-frame timing totals ---
+                total_time = (time.time() - loop_start) * 1000
+                loop_fps = 1000.0 / total_time if total_time > 0 else 0
 
-                # Write preview frame for LivePreview UI (every 3rd frame)
+                # --- Debug log line (compact real-time metrics) ---
+                if self.debug_mode:
+                    state_str = self.current_state[:7]
+                    det_count = len(detections)
+                    trk_count = len(tracked) if isinstance(tracked, list) else (len(tracked.get("tracks", [])) if isinstance(tracked, dict) else 0)
+                    logger.debug("Frame #{:<6d} | {:<7s} | {:>7.1f} | {:>7.1f} | {:>8.1f} | {:>7.1f} | {:>3d} | {:>6.1f} | {:>7.1f} | {:>7.2f} | {:>3d}|{:>3d}| {}".format(
+                        frame_count, state_str, capture_time, motion_time, pre_time, infer_time,
+                        len(detections), track_time, total_time, loop_fps,
+                        det_count, trk_count, class_breakdown))
+
+                # --- Write preview frame for LivePreview UI (every 3rd frame) ---
                 if frame_count % 3 == 0:
                     try:
-                        import cv2
                         preview_path = "/opt/fss/latest_preview.jpg"
                         cv2.imwrite(preview_path, frame,
                                     [cv2.IMWRITE_JPEG_QUALITY, 70])
                     except Exception:
                         pass
 
-                frame_count += 1
+                # --- FPS metrics every second ---
                 elapsed = time.time() - fps_start_time
                 if elapsed >= 1.0:
                     self.log_pipeline_metrics(frame_count / elapsed, 0.0)
                     frame_count = 0
                     fps_start_time = time.time()
 
+                # --- Loop rate control ---
                 loop_time = (time.time() - loop_start) * 1000
                 sleep_time = max(0, self.loop_interval_ms - loop_time) / 1000.0
                 if sleep_time > 0:
@@ -468,6 +521,18 @@ class FrtMain:
                 if not self.recover_from_crash():
                     self.is_running = False
                     self.current_state = AppState.ERROR.value
+
+    def _shutdown_camera_and_tracking(self) -> None:
+        if self.current_state != AppState.TRACKING.value:
+            return
+        logger.info("Camera idle timeout — releasing camera and resetting tracker")
+        self.current_state = AppState.IDLE.value
+        if self.motion_detector:
+            self.motion_detector.reset_background_model()
+        if self.camera_driver:
+            self.camera_driver.release_camera()
+        if self.dbus_interface:
+            self.dbus_interface.emit_camera_state("OFF")
 
     def on_distance_event_received(self, distance_cm: float) -> None:
         """
@@ -486,6 +551,7 @@ class FrtMain:
         logger.info("Door event received: {}".format(door_state))
 
         if door_state.upper() == "OPEN":
+            prev_state = self.current_state
             can_track = False
             if not self.distance_sensor_enabled:
                 can_track = True
@@ -493,12 +559,17 @@ class FrtMain:
                 can_track = True
 
             if can_track and self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
-                logger.info("Transitioning to AUTO_CALIBRATION state")
+                logger.info("State: {} → AUTO_CALIBRATION (door OPEN)".format(prev_state))
                 self.current_state = AppState.AUTO_CALIBRATION.value
+                self._last_active_time = time.time()
                 if self.tracker:
                     self.tracker.reset()
                 self.virtual_line_ready = False
                 self.frames_without_line = 0
+                if self.debug_mode:
+                    logger.debug("Door OPEN → camera ON, distance={}cm, threshold={}cm".format(
+                        self.last_distance_cm if self.last_distance_cm is not None else "N/A",
+                        self.distance_threshold_cm))
                 
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("ON")
@@ -506,8 +577,9 @@ class FrtMain:
                     self.camera_driver.open_camera_stream()
 
         elif door_state.upper() == "CLOSED":
+            prev_state = self.current_state
             if self.current_state == AppState.TRACKING.value:
-                logger.info("Transitioning to IDLE state")
+                logger.info("State: {} → IDLE (door CLOSED)".format(prev_state))
                 self.current_state = AppState.IDLE.value
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("OFF")
@@ -515,17 +587,21 @@ class FrtMain:
                 if self.tracker and self.dbus_interface:
                     changes = self.tracker.get_quantity_change()
                     if changes:
+                        logger.info("Publishing {} boundary events to DBDaemon".format(len(changes)))
                         self.dbus_interface.publish_tracking_results({
                             "food_items": [{"id": k, "qty": v} for k, v in changes.items()],
                             "timestamp": time.time(),
                             "event": "door_closed"
                         })
+                    else:
+                        logger.info("No boundary events to publish — no items crossed the line")
 
                 if self.motion_detector:
                     self.motion_detector.reset_background_model()
 
                 if self.camera_driver:
                     self.camera_driver.release_camera()
+                    logger.debug("Camera released")
 
         else:
             logger.warning("Unknown door state: {}".format(door_state))

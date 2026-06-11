@@ -1,6 +1,13 @@
 #include "TfliteReader.h"
 #include "tensorflow/lite/c/c_api.h"
 
+#if __has_include("tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h")
+#include "tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h"
+#define HAS_XNNPACK 1
+#else
+#define HAS_XNNPACK 0
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,11 +18,20 @@ struct TfliteReader {
     TfLiteInterpreter* interpreter;
     ModelPrecision precision;
     float* output_buffer;
+    int output_buffer_capacity;
     int output_size;
 };
 
 static void log_error(const char* msg) {
     fprintf(stderr, "TfliteReader: %s\n", msg);
+}
+
+int tflite_reader_is_xnnpack_available(void) {
+#if HAS_XNNPACK
+    return 1;
+#else
+    return 0;
+#endif
 }
 
 TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precision) {
@@ -32,6 +48,7 @@ TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precis
 
     reader->precision = precision;
     reader->output_buffer = NULL;
+    reader->output_buffer_capacity = 0;
     reader->output_size = 0;
 
     reader->model = TfLiteModelCreateFromFile(model_path);
@@ -49,7 +66,16 @@ TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precis
         return NULL;
     }
 
-    TfLiteInterpreterOptionsSetNumThreads(reader->options, 2);
+    TfLiteInterpreterOptionsSetNumThreads(reader->options, 4);
+
+#if HAS_XNNPACK
+    TfLiteXNNPackDelegateOptions xnnpack_opts = TfLiteXNNPackDelegateOptionsDefault();
+    xnnpack_opts.num_threads = 4;
+    TfLiteDelegate* xnnpack_delegate = TfLiteXNNPackDelegateCreate(&xnnpack_opts);
+    if (xnnpack_delegate) {
+        TfLiteInterpreterOptionsAddDelegate(reader->options, xnnpack_delegate);
+    }
+#endif
 
     reader->interpreter = TfLiteInterpreterCreate(reader->model, reader->options);
     if (!reader->interpreter) {
@@ -67,6 +93,21 @@ TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precis
     }
 
     return reader;
+}
+
+static int ensure_output_capacity(TfliteReader* reader, int num_floats) {
+    if (num_floats <= reader->output_buffer_capacity) {
+        return 0;
+    }
+    float* new_buf = (float*)realloc(reader->output_buffer,
+                                      (size_t)num_floats * sizeof(float));
+    if (!new_buf) {
+        log_error("failed to realloc output buffer");
+        return -1;
+    }
+    reader->output_buffer = new_buf;
+    reader->output_buffer_capacity = num_floats;
+    return 0;
 }
 
 int tflite_reader_get_input_dims(TfliteReader* reader, int* dims_out, int max_dims) {
@@ -163,21 +204,41 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
     size_t output_byte_size = (size_t)TfLiteTensorByteSize(output_tensor);
     TfLiteType output_type = TfLiteTensorType(output_tensor);
 
-    if (reader->output_buffer) {
-        free(reader->output_buffer);
-        reader->output_buffer = NULL;
-    }
-
     if (output_type == kTfLiteFloat32) {
         int num_floats = (int)(output_byte_size / sizeof(float));
-        reader->output_buffer = (float*)malloc(output_byte_size);
-        if (!reader->output_buffer) {
-            log_error("failed to allocate output buffer");
+        if (ensure_output_capacity(reader, num_floats) != 0) {
             return -1;
         }
         TfLiteTensorCopyToBuffer(output_tensor, reader->output_buffer, output_byte_size);
         reader->output_size = num_floats;
-    } else if (output_type == kTfLiteInt8 || output_type == kTfLiteUInt8) {
+
+    } else if (output_type == kTfLiteInt8) {
+        TfLiteQuantizationParams quant_params = TfLiteTensorQuantizationParams(output_tensor);
+        float scale = quant_params.scale;
+        int zero_point = quant_params.zero_point;
+
+        int num_elements = (int)(output_byte_size / sizeof(int8_t));
+        int8_t* quantized = (int8_t*)malloc(output_byte_size);
+        if (!quantized) {
+            log_error("failed to allocate int8 quantized buffer");
+            return -1;
+        }
+
+        TfLiteTensorCopyToBuffer(output_tensor, quantized, output_byte_size);
+
+        if (ensure_output_capacity(reader, num_elements) != 0) {
+            free(quantized);
+            return -1;
+        }
+
+        for (int i = 0; i < num_elements; i++) {
+            reader->output_buffer[i] = ((float)quantized[i] - (float)zero_point) * scale;
+        }
+
+        free(quantized);
+        reader->output_size = num_elements;
+
+    } else if (output_type == kTfLiteUInt8) {
         TfLiteQuantizationParams quant_params = TfLiteTensorQuantizationParams(output_tensor);
         float scale = quant_params.scale;
         int zero_point = quant_params.zero_point;
@@ -185,25 +246,24 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
         int num_elements = (int)(output_byte_size / sizeof(uint8_t));
         uint8_t* quantized = (uint8_t*)malloc(output_byte_size);
         if (!quantized) {
-            log_error("failed to allocate quantized buffer");
+            log_error("failed to allocate uint8 quantized buffer");
             return -1;
         }
 
         TfLiteTensorCopyToBuffer(output_tensor, quantized, output_byte_size);
 
-        reader->output_buffer = (float*)malloc((size_t)num_elements * sizeof(float));
-        if (!reader->output_buffer) {
-            log_error("failed to allocate dequantized buffer");
+        if (ensure_output_capacity(reader, num_elements) != 0) {
             free(quantized);
             return -1;
         }
 
         for (int i = 0; i < num_elements; i++) {
-            reader->output_buffer[i] = (float)((int)quantized[i] - zero_point) * scale;
+            reader->output_buffer[i] = ((float)quantized[i] - (float)zero_point) * scale;
         }
 
         free(quantized);
         reader->output_size = num_elements;
+
     } else if (output_type == kTfLiteInt16) {
         int num_elements = (int)(output_byte_size / sizeof(int16_t));
         int16_t* int16_buf = (int16_t*)malloc(output_byte_size);
@@ -216,9 +276,7 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
 
         float scale = TfLiteTensorQuantizationParams(output_tensor).scale;
 
-        reader->output_buffer = (float*)malloc((size_t)num_elements * sizeof(float));
-        if (!reader->output_buffer) {
-            log_error("failed to allocate fp32 buffer for int16");
+        if (ensure_output_capacity(reader, num_elements) != 0) {
             free(int16_buf);
             return -1;
         }
@@ -229,6 +287,7 @@ int tflite_reader_run_inference(TfliteReader* reader, const void* input_data, si
 
         free(int16_buf);
         reader->output_size = num_elements;
+
     } else {
         log_error("unsupported output tensor type");
         return -1;

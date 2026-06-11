@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_comprehensive_frt.py — Comprehensive Real-Hardware FRT App Test
+[FRT-MAIN]-test_comprehensive_frt.py — PRIMARY FRT Pipeline Test (most important)
 ====================================================================
 
 Purpose:
@@ -16,14 +16,17 @@ Purpose:
     Every algorithm stage is timed and validated for correctness.
 
 Usage:
-    # Real hardware (default)
-    python test_comprehensive_frt.py
+    # Real hardware, door bypassed (default)
+    python "[FRT-MAIN]-test_comprehensive_frt.py"
 
     # Synthetic fallback (no camera/model)
-    python test_comprehensive_frt.py --synthetic
+    python "[FRT-MAIN]-test_comprehensive_frt.py" --synthetic
+
+    # Real door sensor required via D-Bus
+    python "[FRT-MAIN]-test_comprehensive_frt.py" --no-bypass-door
 
     # Debug mode with verbose logging
-    python test_comprehensive_frt.py --debug
+    python "[FRT-MAIN]-test_comprehensive_frt.py" --debug
 
 Exit Codes:
     0 — All critical tests pass
@@ -72,12 +75,14 @@ def setup_logging(output_dir: str, debug: bool = False):
 
 class ComprehensiveFrtTest:
     def __init__(self, camera: str, model: str, output_dir: str,
-                 synthetic: bool = False, debug: bool = False):
+                 synthetic: bool = False, debug: bool = False,
+                 bypass_door: bool = True):
         self.camera_device = camera
         self.model_path = model
         self.output_dir = Path(output_dir)
         self.synthetic = synthetic
         self.debug = debug
+        self.bypass_door = bypass_door
         self.logger = setup_logging(output_dir, debug)
         self.results = {"passed": 0, "failed": 0, "skipped": 0}
         self.metrics: Dict = {}
@@ -488,6 +493,8 @@ class ComprehensiveFrtTest:
         self._section("TEST 6 — YoloPipeline: Full Pipeline Integration")
         from YoloPipeline import YoloPipeline, SharedMemoryReader
 
+        if self.bypass_door:
+            self.logger.info("  Door sensor bypassed — no D-Bus subscription needed")
         pipeline = YoloPipeline(model_path=self.model_path, use_shared_memory=False)
         result, t = self._benchmark(pipeline.init_pipeline)
         if result:
@@ -647,6 +654,7 @@ class ComprehensiveFrtTest:
         self.logger.info("  Camera: {}", self.camera_device)
         self.logger.info("  Model:  {}", self.model_path)
         self.logger.info("  Mode:   {}", "REAL HARDWARE" if not self.synthetic else "SYNTHETIC")
+        self.logger.info("  Door:   {}", "BYPASSED (assume camera ON)" if self.bypass_door else "READ from D-Bus")
         self.logger.info("  Output: {}", self.output_dir)
 
         self.test_camera_driver()
@@ -673,6 +681,10 @@ def main():
                         help="Use synthetic data (no hardware required)")
     parser.add_argument("--debug", action="store_true",
                         help="Enable debug logging")
+    parser.add_argument("--bypass-door", action="store_true", default=True,
+                        help="Bypass door sensor, assume camera ON (default: True)")
+    parser.add_argument("--no-bypass-door", action="store_false", dest="bypass_door",
+                        help="Require real door sensor via D-Bus")
     args = parser.parse_args()
 
     tester = ComprehensiveFrtTest(
@@ -680,7 +692,8 @@ def main():
         model=args.model,
         output_dir=args.output_dir,
         synthetic=args.synthetic,
-        debug=args.debug)
+        debug=args.debug,
+        bypass_door=args.bypass_door)
     return tester.run_all()
 
 

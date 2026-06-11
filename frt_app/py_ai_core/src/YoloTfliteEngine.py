@@ -35,7 +35,7 @@ class YoloTfliteEngine:
     
     # Default inference parameters (overridable via constructor)
     CONFIDENCE_THRESHOLD = 0.2      # Minimum confidence for detection
-    IOU_THRESHOLD = 0.45             # NMS IoU threshold
+    IOU_THRESHOLD = 0.35            # Per-class NMS IoU threshold
     
     def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
                  c_precision: int = 2, confidence_threshold: float = None):
@@ -101,6 +101,12 @@ class YoloTfliteEngine:
 
             self._c_lib.tflite_reader_destroy.argtypes = [ctypes.c_void_p]
             self._c_lib.tflite_reader_destroy.restype = None
+
+            self._c_lib.tflite_reader_is_xnnpack_available.argtypes = []
+            self._c_lib.tflite_reader_is_xnnpack_available.restype = ctypes.c_int
+            xnnpack_avail = self._c_lib.tflite_reader_is_xnnpack_available()
+            if xnnpack_avail:
+                logger.info("XNNPACK delegate enabled in C backend (4 threads)")
 
             logger.info("C TFLite backend library loaded successfully")
         except Exception as e:
@@ -246,6 +252,31 @@ class YoloTfliteEngine:
             logger.exception("Error during inference: {}".format(e))
             self.handle_tensor_allocation_error()
     
+    @staticmethod
+    def _run_per_class_nms(results: List[Dict], conf_threshold: float, iou_threshold: float) -> List[Dict]:
+        if not results:
+            return []
+        by_class = {}
+        for i, det in enumerate(results):
+            cid = det["class_id"]
+            by_class.setdefault(cid, []).append(i)
+        survivors = []
+        for cid, indices in by_class.items():
+            class_boxes = []
+            class_scores = []
+            for idx in indices:
+                bx1, by1, bx2, by2 = results[idx]["bbox"]
+                class_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
+                class_scores.append(results[idx]["confidence"])
+            if not class_boxes:
+                continue
+            nms_idx = cv2.dnn.NMSBoxes(class_boxes, class_scores, conf_threshold, iou_threshold)
+            if len(nms_idx) > 0:
+                for i in nms_idx.flatten():
+                    survivors.append(indices[i])
+        survivors.sort()
+        return [results[i] for i in survivors]
+
     def _get_output_boxes_c(self) -> List[Dict]:
         """
         Extract detection boxes from C backend output.
@@ -321,22 +352,9 @@ class YoloTfliteEngine:
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
 
-            nms_boxes = []
-            for r in results:
-                bx1, by1, bx2, by2 = r["bbox"]
-                nms_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
-
-            indices = cv2.dnn.NMSBoxes(
-                nms_boxes,
-                [r["confidence"] for r in results],
-                self.CONFIDENCE_THRESHOLD,
-                self.IOU_THRESHOLD
+            final_results = self._run_per_class_nms(
+                results, self.CONFIDENCE_THRESHOLD, self.IOU_THRESHOLD
             )
-
-            final_results = []
-            if len(indices) > 0:
-                for i in indices.flatten():
-                    final_results.append(results[i])
 
             nms_log = "NMS: before={} after={} iou={} conf={}".format(
                 len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
@@ -417,22 +435,9 @@ class YoloTfliteEngine:
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
             
-            nms_boxes = []
-            for r in results:
-                bx1, by1, bx2, by2 = r["bbox"]
-                nms_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
-            
-            indices = cv2.dnn.NMSBoxes(
-                nms_boxes,
-                [r["confidence"] for r in results],
-                self.CONFIDENCE_THRESHOLD,
-                self.IOU_THRESHOLD
+            final_results = self._run_per_class_nms(
+                results, self.CONFIDENCE_THRESHOLD, self.IOU_THRESHOLD
             )
-            
-            final_results = []
-            if len(indices) > 0:
-                for i in indices.flatten():
-                    final_results.append(results[i])
 
             nms_log = "NMS: before={} after={} iou={} conf={}".format(
                 len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
