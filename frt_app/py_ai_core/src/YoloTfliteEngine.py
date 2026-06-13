@@ -140,7 +140,7 @@ class YoloTfliteEngine:
                     return False
             
             # Load model
-            self.interpreter = tflite.Interpreter(model_path=self.model_path)
+            self.interpreter = tflite.Interpreter(model_path=self.model_path, num_threads=4)
             
             # Allocate tensors
             self.allocate_tensors()

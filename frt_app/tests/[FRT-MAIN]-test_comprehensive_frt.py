@@ -458,7 +458,7 @@ class ComprehensiveFrtTest:
         tracker2 = ByteTrack(max_age=30)
         det_a = [{"bbox": [10, 20, 30, 40], "confidence": 0.9, "class_id": 0}]
         det_b = [{"bbox": [12, 22, 30, 40], "confidence": 0.85, "class_id": 0}]
-        det_c = [{"bbox": [200, 200, 30, 40], "confidence": 0.7, "class_id": 1}]
+        det_c = [{"bbox": [200, 200, 30, 40], "confidence": 0.9, "class_id": 1}]
 
         tracks_a = tracker2.update(det_a)
         tracks_b = tracker2.update(det_b)
