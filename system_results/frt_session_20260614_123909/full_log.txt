@@ -1,0 +1,223 @@
+12:39:17.872 | INFO     | Log file: /home/richardmelvin52/FSS/system_results/frt_session_20260614_123909/frt_comprehensive_20260614_123917.log
+12:39:17.873 | INFO     | 
+12:39:17.873 | INFO     | ╔====================================================================╗
+12:39:17.873 | INFO     | ║      FRT COMPREHENSIVE REAL-HARDWARE TEST         ║
+12:39:17.874 | INFO     | ║  Camera → Preproc → Motion → YOLO → Track → Out  ║
+12:39:17.874 | INFO     | ╚====================================================================╝
+12:39:17.874 | INFO     |   Camera: /dev/video0
+12:39:17.875 | INFO     |   Model:  /opt/fss/models/YOLOv11n_260518_best_int8.tflite
+12:39:17.875 | INFO     |   Mode:   REAL HARDWARE
+12:39:17.875 | INFO     |   Door:   BYPASSED (assume camera ON)
+12:39:17.875 | INFO     |   Output: /home/richardmelvin52/FSS/system_results/frt_session_20260614_123909
+12:39:17.921 | INFO     | FSS service stopped: fss-sensor
+12:39:17.960 | INFO     | FSS service stopped: fss-camera
+12:39:18.003 | INFO     | FSS service stopped: fss-ai
+12:39:18.048 | INFO     | FSS service stopped: fss-db
+12:39:18.088 | INFO     | FSS service stopped: fss-recommend
+12:39:19.886 | INFO     | 
+12:39:19.886 | INFO     | 
+12:39:19.886 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:19.887 | INFO     |   TEST 1 — CameraUvcDriver: USB Camera
+12:39:19.887 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:19.947 | INFO     | CameraUvcDriver initialized (device=/dev/video0)
+12:39:19.948 | INFO     |   ✓ PASS: check_uvc_connection() 0.2ms — device OK
+12:39:19.948 | INFO     | Opening camera stream from /dev/video0
+12:39:20.125 | INFO     | Camera stream opened successfully (640x480 @ 30 FPS)
+12:39:20.125 | INFO     |   ✓ PASS: open_camera_stream() 177.2ms — V4L2 stream OK
+12:39:20.126 | INFO     | 
+12:39:20.126 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:20.126 | INFO     |     └─ Frame capture (10 frames)
+12:39:20.127 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:20.442 | INFO     |     Frame 1: shape=(480, 640, 3) dtype=uint8 read=315.1ms
+12:39:20.478 | INFO     |     Frame 2: shape=(480, 640, 3) dtype=uint8 read=35.5ms
+12:39:20.518 | INFO     |     Frame 3: shape=(480, 640, 3) dtype=uint8 read=39.1ms
+12:39:20.796 | INFO     |   ✓ PASS: Frame capture 10/10 frames captured
+12:39:20.797 | INFO     | 
+12:39:20.797 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:20.797 | INFO     |     └─ Frame integrity
+12:39:20.798 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:20.803 | WARNING  |     Frame 0: suspiciously dark (0.0)
+12:39:20.824 | INFO     |   ✓ PASS: Pixel integrity dtype=uint8, 3-channel BGR, non-empty
+12:39:20.829 | INFO     |   ✓ PASS: Sample saved /home/richardmelvin52/FSS/system_results/frt_session_20260614_123909/capture_sample.jpg
+12:39:20.829 | INFO     | 
+12:39:20.830 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:20.830 | INFO     |     └─ FPS benchmark (3s)
+12:39:20.830 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:23.850 | INFO     |   ✓ PASS: Camera FPS 25.5 FPS over 3.0s (target ≥10)
+12:39:23.851 | INFO     | 
+12:39:23.851 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:23.852 | INFO     |     └─ Latency benchmark (50 reads)
+12:39:23.852 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:27.819 | INFO     |   ✓ PASS: Read latency avg=39.5ms min=35.6ms max=41.1ms
+12:39:27.820 | INFO     | Releasing camera resources
+12:39:27.825 | INFO     | Camera released
+12:39:27.825 | INFO     |   ✓ PASS: release_camera() Resources released
+12:39:27.826 | INFO     | 
+12:39:27.826 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:27.826 | INFO     |   TEST 2 — ImagePreprocessor: Frame Preprocessing
+12:39:27.826 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:27.828 | INFO     | ImagePreprocessor initialized (target=640x640)
+12:39:27.828 | INFO     |   Using real frame: (480, 640, 3)
+12:39:27.829 | INFO     |   ✓ PASS: convert_bgr_to_rgb() 0.9ms — shape=(480, 640, 3)
+12:39:27.831 | INFO     |   ✓ PASS: resize_frame() 1.6ms — shape=(640, 640, 3) letterboxed
+12:39:27.851 | INFO     |   ✓ PASS: normalize_pixels() 13.3ms — range=[0.000, 0.447] dtype=float32
+12:39:27.875 | INFO     |   ✓ PASS: prepare_tensor_input() 17.0ms — shape=(1, 640, 640, 3) dtype=float32 range=[0.000, 0.447]
+12:39:27.876 | INFO     | 
+12:39:27.876 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:27.876 | INFO     |     └─ Preprocessing latency (100 iterations)
+12:39:27.877 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:29.638 | INFO     |   ✓ PASS: Pipeline throughput avg 17.22ms per frame
+12:39:29.642 | INFO     | 
+12:39:29.642 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:29.642 | INFO     |   TEST 3 — MotionDetector: MOG2 Background Subtraction
+12:39:29.642 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:29.643 | INFO     | MotionDetector initialized (threshold=1.0%)
+12:39:29.644 | INFO     | Initializing MOG2 background subtractor
+12:39:29.644 | INFO     | MOG2 initialized (history=500, threshold=16.0)
+12:39:29.644 | INFO     |   ✓ PASS: init_mog2() 0.4ms — history=500, threshold=16.0
+12:39:29.644 | INFO     |   Using 5 real frames
+12:39:29.679 | INFO     |   ✓ PASS: apply_background_subtraction() 34.0ms — mask shape=(480, 640) dtype=uint8
+12:39:29.785 | INFO     |   ✓ PASS: is_motion_detected() 0.7ms — result=True
+12:39:29.785 | INFO     |     Motion on last frame: DETECTED (1.0% threshold)
+12:39:29.785 | INFO     | 
+12:39:29.786 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:29.786 | INFO     |     └─ Static vs. motion discrimination
+12:39:29.786 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:30.095 | INFO     |   ✓ PASS: Motion discrimination Static=no-motion, Changed=motion ✓
+12:39:30.096 | INFO     | Resetting MOG2 background model
+12:39:30.096 | INFO     | Initializing MOG2 background subtractor
+12:39:30.102 | INFO     | MOG2 initialized (history=500, threshold=16.0)
+12:39:30.102 | INFO     | Background model reset successfully
+12:39:30.102 | INFO     |   ✓ PASS: reset_background_model() 6.7ms
+12:39:30.103 | INFO     | 
+12:39:30.103 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:30.103 | INFO     |   TEST 4 — YoloTfliteEngine: YOLO Inference
+12:39:30.103 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:30.115 | INFO     | YoloTfliteEngine initialized (model=/opt/fss/models/YOLOv11n_260518_best_int8.tflite)
+12:39:30.115 | INFO     | Loading YOLOv11 model: /opt/fss/models/YOLOv11n_260518_best_int8.tflite
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+12:39:30.229 | INFO     | Model loaded successfully
+12:39:30.229 | INFO     |   ✓ PASS: load_model_mmap() 113.6ms — /opt/fss/models/YOLOv11n_260518_best_int8.tflite
+12:39:30.230 | INFO     |   ✓ PASS: allocate_tensors() 0.2ms — initialized=True
+12:39:30.230 | INFO     | ImagePreprocessor initialized (target=640x640)
+12:39:30.254 | INFO     |   ✓ PASS: set_input_tensor() 7.0ms — shape=(1, 640, 640, 3)
+12:39:30.679 | INFO     |   ✓ PASS: invoke_inference() 424.1ms
+12:39:30.681 | INFO     |   ✓ PASS: get_output_boxes() 1.6ms — 0 detections
+12:39:30.682 | INFO     | 
+12:39:30.682 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:30.682 | INFO     |     └─ Inference latency (10 runs)
+12:39:30.683 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:35.167 | INFO     |   ✓ PASS: Latency (10 runs) avg=418.1ms min=371.1ms max=464.6ms
+12:39:35.167 | INFO     | 
+12:39:35.168 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:35.168 | INFO     |     └─ C backend check
+12:39:35.168 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:35.180 | INFO     |   ✓ PASS: C backend libtflite_reader.so loaded
+12:39:35.183 | INFO     | 
+12:39:35.183 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:35.183 | INFO     |   TEST 5 — ByteTrack: Multi-Object Tracking
+12:39:35.184 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.288 | INFO     |   ✓ PASS: ByteTrack init max_age=30
+12:39:36.289 | INFO     |   Using 2 synthetic detections
+12:39:36.289 | INFO     | >>> notify start tracking: new Track ID 1 for 'apple' (class_id=0, conf=0.90)
+12:39:36.290 | INFO     |   ✓ PASS: update() — synthetic 1.2ms — 1 tracks
+12:39:36.291 | INFO     | 
+12:39:36.291 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.291 | INFO     |     └─ Track persistence
+12:39:36.292 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.292 | INFO     | >>> notify start tracking: new Track ID 1 for 'apple' (class_id=0, conf=0.90)
+12:39:36.295 | INFO     | >>> notify start tracking: new Track ID 2 for 'carrot' (class_id=1, conf=0.90)
+12:39:36.296 | INFO     |   ✓ PASS: Track assignment Same object = same ID, diff object = diff ID
+12:39:36.296 | INFO     |   ✓ PASS: reset() 0.0ms — 0 tracks cleared
+12:39:36.297 | INFO     | 
+12:39:36.297 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.297 | INFO     |     └─ Quantity change detection
+12:39:36.298 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.298 | INFO     | >>> notify start tracking: new Track ID 1 for 'apple' (class_id=0, conf=0.90)
+12:39:36.300 | INFO     |   ✓ PASS: get_quantity_change() 0 class changes
+12:39:36.301 | INFO     | 
+12:39:36.301 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.301 | INFO     |   TEST 6 — YoloPipeline: Full Pipeline Integration
+12:39:36.302 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.302 | INFO     |   Door sensor bypassed — no D-Bus subscription needed
+12:39:36.302 | INFO     | MotionDetector initialized (threshold=1.0%)
+12:39:36.303 | INFO     | ImagePreprocessor initialized (target=640x640)
+12:39:36.303 | INFO     | C TFLite backend library loaded successfully
+12:39:36.304 | INFO     | YoloTfliteEngine initialized (model=/opt/fss/models/YOLOv11n_260518_best_int8.tflite)
+12:39:36.304 | INFO     | CameraUvcDriver initialized (device=/dev/video0)
+12:39:36.305 | INFO     | YoloPipeline initialized
+12:39:36.305 | INFO     | Initializing YOLO pipeline...
+12:39:36.305 | INFO     | Initializing MOG2 background subtractor
+12:39:36.306 | INFO     | MOG2 initialized (history=500, threshold=16.0)
+12:39:36.306 | INFO     | Loading YOLOv11 model: /opt/fss/models/YOLOv11n_260518_best_int8.tflite
+12:39:36.313 | INFO     | Model loaded via C backend (4915200 bytes input)
+12:39:36.313 | INFO     | Pipeline initialized
+12:39:36.313 | INFO     |   ✓ PASS: init_pipeline() 8.3ms
+12:39:36.314 | INFO     | 
+12:39:36.314 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:36.314 | INFO     |     └─ process_frame() — individual frames
+12:39:36.315 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:37.160 | INFO     | NMS: before=1835 after=56 iou=0.35 conf=0.2
+12:39:37.161 | INFO     | >>> notify start tracking: new Track ID 1 for 'carrot' (class_id=1, conf=0.99)
+12:39:37.162 | INFO     | >>> notify start tracking: new Track ID 2 for 'egg' (class_id=2, conf=0.99)
+12:39:37.163 | INFO     | >>> notify start tracking: new Track ID 3 for 'tomato' (class_id=4, conf=0.99)
+12:39:37.164 | INFO     | >>> notify start tracking: new Track ID 4 for 'lemon' (class_id=3, conf=0.99)
+12:39:37.165 | INFO     | >>> notify start tracking: new Track ID 5 for 'apple' (class_id=0, conf=0.99)
+12:39:37.166 | INFO     | >>> notify start tracking: new Track ID 6 for 'tomato' (class_id=4, conf=0.95)
+12:39:37.166 | INFO     |   ✓ PASS: Frame 0: process_frame() 851.0ms — 56 detections
+12:39:37.935 | INFO     | NMS: before=1817 after=51 iou=0.35 conf=0.2
+12:39:37.940 | INFO     |   ✓ PASS: Frame 1: process_frame() 773.6ms — 51 detections
+12:39:38.715 | INFO     | NMS: before=1831 after=58 iou=0.35 conf=0.2
+12:39:38.721 | INFO     |   ✓ PASS: Frame 2: process_frame() 780.2ms — 58 detections
+12:39:38.722 | INFO     | 
+12:39:38.722 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:38.723 | INFO     |     └─ run_stream() — simulated sequence
+12:39:38.724 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:38.724 | INFO     | Opening camera stream from /dev/video0
+12:39:38.899 | INFO     | Camera stream opened successfully (640x480 @ 30 FPS)
+12:39:39.370 | INFO     |   ✓ PASS: Stream input 5 real frames from camera
+12:39:39.370 | INFO     | Releasing camera resources
+12:39:39.375 | INFO     | Camera released
+12:39:39.376 | INFO     | 
+12:39:39.376 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:39.376 | INFO     |     └─ Pipeline metrics
+12:39:39.376 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:39.376 | INFO     |   ✓ PASS: Metrics report frames=3, inferences=3, tracks=6
+12:39:39.377 | INFO     |   ✓ PASS: All components initialized MotionDet=✓ YOLO=✓ Preproc=✓ Tracker=✓
+12:39:39.377 | INFO     | 
+12:39:39.377 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:39.377 | INFO     |     └─ SharedMemoryReader check
+12:39:39.377 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:39.377 | INFO     | Attached to shared memory: /fss_video_frame
+12:39:39.377 | INFO     |   ✓ PASS: SharedMemoryReader.attach() 0.2ms — SHM at /dev/shm/fss_video_frame
+12:39:39.378 | INFO     | 
+12:39:39.378 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:39.378 | INFO     |   TEST 7 — Annotated Output: Visual Validation
+12:39:39.378 | INFO     | ══════════════════════════════════════════════════════════════════════
+12:39:39.379 | WARNING  |   ∼ SKIP: Annotated output No detections to draw
+12:39:39.379 | INFO     | 
+12:39:39.379 | INFO     | ======================================================================
+12:39:39.379 | INFO     |   COMPREHENSIVE FRT TEST — SUMMARY
+12:39:39.379 | INFO     | ======================================================================
+12:39:39.379 | INFO     |   Passed:   38
+12:39:39.380 | INFO     |   Failed:   0
+12:39:39.380 | INFO     |   Skipped:  1
+12:39:39.380 | INFO     |   Total:    39
+12:39:39.380 | INFO     | 
+12:39:39.380 | INFO     |   Performance Metrics:
+12:39:39.380 | INFO     |     camera_fps:                    = 25.5
+12:39:39.380 | INFO     |     preprocess_latency_ms:         = 17.03
+12:39:39.381 | INFO     |     preprocess_avg_ms:             = 17.22
+12:39:39.381 | INFO     |     yolo_latency_first_ms:         = 424.14
+12:39:39.381 | INFO     |     yolo_avg_latency_ms:           = 418.09
+12:39:39.381 | INFO     |     yolo_min_latency_ms:           = 371.14
+12:39:39.381 | INFO     |     yolo_max_latency_ms:           = 464.59
+12:39:39.381 | INFO     |     pipeline:                      = {'total_frames': 3, 'total_inferences': 3, 'active_tracks': 6}
+12:39:39.382 | INFO     |   Report: /home/richardmelvin52/FSS/system_results/frt_session_20260614_123909/frt_comprehensive_report.json
+12:39:39.382 | INFO     | 
+12:39:39.383 | INFO     |   ✓ ALL TESTS PASSED — FRT pipeline validated
+12:39:39.432 | INFO     | FSS service started: fss-sensor
+12:39:39.492 | INFO     | FSS service started: fss-camera
+12:39:39.546 | INFO     | FSS service started: fss-ai
+12:39:39.622 | INFO     | FSS service started: fss-db
+12:39:39.698 | INFO     | FSS service started: fss-recommend

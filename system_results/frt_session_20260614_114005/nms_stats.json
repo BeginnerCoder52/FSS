@@ -1,0 +1,96 @@
+{
+  "nms_samples": [
+    {
+      "before": 1913,
+      "after": 58,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1815,
+      "after": 55,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1824,
+      "after": 59,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1807,
+      "after": 65,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1822,
+      "after": 62,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1817,
+      "after": 63,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1811,
+      "after": 59,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1815,
+      "after": 60,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1805,
+      "after": 61,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1823,
+      "after": 58,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1820,
+      "after": 63,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1913,
+      "after": 58,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1952,
+      "after": 66,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1927,
+      "after": 58,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    }
+  ],
+  "summary": {
+    "total_inferences": 14,
+    "boxes_before_nms_avg": 1847.43,
+    "boxes_after_nms_avg": 60.36,
+    "suppression_rate_avg": 96.73,
+    "iou_threshold": 0.35,
+    "confidence_threshold": 0.2
+  }
+}
