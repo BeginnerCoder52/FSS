@@ -85,13 +85,14 @@ def setup_logging(output_dir: str, debug: bool = False):
 class ComprehensiveFrtTest:
     def __init__(self, camera: str, model: str, output_dir: str,
                  synthetic: bool = False, debug: bool = False,
-                 bypass_door: bool = True):
+                 bypass_door: bool = True, python_backend: bool = False):
         self.camera_device = camera
         self.model_path = model
         self.output_dir = Path(output_dir)
         self.synthetic = synthetic
         self.debug = debug
         self.bypass_door = bypass_door
+        self.python_backend = python_backend
         self.logger = setup_logging(output_dir, debug)
         self.results = {"passed": 0, "failed": 0, "skipped": 0}
         self.metrics: Dict = {}
@@ -416,7 +417,8 @@ class ComprehensiveFrtTest:
     def test_yolo_engine(self):
         self._section("TEST 4 — YoloTfliteEngine: YOLO Inference")
         from YoloTfliteEngine import YoloTfliteEngine
-        engine = YoloTfliteEngine(self.model_path, use_c_backend=True, c_precision=2)
+        use_c = not self.python_backend
+        engine = YoloTfliteEngine(self.model_path, use_c_backend=use_c, c_precision=2)
 
         loaded, t = self._benchmark(engine.load_model_mmap)
         if loaded:
@@ -761,6 +763,8 @@ def main():
                         help="Bypass door sensor, assume camera ON (default: True)")
     parser.add_argument("--no-bypass-door", action="store_false", dest="bypass_door",
                         help="Require real door sensor via D-Bus")
+    parser.add_argument("--python-backend", action="store_true",
+                        help="Use Python tflite-runtime backend instead of C TFLite reader")
     args = parser.parse_args()
 
     tester = ComprehensiveFrtTest(
@@ -769,7 +773,8 @@ def main():
         output_dir=args.output_dir,
         synthetic=args.synthetic,
         debug=args.debug,
-        bypass_door=args.bypass_door)
+        bypass_door=args.bypass_door,
+        python_backend=args.python_backend)
     return tester.run_all()
 
 

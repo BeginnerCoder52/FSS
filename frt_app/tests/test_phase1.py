@@ -23,15 +23,9 @@ License: Proprietary
 """
 
 import sys
-import os
 import time
-from pathlib import Path
 import numpy as np
 from loguru import logger
-
-FRT_SRC = str(Path(__file__).resolve().parent.parent / 'py_ai_core' / 'src')
-if FRT_SRC not in sys.path:
-    sys.path.insert(0, FRT_SRC)
 
 # Setup logging
 logger.remove()
@@ -50,10 +44,11 @@ class TestResult:
         self.warnings = 0
         self.tests = []
     
-    def add_pass(self, test_name: str):
+    def add_pass(self, test_name: str, detail: str = ""):
         self.passed += 1
-        self.tests.append(("✓ PASS", test_name))
-        logger.info("✓ PASS: {}".format(test_name))
+        msg = "{} {}".format(test_name, detail) if detail else test_name
+        self.tests.append(("✓ PASS", msg))
+        logger.info("✓ PASS: {}".format(msg))
     
     def add_fail(self, test_name: str, error: str):
         self.failed += 1

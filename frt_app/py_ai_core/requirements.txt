@@ -21,12 +21,9 @@ numpy>=1.24.0
 # Used in: ByteTracker for linear_sum_assignment (Hungarian Algorithm)
 scipy>=1.10.0
 
-# TFLite Runtime - lightweight TensorFlow Lite inference engine
-# NOTE: No wheel for Python 3.13 on ARM64. Using C backend (libtflite_reader.so) instead.
-# See frt_app/c_tflite_reader/ for the C implementation.
-# If you need Python-only fallback, install manually:
-#   pip install tflite-runtime
-# tflite-runtime>=2.14.0
+# TFLite Runtime - lightweight TensorFlow Lite inference engine (ai-edge-litert for Py3.13+ ARM64)
+# Falls back: tflite-runtime → ai-edge-litert → tensorflow.lite
+ai-edge-litert>=2.1.0
 
 # Pillow - image processing utilities for preprocessing
 Pillow>=9.0.0

@@ -44,10 +44,11 @@ class TestResult:
         self.warnings = 0
         self.tests = []
     
-    def add_pass(self, test_name: str):
+    def add_pass(self, test_name: str, detail: str = ""):
         self.passed += 1
-        self.tests.append(("✓ PASS", test_name))
-        logger.info("✓ PASS: {}".format(test_name))
+        msg = "{} {}".format(test_name, detail) if detail else test_name
+        self.tests.append(("✓ PASS", msg))
+        logger.info("✓ PASS: {}".format(msg))
     
     def add_fail(self, test_name: str, error: str):
         self.failed += 1

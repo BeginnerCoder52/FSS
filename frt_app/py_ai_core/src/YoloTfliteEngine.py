@@ -134,10 +134,13 @@ class YoloTfliteEngine:
                 import tflite_runtime.interpreter as tflite
             except ImportError:
                 try:
-                    import tensorflow.lite as tflite
+                    import ai_edge_litert.interpreter as tflite
                 except ImportError:
-                    logger.error("TFLite runtime not installed.")
-                    return False
+                    try:
+                        import tensorflow.lite as tflite
+                    except ImportError:
+                        logger.error("TFLite runtime not installed.")
+                        return False
             
             # Load model
             self.interpreter = tflite.Interpreter(model_path=self.model_path, num_threads=4)
