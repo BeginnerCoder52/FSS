@@ -37,6 +37,8 @@ import os
 import sys
 import time
 import json
+import base64
+import subprocess
 import argparse
 import importlib
 import numpy as np
@@ -57,6 +59,10 @@ sys.path.insert(0, FRT_SRC)
 
 CAMERA_DEVICE = "/dev/video0"
 YOLO_MODEL_PATH = "/opt/fss/models/yolov11n.tflite"
+
+FSS_SERVICES = ["fss-sensor", "fss-camera", "fss-ai", "fss-db", "fss-recommend"]
+FSS_PROCESSES = ["sensor_daemon_exec", "camera_core_exec",
+                 "python.*main.py", "recommend_daemon", "db_daemon"]
 
 
 def setup_logging(output_dir: str, debug: bool = False):
@@ -116,6 +122,60 @@ class ComprehensiveFrtTest:
         result = fn(*args, **kwargs)
         elapsed = (time.perf_counter() - start) * 1000
         return result, elapsed
+
+    # ──────────────────────────────────────────────────────────────
+    # FSS Service Management
+    # ──────────────────────────────────────────────────────────────
+
+    def _service_exists(self, name: str) -> bool:
+        try:
+            r = subprocess.run(["systemctl", "cat", name],
+                               capture_output=True, timeout=5)
+            return r.returncode == 0
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            return False
+
+    def _stop_fss_services(self):
+        stopped = []
+        for svc in FSS_SERVICES:
+            if not self._service_exists(svc):
+                continue
+            try:
+                r = subprocess.run(["systemctl", "stop", svc],
+                                   capture_output=True, timeout=10)
+                if r.returncode == 0:
+                    self.logger.info("FSS service stopped: {}", svc)
+                    stopped.append(svc)
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                pass
+        for proc in FSS_PROCESSES:
+            try:
+                r = subprocess.run(["pkill", "-f", proc],
+                                   capture_output=True, timeout=10)
+                if r.returncode == 0:
+                    self.logger.info("FSS process killed: {} (pattern)", proc)
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                pass
+        if not stopped:
+            self.logger.info("No FSS services found running — skipping stop")
+        else:
+            time.sleep(1)
+
+    def _start_fss_services(self):
+        started = []
+        for svc in FSS_SERVICES:
+            if not self._service_exists(svc):
+                continue
+            try:
+                r = subprocess.run(["systemctl", "start", svc],
+                                   capture_output=True, timeout=30)
+                if r.returncode == 0:
+                    self.logger.info("FSS service started: {}", svc)
+                    started.append(svc)
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                pass
+        if not started:
+            self.logger.info("No FSS services to restart — done")
 
     # ──────────────────────────────────────────────────────────────
     # TEST 1: CameraUvcDriver
@@ -605,6 +665,14 @@ class ComprehensiveFrtTest:
         cv2.imwrite(str(path), frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
         self._pass("Annotated output saved", "{} ({} detections)".format(path, len(self.detection_results)))
 
+        with open(str(path), "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+        self.logger.info("")
+        self.logger.info("▔" * 50)
+        self.logger.info("  Annotated frame (base64 — copy into browser URL bar to view)")
+        self.logger.info("  data:image/jpeg;base64,{}", b64)
+        self.logger.info("▁" * 50)
+
     # ──────────────────────────────────────────────────────────────
     # Summary
     # ──────────────────────────────────────────────────────────────
@@ -660,14 +728,19 @@ class ComprehensiveFrtTest:
         self.logger.info("  Door:   {}", "BYPASSED (assume camera ON)" if self.bypass_door else "READ from D-Bus")
         self.logger.info("  Output: {}", self.output_dir)
 
-        self.test_camera_driver()
-        self.test_image_preprocessor()
-        self.test_motion_detector()
-        self.test_yolo_engine()
-        self.test_bytetrack()
-        self.test_full_pipeline()
-        self.test_save_annotated_output()
-        return self.print_summary()
+        self._stop_fss_services()
+        self.logger.info("")
+        try:
+            self.test_camera_driver()
+            self.test_image_preprocessor()
+            self.test_motion_detector()
+            self.test_yolo_engine()
+            self.test_bytetrack()
+            self.test_full_pipeline()
+            self.test_save_annotated_output()
+            return self.print_summary()
+        finally:
+            self._start_fss_services()
 
 
 def main():
