@@ -123,6 +123,7 @@ start_sensor_daemon() {
     fi
     nohup sudo "$SENSOR_DAEMON_EXEC" >"${LOG_DIR}/sensor_daemon.log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
     sleep 1
     if kill -0 $pid 2>/dev/null; then
         log_ok "SensorDaemon started (PID: $pid)"
@@ -139,6 +140,7 @@ start_db_daemon() {
     nohup sudo "${DB_DAEMON_VENV}/bin/python" "${DB_DAEMON_SRC}/main.py" \
         >"${LOG_DIR}/db_daemon.log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
     sleep 2
     if kill -0 $pid 2>/dev/null; then
         log_ok "DBDaemon started (PID: $pid)"
@@ -155,6 +157,7 @@ start_recommend_daemon() {
     nohup sudo "${RECOMMEND_DAEMON_VENV}/bin/python" "${RECOMMEND_DAEMON_SRC}/main.py" \
         >"${LOG_DIR}/recommend_daemon.log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
     sleep 2
     if kill -0 $pid 2>/dev/null; then
         log_ok "RecommendDaemon started (PID: $pid)"
@@ -171,6 +174,7 @@ start_recipe_extractor() {
     nohup sudo "${RECIPE_EXTRACTOR_VENV}/bin/python" "${RECIPE_EXTRACTOR_SRC}/recipe_extractor_main.py" \
         >"${LOG_DIR}/recipe_extractor.log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
     sleep 2
     if kill -0 $pid 2>/dev/null; then
         log_ok "RecipeExtractor started (PID: $pid)"
@@ -189,6 +193,7 @@ start_frt_camera() {
     fi
     nohup sudo "$FRT_CAMERA_EXEC" >"${LOG_DIR}/frt_camera.log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
     sleep 1
     if kill -0 $pid 2>/dev/null; then
         log_ok "FRTApp Camera Core started (PID: $pid)"
@@ -205,6 +210,7 @@ start_frt_ai() {
     nohup sudo "${FRT_AI_VENV}/bin/python" "${FRT_AI_SRC}/main.py" \
         --use-c-backend >"${LOG_DIR}/frt_ai.log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
     sleep 2
     if kill -0 $pid 2>/dev/null; then
         log_ok "FRTApp AI Core started (PID: $pid)"
@@ -244,6 +250,12 @@ shutdown_handler() {
     stop_daemon_by_pidfile "$PID_DIR/db_daemon.pid" "DBDaemon"
     stop_daemon_by_pidfile "$PID_DIR/sensor_daemon.pid" "SensorDaemon"
     log_ok "FSS system stopped"
+    exit 0
+}
+
+int_handler() {
+    log_info "Ctrl+C received - exiting monitoring loop (daemons keep running)"
+    log_info "Run '$0 --stop' to shut down all daemons"
     exit 0
 }
 
@@ -294,7 +306,14 @@ print_status() {
     echo ""
 }
 
-trap shutdown_handler SIGTERM SIGINT
+# Handle --stop flag for clean shutdown without monitoring
+if [[ "${1:-}" == "--stop" ]]; then
+    setup_log_directory
+    shutdown_handler
+fi
+
+trap shutdown_handler SIGTERM
+trap int_handler SIGINT
 setup_log_directory
 cleanup_stale_processes
 

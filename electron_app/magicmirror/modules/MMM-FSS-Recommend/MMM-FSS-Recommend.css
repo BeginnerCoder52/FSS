@@ -58,22 +58,40 @@
 
 .fss-input-row {
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .fss-input-text {
     color: var(--color-text-dimmed);
 }
 
-.fss-trash-icon {
-    color: var(--color-text-dimmed);
+.fss-trash-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
     cursor: pointer;
     margin-right: 1em;
-    padding: 0.3em;
-    transition: color 0.2s ease;
+    color: var(--color-text-dimmed);
+    background: transparent;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.fss-trash-icon:hover {
+.fss-trash-btn:hover {
     color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.fss-trash-btn:active {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.2);
+    transform: scale(0.9);
 }
 
 :root { --color-border: #000000; }
