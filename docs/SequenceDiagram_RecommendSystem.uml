@@ -1,0 +1,234 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowMessage true
+skinparam participantPadding 20
+skinparam lifelineStrategy solid
+
+title Hệ Thống Gợi Ý Mua Sắm (Recommend System)\nSequence Diagram - Luồng Xử Lý NLP Pipeline
+
+' ============================================================
+' ACTORS & PARTICIPANTS
+' ============================================================
+actor "Người Dùng\n(User)" as USER
+
+participant "MMM-FSS-Recommend\n(Frontend JS)" as UI
+participant "MMM-Keyboard\n(Virtual Keyboard)" as KBD
+participant "node_helper.js\n(Node.js Backend)" as HELPER
+participant "recommend_dbus_listener.py\n(Python Bridge)" as BRIDGE
+participant "RecommendDaemon\n(D-Bus Service)" as DAEMON
+participant "RecipeAnalyzerEngine\n(NLP - CRF)" as NLP
+participant "DBDaemon\n(D-Bus Service)" as DBD
+participant "RecommendDbManager\n(SQLite)" as DBMGR
+database "FSS-Recommend.db" as DB
+database "FSS_Inventory.db" as INVENTORY
+
+' ============================================================
+' INTERACTIONS
+' ============================================================
+
+== 1. KÍCH HOẠT BÀN PHÍM (Keyboard Activation) ==
+
+USER -> UI: Gõ tên món ăn
+note right #F0F0F0: "thịt kho, trứng chiên"
+
+UI -> KBD: sendNotification("KEYBOARD",
+  {key: "recommendSearch",
+   style: "default"})
+note right #E8F0FE: Mở bàn phím ảo
+
+KBD -> USER: Hiển thị bàn phím ảo
+
+USER -> KBD: Nhập tên món + nhấn SEND
+
+KBD -> UI: sendNotification("KEYBOARD_INPUT",
+  {key: "recommendSearch",
+   message: "thịt kho, trứng chiên"})
+note right #E8F0FE: Gửi lại UI module
+
+== 2. PHÂN TÁCH & GỬI YÊU CẦU (Parse & Dispatch) ==
+
+UI -> UI: split(",") → ["thịt kho", "trứng chiên"]
+note right #FFF3CD: Phân tách\ncomma-separated
+
+loop Với mỗi tên món ăn [recipe1, recipe2, ...]
+
+  UI -> HELPER: sendSocketNotification(
+    "RECIPE_SEARCH",
+    {recipe: "thịt kho"})
+
+  HELPER -> HELPER: Ghi JSON command vào stdin
+  note right #FFF3CD: {\"type\":\"SEARCH\",\n \"recipe\":\"...\"}
+
+  HELPER -> BRIDGE: stdin (pipe)
+  note right #E8F0FE: Python subprocess
+
+  BRIDGE -> DAEMON: D-Bus Method Call
+  note right #E8F0FE: RecommendDaemon.\nGenerateShoppingList(\n recipe_name, batch_id)
+
+  == 3. KHỞI TẠO NLP ENGINE (Lazy Load) ==
+
+  DAEMON -> DAEMON: _ensure_nlp_engine()
+  note right #F0F0F0: Kiểm tra engine\nđã load chưa
+
+  alt NLP chưa được load (lần đầu)
+
+    DAEMON -> DAEMON: _lazy_load_nlp_engine()
+    note right #E8F0FE: import RecipeAnalyzerEngine
+
+    DAEMON -> NLP: RecipeAnalyzerEngine(
+      model_path,
+      recipe_db_path)
+    note right #E8F0FE: Load CRF model.joblib\n+ 250 recipe JSON files
+
+    NLP --> DAEMON: engine instance
+
+    DAEMON -> DAEMON: engine.set_nlp_engine()
+    note right #F0F0F0: Gán vào RecommendEngine
+
+  end
+
+  == 4. XỬ LÝ NLP (CRF NER Pipeline) ==
+
+  DAEMON -> NLP: generate_fss_request("thịt kho")
+  note right #E8F0FE: Bước 1-5 của NLP pipeline
+
+  NLP -> NLP: normalize_text()
+  note right #FFF3CD: Chuẩn hóa Unicode,\nloại bỏ ký tự đặc biệt
+
+  NLP -> NLP: tokenize_vietnamese()
+  note right #FFF3CD: PyVi tokenizer\n(compound words)
+
+  NLP -> NLP: word2features(sent, i)
+  note right #FFF3CD: Trích xuất 10+ features:\nbias, word form, case,\ndigits, context, BOS/EOS
+
+  NLP -> NLP: CRF.predict([features])
+  note right #E8F0FE: CRF model inference\n→ BIO tags
+
+  NLP -> NLP: _format_output(tokens, tags)
+  note right #FFF3CD: Giải mã BIO tags:\nB-ING → ingredient\nB-QTY → quantity
+
+  NLP --> DAEMON: {
+    "status": "SUCCESS",
+    "dish": "thịt kho",
+    "ingredients": [
+      {"ingredient": "thịt ba chỉ",
+       "quantity": "500", "unit": "g"},
+      {"ingredient": "trứng", ...},
+      {"ingredient": "nước mắm", ...}
+    ],
+    "processing_time_ms": 3.2
+  }
+
+  == 5. LẤY TỒN KHO (Get Inventory via D-Bus) ==
+
+  DAEMON -> DBD: D-Bus Method Call
+  note right #E8F0FE: DBDaemon.GetInventory()
+
+  DBD -> INVENTORY: SELECT * FROM current_inventory
+
+  INVENTORY --> DBD: [ {food_id, qty}, ... ]
+
+  DBD --> DAEMON: JSON inventory list
+
+  == 6. THUẬT TOÁN BÙ TRỪ (Comparison Algorithm) ==
+
+  DAEMON -> DAEMON: generate_shopping_list()
+  note right #E8F0FE: Thuật toán Bù Trừ
+
+  group Bù Trừ So Sánh
+    note right #F0F0F0
+      Với mỗi nguyên liệu:
+        tồn kho >= cần ? → available
+        0 < tồn kho < cần → needed
+        tồn kho = 0       → missing
+    end note
+
+    DAEMON -> DAEMON: available_count = 3
+    DAEMON -> DAEMON: needed_count = 1
+    DAEMON -> DAEMON: missing_count = 2
+  end
+
+  == 7. LƯU KẾT QUẢ (Persist to Database) ==
+
+  DAEMON -> DBMGR: insert_recommendation(...)
+  note right #E8F0FE: recommendation_log table
+
+  DBMGR -> DB: INSERT INTO recommendation_log
+
+  DB --> DBMGR: row_id
+
+  DAEMON -> DBMGR: insert_shopping_list(row_id, items)
+  note right #E8F0FE: shopping_list table
+
+  DBMGR -> DB: INSERT INTO shopping_list
+
+  == 8. PHÁT TÍN HIỆU D-BUS & TRẢ VỀ (Signal & Return) ==
+
+  DAEMON -> DAEMON: format_result_for_ui()
+  note right #FFF3CD: Chuyển đổi định dạng\ncho UI hiển thị
+
+  DAEMON -> DAEMON: emit_recommendation_updated()
+  note right #E8F0FE: D-Bus Signal:\nRecommendationUpdated(\n recipe_name,\n shopping_list_json)
+
+  DAEMON --> BRIDGE: JSON result (D-Bus return)
+
+  BRIDGE -> BRIDGE: Ghi JSON result line ra stdout
+
+  BRIDGE --> HELPER: stdout (pipe)
+
+  HELPER -> HELPER: Parse JSON line
+
+  HELPER -> UI: sendSocketNotification(
+    "RECOMMEND_RESULT",
+    result_data)
+
+  UI -> UI: accumulatedResults.push(result)
+  note right #F0F0F0: Tích lũy kết quả\ncho merge sau
+
+end
+
+== 9. HỢP NHẤT KẾT QUẢ (Merge & Display) ==
+
+UI -> UI: mergeResults(accumulatedResults)
+note right #E8F0FE
+  Hợp nhất nhiều món:
+  - Gộp tên món: ", "
+  - Gộp tất cả ingredients
+  - Tính lại available/needed/missing
+  - Trả về unified result
+end note
+
+UI -> UI: playNotificationSound("recommend_done")
+note right #F0F0F0
+  Web Audio API OscillatorNode:
+  550Hz → 770Hz (quãng 2)
+  150ms × 2 beeps, gap 100ms
+end note
+
+UI -> UI: updateDom()
+note right #FFF3CD
+  Render giao diện:
+  - Bảng "DANH SÁCH ĐỀ XUẤT"
+    (shopping list mua thêm)
+  - Bảng "THỰC ĐƠN HÔM NAY"
+    (menu đã chọn)
+  - Từng item có nút xoá
+end note
+
+UI --> USER: Hiển thị kết quả
+
+== 10. TƯƠNG TÁC NGƯỜI DÙNG (Post-Processing) ==
+
+USER -> UI: Nhấn vào item (có sẵn)
+
+UI -> UI: removeIngredient(food_id)
+note right #FFF3CD: Đánh dấu là "available"
+
+USER -> UI: Nhấn nút xoá món
+
+UI -> UI: deleteRecipe(recipe_name)
+note right #FFF3CD: Xoá khỏi danh sách
+
+@enduml

@@ -3,9 +3,11 @@
 import sys, json, uuid, os, time, logging
 
 proxy = None
+_service_checked = False
 
 try:
     from sdbus import DbusInterfaceCommon, dbus_method
+    from sdbus import sd_bus_open_system, set_default_bus
 
     def get_dbus_config():
         config_path = os.environ.get("FSS_CONFIG_PATH", "")
@@ -27,6 +29,8 @@ try:
                 logging.warning(f"Failed to load config from {config_path}: {e}")
         return {}
 
+    set_default_bus(sd_bus_open_system())
+
     dbus_config = get_dbus_config()
     RECOMMEND_SERVICE = dbus_config.get("recommend_daemon_service", "vn.edu.uit.FSS.RecommendDaemon")
     RECOMMEND_INTERFACE = dbus_config.get("recommend_daemon_interface", "vn.edu.uit.FSS.RecommendDaemon")
@@ -37,14 +41,38 @@ try:
         def GenerateShoppingList(self, recipe_name: str, batch_id: str) -> str:
             pass
 
-    proxy = RecommendDaemonInterface.new_proxy(RECOMMEND_SERVICE, RECOMMEND_PATH)
+    proxy = RecommendDaemonInterface(RECOMMEND_SERVICE, RECOMMEND_PATH)
 except Exception as e:
     print(f"Warning: D-Bus not available ({e}). Running in MOCK mode.", file=sys.stderr)
 
 
-for line in sys.stdin:
+def wait_for_service(timeout=5):
+    import subprocess, sys
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            result = subprocess.run(
+                ["dbus-send", "--system", "--print-reply",
+                 "--dest=org.freedesktop.DBus",
+                 "/org/freedesktop/DBus", "org.freedesktop.DBus.NameHasOwner",
+                 f"string:{RECOMMEND_SERVICE}"],
+                capture_output=True, text=True, timeout=3
+            )
+            if "true" in result.stdout:
+                return True
+        except Exception:
+            pass
+        time.sleep(0.5)
+    return False
+
+
+while True:
+    line = sys.stdin.readline()
+    if not line:
+        break
     line = line.strip()
-    if not line: continue
+    if not line:
+        continue
     try:
         msg = json.loads(line)
         if msg.get("type") == "SEARCH":
@@ -70,6 +98,12 @@ for line in sys.stdin:
             else:
                 if proxy is None:
                     raise Exception("D-Bus proxy is not initialized. Cannot process production request.")
+                if not _service_checked:
+                    if not wait_for_service():
+                        print(json.dumps({"type": "ERROR",
+                            "message": f"RecommendDaemon not reachable on D-Bus after 5s"}), flush=True)
+                        continue
+                    _service_checked = True
                 batch_id = str(uuid.uuid4())
                 raw_result = proxy.GenerateShoppingList(recipe, batch_id)
                 parsed = json.loads(raw_result)

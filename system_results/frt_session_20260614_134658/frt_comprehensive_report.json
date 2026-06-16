@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-06-14T13:47:27.644954",
+  "mode": "real",
+  "camera": "/dev/video0",
+  "model": "/opt/fss/models/YOLOv11n_260518_best_int8.tflite",
+  "results": {
+    "passed": 38,
+    "failed": 0,
+    "skipped": 1
+  },
+  "metrics": {
+    "camera_fps": 25.6,
+    "preprocess_latency_ms": 23.22,
+    "preprocess_avg_ms": 15.08,
+    "yolo_latency_first_ms": 339.46,
+    "yolo_avg_latency_ms": 319.84,
+    "yolo_min_latency_ms": 311.68,
+    "yolo_max_latency_ms": 326.95,
+    "pipeline": {
+      "total_frames": 3,
+      "total_inferences": 3,
+      "active_tracks": 6
+    }
+  }
+}

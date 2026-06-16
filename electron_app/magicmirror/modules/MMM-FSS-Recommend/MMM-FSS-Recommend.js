@@ -120,25 +120,35 @@ Module.register("MMM-FSS-Recommend", {
 
         const searchIcon = document.createElement("i");
         searchIcon.className = "fas fa-search";
-        searchIcon.style.width = "1.2em"; // Bằng đúng kích thước vòng tròn
+        searchIcon.style.width = "1.2em";
         searchIcon.style.textAlign = "center";
         searchIcon.style.marginRight = "0.5em";
         searchIcon.style.color = "var(--color-text-dimmed)";
+        searchIcon.style.pointerEvents = "none";
         inputRow.appendChild(searchIcon);
 
         const inputSpan = document.createElement("span");
         inputSpan.textContent = "Nhập tên món ăn...";
         inputSpan.className = "fss-input-text";
+        inputSpan.style.pointerEvents = "none";
         inputRow.appendChild(inputSpan);
 
-        // Gắn sự kiện click để mở bàn phím tìm kiếm
-        inputRow.addEventListener("click", () => {
-            this.sendNotification("KEYBOARD", {
+        const self = this;
+        const openKeyboard = function () {
+            self.sendNotification("KEYBOARD", {
                 key: "recommendSearch",
                 style: "default",
                 data: {}
             });
+        };
+
+        inputRow.addEventListener("click", openKeyboard);
+        inputRow.addEventListener("touchend", function (e) {
+            e.preventDefault();
+            openKeyboard();
         });
+
+        inputRow.style.touchAction = "manipulation";
         menuPanel.appendChild(inputRow);
 
         // Danh sách các món ăn
@@ -155,13 +165,20 @@ Module.register("MMM-FSS-Recommend", {
             leftDiv.style.display = "flex";
             leftDiv.style.alignItems = "center";
 
-            // Nút Thùng rác (thay thế vòng tròn)
-            const trashIcon = document.createElement("i");
-            trashIcon.className = "fas fa-trash fss-trash-icon";
-            trashIcon.addEventListener("click", () => {
+            // Nút Xoá món khỏi thực đơn
+            const trashBtn = document.createElement("div");
+            trashBtn.className = "fss-trash-btn";
+            trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            trashBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
                 this.deleteRecipe(index);
             });
-            leftDiv.appendChild(trashIcon);
+            trashBtn.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.deleteRecipe(index);
+            });
+            leftDiv.appendChild(trashBtn);
 
             const nameSpan = document.createElement("span");
             nameSpan.textContent = meal;
@@ -248,6 +265,13 @@ Module.register("MMM-FSS-Recommend", {
             this.loading = true;
             this.result = null;
             this.updateDom();
+        } else if (notification === "RECOMMEND_ERROR") {
+            console.warn("[MMM-FSS-Recommend] Search error:", payload);
+            this.pendingCount = Math.max(0, this.pendingCount - 1);
+            if (this.pendingCount <= 0) {
+                this.loading = false;
+                this.updateDom();
+            }
         }
     },
     mergeResults(results) {

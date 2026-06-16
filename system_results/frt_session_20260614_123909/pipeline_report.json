@@ -1,0 +1,53 @@
+{
+  "session": "frt_session_20260614_123909",
+  "mode": "comprehensive",
+  "boundary_events": [],
+  "metrics": {
+    "fps_samples": [],
+    "fps_avg": 0,
+    "fps_min": 0,
+    "fps_max": 0,
+    "fps_stdev": 0,
+    "total_events": 0,
+    "check_in_count": 0,
+    "check_out_count": 0,
+    "unique_tracks": 0,
+    "total_detections": 0,
+    "detection_samples": [],
+    "nms": {
+      "total_inferences": 3,
+      "boxes_before_nms_total": 5483,
+      "boxes_after_nms_total": 165,
+      "boxes_before_nms_avg": 1827.67,
+      "boxes_after_nms_avg": 55,
+      "boxes_before_nms_min": 1817,
+      "boxes_before_nms_max": 1835,
+      "boxes_after_nms_min": 51,
+      "boxes_after_nms_max": 58,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2,
+      "suppression_rate_avg": 96.99
+    }
+  },
+  "track_count": 0,
+  "fps_summary": {
+    "avg": 0,
+    "min": 0,
+    "max": 0,
+    "samples": 0
+  },
+  "nms_summary": {
+    "total_inferences": 3,
+    "boxes_before_nms_total": 5483,
+    "boxes_after_nms_total": 165,
+    "boxes_before_nms_avg": 1827.67,
+    "boxes_after_nms_avg": 55,
+    "boxes_before_nms_min": 1817,
+    "boxes_before_nms_max": 1835,
+    "boxes_after_nms_min": 51,
+    "boxes_after_nms_max": 58,
+    "iou_threshold": 0.35,
+    "confidence_threshold": 0.2,
+    "suppression_rate_avg": 96.99
+  }
+}

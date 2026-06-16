@@ -19,6 +19,10 @@
 #       --scenario check-in   S1: hand+fuit enters → YOLO detects → "added"
 #       --scenario check-out  S2: fruit leaves → YOLO detects → "removed"
 #     --mode unit      test_user_scenario_frtapp.py — 38 unit tests
+#     --mode comprehensive  [FRT-MAIN]-test_comprehensive_frt.py — 7-stage
+#                        end-to-end validation of ALL pipeline components:
+#                        Camera → Preproc → MOG2 → YOLO → ByteTrack →
+#                        YoloPipeline → Annotated Output
 #
 # Usage:
 #     sudo bash run_frt_full_test.sh                                # default auto mode
@@ -26,6 +30,9 @@
 #     sudo bash run_frt_full_test.sh --mode scenario --scenario check-in
 #     sudo bash run_frt_full_test.sh --mode scenario --scenario check-out --duration 20
 #     sudo bash run_frt_full_test.sh --mode unit --duration 3
+#     sudo bash run_frt_full_test.sh --mode comprehensive           # 7-stage validation
+#     sudo bash run_frt_full_test.sh --mode comprehensive --synthetic  # no hardware needed
+#     sudo bash run_frt_full_test.sh --mode comprehensive --python-backend  # Python tflite-runtime (no C backend)
 #     sudo bash run_frt_full_test.sh --confidence 0.85              # detection threshold
 #     sudo bash run_frt_full_test.sh --save-results                 # save to system_results/
 #     sudo bash run_frt_full_test.sh --skip-services
@@ -94,6 +101,7 @@ SCENARIO="check-in"
 CONFIDENCE=0.85
 SAVE_RESULTS=false
 RUNTIME=0
+PYTHON_BACKEND=false
 
 FSS_SERVICES=("fss-sensor" "fss-camera" "fss-ai" "fss-db" "fss-recommend")
 SYSTEM_RESULTS_DIR="$FSS_ROOT/system_results"
@@ -129,6 +137,7 @@ while [[ $# -gt 0 ]]; do
         --skip-services) SKIP_SERVICES=true; shift ;;
         --synthetic)    SYNTHETIC=true; shift ;;
         --confidence)   CONFIDENCE="$2"; shift 2 ;;
+        --python-backend) PYTHON_BACKEND=true; shift ;;
         --save-results)  SAVE_RESULTS=true; shift ;;
         --shm-seconds)  SHM_SECONDS="$2"; shift 2 ;;
         --pipeline-fps) PIPELINE_FPS="$2"; shift 2 ;;
@@ -475,9 +484,12 @@ if [[ "$MODE" == "scenario" ]]; then
     echo "  Scenario:     $SCENARIO"
 elif [[ "$MODE" == "auto" ]]; then
     echo "  Pipeline:     Camera → MOG2 → YOLO(NMS) → ByteTrack → Boundary"
+elif [[ "$MODE" == "comprehensive" ]]; then
+    echo "  Pipeline:     Camera → Preproc → MOG2 → YOLO → ByteTrack → Pipeline → Output"
 fi
 echo "  Synthetic:    $SYNTHETIC"
 echo "  Confidence:   $CONFIDENCE"
+echo "  Backend:      $($PYTHON_BACKEND && echo 'Python (tflite-runtime)' || echo 'C (libtflite_reader.so)')"
 echo "  Create SHM:   $([[ $NO_SHM == true ]] && echo 'no' || echo 'yes')"
 echo "  SHM seconds:  ${SHM_SECONDS}s"
 echo "  Pipeline FPS: $PIPELINE_FPS"
@@ -788,12 +800,72 @@ elif [[ "$MODE" == "scenario" ]]; then
 
     postprocess_session
 
+elif [[ "$MODE" == "comprehensive" ]]; then
+    header "STEP 4: Run Comprehensive FRT Pipeline Test ([FRT-MAIN]-test_comprehensive_frt.py)"
+
+    echo ""
+    echo "  ╔══════════════════════════════════════════════════════════════════╗"
+    echo "  ║  7-STAGE COMPREHENSIVE FRT TEST                                 ║"
+    echo "  ║  1. CameraUvcDriver    — USB camera init, capture, FPS          ║"
+    echo "  ║  2. ImagePreprocessor  — BGR→RGB, letterbox, normalize, tensor  ║"
+    echo "  ║  3. MotionDetector     — MOG2 init, subtraction, motion detect  ║"
+    echo "  ║  4. YoloTfliteEngine   — YOLO model load, inference, outputs    ║"
+    echo "  ║  5. ByteTrack          — IoU tracking, persistence, quantity    ║"
+    echo "  ║  6. YoloPipeline       — Full integration pipeline              ║"
+    echo "  ║  7. Annotated Output   — BBox viz + base64 terminal display     ║"
+    echo "  ╚══════════════════════════════════════════════════════════════════╝"
+    echo ""
+
+    COMPREHENSIVE_SCRIPT="$SCRIPT_DIR/[FRT-MAIN]-test_comprehensive_frt.py"
+    if [[ ! -f "$COMPREHENSIVE_SCRIPT" ]]; then
+        fail "Comprehensive test script not found: $COMPREHENSIVE_SCRIPT"
+        exit 2
+    fi
+
+    CMD_ARGS=(
+        "$PYTHON_CMD" "$COMPREHENSIVE_SCRIPT"
+        "--camera" "$CAMERA_DEVICE"
+        "--model" "$MODEL_PATH"
+        "--output-dir" "$SESSION_DIR"
+    )
+    if $SYNTHETIC; then
+        CMD_ARGS+=("--synthetic")
+    fi
+    if $PYTHON_BACKEND; then
+        CMD_ARGS+=("--python-backend")
+    fi
+    if $DEBUG; then
+        CMD_ARGS+=("--debug")
+    fi
+
+    echo "  Running: ${CMD_ARGS[*]}"
+    echo ""
+
+    START_TS=$(date +%s)
+    set +e
+    set +o pipefail
+    FULL_LOG="$SESSION_DIR/full_log.txt"
+    "${CMD_ARGS[@]}" 2>&1 | tee -a "$FULL_LOG"
+    TEST_EXIT=${PIPESTATUS[0]}
+    set -o pipefail
+    set -e
+    END_TS=$(date +%s)
+    RUNTIME=$((END_TS - START_TS))
+
+    echo ""
+    if [[ $TEST_EXIT -eq 0 ]]; then
+        pass "Comprehensive test PASSED (exit=$TEST_EXIT, ${RUNTIME}s)"
+    else
+        fail "Comprehensive test FAILED (exit=$TEST_EXIT, ${RUNTIME}s)"
+    fi
+
+    postprocess_session
+
 fi
 
 # ==============================================================================
 # STEP 5: Session Summary
 # ==============================================================================
-# STEP 5: Session Summary
 # ==============================================================================
 
 header "STEP 5: Session Summary"
@@ -802,6 +874,9 @@ echo "  Session:   $SESSION_DIR/"
 echo "  Mode:      $MODE"
 if [[ "$MODE" == "scenario" ]]; then
     echo "  Scenario:  $SCENARIO"
+fi
+if [[ "$MODE" == "comprehensive" ]]; then
+    echo "  Pipeline:  Camera → Preproc → MOG2 → YOLO → ByteTrack → Pipeline → Output"
 fi
 echo "  Duration:  ${RUNTIME}s"
 echo "  Exit code: $TEST_EXIT"
@@ -840,6 +915,21 @@ if [[ "$MODE" == "auto" ]] && [[ -f "$SESSION_DIR/full_log.txt" ]]; then
     NMS_AFTER=$(grep "NMS:" "$SESSION_DIR/full_log.txt" | head -1 | sed 's/.*after=//;s/ .*//' 2>/dev/null || echo "?")
     echo "  NMS inferences:  $NMS_COUNT"
     echo "  NMS suppression: $NMS_BEFORE → $NMS_AFTER boxes (first frame)"
+    echo ""
+fi
+
+# Comprehensive mode: show report
+if [[ "$MODE" == "comprehensive" ]] && [[ -f "$SESSION_DIR/frt_comprehensive_report.json" ]]; then
+    echo "  Comprehensive test report:"
+    echo "    $(python3 -c "
+import json
+with open('$SESSION_DIR/frt_comprehensive_report.json') as f:
+    r = json.load(f)
+res = r.get('results', {})
+print(f'Passed: {res.get(\"passed\", 0)}  Failed: {res.get(\"failed\", 0)}  Skipped: {res.get(\"skipped\", 0)}')
+print(f'Camera FPS: {r.get(\"metrics\",{}).get(\"camera_fps\",\"N/A\")}')
+print(f'YOLO avg: {r.get(\"metrics\",{}).get(\"yolo_avg_latency_ms\",\"N/A\")}ms')
+" 2>/dev/null || echo '    (unable to parse)')"
     echo ""
 fi
 
