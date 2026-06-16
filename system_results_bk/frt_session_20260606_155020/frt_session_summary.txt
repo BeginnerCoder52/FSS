@@ -1,0 +1,16 @@
+FRTApp Session Summary
+=============================================
+
+Session:  frt_session_20260606_155020
+Mode:     scenario
+Duration: 8s
+
+Boundary crossings: 0
+  CHECK_IN  (enter):  0
+  CHECK_OUT (leave):  0
+
+Tracks tracked:      0
+Total detections:    0
+
+
+--- End of Summary ---

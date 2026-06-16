@@ -1,0 +1,104 @@
+{
+  "timestamp": "2026-06-07T01:53:42.040631",
+  "scenario": "check-in",
+  "duration_sec": 5,
+  "state_transitions": [
+    {
+      "timestamp": 1780772016.8565402,
+      "from": "IDLE",
+      "to": "FRUIT_DETECTED",
+      "notification": "tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780772020.5791852,
+      "from": "FRUIT_DETECTED",
+      "to": "CHECKING_IN",
+      "notification": "lemon, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780772021.2433705,
+      "from": "CHECKING_IN",
+      "to": "CONFIRMED",
+      "notification": "2 tomato has added"
+    }
+  ],
+  "notifications": [
+    {
+      "timestamp": 1780772016.8565402,
+      "state": "FRUIT_DETECTED",
+      "message": "tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780772017.8962245,
+      "state": "FRUIT_DETECTED",
+      "message": "apple, lemon, carrot detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780772018.6002185,
+      "state": "FRUIT_DETECTED",
+      "message": "apple, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780772020.5791852,
+      "state": "CHECKING_IN",
+      "message": "lemon, tomato detected! Ready for check-in"
+    },
+    {
+      "timestamp": 1780772021.2433705,
+      "state": "CONFIRMED",
+      "message": "2 tomato has added"
+    }
+  ],
+  "inferences_run": 7,
+  "total_detections": 20,
+  "class_labels": [
+    "apple",
+    "carrot",
+    "egg",
+    "lemon",
+    "tomato"
+  ],
+  "alarms": {
+    "scan_timeout_sec": 10,
+    "action_timeout_sec": 5,
+    "scan_alarm_triggered": false,
+    "action_alarm_triggered": false
+  },
+  "detection_summary": {
+    "tomato": {
+      "count": 11,
+      "class_ids": [
+        4
+      ],
+      "max_conf": 0.7391817569732666
+    },
+    "apple": {
+      "count": 4,
+      "class_ids": [
+        0
+      ],
+      "max_conf": 0.7415135502815247
+    },
+    "lemon": {
+      "count": 3,
+      "class_ids": [
+        3
+      ],
+      "max_conf": 0.7362158298492432
+    },
+    "carrot": {
+      "count": 1,
+      "class_ids": [
+        1
+      ],
+      "max_conf": 0.7056012153625488
+    },
+    "egg": {
+      "count": 1,
+      "class_ids": [
+        2
+      ],
+      "max_conf": 0.7136317491531372
+    }
+  }
+}

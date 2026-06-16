@@ -417,9 +417,11 @@ section "15. CONFIGURATION FILES"
 collect_file "$FSS_ROOT/electron_app/magicmirror/config/config.js" "config/config.js"
 collect_file "$FSS_ROOT/dbus_config/vn.edu.uit.FSS.conf" "config/dbus.conf"
 collect_file "$FSS_ROOT/tools/verify_dbus_config.sh" "config/verify_dbus_config.sh"
-collect_file "$FSS_ROOT/setup.sh" "config/setup.sh"
-collect_file "$FSS_ROOT/fss_env_setup.sh" "config/fss_env_setup.sh"
-collect_file "$FSS_ROOT/startup_fss_system.sh" "config/startup_fss_system.sh"
+collect_file "$FSS_ROOT/FSS_SETUP.sh" "config/FSS_SETUP.sh"
+collect_file "$FSS_ROOT/tools/fss_env_setup.sh" "config/fss_env_setup.sh"
+collect_file "$FSS_ROOT/FSS_RUN.sh" "config/FSS_RUN.sh"
+collect_file "$FSS_ROOT/scripts/archive/setup.sh" "config/setup.sh" 2>/dev/null || true
+collect_file "$FSS_ROOT/scripts/archive/startup_fss_system.sh" "config/startup_fss_system.sh" 2>/dev/null || true
 
 # ==============================================================================
 # 16. FRTApp Test Log
