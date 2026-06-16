@@ -256,6 +256,7 @@ start_daemon() {
 
     nohup $cmd >"$log" 2>&1 &
     local pid=$!
+    disown $pid 2>/dev/null
 
     local sleep_time=2
     [[ "$key" == "sensor" || "$key" == "camera" ]] && sleep_time=1
@@ -428,7 +429,15 @@ shutdown_handler() {
     exit 0
 }
 
-trap shutdown_handler SIGTERM SIGINT
+int_handler() {
+    echo ""
+    fss_log_info "Ctrl+C received — exiting monitor (daemons keep running)"
+    fss_log_info "Run 'bash FSS_RUN.sh --stop' to stop all daemons"
+    exit 0
+}
+
+trap shutdown_handler SIGTERM
+trap int_handler SIGINT
 
 # ==============================================================================
 # Main
@@ -454,9 +463,9 @@ print_status
 
 # Monitor or wait
 if [[ "$MONITOR" == true ]]; then
-    fss_log_info "Monitoring enabled. Press Ctrl+C to stop all daemons."
+    fss_log_info "Monitoring enabled. Press Ctrl+C to exit monitor (daemons keep running)."
     monitor_daemons
 else
-    fss_log_info "All daemons started (no monitoring). Press Ctrl+C to stop."
+    fss_log_info "All daemons started (no monitoring). Press Ctrl+C to exit (daemons keep running)."
     while true; do sleep 10; done
 fi
