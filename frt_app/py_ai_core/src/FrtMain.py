@@ -86,7 +86,6 @@ class AppState(Enum):
     """
     INIT = "INIT"              # Initialization phase
     IDLE = "IDLE"              # Ready but dormant (door closed)
-    AUTO_CALIBRATION = "AUTO_CALIBRATION" # Detecting virtual line before AI
     TRACKING = "TRACKING"      # Active inference (door open)
     ERROR = "ERROR"            # Error state
     STOPPED = "STOPPED"        # Shutdown
@@ -125,14 +124,16 @@ class FrtMain:
 
     def __init__(self, bypass_door_sensor: bool = True,
                  confidence_threshold: float = 0.85,
-                 boundary_ratio: float = 0.66):
+                 line_a_ratio: float = 0.33,
+                 line_b_ratio: float = 0.66):
         """
         Initialize FrtMain application controller.
 
         Args:
             bypass_door_sensor: If True, auto-enter TRACKING on start (no MC-38 needed).
             confidence_threshold: Min confidence for YOLO + ByteTrack high/low split.
-            boundary_ratio: Virtual boundary line position as fraction of frame height.
+            line_a_ratio: Outer virtual line position as fraction of frame height (default 0.33).
+            line_b_ratio: Inner virtual line position as fraction of frame height (default 0.66).
         """
         self.current_state: str = AppState.INIT.value
         self.is_running: bool = False
@@ -141,7 +142,7 @@ class FrtMain:
         # Door sensor bypass flag (True = auto-TRACKING, no MC-38; False = wait for door signal)
         self.bypass_door_sensor: bool = bypass_door_sensor
 
-        # Component instances (updated for Phase 2 - now using ShmReader instead of CameraUvcDriver)
+        # Component instances
         self.shm_reader = None  # POSIX SHM reader (from C++ camera core)
         self.camera_driver = None
         self.motion_detector = None
@@ -149,9 +150,6 @@ class FrtMain:
         self.ai_engine = None
         self.dbus_interface = None
         self.tracker = None
-        self.virtual_line_detector = None
-        self.virtual_line_ready = False
-        self.frames_without_line = 0
 
         # C backend configuration (Phase 1 upgrade)
         self.use_c_backend: bool = True
@@ -163,9 +161,10 @@ class FrtMain:
         self.distance_threshold_cm: float = 60.0
         self.last_distance_cm: Optional[float] = None
 
-        # Confidence and boundary config
+        # Confidence and 2-line boundary config
         self.confidence_threshold: float = confidence_threshold
-        self.boundary_ratio: float = boundary_ratio
+        self.line_a_ratio: float = line_a_ratio
+        self.line_b_ratio: float = line_b_ratio
         self._boundary_event_callback: Optional[Callable] = None
 
         # Food class name lookup (from class.yaml or built-in defaults)
@@ -258,8 +257,8 @@ class FrtMain:
         if self.bypass_door_sensor:
             self.current_state = AppState.TRACKING.value
             logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
-            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={})".format(
-                int(480 * self.boundary_ratio)))
+            logger.info(">>> notify start tracking: ByteTrack activated (2 fixed virtual lines: A at y={:.0f}, B at y={:.0f})".format(
+                480 * self.line_a_ratio, 480 * self.line_b_ratio))
             logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
             if self.dbus_interface:
                 self.dbus_interface.emit_camera_state("ON")
@@ -279,11 +278,11 @@ class FrtMain:
             if hasattr(self, 'tracker') and self.tracker and hasattr(self.tracker, 'line_detector'):
                 line_det = self.tracker.line_detector
                 logger.info("=" * 60)
-                logger.info("BOUNDARY CROSSING SUMMARY")
-                logger.info("  Boundary line: {} at pos {}".format(
-                    line_det.boundary_line.get('type', '?'),
-                    int(line_det.boundary_line.get('pos', 0)),
-                ))
+                logger.info("BOUNDARY CROSSING SUMMARY (2-line sequential)")
+                logger.info("  Line A (outer): {} at pos {}".format(
+                    line_det.line_type, line_det.line_a_pos))
+                logger.info("  Line B (inner): {} at pos {}".format(
+                    line_det.line_type, line_det.line_b_pos))
                 changes = line_det.get_and_clear_changes()
                 if changes:
                     logger.info("  Net quantity changes (class_id → delta):")
@@ -311,20 +310,14 @@ class FrtMain:
 
         from ByteTracker import ByteTracker
         self.tracker = ByteTracker(max_age=30, high_thresh=self.confidence_threshold)
-        
-        from VirtualLineDetector import VirtualLineDetector
-        self.virtual_line_detector = VirtualLineDetector()
 
-        # If bypass enabled and no door signal triggers AUTO_CALIBRATION,
-        # set a default boundary line so crossing detection works immediately.
-        if self.bypass_door_sensor:
-            default_y = int(480 * self.boundary_ratio)  # 480 as default frame height
-            self.tracker.line_detector.boundary_line = {
-                'type': 'horizontal',
-                'pos': default_y
-            }
-            logger.info("Default boundary line set at y={} (ratio={})".format(
-                default_y, self.boundary_ratio))
+        # Set 2 fixed virtual lines based on default frame height (updated per frame)
+        default_h = 480
+        line_a = int(default_h * self.line_a_ratio)
+        line_b = int(default_h * self.line_b_ratio)
+        self.tracker.line_detector.set_virtual_lines(line_a, line_b)
+        logger.info("2 fixed virtual lines: A={} (ratio={}), B={} (ratio={})".format(
+            line_a, self.line_a_ratio, line_b, self.line_b_ratio))
 
         frame_count = 0
         fps_start_time = time.time()
@@ -333,7 +326,7 @@ class FrtMain:
             try:
                 loop_start = time.time()
 
-                if self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
+                if self.current_state != AppState.TRACKING.value:
                     time.sleep(0.1)
                     continue
 
@@ -353,45 +346,20 @@ class FrtMain:
                     time.sleep(0.033)
                     continue
 
-                # Print user instructions once at frame 5 (auto-detect mode)
+                # Print user instructions once at frame 5
                 if frame_count == 5 and self.bypass_door_sensor:
                     logger.info("=" * 60)
-                    logger.info("FRTApp AUTO-DETECT MODE (door sensor bypassed)")
-                    logger.info("Default boundary at y={} (horizontal)".format(
-                        self.tracker.line_detector.boundary_line.get('pos', '?')))
-                    logger.info("  CHECK_IN  = object moves top → bottom (enter fridge)")
-                    logger.info("  CHECK_OUT = object moves bottom → top (leave fridge)")
+                    logger.info("FRTAPP 2-LINE CHECK-IN/CHECK-OUT MODE")
+                    logger.info("  Line A (outer, y={}) — Line B (inner, y={})".format(
+                        self.tracker.line_detector.line_a_pos,
+                        self.tracker.line_detector.line_b_pos))
+                    logger.info("  CHECK_IN  = cross A then B downward (enter fridge)")
+                    logger.info("  CHECK_OUT = cross B then A upward (leave fridge)")
                     logger.info("Wave a hand or object past the camera to test!")
                     logger.info("=" * 60)
                     
                 # ============================================================
-                # Phase 1: Auto-Calibration (Run OpenCV only, yield CPU)
-                # ============================================================
-                if self.current_state == AppState.AUTO_CALIBRATION.value:
-                    if self.virtual_line_detector is not None:
-                        line_info = self.virtual_line_detector.detect_virtual_line(frame)
-                        if line_info:
-                            self.tracker.line_detector.set_virtual_line(line_info)
-                            self.virtual_line_ready = True
-                            self.current_state = AppState.TRACKING.value
-                            logger.info("Auto-Calibration complete. Virtual Line saved. Transitioning to TRACKING state.")
-                            logger.info(">>> notify start tracking: ByteTrack activated (virtual line at {})".format(
-                                line_info.get('pos', '?')))
-                            continue
-                        else:
-                            self.frames_without_line += 1
-                            if self.frames_without_line > 5:
-                                logger.warning("Auto-Calibration timeout after 5 frames, using default. Transitioning to TRACKING state.")
-                                self.virtual_line_ready = True
-                                self.current_state = AppState.TRACKING.value
-                                logger.info(">>> notify start tracking: ByteTrack activated (default boundary)")
-                                continue
-                            else:
-                                time.sleep(0.01)
-                                continue
-
-                # ============================================================
-                # Phase 2: AI Vision Core (MOG2 + YOLO + ByteTrack + Boundary)
+                # AI Vision Core (MOG2 + YOLO + ByteTrack + 2-line Boundary)
                 # ============================================================
                 # Motion detection
                 motion_mask = self.motion_detector.apply_background_subtraction(frame)
@@ -492,14 +460,12 @@ class FrtMain:
             elif self.last_distance_cm is not None and self.last_distance_cm < self.distance_threshold_cm:
                 can_track = True
 
-            if can_track and self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
-                logger.info("Transitioning to AUTO_CALIBRATION state")
-                self.current_state = AppState.AUTO_CALIBRATION.value
+            if can_track and self.current_state != AppState.TRACKING.value:
+                logger.info("Transitioning to TRACKING state")
+                self.current_state = AppState.TRACKING.value
                 if self.tracker:
                     self.tracker.reset()
-                self.virtual_line_ready = False
-                self.frames_without_line = 0
-                
+
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("ON")
                 if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:

@@ -171,8 +171,7 @@ class Track:
         self.state = "ACTIVE" # ACTIVE, LOST
         self.age = 0
         
-        # Line Crossing tracking
-        # We store centroid history (x and y)
+        # Line Crossing tracking (2-line sequential)
         self.centroid_x_history = []
         self.centroid_y_history = []
         cx = bbox[0] + bbox[2] / 2
@@ -181,7 +180,14 @@ class Track:
         self.centroid_y_history.append(cy)
         self.entry_counted = False
         self.exit_counted = False
-        
+
+        # 2-line crossing state flags
+        self.crossed_a_down = False
+        self.crossed_b_down = False
+        self.crossed_b_up = False
+        self.crossed_a_up = False
+        self.last_zone = None
+
         # Kalman state
         self.mean, self.covariance = None, None
         
@@ -190,16 +196,18 @@ class Track:
         self.score = score
         self.age = 0
         self.state = "ACTIVE"
-        
+
+        prev_cy = (self.centroid_y_history[-1] if self.centroid_y_history else None)
+
         cx = bbox[0] + bbox[2] / 2
         cy = bbox[1] + bbox[3] / 2
         self.centroid_x_history.append(cx)
         self.centroid_y_history.append(cy)
-        
+
         if len(self.centroid_y_history) > 10:
             self.centroid_x_history.pop(0)
             self.centroid_y_history.pop(0)
-            
+
         measurement = bbox_to_xyah(bbox)
         self.mean, self.covariance = kf.update(self.mean, self.covariance, measurement)
 
@@ -215,66 +223,123 @@ class Track:
         return xyah_to_bbox(self.mean[:4]).tolist()
 
 
-class LineCrossDetector:
-    """Detects when objects cross a virtual boundary line."""
-    def __init__(self, boundary_y: int = 240):
-        # Default to horizontal line
-        self.boundary_line = {
-            'type': 'horizontal',
-            'pos': boundary_y
-        }
-        self.qty_changes = {} # class_id -> change quantity (+ or -)
-        
-    def set_virtual_line(self, line_info: dict):
-        """Set a dynamic virtual line detected from frame."""
-        if line_info:
-            self.boundary_line = line_info
-            logger.info(f"LineCrossDetector updated with {line_info['type']} virtual line at {int(line_info['pos'])}")
+class TwoLineCrossDetector:
+    """
+    2 fixed virtual lines — sequential zone crossing for CHECK_IN/CHECK_OUT.
+
+    3 Zones (horizontal):
+      Zone 1: above line_a     → outside fridge
+      Zone 2: between A and B  → threshold
+      Zone 3: below line_B     → inside fridge
+
+    CHECK_IN  (enter):  Zone 1 → 2 → 3 (cross A then B downward)
+    CHECK_OUT (leave):  Zone 3 → 2 → 1 (cross B then A upward)
+    """
+    def __init__(self, line_a_pos: int = 160, line_b_pos: int = 320, line_type: str = 'horizontal'):
+        self.line_a_pos = line_a_pos
+        self.line_b_pos = line_b_pos
+        self.line_type = line_type
+        self.qty_changes: Dict[int, int] = {}
+
+    def set_virtual_lines(self, line_a: int, line_b: int, line_type: str = 'horizontal'):
+        """Set fixed positions for both virtual lines."""
+        self.line_a_pos = line_a
+        self.line_b_pos = line_b
+        self.line_type = line_type
+        logger.info(f"2-line detector updated: A={line_a}, B={line_b} (type={line_type})")
+
+    def _get_zone(self, coord: float) -> int:
+        """Map a coordinate to zone 1|2|3."""
+        if coord < self.line_a_pos:
+            return 1
+        if coord < self.line_b_pos:
+            return 2
+        return 3
 
     def check_crossing(self, track: Track):
         """
-        Check if a track has crossed the boundary.
-        Top -> Bottom (Outside -> Inside) = Entry (+1)
-        Bottom -> Top (Inside -> Outside) = Exit (-1)
-        Left -> Right (Outside -> Inside) = Entry (+1)
-        Right -> Left (Inside -> Outside) = Exit (-1)
+        Check 2-line sequential crossing for a track.
+        Uses prev/current centroid to detect zone transitions.
         """
         if len(track.centroid_y_history) < 2 or len(track.centroid_x_history) < 2:
             return
-            
-        line_type = self.boundary_line['type']
-        pos = self.boundary_line['pos']
-        
-        if line_type == 'horizontal':
-            start_pos = track.centroid_y_history[0]
-            end_pos = track.centroid_y_history[-1]
-        else: # vertical
-            start_pos = track.centroid_x_history[0]
-            end_pos = track.centroid_x_history[-1]
-            
-        # Outside to Inside (Entry)
-        if start_pos < pos and end_pos >= pos and not track.entry_counted:
-            class_id = track.class_id
-            food_name = _get_food_name(class_id)
+
+        if self.line_type == 'horizontal':
+            curr_coord = track.centroid_y_history[-1]
+            prev_coord = track.centroid_y_history[-2]
+        else:
+            curr_coord = track.centroid_x_history[-1]
+            prev_coord = track.centroid_x_history[-2]
+
+        prev_zone = self._get_zone(prev_coord)
+        curr_zone = self._get_zone(curr_coord)
+
+        if prev_zone == curr_zone:
+            return
+
+        class_id = track.class_id
+        food_name = _get_food_name(class_id)
+
+        # --- Zone transitions ---
+        if prev_zone == 1 and curr_zone == 2:
+            # Crossed line A downward → start entry sequence
+            track.crossed_a_down = True
+            track.crossed_b_up = False
+            track.crossed_a_up = False
+            track.crossed_b_down = False
+            logger.debug(f"Track {track.track_id}: crossed A down (zone 1→2)")
+
+        elif prev_zone == 2 and curr_zone == 3:
+            # Crossed line B downward
+            track.crossed_b_down = True
+            if track.crossed_a_down and not track.entry_counted:
+                self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) + 1
+                track.entry_counted = True
+                track.exit_counted = False
+                track.crossed_a_down = False
+                track.crossed_b_down = False
+                logger.info(f">>> notify: Track ID {track.track_id} CHECKED IN → '"+food_name+f"' (class={class_id}, +1) via 2-line")
+
+        elif prev_zone == 3 and curr_zone == 2:
+            # Crossed line B upward → start exit sequence
+            track.crossed_b_up = True
+            track.crossed_a_down = False
+            track.crossed_b_down = False
+            track.crossed_a_up = False
+            logger.debug(f"Track {track.track_id}: crossed B up (zone 3→2)")
+
+        elif prev_zone == 2 and curr_zone == 1:
+            # Crossed line A upward
+            track.crossed_a_up = True
+            if track.crossed_b_up and not track.exit_counted:
+                self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) - 1
+                track.exit_counted = True
+                track.entry_counted = False
+                track.crossed_b_up = False
+                track.crossed_a_up = False
+                logger.info(f">>> notify: Track ID {track.track_id} CHECKED OUT → '"+food_name+f"' (class={class_id}, -1) via 2-line")
+
+        # Direct zone 1→3 or 3→1: complete crossing in one frame — count directly
+        elif prev_zone == 1 and curr_zone == 3 and not track.entry_counted:
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) + 1
             track.entry_counted = True
-            track.exit_counted = False # Reset if it changes direction
-            logger.info(f">>> notify: Track ID {track.track_id} crossed IN → '"+food_name+f"' (class={class_id}, +1) via {line_type} line")
-            
-        # Inside to Outside (Exit)
-        elif start_pos > pos and end_pos <= pos and not track.exit_counted:
-            class_id = track.class_id
-            food_name = _get_food_name(class_id)
+            track.exit_counted = False
+            track.crossed_a_down = False
+            track.crossed_b_down = False
+            logger.info(f">>> notify: Track ID {track.track_id} CHECKED IN (fast) → '"+food_name+f"' (class={class_id}, +1) via 2-line")
+
+        elif prev_zone == 3 and curr_zone == 1 and not track.exit_counted:
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) - 1
             track.exit_counted = True
-            track.entry_counted = False # Reset if it changes direction
-            logger.info(f">>> notify: Track ID {track.track_id} crossed OUT → '"+food_name+f"' (class={class_id}, -1) via {line_type} line")
+            track.entry_counted = False
+            track.crossed_b_up = False
+            track.crossed_a_up = False
+            logger.info(f">>> notify: Track ID {track.track_id} CHECKED OUT (fast) → '"+food_name+f"' (class={class_id}, -1) via 2-line")
 
     def get_and_clear_changes(self) -> Dict[int, int]:
         """Return the net changes and clear the buffer."""
         changes = self.qty_changes.copy()
         self.qty_changes.clear()
-        # Filter out 0 changes
         return {k: v for k, v in changes.items() if v != 0}
 
 
@@ -294,7 +359,7 @@ class ByteTracker:
         self.tracks: List[Track] = []
         self.next_track_id = 1
         
-        self.line_detector = LineCrossDetector(boundary_y=240)
+        self.line_detector = TwoLineCrossDetector(line_a_pos=160, line_b_pos=320)
         
     def update(self, detections: List[Dict]) -> List[Dict]:
         """

@@ -116,8 +116,10 @@ def main():
                        help="Disable bypass (wait for MC-38 door open signal)")
     parser.add_argument("--confidence", type=float, default=0.85,
                        help="Detection confidence threshold (0.0-1.0, default: 0.85)")
-    parser.add_argument("--boundary-y", type=float, default=0.66,
-                       help="Virtual boundary as fraction of frame height (default: 0.66)")
+    parser.add_argument("--boundary-line-a", type=float, default=0.33,
+                       help="Outer virtual line position as fraction of frame height (default: 0.33)")
+    parser.add_argument("--boundary-line-b", type=float, default=0.66,
+                       help="Inner virtual line position as fraction of frame height (default: 0.66)")
 
     args = parser.parse_args()
     
@@ -169,7 +171,7 @@ def main():
     bypass = args.bypass_door_sensor and not args.no_bypass_door_sensor
     logger.info("Door sensor bypass: {}".format("ON (auto-TRACKING)" if bypass else "OFF (wait for MC-38)"))
     logger.info("Confidence threshold: {}".format(args.confidence))
-    logger.info("Boundary Y ratio: {}".format(args.boundary_y))
+    logger.info("Boundary line A ratio: {} | B ratio: {}".format(args.boundary_line_a, args.boundary_line_b))
     
     # ========================================================================
     # SIGNAL HANDLERS
@@ -189,7 +191,8 @@ def main():
         logger.info("Creating FrtMain instance...")
         app_instance = FrtMain(bypass_door_sensor=bypass,
                                confidence_threshold=args.confidence,
-                               boundary_ratio=args.boundary_y)
+                               line_a_ratio=args.boundary_line_a,
+                               line_b_ratio=args.boundary_line_b)
         
         # Override camera device if provided
         app_instance.CAMERA_DEVICE = args.camera
