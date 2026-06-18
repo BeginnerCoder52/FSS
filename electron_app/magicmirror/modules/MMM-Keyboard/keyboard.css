@@ -1,5 +1,5 @@
 .MMM-Keyboard .keyboardWrapper {
-  width: 650px;
+  width: 780px;
   margin: auto;
   text-align: center;
   z-index: 20;
@@ -71,21 +71,22 @@
 }
 
 .MMM-Keyboard .hg-theme-default .hg-button {
-  height: 50px;
+  height: 65px;
   color: #5d7b9d;
-  font-size: 0.7em;
-  padding: 8px;
-  margin: 1px;
+  font-size: 1.2em;
+  padding: 10px;
+  margin: 3px;
+  border-radius: 8px;
 }
 
 .MMM-Keyboard .hg-theme-default .hg-button.hg-standardBtn{
-  min-width: 45px;
-  max-width: 45px;
+  min-width: 58px;
+  max-width: 58px;
 }
 
 .MMM-Keyboard .hg-theme-default .specialButton {
-  min-width: 60px;
-  max-width: 150px;
+  min-width: 80px;
+  max-width: 160px;
   color: #0000ce;
 }
 

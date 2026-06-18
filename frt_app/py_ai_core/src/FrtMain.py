@@ -32,6 +32,7 @@ License: Proprietary
 
 import os
 import time
+import json
 import threading
 from enum import Enum
 from typing import Optional, Callable
@@ -500,6 +501,34 @@ class FrtMain:
                         preview_path = "/opt/fss/latest_preview.jpg"
                         cv2.imwrite(preview_path, frame,
                                     [cv2.IMWRITE_JPEG_QUALITY, 70])
+                    except Exception:
+                        pass
+
+                # --- Write metadata JSON alongside preview frame ---
+                if frame_count % 3 == 0:
+                    try:
+                        events_list = []
+                        for cid, delta in changes.items():
+                            food_name = self._get_food_name(cid)
+                            events_list.append({
+                                "food_name": food_name,
+                                "class_id": cid,
+                                "delta": abs(delta),
+                                "event": "added" if delta > 0 else "removed"
+                            })
+                        meta = {
+                            "foods": class_breakdown,
+                            "events": events_list,
+                            "pipeline_time_ms": round(total_time, 2),
+                            "capture_time_ms": round(capture_time, 2),
+                            "motion_time_ms": round(motion_time, 2),
+                            "preprocess_time_ms": round(pre_time, 2),
+                            "inference_time_ms": round(infer_time, 2),
+                            "tracking_time_ms": round(track_time, 2)
+                        }
+                        meta_path = "/opt/fss/latest_preview_meta.json"
+                        with open(meta_path, "w") as f:
+                            json.dump(meta, f)
                     except Exception:
                         pass
 

@@ -94,4 +94,52 @@
     transform: scale(0.9);
 }
 
-:root { --color-border: #000000; }
+.fss-panel {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.fss-shopping-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 22em;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text-dimmed) transparent;
+}
+
+.fss-shopping-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.fss-shopping-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-text-dimmed);
+    border-radius: 2px;
+}
+
+.fss-menu-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 18em;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text-dimmed) transparent;
+}
+
+.fss-menu-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.fss-menu-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-text-dimmed);
+    border-radius: 2px;
+}
+
+.fss-pipeline-time {
+    font-size: 0.75em;
+    color: var(--color-text-dimmed);
+    text-align: right;
+    margin-top: 0.4em;
+    padding: 0.2em 0.5em;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+

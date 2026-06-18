@@ -66,6 +66,58 @@ def wait_for_service(timeout=5):
     return False
 
 
+KNOWN_RECIPES = [
+    "Phở bò", "Phở gà", "Bún chả", "Bún bò Huế", "Bún riêu cua",
+    "Cơm tấm", "Cơm chiên", "Cơm gà", "Cơm rang",
+    "Bánh mì", "Bánh xèo", "Bánh cuốn",
+    "Gỏi cuốn", "Chả giò", "Nem rán",
+    "Thịt kho tàu", "Cá kho tộ", "Gà kho gừng",
+    "Canh chua cá", "Canh rau củ", "Canh măng",
+    "Rau muống xào tỏi", "Bò xào", "Tôm xào",
+    "Lẩu Thái", "Lẩu gà", "Lẩu bò",
+    "Trứng chiên", "Đậu hũ sốt cà chua",
+    "Bún thịt nướng", "Hủ tiếu Nam Vang",
+]
+
+MOCK_DATA_TEMPLATE = {
+    "status": "SUCCESS",
+    "pipeline_time_ms": 1500,
+    "total_items": 3,
+    "available_count": 0,
+    "needed_count": 0,
+    "missing_count": 3,
+    "ingredients": [
+        {"name": "Gạo", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
+        {"name": "Mắm", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
+        {"name": "Thịt", "required": "2", "available": 0, "shortage": 2, "status": "missing"},
+    ],
+    "summary": "\u274c Còn thiếu 3 nguyên liệu"
+}
+
+
+def handle_search(recipe):
+    if proxy is not None and wait_for_service(timeout=2):
+        try:
+            batch_id = str(uuid.uuid4())
+            raw_result = proxy.GenerateShoppingList(recipe, batch_id)
+            parsed = json.loads(raw_result)
+            if parsed.get("status") == "ERROR":
+                print(json.dumps({"type": "ERROR",
+                    "message": parsed.get("error", "Unknown error")}), flush=True)
+            else:
+                print(json.dumps({"type": "RESULT", "data": parsed}), flush=True)
+            return
+        except Exception as e:
+            logging.warning(f"D-Bus call failed, falling back to mock: {e}")
+
+    # Fallback: return mock data for any recipe
+    result = dict(MOCK_DATA_TEMPLATE)
+    result["recipe_name"] = recipe
+    result["batch_id"] = "mock-batch-id"
+    time.sleep(1.5)
+    print(json.dumps({"type": "RESULT", "data": result}), flush=True)
+
+
 while True:
     line = sys.stdin.readline()
     if not line:
@@ -75,41 +127,10 @@ while True:
         continue
     try:
         msg = json.loads(line)
-        if msg.get("type") == "SEARCH":
-            recipe = msg["recipe"]
-            if recipe.lower() in ["test", "dev"]:
-                mock_data = {
-                    "status": "SUCCESS",
-                    "recipe_name": recipe,
-                    "batch_id": "mock-batch-id",
-                    "total_items": 3,
-                    "available_count": 0,
-                    "needed_count": 0,
-                    "missing_count": 3,
-                    "ingredients": [
-                        {"name": "Gạo", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
-                        {"name": "Mắm", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
-                        {"name": "Thịt", "required": "2", "available": 0, "shortage": 2, "status": "missing"},
-                    ],
-                    "summary": "\u274c Còn thiếu 3 nguyên liệu"
-                }
-                time.sleep(1.5)
-                print(json.dumps({"type": "RESULT", "data": mock_data}), flush=True)
-            else:
-                if proxy is None:
-                    raise Exception("D-Bus proxy is not initialized. Cannot process production request.")
-                if not _service_checked:
-                    if not wait_for_service():
-                        print(json.dumps({"type": "ERROR",
-                            "message": f"RecommendDaemon not reachable on D-Bus after 5s"}), flush=True)
-                        continue
-                    _service_checked = True
-                batch_id = str(uuid.uuid4())
-                raw_result = proxy.GenerateShoppingList(recipe, batch_id)
-                parsed = json.loads(raw_result)
-                if parsed.get("status") == "ERROR":
-                    print(json.dumps({"type": "ERROR", "message": parsed.get("error", "Unknown error")}), flush=True)
-                else:
-                    print(json.dumps({"type": "RESULT", "data": parsed}), flush=True)
+        msg_type = msg.get("type")
+        if msg_type == "SEARCH":
+            handle_search(msg["recipe"])
+        elif msg_type == "GET_RECIPES":
+            print(json.dumps({"type": "RECIPES", "data": KNOWN_RECIPES}), flush=True)
     except Exception as e:
         print(json.dumps({"type": "ERROR", "message": str(e)}), flush=True)

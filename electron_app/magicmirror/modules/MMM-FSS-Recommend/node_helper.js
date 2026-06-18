@@ -25,6 +25,13 @@ module.exports = NodeHelper.create({
                 return;
             }
             this.sendSearch(payload.recipe);
+        } else if (notification === "GET_RECIPES") {
+            if (!this.started) {
+                this.startBridge();
+            }
+            if (this.processReady && this.pythonProcess && !this.pythonProcess.killed) {
+                this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
+            }
         }
     },
 
@@ -67,6 +74,8 @@ module.exports = NodeHelper.create({
                         this.sendSocketNotification("RECOMMEND_ERROR", { error: msg.message });
                     } else if (msg.type === "STATUS") {
                         console.log(`[MMM-FSS-Recommend] ${msg.message}`);
+                    } else if (msg.type === "RECIPES") {
+                        this.sendSocketNotification("RECIPES", { data: msg.data });
                     }
                 } catch (e) {
                     // non-JSON output - ignore
@@ -101,6 +110,8 @@ module.exports = NodeHelper.create({
                     this.sendSearch(recipe);
                 }
                 this.pendingQueue = [];
+                // Fetch available recipes list
+                this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
             }
         }, 500);
 
