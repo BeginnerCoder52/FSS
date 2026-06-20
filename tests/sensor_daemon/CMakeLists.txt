@@ -109,3 +109,22 @@ target_link_libraries(vl53l0x_test
 # Compilation flags for libgpiod
 target_compile_options(vl53l0x_test PRIVATE ${GPIOD_CFLAGS})
 
+# ========= Temperature Monitor Tests (pure STL, no hardware deps) =========
+set(TEMPERATURE_MONITOR_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/temperature_monitor/test_temperature_monitor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/TemperatureMonitor.cpp"
+)
+
+add_executable(temperature_monitor_test
+    ${TEMPERATURE_MONITOR_SOURCES}
+)
+
+target_link_libraries(temperature_monitor_test
+    PRIVATE
+    pthread
+)
+
+# Register test
+add_test(NAME temperature_monitor_test
+    COMMAND temperature_monitor_test)
+

@@ -12,8 +12,9 @@
 #include <map>
 #include <string>
 
-// Forward declaration
+// Forward declarations
 class SensorDbusInterface;
+struct AnomalyEvent;
 
 /**
  * @class OutputProcessor
@@ -67,6 +68,12 @@ public:
      * @param data Data map from InputProcessor.
      */
     void broadcast_system_events(const std::map<std::string, float>& data);
+
+    /**
+     * @brief Broadcasts a temperature anomaly event via D-Bus.
+     * @param event The anomaly event to broadcast.
+     */
+    void broadcast_temperature_anomaly(const AnomalyEvent& event);
 
 private:
     std::shared_ptr<SensorDbusInterface> sdbus_interface; ///< Interface for D-Bus communication.

@@ -7,6 +7,7 @@
 #include "InputProcessor.hpp"
 #include "OutputProcessor.hpp"
 #include "SystemWatchdog.hpp"
+#include "TemperatureMonitor.hpp"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -23,6 +24,12 @@ SensorDaemonMain::SensorDaemonMain()
     input_processor = std::make_unique<InputProcessor>();
     output_processor = std::make_unique<OutputProcessor>();
     watchdog = std::make_unique<SystemWatchdog>();
+    temp_monitor = std::make_unique<TemperatureMonitor>();
+    temp_monitor->set_callback(
+        [this](const AnomalyEvent& event) {
+            output_processor->broadcast_temperature_anomaly(event);
+        }
+    );
 }
 
 SensorDaemonMain::~SensorDaemonMain() {
@@ -150,6 +157,12 @@ void SensorDaemonMain::process_environment_data() {
     try {
         auto data = input_processor->poll_all_data();
         output_processor->broadcast_system_events(data);
+        if (temp_monitor && data.count("temp")) {
+            temp_monitor->feed_temperature(data.at("temp"));
+            if (data.count("temp_2")) {
+                temp_monitor->feed_temperature_secondary(data.at("temp_2"));
+            }
+        }
     } catch (const std::exception& e) {
         std::cerr << "process_environment_data exception: " << e.what() << std::endl;
         watchdog->report_error_status("Failed to process environment data");

@@ -67,6 +67,9 @@ Module.register("MMM-FSS-Notification", {
             const msg = { ...payload };
             if (msg.type === "door_open") msg.message = "OPENING CAMERA";
             else if (msg.type === "door_closed") msg.message = "CLOSING CAMERA";
+            else if (msg.type === "temperature_anomaly") {
+                msg.isCritical = true;
+            }
             this.addNotification(msg);
         }
     },
@@ -113,7 +116,8 @@ Module.register("MMM-FSS-Notification", {
                 "door_closed": { freq: 330, dur: 150, count: 1, gap: 0 },
                 "food_added": { freq: 880, dur: 100, count: 1, gap: 0 },
                 "food_removed": { freq: 330, dur: 200, count: 2, gap: 150 },
-                "recommend_done": { freq: 550, dur: 150, count: 2, gap: 100, freq2: 770 }
+                "recommend_done": { freq: 550, dur: 150, count: 2, gap: 100, freq2: 770 },
+                "temperature_anomaly": { freq: 220, dur: 300, count: 3, gap: 150 }
             };
 
             const s = soundMap[type] || { freq: 500, dur: 100, count: 1, gap: 0 };

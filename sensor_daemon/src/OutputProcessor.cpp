@@ -5,6 +5,7 @@
 
 #include "OutputProcessor.hpp"
 #include "SensorDbusInterface.hpp"
+#include "TemperatureMonitor.hpp"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -154,6 +155,33 @@ void OutputProcessor::broadcast_system_events(const std::map<std::string, float>
         std::cerr << "OutputProcessor broadcast_system_events exception: " << e.what() << std::endl;
         if (sdbus_interface) {
             sdbus_interface->log_bus_error(std::string("broadcast_system_events failed: ") + e.what());
+        }
+    }
+}
+
+void OutputProcessor::broadcast_temperature_anomaly(const AnomalyEvent& event) {
+    try {
+        if (!sdbus_interface) {
+            std::cerr << "OutputProcessor: Cannot broadcast anomaly, interface not initialized" << std::endl;
+            return;
+        }
+
+        std::ostringstream json_stream;
+        json_stream << std::fixed << std::setprecision(2);
+        json_stream << "{";
+        json_stream << "\"type\": \"" << event.type << "\"";
+        json_stream << ", \"temp_c\": " << event.temp_c;
+        json_stream << ", \"delta_c\": " << event.delta_c;
+        json_stream << ", \"duration_s\": " << event.duration_s;
+        json_stream << ", \"sensor\": \"" << event.sensor << "\"";
+        json_stream << ", \"timestamp\": " << event.timestamp;
+        json_stream << "}";
+
+        sdbus_interface->emit_temperature_anomaly(json_stream.str());
+    } catch (const std::exception& e) {
+        std::cerr << "OutputProcessor broadcast_temperature_anomaly exception: " << e.what() << std::endl;
+        if (sdbus_interface) {
+            sdbus_interface->log_bus_error(std::string("broadcast_temperature_anomaly failed: ") + e.what());
         }
     }
 }

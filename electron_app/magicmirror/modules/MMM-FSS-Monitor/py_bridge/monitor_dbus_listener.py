@@ -77,6 +77,11 @@ class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get
         """Signal: Door state."""
         pass
 
+    @dbus_signal_async("s")
+    def TemperatureAnomaly(self) -> None:
+        """Signal: Temperature anomaly event (JSON string)."""
+        pass
+
 
 class DbDaemonMonitorProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("dbdaemon_interface", "vn.edu.uit.FSS.DBDaemon")):
     """D-Bus interface proxy for distance and door signals from DBDaemon."""
@@ -289,6 +294,7 @@ class MonitorListener:
                 asyncio.create_task(self._listen_sensor_distance()),
                 asyncio.create_task(self._listen_sensor_door()),
                 asyncio.create_task(self._listen_user_presence()),
+                asyncio.create_task(self._listen_temperature_anomaly()),
             ]
 
             self.signal_tasks.extend(tasks)
@@ -350,6 +356,36 @@ class MonitorListener:
             logger.debug("User presence listener task cancelled")
         except Exception as e:
             logger.error(f"Error in raw user presence listener: {e}")
+
+    async def _listen_temperature_anomaly(self):
+        """Listen for temperature anomaly events from sensor daemon."""
+        if not self.sensor_proxy:
+            return
+
+        try:
+            async for json_data in self.sensor_proxy.TemperatureAnomaly:
+                try:
+                    anomaly = json.loads(json_data)
+                    data = {
+                        "type": "TEMPERATURE_ANOMALY",
+                        "anomaly_type": anomaly.get("type", "UNKNOWN"),
+                        "temp_c": anomaly.get("temp_c", 0.0),
+                        "delta_c": anomaly.get("delta_c", 0.0),
+                        "duration_s": anomaly.get("duration_s", 0),
+                        "sensor": anomaly.get("sensor", "primary"),
+                        "source": "raw_sensor",
+                        "timestamp": anomaly.get("timestamp", int(time.time() * 1000)),
+                    }
+                    print(json.dumps(data), flush=True)
+                    logger.info(f"Temperature anomaly: {data['anomaly_type']} at {data['temp_c']:.1f}°C")
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse anomaly JSON: {e}")
+                except Exception as e:
+                    logger.error(f"Error processing temperature anomaly: {e}")
+        except asyncio.CancelledError:
+            logger.debug("Temperature anomaly listener task cancelled")
+        except Exception as e:
+            logger.error(f"Error in temperature anomaly listener: {e}")
 
 
     async def attempt_reconnect(self):

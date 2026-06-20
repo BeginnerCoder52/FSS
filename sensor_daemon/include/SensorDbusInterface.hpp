@@ -64,6 +64,12 @@ public:
     void emit_presence_signal(bool user);
 
     /**
+     * @brief Emits a temperature anomaly signal with JSON payload.
+     * @param json_data JSON string with anomaly details.
+     */
+    void emit_temperature_anomaly(const std::string& json_data);
+
+    /**
      * @brief Restores IPC connection if D-Bus daemon is restarted.
      * @return true if successful, false otherwise.
      */

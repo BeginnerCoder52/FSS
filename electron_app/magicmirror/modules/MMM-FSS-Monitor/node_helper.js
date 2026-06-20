@@ -143,6 +143,30 @@ module.exports = NodeHelper.create({
 					type: "monitor",
 					message: `🚪 DOOR ${doorState}`
 				});
+			} else if (data.type === "TEMPERATURE_ANOMALY") {
+				const anomaly = data.anomaly_type || "UNKNOWN";
+				const temp = data.temp_c != null ? data.temp_c.toFixed(1) : "?";
+				console.log(`${this.name}: Temperature anomaly - ${anomaly} at ${temp}°C`);
+				this.sendSocketNotification("TEMPERATURE_ANOMALY", {
+					anomalyType: anomaly,
+					tempC: data.temp_c,
+					deltaC: data.delta_c,
+					durationS: data.duration_s,
+					sensor: data.sensor,
+					timestamp: data.timestamp || Date.now(),
+				});
+				// Relay to MMM-FSS-Notification
+				const notifMsg = anomaly === "LOAD_WARM_FOOD"
+					? `🔥 CẢNH BÁO: Đồ ăn nóng vừa bỏ vào (${temp}°C)`
+					: anomaly === "FRIDGE_OVERHEATING"
+					? `⚠️ TỦ LẠNH QUÁ NÓNG (${temp}°C)`
+					: anomaly === "FREEZER_WARNING"
+					? `❄️ NGĂN ĐÁ KHÔNG ĐỦ LẠNH (${temp}°C)`
+					: `🌡️ BẤT THƯỜNG NHIỆT: ${anomaly} (${temp}°C)`;
+				this.sendSocketNotification("FSS_NOTIFICATION", {
+					type: "temperature_anomaly",
+					message: notifMsg
+				});
 			} else if (data.type === "STATUS") {
 				console.log(`${this.name}: Status - ${data.message}`);
 			} else {

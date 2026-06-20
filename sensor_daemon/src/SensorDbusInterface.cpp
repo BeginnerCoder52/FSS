@@ -218,6 +218,33 @@ void SensorDbusInterface::emit_presence_signal(bool user) {
     }
 }
 
+void SensorDbusInterface::emit_temperature_anomaly(const std::string& json_data) {
+    if (!is_connected || !system_bus) {
+        std::cerr << "[D-Bus] Cannot emit signal, interface not connected" << std::endl;
+        dropped_messages_count++;
+        return;
+    }
+
+    try {
+        auto data = static_cast<SdbusData*>(system_bus);
+        if (!data || !data->object) {
+            std::cerr << "[D-Bus] Invalid data object" << std::endl;
+            dropped_messages_count++;
+            return;
+        }
+
+        data->object->emitSignal("TemperatureAnomaly")
+                     .onInterface(interface_name)
+                     .withArguments(json_data);
+    } catch (const sdbus::Error& e) {
+        std::cerr << "[D-Bus] emit_temperature_anomaly failed: " << e.what() << std::endl;
+        dropped_messages_count++;
+    } catch (const std::exception& e) {
+        std::cerr << "[D-Bus] emit_temperature_anomaly unexpected error: " << e.what() << std::endl;
+        dropped_messages_count++;
+    }
+}
+
 bool SensorDbusInterface::reconnect_bus() {
     try {
         std::cerr << "[D-Bus] Attempting to reconnect..." << std::endl;

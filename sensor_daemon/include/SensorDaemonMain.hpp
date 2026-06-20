@@ -16,6 +16,7 @@
 class InputProcessor;
 class OutputProcessor;
 class SystemWatchdog;
+class TemperatureMonitor;
 
 /**
  * @class SensorDaemonMain
@@ -84,6 +85,7 @@ public:
     std::unique_ptr<InputProcessor> input_processor;   ///< Sensor data collection logic.
     std::unique_ptr<OutputProcessor> output_processor; ///< Signal broadcasting logic.
     std::unique_ptr<SystemWatchdog> watchdog;          ///< OS survival reporting.
+    std::unique_ptr<TemperatureMonitor> temp_monitor;  ///< Temperature anomaly detector.
     };
 
     #endif // SENSOR_DAEMON_MAIN_HPP
