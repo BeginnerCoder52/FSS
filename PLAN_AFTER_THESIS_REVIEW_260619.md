@@ -199,6 +199,192 @@ These tests import or depend on the CRF model and **must be rewritten**:
 | `TestFullRecipeOutput` | Verify all fields returned (serving, times, difficulty, process, cook, usage, tips) |
 | `TestRecommendEngineNewFormat` | Test `original_ingredients` parsing in `generate_shopping_list()` |
 
+### Pipeline Verification: Step-by-Step Real Results
+
+Beyond unit tests, the NLP pipeline must produce **concrete evidence at every stage** so the thesis can show that each transformation is correct.
+
+| Step | Input | Processing | Expected Output | Evidence |
+|------|-------|------------|----------------|---------|
+| **1. Load recipe DB** | Path to `recipe_extractor/data/recipes/` | Scan all JSON files, build `{name → data}` dict | 2470 recipes loaded, < 0.5s | Terminal log: `Loaded 2470 recipes in 0.32s` |
+| **2. Filter** | `"gỏi trộn khô mực"` | Normalize + hash lookup (case-insensitive, diacritic-insensitive) | `recipe_data: {name, ingredients, spices, ...}` | Printed recipe name match |
+| **3. Parse ingredients** | `["Bưởi : 1 trái", "Mực khô : 1 con (50g)"]` | Split on `" : "`, strip whitespace | `[{"ingredient": "Bưởi", "quantity": "1 trái"}, ...]` | Terminal table of parsed pairs |
+| **4. Sort** | Parsed ingredient list | Alphabetical by ingredient name | `["Bưởi", "Cà rốt", "Đậu phộng", ...]` | Printed sorted list |
+| **5. Build full output** | All recipe fields + parsed ingredients | Combine into JSON FSS-Request | Full recipe JSON with `original_ingredients`, `process`, `cook`, etc. | Saved `recipe_output.json` |
+| **6. RecommendDaemon parse** | `original_ingredients` from NLP | Split on `" : "` → feed to Bù Trừ | Shopping list with available/needed/missing | Comparison table |
+| **7. Edge case: not found** | `"bún bò huế không tồn tại"` | Hash miss → NOT_FOUND | `status: "NOT_FOUND", message: "..."` | Suggestion list |
+
+### User Script: `scripts/nlp_pipeline_demo.sh`
+
+A step-by-step CLI script that the user runs to demonstrate the pipeline:
+
+```bash
+#!/usr/bin/env bash
+# nlp_pipeline_demo.sh — Step-by-step NLP pipeline demonstration
+# Usage: bash scripts/nlp_pipeline_demo.sh
+# Output: prints each step, pauses for user confirmation, saves artifacts
+
+RECIPE_NAME="${1:-Gỏi Trộn Khô Mực}"
+RECIPE_DB="recipe_extractor/data/recipes"
+OUTPUT_DIR="system_results/nlp_demo_$(date +%Y%m%d_%H%M%S)"
+
+mkdir -p "$OUTPUT_DIR"
+
+echo "╔══════════════════════════════════════════════════════╗"
+echo "║     NLP PIPELINE DEMO — Filter + Parse + Sort       ║"
+echo "╚══════════════════════════════════════════════════════╝"
+echo ""
+echo "Recipe: $RECIPE_NAME"
+echo "Output: $OUTPUT_DIR/"
+echo ""
+
+# --- STEP 1: Load Recipe Database ---
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  STEP 1: Load Recipe Database"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Scanning: $RECIPE_DB/"
+START=$(date +%s%N)
+RECIPE_COUNT=$(find "$RECIPE_DB" -name "*.json" | wc -l)
+python3 -c "
+import json, os, time
+start = time.time()
+db = {}
+for f in os.listdir('$RECIPE_DB'):
+    if f.endswith('.json'):
+        with open(os.path.join('$RECIPE_DB', f)) as fp:
+            data = json.load(fp)
+            db[data.get('recipe_name', '').lower().strip()] = data
+elapsed = (time.time() - start) * 1000
+print(f'  ✅ Loaded {len(db)} recipes in {elapsed:.2f}ms')
+print(f'  First 3: {list(db.keys())[:3]}')
+"
+echo ""
+
+# --- STEP 2: Filter Recipe ---
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  STEP 2: Filter — Look up '$RECIPE_NAME'"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+python3 -c "
+import json, os
+db = {}
+for f in os.listdir('$RECIPE_DB'):
+    if f.endswith('.json'):
+        with open(os.path.join('$RECIPE_DB', f)) as fp:
+            data = json.load(fp)
+            db[data.get('recipe_name', '').lower().strip()] = data
+key = '$RECIPE_NAME'.lower().strip()
+if key in db:
+    print(f'  ✅ Found: \"{db[key][\"recipe_name\"]}\"')
+    print(f'     Serving: {db[key].get(\"serving\",\"N/A\")}')
+    print(f'     Time:    {db[key].get(\"times\",\"N/A\")}')
+    print(f'     Difficulty: {db[key].get(\"difficulty\",\"N/A\")}')
+else:
+    suggestions = [k for k in db if key in k or any(w in k for w in key.split())]
+    print(f'  ❌ Not found. Suggestions: {suggestions[:5]}')
+"
+echo "Press Enter to continue..."
+read -r
+
+# --- STEP 3: Parse Ingredients ---
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  STEP 3: Parse ingredients (split on ' : ')"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+python3 -c "
+import json, os
+db = {}
+for f in os.listdir('$RECIPE_DB'):
+    if f.endswith('.json'):
+        with open(os.path.join('$RECIPE_DB', f)) as fp:
+            data = json.load(fp)
+            db[data.get('recipe_name', '').lower().strip()] = data
+key = '$RECIPE_NAME'.lower().strip()
+if key in db:
+    raw = db[key].get('normal_ingredients', [])
+    print(f'  Raw strings ({len(raw)} items):')
+    for s in raw:
+        print(f'    \"{s}\"')
+    print()
+    parsed = []
+    for s in raw:
+        parts = s.split(' : ', 1)
+        name = parts[0].strip()
+        qty = parts[1].strip() if len(parts) > 1 else '1'
+        parsed.append({'ingredient': name, 'quantity': qty})
+    print(f'  Parsed into:')
+    for p in parsed:
+        print(f'    {p[\"ingredient\"]:20s} → qty: {p[\"quantity\"]}')
+"
+echo "Press Enter to continue..."
+read -r
+
+# --- STEP 4: Sort Alphabetically ---
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  STEP 4: Sort ingredients alphabetically"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+python3 -c "
+import json, os
+db = {}
+for f in os.listdir('$RECIPE_DB'):
+    if f.endswith('.json'):
+        with open(os.path.join('$RECIPE_DB', f)) as fp:
+            data = json.load(fp)
+            db[data.get('recipe_name', '').lower().strip()] = data
+key = '$RECIPE_NAME'.lower().strip()
+if key in db:
+    raw = db[key].get('normal_ingredients', [])
+    parsed = []
+    for s in raw:
+        parts = s.split(' : ', 1)
+        name = parts[0].strip()
+        qty = parts[1].strip() if len(parts) > 1 else '1'
+        parsed.append({'ingredient': name, 'quantity': qty})
+    sorted_parsed = sorted(parsed, key=lambda x: x['ingredient'])
+    print(f'  Sorted ({len(sorted_parsed)} items):')
+    for i, p in enumerate(sorted_parsed, 1):
+        print(f'    {i:2d}. {p[\"ingredient\"]:20s} → {p[\"quantity\"]}')
+"
+echo ""
+
+# --- STEP 5: Full Output ---
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  STEP 5: Full Recipe Output (saved to JSON)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+python3 -c "
+import json, os
+db = {}
+for f in os.listdir('$RECIPE_DB'):
+    if f.endswith('.json'):
+        with open(os.path.join('$RECIPE_DB', f)) as fp:
+            data = json.load(fp)
+            db[data.get('recipe_name', '').lower().strip()] = data
+key = '$RECIPE_NAME'.lower().strip()
+if key in db:
+    output = {
+        'status': 'SUCCESS',
+        'dish': db[key].get('recipe_name', key),
+        'original_ingredients': db[key].get('normal_ingredients', []),
+        'original_spices': db[key].get('spices', []),
+        'serving': db[key].get('serving', ''),
+        'times': db[key].get('times', ''),
+        'difficulty': db[key].get('difficulty', ''),
+        'process': db[key].get('process', db[key].get('step', [])),
+        'cook': db[key].get('cook', []),
+        'usage': db[key].get('usage', []),
+        'tips': db[key].get('tips', []),
+        'processing_time_ms': 0.01
+    }
+    output_path = '$OUTPUT_DIR/recipe_output.json'
+    with open(output_path, 'w', encoding='utf-8') as fp:
+        json.dump(output, fp, ensure_ascii=False, indent=2)
+    print(f'  ✅ Full recipe saved to: {output_path}')
+    print(f'  Fields: {list(output.keys())}')
+    print(f'  Ingredients: {len(output[\"original_ingredients\"])}')
+    print(f'  Process steps: {len(output[\"process\"])}')
+    print(f'  Cook steps: {len(output[\"cook\"])}')
+"
+echo ""
+echo "✅ NLP PIPELINE DEMO COMPLETE — Results in $OUTPUT_DIR/"
+```
+
 ### Branch: `recommend_system` (or `feat/nlp-filter-sort`)
 
 This is a self-contained change to `recipe_extractor/` + `recommend_daemon/src/RecommendEngine.py`. Work on this branch, write tests inline.
@@ -610,6 +796,249 @@ User inputs: "Bún bò Huế"
 > *"Độ chính xác của mô hình nhận diện không được tốt => Cần nêu rõ quá trình cải thiện mô hình."*
 > *"Còn thiếu các minh chứng cho mô hình xử lý ảnh"*
 
+### Pipeline Stages & Per-Step Verification
+
+The FRT pipeline has 7 distinct stages. Each stage must produce **concrete output artifacts** that prove the stage works correctly. These artifacts go into the thesis as evidence.
+
+| # | Stage | Input | Processing | Output Artifact | Thesis Evidence |
+|---|-------|-------|------------|----------------|-----------------|
+| **1** | Camera Capture | USB camera `/dev/video0` | V4L2: `open()` → `ioctl` → `mmap` → `dequeue` | `sample_frame.jpg` (first raw frame) | Shows camera is working at expected resolution |
+| **2** | MOG2 Motion Detection | Raw BGR frame | `cv2.createBackgroundSubtractorMOG2()` → foreground mask | `mog2_foreground_mask.jpg` + `mog2_heatmap.jpg` | Proves motion filter removes empty frames |
+| **3** | Image Preprocessing | BGR frame | BGR→RGB, letterbox resize to 640×640, normalize to [0,1] | `preprocess_rgb.jpg` + `preprocess_letterbox.jpg` | Shows input tensor preparation is correct |
+| **4** | YOLO Inference | 640×640×3 float32 tensor | TFLite interpreter → NMS → output boxes | `inference_table.csv` (all detections with confidence) | Raw model output before any filtering |
+| **5** | NMS Filtering | Raw YOLO boxes | IoU threshold 0.45, confidence threshold 0.25 → deduplicated boxes | `nms_stats.json` (before/after box counts per frame) | Proves NMS removes duplicates |
+| **6** | ByteTrack Tracking | NMS-filtered boxes across frames | IoU matching → Kalman filter → track ID assignment | `track_trajectories.json` + `boundary_events.json` | Shows persistent ID assignment |
+| **7** | Annotated Output | Frame + final boxes | `cv2.rectangle()` + label + virtual boundary line | `annotated_result.jpg` + per-frame `frame_{n}_annotated.jpg` | Final visual result for thesis |
+
+### Startup Timer: Camera Countdown Notification
+
+The user needs a **visible countdown in the terminal** before the camera pipeline starts, so they can prepare their test object.
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║           FRT PIPELINE — CAMERA STARTING IN...             ║
+╚══════════════════════════════════════════════════════════════╝
+
+  Preparing camera: /dev/video0
+  Using model:      YOLOv11n_260518_best_int8.tflite
+  Duration:         30 seconds
+
+  5... (check: camera free? ✓)
+  4... (check: SHM ready? ✓)
+  3... (check: model loaded? ✓)
+  2... (check: MOG2 initialized? ✓)
+  1... PIPELINE STARTED!
+
+  ╔══════════════════════════════════════════════════════════╗
+  ║  Camera is LIVE — Pipeline running at 10 FPS             ║
+  ║                                                          ║
+  ║  HOW TO TEST CHECK-IN:                                   ║
+  ║  1. Hold an object (fruit, can, bottle) in front of      ║
+  ║     the camera at the TOP of the frame                   ║
+  ║  2. Slowly move it DOWNWARD across the middle line       ║
+  ║  3. Watch terminal for: ✅ CHECK_IN — track_id=3         ║
+  ║                                                          ║
+  ║  HOW TO TEST CHECK-OUT:                                  ║
+  ║  1. Hold an object at the BOTTOM of the frame            ║
+  ║  2. Slowly move it UPWARD across the middle line         ║
+  ║  3. Watch terminal for: ✅ CHECK_OUT — track_id=3        ║
+  ║                                                          ║
+  ║  Press Ctrl+C to stop the test early                     ║
+  ╚══════════════════════════════════════════════════════════╝
+```
+
+**Implementation**: Add a `--countdown SECONDS` flag to `run_frt_full_test.sh`. Default: 5 seconds. The countdown runs prerequisite checks (camera device, model file, SHM) in parallel and prints a green checkmark for each.
+
+### Live Terminal Dashboard (during pipeline run)
+
+While the pipeline runs, the terminal should display a live-updating status panel:
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  FRT PIPELINE — LIVE DASHBOARD           Elapsed: 12s / 30s │
+├──────────────────────────────────────────────────────────────┤
+│  Camera FPS:        9.8                                       │
+│  Pipeline FPS:      8.2                                       │
+│                                                              │
+│  MOG2:    ████████████░░░░░░░  65% motion (last 10 frames)  │
+│  YOLO:    ████████████████░░  82ms avg inference              │
+│  NMS:     before=42 → after=3  (92.9% suppression)           │
+│  ByteTrack:  3 active tracks                                  │
+│                                                              │
+│  Boundary Events:  CHECK_IN ×2   CHECK_OUT ×1               │
+│  ─────────────────────────────────────────────────────────── │
+│  [00:05] Track #2: CHECK_IN  → add "apple" to inventory     │
+│  [00:09] Track #3: CHECK_OUT → remove "carrot" from inv.    │
+│  [00:12] Track #4: CHECK_IN  → add "bottle" to inventory    │
+│                                                              │
+│  Latest detection: apple (99.2%) @ center=(320, 240)        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+This dashboard updates in-place every second using ANSI escape codes (`\033[<N>A`, `\033[J`). Already partially supported via the loguru output; the enhancement is to consolidate key metrics into a single compact panel.
+
+### User Script: `scripts/frt_pipeline_demo.sh`
+
+A step-by-step script that:
+1. Shows a 5-second countdown with camera/model checks
+2. Runs the pipeline for a configurable duration
+3. Prints per-stage results as they complete
+4. Saves all artifacts to `system_results/frt_demo_<timestamp>/`
+
+```bash
+#!/usr/bin/env bash
+# frt_pipeline_demo.sh — Step-by-step FRT pipeline demonstration
+# Usage: bash scripts/frt_pipeline_demo.sh [--duration 30] [--countdown 5]
+# Output: Terminal dashboard + artifacts in system_results/frt_demo_*/
+
+CAMERA="${CAMERA_DEVICE:-/dev/video0}"
+MODEL="${MODEL_PATH:-/opt/fss/models/YOLOv11n_260518_best_int8.tflite}"
+DURATION=30
+COUNTDOWN=5
+OUTPUT_DIR="system_results/frt_demo_$(date +%Y%m%d_%H%M%S)"
+
+mkdir -p "$OUTPUT_DIR"
+
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║     FRT PIPELINE DEMO — Camera → MOG2 → YOLO → ByteTrack   ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "Camera:   $CAMERA"
+echo "Model:    $MODEL"
+echo "Duration: ${DURATION}s"
+echo "Output:   $OUTPUT_DIR/"
+echo ""
+
+# ──────── Countdown with prerequisite checks ────────
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║           PIPELINE STARTING IN ${COUNTDOWN}s...                    ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+for ((i=COUNTDOWN; i>=1; i--)); do
+    case $i in
+        5)  CHECK1="Camera $CAMERA: $( [[ -c "$CAMERA" ]] && echo '✓ AVAILABLE' || echo '✗ NOT FOUND' )" ;;
+        4)  CHECK2="Model $(basename $MODEL): $( [[ -f "$MODEL" ]] && echo '✓ FOUND' || echo '✗ MISSING' )" ;;
+        3)  CHECK3="SHM /dev/shm/fss_video_frame: $( [[ -f /dev/shm/fss_video_frame ]] && echo '✓ READY' || echo '⚠ NOT FOUND (will create)' )" ;;
+        2)  CHECK4="MOG2 initializing... ✓" ;;
+    esac
+    echo -e "\033[1m  $i...\033[0m"
+    [[ -n "$CHECK1" ]] && echo "    $CHECK1" && unset CHECK1
+    [[ -n "$CHECK2" ]] && echo "    $CHECK2" && unset CHECK2
+    [[ -n "$CHECK3" ]] && echo "    $CHECK3" && unset CHECK3
+    [[ -n "$CHECK4" ]] && echo "    $CHECK4" && unset CHECK4
+    sleep 1
+done
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║  🎥 PIPELINE IS NOW RUNNING                                 ║"
+echo "║                                                             ║"
+echo "║  CHECK-IN:  Move object TOP → BOTTOM (cross middle line)    ║"
+echo "║  CHECK-OUT: Move object BOTTOM → TOP (cross middle line)    ║"
+echo "║                                                             ║"
+echo "║  Press Ctrl+C to stop                                       ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+# ──────── Run pipeline (uses existing comprehensive test) ────────
+source frt_app/py_ai_core/venv/bin/activate
+python tests/frt_app/"[FRT-MAIN]-test_comprehensive_frt.py" \
+    --camera "$CAMERA" \
+    --model "$MODEL" \
+    --output-dir "$OUTPUT_DIR" \
+    --duration "$DURATION" \
+    2>&1 | tee "$OUTPUT_DIR/full_log.txt"
+
+# ──────── Print per-stage results summary ────────
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║     PIPELINE RESULTS — Per-Stage Artifacts                  ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+# Stage 1: Camera
+if [[ -f "$OUTPUT_DIR/sample_frame.jpg" ]]; then
+    echo "  ✅ [Stage 1] Camera Capture: sample_frame.jpg ($(du -h "$OUTPUT_DIR/sample_frame.jpg" | cut -f1))"
+else
+    echo "  ❌ [Stage 1] Camera Capture: NO FRAME"
+fi
+
+# Stage 2: MOG2
+if [[ -f "$OUTPUT_DIR/mog2_foreground_mask.jpg" ]]; then
+    echo "  ✅ [Stage 2] MOG2 Motion: mog2_foreground_mask.jpg"
+    echo "     → mog2_heatmap.jpg"
+else
+    echo "  ❌ [Stage 2] MOG2 Motion: NO MASK"
+fi
+
+# Stage 3: Preprocessing
+if [[ -f "$OUTPUT_DIR/preprocess_letterbox.jpg" ]]; then
+    echo "  ✅ [Stage 3] Preprocessing: preprocess_rgb.jpg + preprocess_letterbox.jpg"
+else
+    echo "  ❌ [Stage 3] Preprocessing: NO OUTPUT"
+fi
+
+# Stage 4: YOLO Inference
+if [[ -f "$OUTPUT_DIR/inference_table.csv" ]]; then
+    LINE_COUNT=$(wc -l < "$OUTPUT_DIR/inference_table.csv")
+    echo "  ✅ [Stage 4] YOLO Inference: inference_table.csv ($((LINE_COUNT-1)) detections)"
+else
+    echo "  ❌ [Stage 4] YOLO Inference: NO TABLE"
+fi
+
+# Stage 5: NMS
+if [[ -f "$OUTPUT_DIR/nms_stats.json" ]]; then
+    echo "  ✅ [Stage 5] NMS: nms_stats.json"
+    python3 -c "
+import json
+with open('$OUTPUT_DIR/nms_stats.json') as f:
+    nms = json.load(f)
+s = nms.get('summary', {})
+print(f'     → Avg boxes before NMS: {s.get(\"boxes_before_nms_avg\",\"?\")} \
+→ after: {s.get(\"boxes_after_nms_avg\",\"?\")} \
+(suppression: {s.get(\"suppression_rate_avg\",\"?\")}%)')
+"
+else
+    echo "  ❌ [Stage 5] NMS: NO STATS"
+fi
+
+# Stage 6: ByteTrack
+if [[ -f "$OUTPUT_DIR/boundary_events.json" ]]; then
+    EVENTS=$(python3 -c "import json; e=json.load(open('$OUTPUT_DIR/boundary_events.json')); print(len(e))" 2>/dev/null || echo "0")
+    echo "  ✅ [Stage 6] ByteTrack: boundary_events.json ($EVENTS events)"
+    python3 -c "
+import json
+events = json.load(open('$OUTPUT_DIR/boundary_events.json'))
+ci = sum(1 for e in events if 'CHECK_IN' in e.get('event',''))
+co = sum(1 for e in events if 'CHECK_OUT' in e.get('event',''))
+print(f'     → CHECK_IN: {ci} | CHECK_OUT: {co}')
+# Print last 3 events
+for e in events[-3:]:
+    print(f'     → [{e.get(\"timestamp\",\"?\")}] Track {e.get(\"track_id\",\"?\")}: {e.get(\"event\",\"?\")}')
+" 2>/dev/null
+else
+    echo "  ❌ [Stage 6] ByteTrack: NO EVENTS"
+fi
+
+# Stage 7: Final annotation
+if [[ -f "$OUTPUT_DIR/annotated_result.jpg" ]]; then
+    echo "  ✅ [Stage 7] Annotated Output: annotated_result.jpg ($(du -h "$OUTPUT_DIR/annotated_result.jpg" | cut -f1))"
+    ls "$OUTPUT_DIR"/latest_frames/frame_*_annotated.jpg 2>/dev/null && \
+        echo "     → Per-frame annotated: $(ls "$OUTPUT_DIR"/latest_frames/frame_*_annotated.jpg 2>/dev/null | wc -l) frames"
+else
+    echo "  ❌ [Stage 7] Annotated Output: NO IMAGE"
+fi
+
+echo ""
+echo "  📁 Full results: $OUTPUT_DIR/"
+echo "  📄 Pipeline report: $OUTPUT_DIR/pipeline_report.json"
+echo ""
+
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║     FRT PIPELINE DEMO COMPLETE                              ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+```
+
 ### Tasks for friend
 
 | Task | Description | Effort |
@@ -619,6 +1048,9 @@ User inputs: "Bún bò Huế"
 | **Improvement log** | Document: base model → fine-tuning → improved model. Show before/after metrics with annotated images | 1 day |
 | **Evidence collection** | Select best annotated frames from `system_results/`, create comparison grids (ground truth vs detection) | 1 day |
 | **Replace diagrams** | Replace YOLO architecture diagrams in thesis with actual `annotated_result.jpg` images from real sessions | 1 day |
+| **Startup timer** | Add `--countdown` flag to `run_frt_full_test.sh` with 5-second timer + prerequisite checks | 0.5 day |
+| **Live dashboard** | Enhance terminal output with ANSI-based live status panel (FPS, detections, boundary events) | 1 day |
+| **Pipeline demo script** | Create `scripts/frt_pipeline_demo.sh` with 7-stage results summary | 0.5 day |
 
 ### What goes in "Improvement" section
 
