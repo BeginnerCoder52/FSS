@@ -14,27 +14,27 @@ pkg_check_modules(GPIOD REQUIRED libgpiod)
 
 # Include directories
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/interface
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/vl53l0x/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../drivers/sensor/sht3x/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../drivers/sensor/sht3x/interface
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../drivers/sensor/vl53l0x/src
     ${GPIOD_INCLUDE_DIRS}
 )
 
 # SHT31 Driver source files
 set(SHT3X_DRIVER_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/src/driver_sht31.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../drivers/sensor/sht3x/src/driver_sht31.c"
 )
 
 # SHT31 Driver source files with wrapper
 set(SHT3X_DRIVER_WRAPPER_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/sht3x/src/driver_sht31.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../drivers/sensor/sht3x/src/driver_sht31.c"
 )
 
 # Wrapper implementation
 set(WRAPPER_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/I2cHandler.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/Sht3xDriver.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/I2cHandler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/Sht3xDriver.cpp"
 )
 
 # Test sources
@@ -76,13 +76,13 @@ target_link_libraries(sht3x_native_test
 
 # VL53L0X Driver source files
 set(VL53L0X_DRIVER_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/vl53l0x/src/vl53l0x.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../drivers/sensor/vl53l0x/src/vl53l0x.c"
 )
 
 # VL53L0X Wrapper implementation
 set(VL53L0X_WRAPPER_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/I2cHandler.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/Vl53l0xDriver.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/I2cHandler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/Vl53l0xDriver.cpp"
 )
 
 # VL53L0X Test sources

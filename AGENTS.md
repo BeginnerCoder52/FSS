@@ -101,7 +101,7 @@ npm run start:x11  # Or use systemd service
 python tests/run_phase1_tests.py
 
 # Recommend system NLP validation
-pytest recipe_extractor/tests/test_recipe_analyzer.py -v
+pytest tests/recipe_extractor/test_recipe_analyzer.py -v
 ```
 
 ### Integration Tests
@@ -404,7 +404,7 @@ python -c "import sdbus; print(sdbus.__file__)"
 1. Implement driver in `sensor_daemon/src/` (e.g., `NewSensorDriver.cpp`)
 2. Register in `InputProcessor::poll_sensors()` with polling interval
 3. Emit D-Bus signal in `OutputProcessor::emit_sensor_data()`
-4. Update test in `sensor_daemon/tests/`
+4. Update test in `tests/sensor_daemon/`
 
 **Add UI logic to MagicMirror**:
 1. Create module in `electron_app/magicmirror/modules/MMM-FSS-<NewModule>/`
@@ -508,11 +508,11 @@ python tests/run_phase1_tests.py
 
 # Recipe extractor NLP (use its own venv)
 source recipe_extractor/venv/bin/activate
-pytest recipe_extractor/tests/test_recipe_analyzer.py -v
+pytest tests/recipe_extractor/test_recipe_analyzer.py -v
 
 # Recommend daemon
 source recommend_daemon/venv/bin/activate
-pytest recommend_daemon/tests/test_recommend_engine.py -v
+pytest tests/recommend_daemon/test_recommend_engine.py -v
 ```
 
 ---
