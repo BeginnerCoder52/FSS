@@ -168,11 +168,23 @@ fi
 # ==============================================================================
 fss_log_info "--- Step 8: Deploying AI models ---"
 if [[ "$SKIP_MODELS" == false ]]; then
-    if [[ -x "${FSS_ROOT}/tools/deploy-model/deploy_model.sh" ]]; then
+    # Check if model already exists before attempting download
+    if [[ -f "$FSS_MODEL_PATH" ]]; then
+        fss_log_info "  Model already exists at ${FSS_MODEL_PATH}, skipping download"
+        fss_log_ok "Models deployed (existing)"
+    elif [[ -x "${FSS_ROOT}/tools/deploy-model/deploy_model.sh" ]]; then
         bash "${FSS_ROOT}/tools/deploy-model/deploy_model.sh"
         fss_log_ok "Models deployed"
     else
         fss_log_warn "deploy_model.sh not executable or missing"
+    fi
+
+    # Show available models
+    fss_log_info "  Models found in ${FSS_MODEL_DIR}:"
+    if [[ -d "$FSS_MODEL_DIR" ]]; then
+        ls -1 "$FSS_MODEL_DIR"/*.tflite 2>/dev/null | while read -r f; do
+            fss_log_info "    - $(basename "$f") ($(du -h "$f" | cut -f1))"
+        done
     fi
 else
     fss_log_skip "Model download skipped (--skip-models)"

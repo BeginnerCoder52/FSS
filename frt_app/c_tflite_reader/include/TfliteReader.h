@@ -11,6 +11,9 @@ typedef enum {
 
 typedef struct TfliteReader TfliteReader;
 
+// XNNPACK support flag (0 = disabled at compile time, 1 = enabled)
+int tflite_reader_is_xnnpack_available(void);
+
 TfliteReader* tflite_reader_create(const char* model_path, ModelPrecision precision);
 
 int tflite_reader_get_input_dims(TfliteReader* reader, int* dims_out, int max_dims);

@@ -6,6 +6,17 @@ Module.register("MMM-FSS-Inventory", {
         showPlaceholder: false,
     },
 
+    FOOD_NAME_VI: {
+        "apple": "Táo",
+        "carrot": "Cà rốt",
+        "egg": "Trứng",
+        "lemon": "Chanh",
+        "tomato": "Cà chua",
+    },
+    _(name) {
+        return this.FOOD_NAME_VI[name] || name;
+    },
+
     getStyles() {
         return ["MMM-FSS-Inventory.css"];
     },
@@ -119,13 +130,13 @@ Module.register("MMM-FSS-Inventory", {
             if (payload.source !== "database") {
                 this.sendNotification("FSS_NOTIFICATION", {
                     type: action === "removed" ? "food_removed" : "food_added",
-                    message: `Bạn vừa ${action === "removed" ? "lấy ra" : "thêm vào"} x${payload.delta || payload.quantity} ${payload.className}`
+                    message: `Bạn vừa ${action === "removed" ? "lấy ra" : "thêm vào"} x${payload.delta || payload.quantity} ${this._(payload.className)}`
                 });
             }
 
             if (payload.quantity > 0) {
                 this.inventoryData.foods[foodId] = {
-                    name: payload.className,
+                    name: this._(payload.className),
                     quantity: payload.quantity,
                     imagePath: payload.imagePath,
                     timestamp: payload.timestamp || Date.now(),
@@ -137,7 +148,12 @@ Module.register("MMM-FSS-Inventory", {
             this.resetStaleTimer();
             this.updateDom();
         } else if (notification === "INVENTORY_UPDATE") {
-            this.inventoryData.foods = payload.foods || {};
+            const rawFoods = payload.foods || {};
+            const translatedFoods = {};
+            for (const [k, v] of Object.entries(rawFoods)) {
+                translatedFoods[k] = {...v, name: this._(v.name || k)};
+            }
+            this.inventoryData.foods = translatedFoods;
             this.inventoryData.lastUpdate = payload.timestamp || Date.now();
             this.inventoryData.isStale = false;
             this.resetStaleTimer();

@@ -64,7 +64,10 @@ Module.register("MMM-FSS-Notification", {
     notificationReceived(notification, payload, sender) {
         if (notification === "FSS_NOTIFICATION") {
             this.playNotificationSound(payload.type);
-            this.addNotification(payload);
+            const msg = { ...payload };
+            if (msg.type === "door_open") msg.message = "OPENING CAMERA";
+            else if (msg.type === "door_closed") msg.message = "CLOSING CAMERA";
+            this.addNotification(msg);
         }
     },
     addNotification(data, preventTimeout = false) {

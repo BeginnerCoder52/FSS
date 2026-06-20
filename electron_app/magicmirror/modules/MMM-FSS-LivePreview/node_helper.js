@@ -38,7 +38,19 @@ module.exports = NodeHelper.create({
                 try {
                     const msg = JSON.parse(line);
                     if (msg.type === "FRAME") {
-                        this.sendSocketNotification("LIVE_PREVIEW_FRAME", { frame: msg.data });
+                        this.sendSocketNotification("LIVE_PREVIEW_FRAME", {
+                            frame: msg.data,
+                            foods: msg.foods || "",
+                            events: msg.events || [],
+                            pipelineTimeMs: msg.pipeline_time_ms || 0,
+                            captureTimeMs: msg.capture_time_ms || 0,
+                            motionTimeMs: msg.motion_time_ms || 0,
+                            preprocessTimeMs: msg.preprocess_time_ms || 0,
+                            inferenceTimeMs: msg.inference_time_ms || 0,
+                            trackingTimeMs: msg.tracking_time_ms || 0
+                        });
+                    } else if (msg.type === "STATUS") {
+                        this.sendSocketNotification("LIVE_PREVIEW_STATUS", { status: msg.message });
                     } else if (msg.type === "ERROR") {
                         console.error("[MMM-FSS-LivePreview] Bridge error:", msg.message);
                         this.sendSocketNotification("LIVE_PREVIEW_ERROR", { error: msg.message });

@@ -135,6 +135,15 @@ body {
   background-color: transparent;
 }
 
+/* Prevent fullscreen overlay module from blocking clicks when keyboard is hidden */
+.region.fullscreen.above .module {
+    pointer-events: none !important;
+}
+.region.fullscreen.above .module .show-keyboard,
+.region.fullscreen.above .module .show-keyboard * {
+    pointer-events: auto !important;
+}
+
 /* Ghi đè CSS toàn cục của MagicMirror cho phù hợp */
 header {
   color: var(--color-text) !important;

@@ -94,7 +94,6 @@ let config = {
 		},
 		{
 			module: "MMM-FSS-Env",
-			disabled: true,
 			position: "top_right",
 			config: {
 				updateInterval: 2000,
@@ -105,8 +104,8 @@ let config = {
 		},
 		{
 			module: "MMM-FSS-LivePreview",
-			position: "bottom_right",
-			config: { previewFps: 10, timeoutAfterStable: 3000 }
+			position: "top_right",
+			config: { previewFps: 10, timeoutAfterStable: 4000 }
 		}
 	]
 };

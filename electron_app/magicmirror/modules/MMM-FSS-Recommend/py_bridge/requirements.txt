@@ -1,0 +1,2 @@
+# Recommend D-Bus listener dependencies
+sdbus>=0.14.0

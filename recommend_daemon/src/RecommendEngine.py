@@ -51,6 +51,7 @@ class RecommendEngine:
                     "batch_id": batch_id
                 }
 
+            pipeline_time_ms = nlp_result.get("processing_time_ms", None)
             ingredients = nlp_result.get("ingredients", [])
             if not ingredients:
                 return {
@@ -107,6 +108,7 @@ class RecommendEngine:
                 "recipe_name": recipe_name,
                 "batch_id": batch_id,
                 "nlp_status": nlp_status,
+                "pipeline_time_ms": pipeline_time_ms,
                 "total_items": total_items,
                 "available_count": available_count,
                 "needed_count": needed_count,
@@ -141,6 +143,7 @@ class RecommendEngine:
                 "status": "SUCCESS",
                 "batch_id": batch_id,
                 "recipe_name": recipe_name,
+                "pipeline_time_ms": pipeline_time_ms,
                 "total_items": total_items,
                 "available_count": available_count,
                 "needed_count": needed_count,
@@ -233,6 +236,7 @@ class RecommendEngine:
         ui_result = dict(result)
         ui_result["ingredients"] = ingredients
         ui_result["summary"] = summary
+        ui_result["pipeline_time_ms"] = result.get("pipeline_time_ms", None)
         return ui_result
 
     def _parse_quantity(self, quantity_str: str) -> int:

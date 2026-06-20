@@ -85,7 +85,7 @@ DAEMON_CMDS=(
     ["sensor"]="sudo ${FSS_SENSOR_EXEC}"
     ["db"]="sudo ${FSS_VENV_DB_DAEMON}/bin/python ${FSS_ROOT}/db_daemon/src/main.py"
     ["camera"]="sudo ${FSS_CAMERA_EXEC}"
-    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend"
+    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend --model /opt/fss/models/YOLOv11n_260518_best_int8.tflite --model-precision int8 --bypass-door-sensor"
     ["recipe"]="sudo ${FSS_VENV_RECIPE_EXTRACTOR}/bin/python ${FSS_ROOT}/recipe_extractor/src/recipe_extractor_main.py"
     ["recommend"]="sudo ${FSS_VENV_RECOMMEND_DAEMON}/bin/python ${FSS_ROOT}/recommend_daemon/src/main.py"
     ["magicmirror"]="pm2"
@@ -198,12 +198,13 @@ check_venv() {
     return 0
 }
 
-wait_for_dbus_release() {
+wait_for_dbus_service() {
     local service_name="$1"
-    local max_wait=5
+    local max_wait="$2"
+    max_wait="${max_wait:-10}"
     local waited=0
     while [[ $waited -lt $max_wait ]]; do
-        if ! dbus-send --system --dest=org.freedesktop.DBus \
+        if dbus-send --system --print-reply --dest=org.freedesktop.DBus \
             /org/freedesktop/DBus org.freedesktop.DBus.NameHasOwner \
             string:"$service_name" 2>/dev/null | grep -q "boolean true"; then
             return 0
@@ -213,6 +214,36 @@ wait_for_dbus_release() {
     done
     return 1
 }
+
+wait_for_dbus_release() {
+    local service_name="$1"
+    local max_wait="${2:-5}"
+    local waited=0
+    while [[ $waited -lt $max_wait ]]; do
+        if ! dbus-send --system --print-reply --dest=org.freedesktop.DBus \
+            /org/freedesktop/DBus org.freedesktop.DBus.NameHasOwner \
+            string:"$service_name" 2>/dev/null | grep -q "boolean true"; then
+            return 0
+        fi
+        sleep 1
+        waited=$((waited + 1))
+    done
+    return 1
+}
+
+# Map daemon keys to their D-Bus service names for registration verification.
+# NOTES:
+#   - "sensor" (C++): connects to system bus but does NOT request a well-known name;
+#     it emits signals from its unique bus name only → no NameHasOwner check.
+#   - "camera" (C++): pure V4L2→SHM capture, no D-Bus code → skip.
+#   - Others (Python): use sdbus.request_default_bus_name_async() → service IS registered.
+declare -A DBUS_SERVICE_MAP
+DBUS_SERVICE_MAP=(
+    ["db"]="vn.edu.uit.FSS.DBDaemon"
+    ["ai"]="vn.edu.uit.FSS.FRTApp"
+    ["recipe"]="vn.edu.uit.FSS.RecipeExtractor"
+    ["recommend"]="vn.edu.uit.FSS.RecommendDaemon"
+)
 
 # ==============================================================================
 # Daemon lifecycle
@@ -229,6 +260,16 @@ start_daemon() {
     fss_log_info "Starting ${name}..."
 
     "$check" "$key" || return 1
+
+    # Verify INT8 model file exists for AI daemon
+    if [[ "$key" == "ai" ]]; then
+        local int8_model="/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
+        if [[ ! -f "$int8_model" ]]; then
+            fss_log_error "INT8 model not found at ${int8_model}. Run FSS_SETUP.sh to deploy models."
+            return 1
+        fi
+        fss_log_info "  INT8 model: ${int8_model}"
+    fi
 
     if [[ "$key" == "magicmirror" ]]; then
         # Fix PM2 version mismatch and clean old instances
@@ -247,6 +288,9 @@ start_daemon() {
             fss_log_ok "${name} started via PM2 (PID: ${pid})"
             echo "$pid" > "$pidfile"
             DAEMON_RETRIES["$key"]=0
+            # Show recent PM2 logs for debugging
+            fss_log_info "  Recent MagicMirror PM2 logs:"
+            pm2 logs MagicMirror --lines 15 --nostream --raw 2>/dev/null | sed 's/^/    | /' || true
             return 0
         fi
         fss_log_error "${name} failed to start via PM2. Check ${log}"
@@ -266,6 +310,17 @@ start_daemon() {
     if kill -0 "$pid" 2>/dev/null; then
         fss_log_ok "${name} started (PID: $pid)"
         echo "$pid" > "$pidfile"
+
+        # Wait for D-Bus service registration (if applicable)
+        local dbus_svc="${DBUS_SERVICE_MAP[$key]:-}"
+        if [[ -n "$dbus_svc" ]]; then
+            fss_log_info "  Waiting for D-Bus service ${dbus_svc}..."
+            if wait_for_dbus_service "$dbus_svc" 8; then
+                fss_log_ok "  D-Bus service ${dbus_svc} registered"
+            else
+                fss_log_warn "  D-Bus service ${dbus_svc} not registered within timeout"
+            fi
+        fi
         return 0
     fi
 

@@ -1,0 +1,36 @@
+{
+  "nms_samples": [
+    {
+      "before": 7,
+      "after": 1,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1898,
+      "after": 73,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1919,
+      "after": 77,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 1916,
+      "after": 79,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    }
+  ],
+  "summary": {
+    "total_inferences": 4,
+    "boxes_before_nms_avg": 1435,
+    "boxes_after_nms_avg": 57.5,
+    "suppression_rate_avg": 95.99,
+    "iou_threshold": 0.35,
+    "confidence_threshold": 0.2
+  }
+}
