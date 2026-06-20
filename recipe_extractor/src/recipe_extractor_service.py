@@ -120,6 +120,16 @@ class RecipeExtractorDbusService:
             self.logger.error(f"D-Bus InsertRequest failed: {e}")
             return False
 
+    def _parse_original_ingredients(self, raw_ingredients: list) -> list:
+        """Parse original_ingredients strings into structured list."""
+        parsed = []
+        for item_str in raw_ingredients:
+            parts = item_str.split(" : ", 1)
+            name = parts[0].strip()
+            qty = parts[1].strip() if len(parts) > 1 else "1"
+            parsed.append({"ingredient": name, "quantity": qty})
+        return parsed
+
     async def _handle_extract_and_persist(self, recipe_name: str) -> str:
         if not self.nlp_engine:
             return json.dumps({
@@ -142,8 +152,9 @@ class RecipeExtractorDbusService:
                     "batch_id": batch_id
                 }, ensure_ascii=False)
 
-            ingredients = nlp_result.get("ingredients", [])
-            ingredients_json = json.dumps(ingredients, ensure_ascii=False)
+            raw_ingredients = nlp_result.get("original_ingredients", [])
+            parsed_ingredients = self._parse_original_ingredients(raw_ingredients)
+            ingredients_json = json.dumps(parsed_ingredients, ensure_ascii=False)
 
             persist_ok = await self._call_dbus_insert_request(
                 recipe_name, ingredients_json, batch_id
@@ -154,14 +165,10 @@ class RecipeExtractorDbusService:
                     f"Failed to persist ingredients for recipe: {recipe_name}"
                 )
 
-            return json.dumps({
-                "status": "SUCCESS",
-                "dish": nlp_result.get("dish", recipe_name),
-                "ingredients": ingredients,
-                "batch_id": batch_id,
-                "persisted": persist_ok,
-                "processing_time_ms": nlp_result.get("processing_time_ms", 0)
-            }, ensure_ascii=False)
+            result = dict(nlp_result)
+            result["batch_id"] = batch_id
+            result["persisted"] = persist_ok
+            return json.dumps(result, ensure_ascii=False)
 
         except Exception as e:
             self.logger.error(

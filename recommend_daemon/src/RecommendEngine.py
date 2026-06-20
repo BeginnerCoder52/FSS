@@ -52,7 +52,15 @@ class RecommendEngine:
                 }
 
             pipeline_time_ms = nlp_result.get("processing_time_ms", None)
-            ingredients = nlp_result.get("ingredients", [])
+
+            raw_strings = nlp_result.get("original_ingredients", [])
+            ingredients = []
+            for item_str in raw_strings:
+                parts = item_str.split(" : ", 1)
+                name = parts[0].strip()
+                qty = parts[1].strip() if len(parts) > 1 else "1"
+                ingredients.append({"ingredient": name, "quantity": qty})
+
             if not ingredients:
                 return {
                     "status": "NOT_FOUND",

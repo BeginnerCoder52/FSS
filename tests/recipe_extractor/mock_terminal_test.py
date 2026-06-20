@@ -1,18 +1,18 @@
 """
-Real Hardware Terminal Test — Recommend System with real CRF model & recipe DB
-==============================================================================
+Real Hardware Terminal Test — Recommend System with Filter+Sort NLP
+====================================================================
 
 Purpose:
     Simulate a real user typing recipe names in the terminal.
     Uses the actual RecipeAnalyzerEngine with:
-      - Real CRF model (fss_ner_crf_optimized.joblib)
+      - Filter+Sort NLP (no ML model needed)
       - Real recipe database (2470 Vietnamese recipes)
-      - Real NLP inference pipeline
+      - Full recipe data output
 
 Usage:
-    python tests/mock_terminal_test.py
-    python tests/mock_terminal_test.py --recipe "thịt kho"
-    python tests/mock_terminal_test.py --recipe "trứng chiên" --recipe "cá kho"
+    python tests/recipe_extractor/mock_terminal_test.py
+    python tests/recipe_extractor/mock_terminal_test.py --recipe "thịt kho"
+    python tests/recipe_extractor/mock_terminal_test.py --recipe "trứng chiên" --recipe "cá kho"
 """
 
 import json
@@ -24,7 +24,7 @@ from typing import List, Dict, Optional
 from pathlib import Path
 
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "recipe_extractor" / "src"))
 
 
 logging.basicConfig(level=logging.WARNING)
@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 
 
 PROJECT_ROOT = Path(__file__).parent.parent
-MODEL_PATH = str(PROJECT_ROOT / "models" / "fss_ner_crf_optimized.joblib")
 RECIPE_DB_PATH = str(PROJECT_ROOT / "data" / "recipes")
 
 
@@ -51,29 +50,31 @@ MASS_UNITS = {"g", "kg", "gram", "ki-lô", "lít", "l", "ml"}
 
 class RealRecipeEngineWrapper:
     def __init__(self):
-        logger.info(f"Loading CRF model: {MODEL_PATH}")
         logger.info(f"Loading recipes from: {RECIPE_DB_PATH}")
         self.engine = RecipeAnalyzerEngine(
-            model_path=MODEL_PATH,
             recipe_db_path=RECIPE_DB_PATH,
         )
         self.recipe_names = self.engine.get_available_recipes()
         print(f"  ✓ Loaded {len(self.recipe_names)} real recipes")
-        print(f"  ✓ CRF model loaded ({os.path.getsize(MODEL_PATH) // 1024} KB)")
+        print(f"  ✓ Filter+Sort NLP engine ready (no ML model needed)")
 
     def extract_recipe(self, name: str) -> Optional[Dict]:
         name = name.strip().lower()
         result = self.engine.generate_fss_request(name)
         if result["status"] == "SUCCESS":
+            raw = result.get("original_ingredients", [])
             ingredients = []
-            for ing in result.get("ingredients", []):
+            for item_str in raw:
+                parts = item_str.split(" : ", 1)
+                ing_name = parts[0].strip()
+                qty = parts[1].strip() if len(parts) > 1 else "1"
                 ingredients.append({
-                    "ingredient": ing["ingredient"],
-                    "quantity": ing.get("quantity", "1"),
+                    "ingredient": ing_name,
+                    "quantity": qty,
                     "unit": "",
                 })
             return {
-                "serving": "N/A",
+                "serving": result.get("serving", "N/A"),
                 "ingredients": ingredients,
             }
         elif result["status"] == "NOT_FOUND":
@@ -131,9 +132,6 @@ def display_recipe(name: str, data: Dict) -> None:
         for d in dropped:
             print(f"    · {d['ingredient']}: {d['quantity']}{d['unit']}")
 
-    total_count = sum(int(ing["quantity"]) for ing in count_ings if ing["quantity"].isdigit())
-    print(f"  → Tổng số nguyên liệu đếm được: {total_count}")
-
 
 def display_combined(results: List[tuple]) -> None:
     print("\n" + "=" * 60)
@@ -157,9 +155,6 @@ def display_combined(results: List[tuple]) -> None:
         for ing in all_count_ings:
             key = f"{ing['ingredient'].lower()}"
             if key in merged:
-                q1 = int(merged[key]["quantity"]) if merged[key]["quantity"].isdigit() else 0
-                q2 = int(ing["quantity"]) if ing["quantity"].isdigit() else 0
-                merged[key]["quantity"] = str(q1 + q2)
                 merged[key]["from_recipes"].append(ing["recipe"])
             else:
                 merged[key] = {
@@ -174,7 +169,7 @@ def display_combined(results: List[tuple]) -> None:
         print(f"  ├──────────┼──────────┼──────────┼──────────┤")
         for item in merged.values():
             name_col = item["ingredient"][:14].ljust(14)
-            qty_col = item["quantity"].rjust(6)
+            qty_col = str(item["quantity"]).rjust(6)
             unit_col = (item["unit"] or " ").ljust(8)
             recipes_col = ", ".join(item["from_recipes"])[:14]
             print(f"  │ {name_col}│ {qty_col}  │ {unit_col}│ {recipes_col:<10}│")
@@ -207,7 +202,7 @@ def interactive_mode(wrapper: RealRecipeEngineWrapper) -> List[str]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Real hardware terminal test for Recommend System — uses real CRF model + recipe DB"
+        description="Real hardware terminal test for Recommend System — uses Filter+Sort NLP + recipe DB"
     )
     parser.add_argument(
         "--recipe",
@@ -222,7 +217,7 @@ def main():
 
     print("\n  ╔══════════════════════════════════════════════╗")
     print("  ║   RECOMMEND SYSTEM — REAL HARDWARE TEST      ║")
-    print("  ║   CRF model + 2470 Vietnamese recipes        ║")
+    print("  ║   Filter+Sort NLP + 2470 Vietnamese recipes  ║")
     print("  ╚══════════════════════════════════════════════╝")
 
     wrapper = RealRecipeEngineWrapper()
