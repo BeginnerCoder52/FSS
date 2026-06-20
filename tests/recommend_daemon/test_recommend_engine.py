@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 from typing import Optional
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "recommend_daemon" / "src"))
 
 from RecommendDbManager import RecommendDbManager
 from RecommendEngine import RecommendEngine
@@ -208,13 +208,22 @@ class TestRecommendEngine(unittest.TestCase):
         self.mock_nlp.generate_fss_request.return_value = {
             "status": "SUCCESS",
             "dish": "gỏi trộn khô mực",
-            "ingredients": [
-                {"ingredient": "Bưởi", "quantity": "1"},
-                {"ingredient": "Mực khô", "quantity": "1"},
-                {"ingredient": "Cà rốt", "quantity": "2"},
-                {"ingredient": "Tắc", "quantity": "3"},
-                {"ingredient": "Đậu phộng", "quantity": "1"}
-            ]
+            "original_ingredients": [
+                "Bưởi : 1 trái",
+                "Mực khô : 1 con",
+                "Cà rốt : 2 củ",
+                "Tắc : 3 trái",
+                "Đậu phộng : 1 gói",
+            ],
+            "original_spices": [],
+            "serving": "4 người",
+            "times": "45 phút",
+            "difficulty": "Dễ",
+            "process": [],
+            "cook": "",
+            "usage": "",
+            "tips": "",
+            "processing_time_ms": 0.35
         }
         self.mock_nlp.get_available_recipes.return_value = [
             "gỏi trộn khô mực", "phở bò", "bún chả"
@@ -437,10 +446,19 @@ class TestDbDbusInteraction(unittest.TestCase):
         self.mock_nlp.generate_fss_request.return_value = {
             "status": "SUCCESS",
             "dish": "phở bò",
-            "ingredients": [
-                {"ingredient": "Thịt bò", "quantity": "1"},
-                {"ingredient": "Bánh phở", "quantity": "1"},
-            ]
+            "original_ingredients": [
+                "Thịt bò : 1 kg",
+                "Bánh phở : 1 gói",
+            ],
+            "original_spices": [],
+            "serving": "2 người",
+            "times": "30 phút",
+            "difficulty": "Dễ",
+            "process": [],
+            "cook": "",
+            "usage": "",
+            "tips": "",
+            "processing_time_ms": 0.42
         }
 
     def tearDown(self):
