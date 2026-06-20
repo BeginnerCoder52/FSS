@@ -17,25 +17,25 @@ Comprehensive test suite for the MC-38 magnetic door sensor driver (DoorSensorDr
 
 ### Option 1: Using Make
 ```bash
-cd /home/richardmelvin52/FSS/sensor_daemon/tests/mc-38
+cd /home/richardmelvin52/FSS/tests/sensor_daemon/mc-38
 make
 ```
 
 ### Option 2: Manual Compilation
 ```bash
 g++ -std=c++17 -Wall -Wextra -O2 \
-    -I../../include \
-    -I../../include/gc-38 \
+    -I../../../sensor_daemon/include \
+    -I../../../sensor_daemon/include/gc-38 \
     -o test_mc38_driver \
     test_main.cpp DoorSensorTest.cpp \
-    ../../src/DoorSensorDriver.cpp \
-    ../../drivers/sensor/mc-38/src/MC38.cpp \
+    ../../../sensor_daemon/src/DoorSensorDriver.cpp \
+    ../../../../drivers/sensor/mc-38/src/MC38.cpp \
     -lgpiod
 ```
 
 ### Option 3: CMake (From tests directory)
 ```bash
-cd /home/richardmelvin52/FSS/sensor_daemon/tests
+cd /home/richardmelvin52/FSS/tests/sensor_daemon
 cmake .
 make
 ```
