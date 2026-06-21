@@ -1,0 +1,8 @@
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Requirement already satisfied: ai-edge-litert in ./frt_app/py_ai_core/venv/lib/python3.13/site-packages (2.1.5)
+Requirement already satisfied: backports.strenum in ./frt_app/py_ai_core/venv/lib/python3.13/site-packages (from ai-edge-litert) (1.2.8)
+Requirement already satisfied: flatbuffers in ./frt_app/py_ai_core/venv/lib/python3.13/site-packages (from ai-edge-litert) (25.12.19)
+Requirement already satisfied: numpy>=1.23.2 in /usr/lib/python3/dist-packages (from ai-edge-litert) (2.2.4)
+Requirement already satisfied: tqdm in /usr/lib/python3/dist-packages (from ai-edge-litert) (4.67.1)
+Requirement already satisfied: typing-extensions in /usr/lib/python3/dist-packages (from ai-edge-litert) (4.13.2)
+Requirement already satisfied: protobuf in ./frt_app/py_ai_core/venv/lib/python3.13/site-packages (from ai-edge-litert) (7.35.1)

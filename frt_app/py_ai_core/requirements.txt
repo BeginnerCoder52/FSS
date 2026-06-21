@@ -21,8 +21,10 @@ numpy>=1.24.0
 # Used in: ByteTracker for linear_sum_assignment (Hungarian Algorithm)
 scipy>=1.10.0
 
-# TFLite Runtime - lightweight TensorFlow Lite inference engine (ai-edge-litert for Py3.13+ ARM64)
-# Falls back: tflite-runtime → ai-edge-litert → tensorflow.lite
+# TFLite Runtime - lightweight TensorFlow Lite inference engine
+# Falls back: ai-edge-litert → tflite-runtime → tensorflow.lite
+# ai-edge-litert >= 2.1.0 supports Python 3.13 ARM64 (Pi 4B)
+# tflite-runtime only has wheels up to Py3.11 — use ai-edge-litert for 3.13+
 ai-edge-litert>=2.1.0
 
 # Pillow - image processing utilities for preprocessing
