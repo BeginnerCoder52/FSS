@@ -13,6 +13,9 @@ Module.register("MMM-FSS-Recommend", {
         this.pipelineTimeMs = null;
         this.availableRecipes = [];
         this.showRecipeList = false;
+        this.suggestedRecipes = [];
+        this.chipOffset = 0;
+        this.CHIPS_PER_PAGE = 5;
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -176,13 +179,60 @@ Module.register("MMM-FSS-Recommend", {
         inputRow.style.touchAction = "manipulation";
         menuPanel.appendChild(inputRow);
 
-        // Suggested recipes hint (shown when no search has been done)
-        if (!this.hasSearched && this.availableRecipes.length > 0) {
-            const hintBox = document.createElement("div");
-            hintBox.className = "fss-recipe-hint";
-            hintBox.style.cssText = "padding:0.4em 1.5em;font-size:0.7em;color:var(--color-text-dimmed);opacity:0.7;";
-            hintBox.textContent = "Gợi ý: " + this.availableRecipes.slice(0, 6).join(", ") + "...";
-            menuPanel.appendChild(hintBox);
+        // Suggested recipe chips (shown when no search has been done)
+        if (!this.hasSearched && this.suggestedRecipes.length > 0) {
+            const chipSection = document.createElement("div");
+            chipSection.className = "fss-chip-section";
+
+            const chipLabel = document.createElement("div");
+            chipLabel.className = "fss-chip-label";
+            chipLabel.textContent = "Gợi ý nhanh:";
+            chipSection.appendChild(chipLabel);
+
+            const chipGrid = document.createElement("div");
+            chipGrid.className = "fss-chip-grid";
+
+            this.suggestedRecipes.forEach((recipe) => {
+                const chip = document.createElement("div");
+                chip.className = "fss-chip";
+                chip.textContent = recipe;
+                chip.setAttribute("data-recipe", recipe);
+
+                const doSearch = () => {
+                    if (this.hasSearched) return;
+                    this.hasSearched = true;
+                    this.searchStartTime = Date.now();
+                    this.pipelineTimeMs = null;
+                    this.searchedRecipes = [recipe];
+                    this.accumulatedResults = [];
+                    this.pendingCount = 1;
+                    this.updateDom();
+                    this.sendSocketNotification("RECIPE_SEARCH", { recipe: recipe });
+                };
+
+                chip.addEventListener("click", doSearch);
+                chip.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    doSearch();
+                });
+
+                chipGrid.appendChild(chip);
+            });
+
+            // Xem thêm button
+            const moreChip = document.createElement("div");
+            moreChip.className = "fss-chip fss-chip-more";
+            moreChip.textContent = "Xem thêm ▾";
+
+            moreChip.addEventListener("click", () => this.advanceChips());
+            moreChip.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                this.advanceChips();
+            });
+
+            chipGrid.appendChild(moreChip);
+            chipSection.appendChild(chipGrid);
+            menuPanel.appendChild(chipSection);
         }
 
         // Scroll container for recipe history
@@ -319,6 +369,7 @@ Module.register("MMM-FSS-Recommend", {
             }
         } else if (notification === "RECIPES") {
             this.availableRecipes = payload.data || [];
+            this.pickSuggestedRecipes();
             this.updateDom();
         }
     },
@@ -385,5 +436,36 @@ Module.register("MMM-FSS-Recommend", {
         } catch (e) {
             // Audio not available
         }
+    },
+
+    pickSuggestedRecipes() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) {
+            this.suggestedRecipes = [];
+            return;
+        }
+        const shuffled = [...this.availableRecipes];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const count = Math.min(this.CHIPS_PER_PAGE, shuffled.length);
+        this.suggestedRecipes = shuffled.slice(0, count);
+        this.chipOffset = count;
+    },
+
+    advanceChips() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) return;
+        const remaining = this.availableRecipes.length - this.chipOffset;
+        if (remaining <= 0) {
+            this.chipOffset = 0;
+        }
+        const count = Math.min(this.CHIPS_PER_PAGE, this.availableRecipes.length);
+        this.suggestedRecipes = [];
+        for (let i = 0; i < count; i++) {
+            const idx = (this.chipOffset + i) % this.availableRecipes.length;
+            this.suggestedRecipes.push(this.availableRecipes[idx]);
+        }
+        this.chipOffset = (this.chipOffset + count) % this.availableRecipes.length;
+        this.updateDom();
     }
 });
