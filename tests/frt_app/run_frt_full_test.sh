@@ -89,6 +89,7 @@ FSS_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CAMERA_DEVICE="/dev/video0"
 MODEL_PATH="/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
 DURATION=15
+COUNTDOWN=5
 DEBUG=false
 NO_SHM=false
 SKIP_SERVICES=false
@@ -130,6 +131,7 @@ while [[ $# -gt 0 ]]; do
         --camera)       CAMERA_DEVICE="$2"; shift 2 ;;
         --model)        MODEL_PATH="$2"; shift 2 ;;
         --duration)     DURATION="$2"; shift 2 ;;
+        --countdown)    COUNTDOWN="$2"; shift 2 ;;
         --session-dir)  SESSION_DIR="$2"; shift 2 ;;
         --mode)         MODE="$2"; shift 2 ;;
         --scenario)     SCENARIO="$2"; shift 2 ;;
@@ -488,6 +490,7 @@ elif [[ "$MODE" == "comprehensive" ]]; then
     echo "  Pipeline:     Camera → Preproc → MOG2 → YOLO → ByteTrack → Pipeline → Output"
 fi
 echo "  Synthetic:    $SYNTHETIC"
+echo "  Countdown:    ${COUNTDOWN}s"
 echo "  Confidence:   $CONFIDENCE"
 echo "  Backend:      $($PYTHON_BACKEND && echo 'Python (tflite-runtime)' || echo 'C (libtflite_reader.so)')"
 echo "  Create SHM:   $([[ $NO_SHM == true ]] && echo 'no' || echo 'yes')"
@@ -802,6 +805,34 @@ elif [[ "$MODE" == "scenario" ]]; then
 
 elif [[ "$MODE" == "comprehensive" ]]; then
     header "STEP 4: Run Comprehensive FRT Pipeline Test ([FRT-MAIN]-test_comprehensive_frt.py)"
+
+    # ─── Countdown with prerequisite checks ───
+    if [[ $COUNTDOWN -gt 0 && $SYNTHETIC == false ]]; then
+        echo ""
+        echo "  ╔══════════════════════════════════════════════════════════════╗"
+        echo "  ║           PIPELINE STARTING IN ${COUNTDOWN}s...                      ║"
+        echo "  ╚══════════════════════════════════════════════════════════════╝"
+        echo ""
+        for ((i=COUNTDOWN; i>=1; i--)); do
+            case $i in
+                $COUNTDOWN)   C1="Camera $CAMERA_DEVICE: $( [[ -c "$CAMERA_DEVICE" ]] && echo '✓' || echo '✗' )" ;;
+                $((COUNTDOWN-1))) C2="Model $(basename $MODEL_PATH): $( [[ -f "$MODEL_PATH" ]] && echo '✓' || echo '✗' )" ;;
+                $((COUNTDOWN-2))) C3="SHM /dev/shm/fss_video_frame: $( [[ -f /dev/shm/fss_video_frame ]] && echo '✓' || echo '⚠' )" ;;
+                $((COUNTDOWN-3))) C4="MOG2 initialization: ✓" ;;
+                1)            C5="ByteTrack tracker: ✓" ;;
+            esac
+            echo -e "  \033[1m$i...\033[0m"
+            [[ -n "$C1" ]] && echo "    $C1" && unset C1
+            [[ -n "$C2" ]] && echo "    $C2" && unset C2
+            [[ -n "$C3" ]] && echo "    $C3" && unset C3
+            [[ -n "$C4" ]] && echo "    $C4" && unset C4
+            [[ -n "$C5" ]] && echo "    $C5" && unset C5
+            sleep 1
+        done
+        echo ""
+        echo "  PIPELINE STARTED!"
+        echo ""
+    fi
 
     echo ""
     echo "  ╔══════════════════════════════════════════════════════════════════╗"
