@@ -16,6 +16,10 @@ Module.register("MMM-FSS-Recommend", {
         this.suggestedRecipes = [];
         this.chipOffset = 0;
         this.CHIPS_PER_PAGE = 5;
+        this.qrBase64 = null;
+        this.qrUrl = null;
+        this.showQrOverlay = false;
+        this.qrError = null;
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -117,6 +121,85 @@ Module.register("MMM-FSS-Recommend", {
             timeDisplay.className = "fss-pipeline-time";
             timeDisplay.textContent = "⏱ Round-trip: " + this.pipelineTimeMs + "ms";
             shoppingPanel.appendChild(timeDisplay);
+        }
+
+        // QR download button (shown after search result)
+        if (this.result && this.result.recipe_name) {
+            const qrBtn = document.createElement("div");
+            qrBtn.className = "fss-qr-btn";
+            qrBtn.textContent = "📱 Tải về";
+            qrBtn.addEventListener("click", () => {
+                this.qrError = null;
+                this.qrBase64 = null;
+                this.qrUrl = null;
+                this.showQrOverlay = false;
+                this.updateDom();
+                this.sendSocketNotification("GENERATE_QR", this.result);
+            });
+            qrBtn.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                this.qrError = null;
+                this.qrBase64 = null;
+                this.qrUrl = null;
+                this.showQrOverlay = false;
+                this.updateDom();
+                this.sendSocketNotification("GENERATE_QR", this.result);
+            });
+            shoppingPanel.appendChild(qrBtn);
+        }
+
+        // QR code overlay
+        if (this.showQrOverlay) {
+            const overlay = document.createElement("div");
+            overlay.className = "fss-qr-overlay";
+
+            const qrContent = document.createElement("div");
+            qrContent.className = "fss-qr-content";
+
+            const qrTitle = document.createElement("div");
+            qrTitle.className = "fss-qr-title";
+            qrTitle.textContent = "Quét mã để xem công thức";
+            qrContent.appendChild(qrTitle);
+
+            if (this.qrError) {
+                const errMsg = document.createElement("div");
+                errMsg.className = "fss-qr-error";
+                errMsg.textContent = "❌ " + this.qrError;
+                qrContent.appendChild(errMsg);
+            } else if (this.qrBase64) {
+                const qrImg = document.createElement("img");
+                qrImg.className = "fss-qr-img";
+                qrImg.src = "data:image/png;base64," + this.qrBase64;
+                qrImg.alt = "QR Code";
+                qrContent.appendChild(qrImg);
+
+                const qrUrlDisplay = document.createElement("div");
+                qrUrlDisplay.className = "fss-qr-url";
+                qrUrlDisplay.textContent = this.qrUrl;
+                qrContent.appendChild(qrUrlDisplay);
+            } else {
+                const spinner = document.createElement("div");
+                spinner.className = "fss-qr-spinner";
+                spinner.textContent = "Đang tạo mã QR...";
+                qrContent.appendChild(spinner);
+            }
+
+            const closeBtn = document.createElement("div");
+            closeBtn.className = "fss-qr-close";
+            closeBtn.textContent = "✕ Đóng";
+            closeBtn.addEventListener("click", () => {
+                this.showQrOverlay = false;
+                this.updateDom();
+            });
+            closeBtn.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                this.showQrOverlay = false;
+                this.updateDom();
+            });
+            qrContent.appendChild(closeBtn);
+
+            overlay.appendChild(qrContent);
+            wrapper.appendChild(overlay);
         }
 
         wrapper.appendChild(shoppingPanel);
@@ -370,6 +453,15 @@ Module.register("MMM-FSS-Recommend", {
         } else if (notification === "RECIPES") {
             this.availableRecipes = payload.data || [];
             this.pickSuggestedRecipes();
+            this.updateDom();
+        } else if (notification === "QR_CODE_READY") {
+            this.qrBase64 = payload.base64;
+            this.qrUrl = payload.url;
+            this.showQrOverlay = true;
+            this.updateDom();
+        } else if (notification === "QR_ERROR") {
+            this.qrError = payload.error || "Unknown error";
+            this.showQrOverlay = true;
             this.updateDom();
         }
     },
