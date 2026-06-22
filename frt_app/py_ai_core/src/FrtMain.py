@@ -267,8 +267,8 @@ class FrtMain:
             self.current_state = AppState.TRACKING.value
             self._last_active_time = time.time()
             logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
-            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={})".format(
-                int(480 * self.boundary_ratio)))
+            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={:.2f})".format(
+                self.boundary_ratio))
             logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
             if self.dbus_interface:
                 self.dbus_interface.emit_camera_state("ON")
@@ -327,13 +327,12 @@ class FrtMain:
         # If bypass enabled and no door signal triggers AUTO_CALIBRATION,
         # set a default boundary line so crossing detection works immediately.
         if self.bypass_door_sensor:
-            default_y = int(480 * self.boundary_ratio)  # 480 as default frame height
             self.tracker.line_detector.boundary_line = {
                 'type': 'horizontal',
-                'pos': default_y
+                'pos': self.boundary_ratio
             }
-            logger.info("Default boundary line set at y={} (ratio={})".format(
-                default_y, self.boundary_ratio))
+            logger.info("Default boundary line set at y={:.2f} (ratio={})".format(
+                self.boundary_ratio, self.boundary_ratio))
 
         frame_count = 0
         fps_start_time = time.time()

@@ -129,19 +129,12 @@ class YoloTfliteEngine:
                 logger.error("Model file not found: {}".format(self.model_path))
                 return False
             
-            # Try to import TFLite runtime (ai-edge-litert is the
-            # Py3.13+ successor; tflite-runtime only up to Py3.11)
+            # Try to import ai-edge-litert (requested by user)
             try:
                 import ai_edge_litert.interpreter as tflite
             except ImportError:
-                try:
-                    import tflite_runtime.interpreter as tflite
-                except ImportError:
-                    try:
-                        import tensorflow.lite as tflite
-                    except ImportError:
-                        logger.error("TFLite runtime not installed.")
-                        return False
+                logger.error("ai-edge-litert not installed.")
+                return False
             
             # Load model
             self.interpreter = tflite.Interpreter(model_path=self.model_path, num_threads=4)

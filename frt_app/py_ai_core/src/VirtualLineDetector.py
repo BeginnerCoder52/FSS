@@ -77,7 +77,7 @@ class VirtualLineDetector:
                         in_edge_area = True
                         line_info = {
                             'type': 'horizontal',
-                            'pos': y_avg,
+                            'pos': y_avg / height if height > 0 else 0.0,
                             'start': min(x1, x2),
                             'end': max(x1, x2)
                         }
@@ -88,7 +88,7 @@ class VirtualLineDetector:
                         in_edge_area = True
                         line_info = {
                             'type': 'vertical',
-                            'pos': x_avg,
+                            'pos': x_avg / width if width > 0 else 0.0,
                             'start': min(y1, y2),
                             'end': max(y1, y2)
                         }

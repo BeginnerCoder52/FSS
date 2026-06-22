@@ -240,7 +240,7 @@ if $LIVE_MODE; then
     echo "  Output:    ${OUTPUT_DIR}/annotated_video.mp4"
     echo ""
 
-    $PYTHON -c "
+    $PYTHON << PYEOF
 import cv2, numpy as np, sys, os, time, json, threading, queue
 from collections import Counter
 
@@ -255,7 +255,7 @@ DUR    = $DURATION
 SHOW   = '$PREVIEW' == 'true'
 SYNTH  = '$SYNTHETIC' == 'true'
 TARGET_FPS = $LIVE_FPS
-BOUNDARY_FRAC = 0.55
+BOUNDARY_FRAC = 0.40  # Lifted higher so CHECK OUT has more visible time
 target_size = 640
 
 if SYNTH:
@@ -271,7 +271,7 @@ else:
     cap_fps = cap.get(cv2.CAP_PROP_FPS) or 30
     print(f'Camera: {W}x{H} @ {cap_fps:.1f} FPS')
 
-# -- Threaded inference backend (tflite-runtime, not C) --
+# -- Threaded inference backend (ai-edge-litert, not C) --
 frame_queue = queue.Queue(maxsize=2)
 state_lock = threading.Lock()
 shared = {'tracks': [], 'changes': Counter()}
@@ -281,7 +281,7 @@ def inference_worker():
     try:
         eng = YoloTfliteEngine(MODEL, use_c_backend=False)
         if not eng.load_model_mmap():
-            print('  FAIL: tflite-runtime model load failed')
+            print('  FAIL: ai-edge-litert model load failed')
             return
         tracker = ByteTracker(max_age=30, high_thresh=0.55, match_thresh=0.6)
         tracker.line_detector.set_virtual_line({'type': 'horizontal', 'pos': BOUNDARY_FRAC})
@@ -329,16 +329,36 @@ def inference_worker():
 infer_thread = threading.Thread(target=inference_worker, daemon=True)
 infer_thread.start()
 if not engine_ready.wait(timeout=8):
-    print('  Warning: inference backend not ready (tflite-runtime may be missing)')
+    print('  Warning: inference backend not ready (ai-edge-litert may be missing)')
     print('  Video will record raw frames without detection boxes')
 
-# -- Main capture + write loop at target FPS --
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+# -- MOG2 background subtractor (secondary stream) --
+mog2 = cv2.createBackgroundSubtractorMOG2()
+mog2_writer = cv2.VideoWriter(f'{OUT}/mog2_stream.mp4', fourcc, TARGET_FPS, (W, H), isColor=True)
+print(f'MOG2 stream: {OUT}/mog2_stream.mp4')
+
+# -- Main capture + write loop at target FPS --
 writer = cv2.VideoWriter(f'{OUT}/annotated_video.mp4', fourcc, TARGET_FPS, (W, H))
 
 COLORS = {0:(0,200,0),1:(200,0,0),2:(0,0,200),3:(200,200,0),4:(200,0,200),-1:(100,100,100)}
 TARGET_CLASSES = {0:'apple',1:'carrot',2:'egg',3:'lemon',4:'tomato'}
+# Letterbox reverse-mapping parameters
+scale_lb = min(target_size / W, target_size / H)
+nw_lb, nh_lb = int(W * scale_lb), int(H * scale_lb)
+x_off_lb = (target_size - nw_lb) // 2
+y_off_lb = (target_size - nh_lb) // 2
 boundary_px = int(H * BOUNDARY_FRAC)
+
+# Notify toast: track new crossing events to show as disappearing toast
+processed_changes = Counter()
+notifications = []  # list of (text, expiry_time)
+
+# Boundary moment capture
+best_boundary_frame = None
+best_boundary_conf = 0.0
+best_boundary_events = {}
+boundary_frame_saved = False
 
 start_ts = time.time()
 frame_nb = 0
@@ -367,33 +387,119 @@ while time.time() - start_ts < DUR:
     except queue.Full:
         pass
 
+    # MOG2 foreground mask on every frame
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    fg_mask = mog2.apply(gray)
+    mog2_bgr = cv2.cvtColor(fg_mask, cv2.COLOR_GRAY2BGR)
+    cv2.putText(mog2_bgr, 'MOG2 Foreground Mask - FSS FRT Pipeline', (10, 28),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 2)
+    cv2.putText(mog2_bgr, f'Motion pixels: {cv2.countNonZero(fg_mask):>6d}', (10, 52),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (200, 200, 200), 1)
+    cv2.putText(mog2_bgr, f'Frame: {frame_nb}  FPS: {TARGET_FPS}', (10, 72),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150, 150, 150), 1)
+    mog2_writer.write(mog2_bgr)
+
     with state_lock:
         tracks = list(shared['tracks'])
-        ci = sum(v for v in shared['changes'].values() if v > 0)
-        co = abs(sum(v for v in shared['changes'].values() if v < 0))
+        current_changes = dict(shared['changes'])
+
+    # Detect new crossing events for notify toast
+    for cid, delta in current_changes.items():
+        old = processed_changes.get(cid, 0)
+        new_delta = delta - old
+        if new_delta != 0:
+            food = TARGET_CLASSES.get(int(cid), cid)
+            direction = "CHECK IN" if new_delta > 0 else "CHECK OUT"
+            notifications.append((f'{int(abs(new_delta))} {food} {direction}', time.time() + 2.5))
+    processed_changes = Counter(current_changes)
 
     annotated = frame.copy()
     cv2.line(annotated, (0, boundary_px), (W, boundary_px), (0, 255, 255), 3)
     cv2.putText(annotated, 'BOUNDARY', (W-120, boundary_px-8),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
+    # Track if any track is near the boundary line
+    near_boundary = False
+    max_near_conf = 0.0
+
     for t in tracks:
         tid = t['track_id']
         cid = int(t['class_id'])
         conf = t['confidence']
         bx, by, bw, bh = t['bbox']
-        x1 = int(bx * W); y1 = int(by * H)
-        x2 = int((bx + bw) * W); y2 = int((by + bh) * H)
+
+        # Reverse letterbox: [0,1] of 640 canvas → original frame pixels
+        cx = (bx * target_size - x_off_lb) / scale_lb
+        cy = (by * target_size - y_off_lb) / scale_lb
+        cw = bw * target_size / scale_lb
+        ch = bh * target_size / scale_lb
+        x1 = int(max(0, min(W-1, cx)))
+        y1 = int(max(0, min(H-1, cy)))
+        x2 = int(max(0, min(W-1, cx + cw)))
+        y2 = int(max(0, min(H-1, cy + ch)))
+
+        # Clamp bbox to prevent Kalman prediction stretching
+        bbox_w = x2 - x1
+        bbox_h = y2 - y1
+        if bbox_w > W * 0.7 or bbox_h > H * 0.7:
+            # Skip stretched bbox (Kalman prediction without correction)
+            continue
+
         color = COLORS.get(cid, COLORS[-1])
         cv2.rectangle(annotated, (x1, y1), (x2, y2), color, 2)
         lbl = f'ID{tid} {TARGET_CLASSES.get(cid,cid)} {conf:.2f}'
         cv2.putText(annotated, lbl, (x1, max(y1-5, 15)),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
 
-    cv2.putText(annotated, f'CI:{int(ci)} CO:{int(co)} Frame:{frame_nb} FPS:{TARGET_FPS}',
+        # Check if this track's centroid is near the boundary line
+        centroid_y = (y1 + y2) / 2.0
+        if abs(centroid_y - boundary_px) < 30:
+            near_boundary = True
+            if conf > max_near_conf:
+                max_near_conf = conf
+
+    # Show per-class counts near boundary line
+    ci_classes = {}
+    co_classes = {}
+    for cid, delta in current_changes.items():
+        if delta > 0: ci_classes[cid] = ci_classes.get(cid, 0) + delta
+        elif delta < 0: co_classes[cid] = co_classes.get(cid, 0) + abs(delta)
+    ci = int(sum(ci_classes.values()))
+    co = int(sum(co_classes.values()))
+    ci_str = ', '.join(f'{int(v)} {TARGET_CLASSES.get(k,k)}' for k, v in sorted(ci_classes.items()))
+    co_str = ', '.join(f'{int(v)} {TARGET_CLASSES.get(k,k)}' for k, v in sorted(co_classes.items()))
+
+    cv2.putText(annotated, f'Frame:{frame_nb} FPS:{TARGET_FPS}',
                 (10, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 2)
+    cv2.putText(annotated, f'IN:{ci_str if ci_str else "0"}', (10, 48),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 1)
+    cv2.putText(annotated, f'OUT:{co_str if co_str else "0"}', (10, 66),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 1)
+
+    # Notify toast: draw recent crossing events with fade
+    now = time.time()
+    alive = []
+    for text, expiry in notifications:
+        remain = expiry - now
+        if remain > 0:
+            alpha = max(0.3, min(1.0, remain * 2.0))
+            color = (0, 255, 0) if 'IN' in text else (0, 0, 255)
+            thickness = max(1, int(1 + alpha))
+            y_base = 90 + len(alive) * 22
+            cv2.putText(annotated, text, (10, y_base),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, thickness)
+            alive.append((text, expiry))
+    notifications = alive
 
     writer.write(annotated)
+
+    # Capture boundary moment: first time a track is near boundary with best conf
+    if near_boundary and max_near_conf > best_boundary_conf and not boundary_frame_saved:
+        best_boundary_conf = max_near_conf
+        best_boundary_frame = annotated.copy()
+        best_boundary_events = dict(current_changes)
+        boundary_frame_saved = True
+
     frame_nb += 1
 
     if SHOW:
@@ -420,30 +526,65 @@ eff_fps = frame_nb / elapsed if elapsed > 0 else 0
 
 with state_lock:
     final_changes = dict(shared['changes'])
-ci = sum(v for v in final_changes.values() if v > 0)
-co = abs(sum(v for v in final_changes.values() if v < 0))
+ci = int(sum(v for v in final_changes.values() if v > 0))
+co = int(abs(sum(v for v in final_changes.values() if v < 0)))
+
+# Save boundary moment image (or fallback to last frame)
+boundary_img = best_boundary_frame if best_boundary_frame is not None else annotated.copy()
+# Draw final event statistics if any occurred
+ci_final = sum(1 for v in final_changes.values() if v > 0)
+co_final = sum(1 for v in final_changes.values() if v < 0)
+if ci_final > 0 or co_final > 0:
+    cv2.putText(boundary_img, f'FINAL SUMMARY -> IN: {ci} OUT: {co}', (10, H - 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
+cv2.imwrite(f'{OUT}/annotated_result.jpg', boundary_img)
+
+# Per-class breakdown
+ci_classes_final = {}
+co_classes_final = {}
+for cid, delta in final_changes.items():
+    if delta > 0: ci_classes_final[cid] = int(delta)
+    elif delta < 0: co_classes_final[cid] = int(abs(delta))
 
 with open(f'{OUT}/boundary_events.json', 'w') as f:
     json.dump(final_changes, f, indent=2)
-cv2.imwrite(f'{OUT}/annotated_result.jpg', annotated)
+
 with open(f'{OUT}/live_summary.json', 'w') as f:
     json.dump({
         'duration_s': round(elapsed, 1),
         'frames': frame_nb,
         'video_fps': round(eff_fps, 1),
         'target_fps': TARGET_FPS,
-        'backend': 'tflite_runtime',
+        'backend': 'ai-edge-litert',
         'boundary_y_px': boundary_px,
-        'total_check_in': int(ci),
-        'total_check_out': int(co),
-        'crossing_events': int(ci + co),
-        'changes_by_class': {str(k): int(v) for k, v in final_changes.items()}
+        'total_check_in': ci,
+        'total_check_out': co,
+        'crossing_events': ci + co,
+        'changes_by_class': {str(k): int(v) for k, v in final_changes.items()},
+        'check_in_by_class': {str(k): v for k, v in ci_classes_final.items()},
+        'check_out_by_class': {str(k): v for k, v in co_classes_final.items()},
+        'boundary_moment_conf': round(best_boundary_conf, 3) if best_boundary_frame is not None else 0
     }, f, indent=2)
 
+# Per-class event lines
+event_lines = []
+for cid, delta in sorted(final_changes.items(), key=lambda x: -abs(x[1])):
+    direction = "CHECK IN" if delta > 0 else "CHECK OUT"
+    event_lines.append(f'{int(abs(delta))} {TARGET_CLASSES.get(cid, cid)} has {direction}')
+
 print(f'Duration: {elapsed:.1f}s | Frames: {frame_nb} | Video: {eff_fps:.1f} FPS')
-print(f'Crossings: {int(ci)} CHECK_IN, {int(co)} CHECK_OUT')
+print(f'CHECK IN total:  {ci}')
+print(f'CHECK OUT total: {co}')
+for line in event_lines:
+    print(f'  -> {line}')
+print(f'Boundary moment confidence: {best_boundary_conf:.3f}')
 print(f'Video: annotated_video.mp4')
-" && pass "Live pipeline complete — ${DURATION}s at ${LIVE_FPS} FPS (tflite-runtime)" || fail "Live pipeline FAILED"
+PYEOF
+if [ $? -eq 0 ]; then
+    pass "Live pipeline complete — ${DURATION}s at ${LIVE_FPS} FPS (ai-edge-litert)"
+else
+    fail "Live pipeline FAILED"
+fi
 
     # Quick summary
     header "LIVE PIPELINE RESULTS"
@@ -453,18 +594,30 @@ import json
 s = json.load(open('$OUTPUT_DIR/live_summary.json'))
 print(f'  Duration:     {s[\"duration_s\"]}s')
 print(f'  Frames:       {s[\"frames\"]}')
-print(f'  Effective FPS:{s[\"effective_fps\"]}')
-print(f'  CHECK_IN:     {s[\"total_check_in\"]}')
-print(f'  CHECK_OUT:    {s[\"total_check_out\"]}')
-print(f'  Crossings:    {s[\"total_crossings\"]}')
+print(f'  Effective FPS:{s[\"video_fps\"]}')
+print(f'  CHECK IN:     {s[\"total_check_in\"]}')
+print(f'  CHECK OUT:    {s[\"total_check_out\"]}')
+print(f'  Crossings:    {s[\"crossing_events\"]}')
+print(f'  Boundary moment confidence: {s.get(\"boundary_moment_conf\", 0):.3f}')
+print()
+# Per-class breakdown (with food name mapping)
+NAMES = {"0":"apple","1":"carrot","2":"egg","3":"lemon","4":"tomato"}
+ci = s.get('check_in_by_class', {})
+co = s.get('check_out_by_class', {})
+for cid_str, cnt in sorted(ci.items()):
+    food = NAMES.get(cid_str, 'class_'+cid_str)
+    print(f'  {int(cnt)} {food} has CHECK IN')
+for cid_str, cnt in sorted(co.items()):
+    food = NAMES.get(cid_str, 'class_'+cid_str)
+    print(f'  {int(cnt)} {food} has CHECK OUT')
 " 2>/dev/null
     fi
     echo ""
     echo "  Output: $OUTPUT_DIR/"
     echo "    annotated_video.mp4   — Real-time annotated video"
-    echo "    annotated_result.jpg  — Final annotated frame"
+    echo "    annotated_result.jpg  — Best boundary-moment frame"
     echo "    boundary_events.json  — All crossing events"
-    echo "    track_trajectories.json — Track state per frame"
+    echo "    live_summary.json     — Full metrics + per-class breakdown"
     echo ""
     exit 0
 fi
@@ -478,21 +631,43 @@ echo ""
 
 if ! $SYNTHETIC; then
     $PYTHON -c "
-import cv2, sys
+import cv2, sys, time, numpy as np
 
 cap = cv2.VideoCapture('$CAMERA_DEVICE')
 if not cap.isOpened():
     print('FAIL: Cannot open camera')
     sys.exit(1)
 
-ret, frame = cap.read()
-if not ret:
-    print('FAIL: Cannot read frame')
+mog2 = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=16, detectShadows=True)
+best_frame = None
+best_motion = -1
+best_mask = None
+
+print('Capturing 30 frames (wave hand/object in front of camera)...')
+for i in range(30):
+    ret, frame = cap.read()
+    if not ret:
+        break
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    mask = mog2.apply(gray)
+    motion_pixels = cv2.countNonZero(mask)
+    
+    # Wait for MOG2 to learn background before selecting best frame
+    if i >= 10 and motion_pixels > best_motion:
+        best_motion = motion_pixels
+        best_frame = frame.copy()
+        best_mask = mask.copy()
+    time.sleep(0.05)
+
+if best_frame is None:
+    print('FAIL: Could not capture enough frames')
     sys.exit(1)
 
-cv2.imwrite('$OUTPUT_DIR/sample_frame.jpg', frame)
-h, w = frame.shape[:2]
-print(f'Frame captured: {w}x{h}, {frame.nbytes/1024:.0f} KB')
+cv2.imwrite('$OUTPUT_DIR/sample_frame.jpg', best_frame)
+np.save('$OUTPUT_DIR/.best_mask.npy', best_mask)
+h, w = best_frame.shape[:2]
+print(f'Selected best frame (Motion pixels: {best_motion})')
+print(f'Frame saved: {w}x{h}, {best_frame.nbytes/1024:.0f} KB')
 cap.release()
 " && pass "Camera capture OK — sample_frame.jpg saved" || fail "Camera capture FAILED"
 else
@@ -522,48 +697,60 @@ if ! $SYNTHETIC; then
     $PYTHON -c "
 import cv2, numpy as np, os, sys, time
 
-mog2 = cv2.createBackgroundSubtractorMOG2()
-cap = cv2.VideoCapture('$CAMERA_DEVICE')
-if not cap.isOpened():
-    print('FAIL: Cannot open camera for MOG2 burst')
-    sys.exit(1)
+mask_path = '$OUTPUT_DIR/.best_mask.npy'
+if os.path.exists(mask_path):
+    final_mask = np.load(mask_path)
+    motion_pixels = cv2.countNonZero(final_mask)
+    total_pixels = final_mask.size
+    motion_pct = (motion_pixels / total_pixels) * 100
+    print('Loaded MOG2 mask from Stage 1 captured sequence.')
+    print(f'MOG2 mask: {motion_pixels}/{total_pixels} motion pixels ({motion_pct:.2f}%)')
+    cv2.imwrite('$OUTPUT_DIR/mog2_foreground_mask.jpg', final_mask)
+    heatmap = cv2.applyColorMap(final_mask, cv2.COLORMAP_JET)
+    cv2.imwrite('$OUTPUT_DIR/mog2_heatmap.jpg', heatmap)
+else:
+    mog2 = cv2.createBackgroundSubtractorMOG2()
+    cap = cv2.VideoCapture('$CAMERA_DEVICE')
+    if not cap.isOpened():
+        print('FAIL: Cannot open camera for MOG2 burst')
+        sys.exit(1)
 
-frames = []
-print('Capturing 15 frames — wave an object in front of the camera for motion...')
-for i in range(15):
-    ret, f = cap.read()
-    if not ret:
-        break
-    frames.append(f)
-    mog2.apply(f)
-    time.sleep(0.08)
-    if i == 0:
-        print('  MOG2: learning background...')
+    frames = []
+    print('Capturing 15 frames — wave an object in front of the camera for motion...')
+    for i in range(15):
+        ret, f = cap.read()
+        if not ret:
+            break
+        frames.append(f)
+        mog2.apply(f)
+        time.sleep(0.08)
+        if i == 0:
+            print('  MOG2: learning background...')
 
-cap.release()
-if len(frames) < 3:
-    print('FAIL: Not enough frames captured')
-    sys.exit(1)
+    cap.release()
+    if len(frames) < 3:
+        print('FAIL: Not enough frames captured')
+        sys.exit(1)
 
-# Simulate motion by drawing a synthetic object on the LAST frame
-# so foreground mask is non-empty even with static scene
-sample = frames[-1].copy()
-cx, cy = sample.shape[1] // 2, sample.shape[0] // 3
-cv2.circle(sample, (cx, cy), 40, (0, 0, 255), -1)  # red circle
-cv2.putText(sample, 'MOTION', (cx-50, cy-50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255), 2)
+    # Simulate motion by drawing a synthetic object on the LAST frame
+    # so foreground mask is non-empty even with static scene
+    sample = frames[-1].copy()
+    cx, cy = sample.shape[1] // 2, sample.shape[0] // 3
+    cv2.circle(sample, (cx, cy), 40, (0, 0, 255), -1)  # red circle
+    cv2.putText(sample, 'MOTION', (cx-50, cy-50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255), 2)
 
-final_mask = mog2.apply(sample)
+    final_mask = mog2.apply(sample)
 
-print(f'Captured {len(frames)} frames for MOG2 background model')
-print(f'Injected synthetic motion object at ({cx}, {cy}) for foreground visibility')
-motion_pixels = np.count_nonzero(final_mask)
-total_pixels = final_mask.size
-motion_pct = (motion_pixels / total_pixels) * 100
-print(f'MOG2 mask: {motion_pixels}/{total_pixels} motion pixels ({motion_pct:.2f}%)')
+    print(f'Captured {len(frames)} frames for MOG2 background model')
+    print(f'Injected synthetic motion object at ({cx}, {cy}) for foreground visibility')
+    motion_pixels = np.count_nonzero(final_mask)
+    total_pixels = final_mask.size
+    motion_pct = (motion_pixels / total_pixels) * 100
+    print(f'MOG2 mask: {motion_pixels}/{total_pixels} motion pixels ({motion_pct:.2f}%)')
 
-cv2.imwrite('$OUTPUT_DIR/mog2_foreground_mask.jpg', final_mask)
-heatmap = cv2.applyColorMap(final_mask, cv2.COLORMAP_JET)
-cv2.imwrite('$OUTPUT_DIR/mog2_heatmap.jpg', heatmap)
+    cv2.imwrite('$OUTPUT_DIR/mog2_foreground_mask.jpg', final_mask)
+    heatmap = cv2.applyColorMap(final_mask, cv2.COLORMAP_JET)
+    cv2.imwrite('$OUTPUT_DIR/mog2_heatmap.jpg', heatmap)
 " && pass "MOG2 motion detection OK" || fail "MOG2 FAILED"
 else
     $PYTHON -c "
@@ -1008,7 +1195,7 @@ with open(csv_path) as f:
         })
 
 tracker = ByteTracker(max_age=30, high_thresh=0.85, match_thresh=0.8)
-tracker.line_detector.set_virtual_line({'type': 'horizontal', 'pos': 0.55})
+tracker.line_detector.set_virtual_line({'type': 'horizontal', 'pos': 0.66})  # Match FrtMain.boundary_ratio
 
 all_tracked = []
 trajectories = {}
@@ -1087,8 +1274,8 @@ try:
         events = json.load(f)
 except: pass
 
-# Draw virtual boundary line (55% height, matching ByteTrack)
-boundary_norm = 0.55
+# Draw virtual boundary line (66% height, matching FrtMain.boundary_ratio=0.66)
+boundary_norm = 0.66
 mid_y = int(h * boundary_norm)
 cv2.line(frame, (0, mid_y), (w, mid_y), (0, 255, 255), 2)
 cv2.putText(frame, f'BOUNDARY ({boundary_norm*100:.0f}%)', (10, mid_y - 10),

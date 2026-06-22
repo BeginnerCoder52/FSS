@@ -217,7 +217,7 @@ class Track:
 
 class LineCrossDetector:
     """Detects when objects cross a virtual boundary line."""
-    def __init__(self, boundary_y: int = 240):
+    def __init__(self, boundary_y: float = 0.5):
         # Default to horizontal line
         self.boundary_line = {
             'type': 'horizontal',
@@ -294,12 +294,17 @@ class ByteTracker:
         self.tracks: List[Track] = []
         self.next_track_id = 1
         
-        self.line_detector = LineCrossDetector(boundary_y=240)
+        self.line_detector = LineCrossDetector(boundary_y=0.5)
         
     def update(self, detections: List[Dict]) -> List[Dict]:
         """
         Update tracker with new detections.
         """
+        # Convert bbox from [x1, y1, x2, y2] (engine output) to [x, y, w, h] (ByteTrack format)
+        for d in detections:
+            x1, y1, x2, y2 = d['bbox']
+            d['bbox'] = [x1, y1, x2 - x1, y2 - y1]
+
         # Split detections into high and low score
         det_high = [d for d in detections if d['confidence'] >= self.high_thresh]
         det_low = [d for d in detections if d['confidence'] < self.high_thresh]
@@ -373,10 +378,14 @@ class ByteTracker:
         for r, c in zip(row_ind, col_ind):
             if cost_matrix[r, c] > self.match_thresh:
                 continue
-                
+
             track = tracks[r]
             det = detections[c]
-            
+
+            # Skip matches between different classes (prevent identity switching)
+            if track.class_id != det['class_id']:
+                continue
+
             # Update track
             track.update(det['bbox'], det['confidence'], self.kf)
             
