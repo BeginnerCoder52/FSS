@@ -14,6 +14,7 @@ Module.register("MMM-FSS-Recommend", {
         this.availableRecipes = [];
         this.suggestedRecipes = [];
         this.showRecipeList = false;
+        this.qrData = null;
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -115,6 +116,50 @@ Module.register("MMM-FSS-Recommend", {
             timeDisplay.className = "fss-pipeline-time";
             timeDisplay.textContent = "⏱ Round-trip: " + this.pipelineTimeMs + "ms";
             shoppingPanel.appendChild(timeDisplay);
+        }
+
+        // QR Code Download Section
+        if (this.hasSearched && this.result) {
+            const dlRow = document.createElement("div");
+            dlRow.style.marginTop = "1em";
+            dlRow.style.textAlign = "center";
+            
+            if (this.qrData) {
+                const qrBox = document.createElement("div");
+                qrBox.className = "fss-qr-box";
+                const img = document.createElement("img");
+                img.src = "data:image/png;base64," + this.qrData.qr_base64;
+                img.style.width = "120px";
+                img.style.borderRadius = "8px";
+                img.style.border = "4px solid white";
+                img.style.marginBottom = "0.5em";
+                qrBox.appendChild(img);
+                
+                const helpText = document.createElement("div");
+                helpText.textContent = "Quét mã bằng camera";
+                helpText.style.fontSize = "0.8em";
+                helpText.style.color = "var(--color-text-dimmed)";
+                qrBox.appendChild(helpText);
+                
+                dlRow.appendChild(qrBox);
+            } else {
+                const dlBtn = document.createElement("div");
+                dlBtn.className = "fss-chip";
+                dlBtn.style.display = "inline-flex";
+                dlBtn.style.backgroundColor = "var(--color-primary, #4facfe)";
+                dlBtn.style.color = "#ffffff";
+                dlBtn.style.border = "none";
+                dlBtn.innerHTML = '<i class="fas fa-qrcode" style="margin-right:0.5em;"></i> Tải danh sách về ĐT';
+                dlBtn.addEventListener("click", () => {
+                    this.sendSocketNotification("GENERATE_QR", this.result);
+                });
+                dlBtn.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    this.sendSocketNotification("GENERATE_QR", this.result);
+                });
+                dlRow.appendChild(dlBtn);
+            }
+            shoppingPanel.appendChild(dlRow);
         }
 
         wrapper.appendChild(shoppingPanel);
@@ -315,6 +360,7 @@ Module.register("MMM-FSS-Recommend", {
             this.hasSearched = true;
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
+            this.qrData = null;
             this.updateDom();
             this.sendSocketNotification("RECIPE_SEARCH", payload);
         }
@@ -325,6 +371,7 @@ Module.register("MMM-FSS-Recommend", {
             this.hasSearched = true;
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
+            this.qrData = null;
             this.searchedRecipes = this.searchedRecipes.concat(recipes);
             this.accumulatedResults = [];
             this.pendingCount = this.searchedRecipes.length;
@@ -361,6 +408,9 @@ Module.register("MMM-FSS-Recommend", {
             this.availableRecipes = payload.data || [];
             this.shuffleSuggestions();
             this.updateDom();
+        } else if (notification === "QR_RESULT") {
+            this.qrData = payload;
+            this.updateDom();
         }
     },
     triggerSearch(recipe) {
@@ -368,6 +418,7 @@ Module.register("MMM-FSS-Recommend", {
         this.hasSearched = true;
         this.searchStartTime = Date.now();
         this.pipelineTimeMs = null;
+        this.qrData = null;
         
         if (!this.searchedRecipes.includes(recipe)) {
             this.searchedRecipes.push(recipe);
