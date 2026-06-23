@@ -3,9 +3,9 @@ FSS Recipe Extractor - NLP Ingredient Extraction Module
 ========================================================
 
 Purpose:
-    Provides NLP-based ingredient extraction from Vietnamese recipes using
-    Conditional Random Fields (CRF) model. Extracts structured ingredient
-    lists from recipe names via D-Bus service vn.edu.uit.FSS.RecipeExtractor.
+    Provides Filter+Parse+Sort NLP ingredient extraction from Vietnamese
+    recipes using direct structured JSON lookup. Extracts ingredient lists
+    from recipe names via D-Bus service vn.edu.uit.FSS.RecipeExtractor.
 
 Module Overview:
     - RecipeAnalyzerAPI: Main interface for recipe ingredient extraction
@@ -13,10 +13,10 @@ Module Overview:
     - recipe_extractor_service: D-Bus service for remote ingredient extraction
     - recipe_extractor_main: Standalone daemon entry point
 
-Version: 1.0.0
+Version: 2.0.0
 Status: Production
 Author: FSS Team
-Last Modified: 2026-06-05
+Last Modified: 2026-06-21
 
 ASPICE Compliance:
     - Clean code with detailed comments
@@ -26,10 +26,10 @@ ASPICE Compliance:
 
 Usage Example:
     >>> from recipe_extractor.src.RecipeAnalyzerAPI import RecipeAnalyzerEngine
-    >>> engine = RecipeAnalyzerEngine(model_path, recipe_db_path)
+    >>> engine = RecipeAnalyzerEngine(recipe_db_path)
     >>> ingredients = engine.generate_fss_request("Gỏi Trộn Khô Mực")
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "FSS Team"
 __all__ = ["RecipeAnalyzerAPI", "RecipeProcessor"]

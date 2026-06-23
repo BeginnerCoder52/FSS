@@ -11,7 +11,6 @@ FSS_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if FSS_ROOT not in sys.path:
     sys.path.insert(0, FSS_ROOT)
 
-NLP_MODEL_PATH = str(Path(__file__).resolve().parent.parent / "models" / "fss_ner_crf_optimized.joblib")
 NLP_RECIPE_DB_PATH = str(Path(__file__).resolve().parent.parent / "data" / "recipes")
 
 
@@ -52,29 +51,10 @@ def setup_logging(log_dir: str = "/var/log/fss") -> None:
               f"File logging disabled.")
 
 
-def _lazy_load_nlp_engine():
-    try:
-        from RecipeAnalyzerAPI import RecipeAnalyzerEngine
-        engine = RecipeAnalyzerEngine(
-            model_path=NLP_MODEL_PATH,
-            recipe_db_path=NLP_RECIPE_DB_PATH
-        )
-        logging.getLogger("RecipeExtractorMain").info(
-            "NLP engine loaded lazily on first recipe analysis"
-        )
-        return engine
-    except Exception as e:
-        logging.getLogger("RecipeExtractorMain").error(
-            f"Failed to load NLP engine: {e}"
-        )
-        return None
-
-
 class RecipeExtractorMain:
     def __init__(self):
         self.is_running = False
         self._nlp_engine = None
-        self._nlp_loaded = False
         self.dbus_service = RecipeExtractorDbusService()
         self.logger = logging.getLogger(self.__class__.__name__)
         self.logger.info("RecipeExtractorMain initialized")
@@ -85,13 +65,20 @@ class RecipeExtractorMain:
             self.logger.info("Recipe Extractor D-Bus Service initialization starting")
             self.logger.info("=" * 70)
 
+            self.logger.info("Loading recipe database...")
+            self._nlp_engine = self._load_engine()
+            if not self._nlp_engine:
+                self.logger.error("Failed to load recipe database")
+                return False
+            self.dbus_service.set_nlp_engine(self._nlp_engine)
+            self.logger.info(f"Recipe database loaded with {len(self._nlp_engine.recipe_names)} recipes")
+
             self.logger.info("Initializing D-Bus service...")
             if not self.dbus_service.setup_bus_service():
                 self.logger.error("Failed to setup D-Bus service")
                 return False
             self.logger.info("D-Bus service initialized")
 
-            self.logger.info("NLP engine will be loaded lazily on first request")
             self.logger.info("=" * 70)
             self.logger.info("Recipe Extractor D-Bus Service initialization completed")
             self.logger.info("=" * 70)
@@ -102,6 +89,18 @@ class RecipeExtractorMain:
                 f"Unexpected error during initialization: {e}", exc_info=True
             )
             return False
+
+    def _load_engine(self):
+        try:
+            from RecipeAnalyzerAPI import RecipeAnalyzerEngine
+            engine = RecipeAnalyzerEngine(
+                recipe_db_path=NLP_RECIPE_DB_PATH
+            )
+            self.logger.info("Recipe database engine loaded successfully")
+            return engine
+        except Exception as e:
+            self.logger.error(f"Failed to load recipe database: {e}")
+            return None
 
     def start_service(self) -> bool:
         if self.is_running:
@@ -130,13 +129,8 @@ class RecipeExtractorMain:
         except Exception as e:
             self.logger.error(f"Error during shutdown: {e}")
 
-    def _ensure_nlp_engine(self) -> bool:
-        if not self._nlp_loaded:
-            self._nlp_engine = _lazy_load_nlp_engine()
-            self._nlp_loaded = True
-            if self._nlp_engine:
-                self.dbus_service.set_nlp_engine(self._nlp_engine)
-        return self._nlp_engine is not None
+    def get_nlp_engine(self):
+        return self._nlp_engine
 
 
 def main() -> int:
