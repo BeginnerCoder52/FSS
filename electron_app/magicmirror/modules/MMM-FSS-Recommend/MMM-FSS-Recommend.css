@@ -143,3 +143,54 @@
     border-top: 1px solid rgba(0,0,0,0.1);
 }
 
+
+.fss-chip-container {
+    padding: 0 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+}
+
+.fss-chip-title {
+    font-size: 0.85em;
+    color: var(--color-text-dimmed);
+    margin-bottom: 0.8em;
+}
+
+.fss-chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+}
+
+.fss-chip {
+    padding: 0.6em 1.2em;
+    background-color: var(--color-panel-bg);
+    border: 0.15vw solid var(--color-border);
+    border-radius: 2em;
+    font-size: 0.9em;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px; /* Touch friendly target */
+}
+
+.fss-chip:hover, .fss-chip:active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-text-dimmed);
+}
+
+.fss-chip-more {
+    color: var(--color-text-dimmed);
+    font-style: italic;
+    background-color: transparent;
+    border-style: dashed;
+}
+
+.fss-chip-more:hover, .fss-chip-more:active {
+    background-color: rgba(255, 255, 255, 0.05);
+}

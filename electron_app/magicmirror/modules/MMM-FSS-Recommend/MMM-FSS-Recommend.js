@@ -12,6 +12,7 @@ Module.register("MMM-FSS-Recommend", {
         this.searchStartTime = null;
         this.pipelineTimeMs = null;
         this.availableRecipes = [];
+        this.suggestedRecipes = [];
         this.showRecipeList = false;
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
@@ -176,13 +177,52 @@ Module.register("MMM-FSS-Recommend", {
         inputRow.style.touchAction = "manipulation";
         menuPanel.appendChild(inputRow);
 
-        // Suggested recipes hint (shown when no search has been done)
-        if (!this.hasSearched && this.availableRecipes.length > 0) {
-            const hintBox = document.createElement("div");
-            hintBox.className = "fss-recipe-hint";
-            hintBox.style.cssText = "padding:0.4em 1.5em;font-size:0.7em;color:var(--color-text-dimmed);opacity:0.7;";
-            hintBox.textContent = "Gợi ý: " + this.availableRecipes.slice(0, 6).join(", ") + "...";
-            menuPanel.appendChild(hintBox);
+        // Suggested recipes chips (shown when no search has been done)
+        if (!this.hasSearched && this.suggestedRecipes.length > 0) {
+            const chipContainer = document.createElement("div");
+            chipContainer.className = "fss-chip-container";
+
+            const chipTitle = document.createElement("div");
+            chipTitle.className = "fss-chip-title";
+            chipTitle.textContent = "Gợi ý nhanh:";
+            chipContainer.appendChild(chipTitle);
+
+            const chipGrid = document.createElement("div");
+            chipGrid.className = "fss-chip-grid";
+
+            this.suggestedRecipes.forEach(recipe => {
+                const chip = document.createElement("div");
+                chip.className = "fss-chip";
+                chip.textContent = recipe;
+                
+                chip.addEventListener("click", () => {
+                    this.triggerSearch(recipe);
+                });
+                chip.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    this.triggerSearch(recipe);
+                });
+                
+                chipGrid.appendChild(chip);
+            });
+
+            // "Xem thêm" button
+            const moreChip = document.createElement("div");
+            moreChip.className = "fss-chip fss-chip-more";
+            moreChip.innerHTML = "Xem thêm ▾";
+            moreChip.addEventListener("click", () => {
+                this.shuffleSuggestions();
+                this.updateDom();
+            });
+            moreChip.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                this.shuffleSuggestions();
+                this.updateDom();
+            });
+            chipGrid.appendChild(moreChip);
+
+            chipContainer.appendChild(chipGrid);
+            menuPanel.appendChild(chipContainer);
         }
 
         // Scroll container for recipe history
@@ -319,8 +359,29 @@ Module.register("MMM-FSS-Recommend", {
             }
         } else if (notification === "RECIPES") {
             this.availableRecipes = payload.data || [];
+            this.shuffleSuggestions();
             this.updateDom();
         }
+    },
+    triggerSearch(recipe) {
+        if (!recipe) return;
+        this.hasSearched = true;
+        this.searchStartTime = Date.now();
+        this.pipelineTimeMs = null;
+        
+        if (!this.searchedRecipes.includes(recipe)) {
+            this.searchedRecipes.push(recipe);
+        }
+        
+        this.accumulatedResults = [];
+        this.pendingCount = this.searchedRecipes.length;
+        this.updateDom();
+        this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
+    },
+    shuffleSuggestions() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) return;
+        const shuffled = [...this.availableRecipes].sort(() => 0.5 - Math.random());
+        this.suggestedRecipes = shuffled.slice(0, 5);
     },
     mergeResults(results) {
         if (!results || results.length === 0) return null;
