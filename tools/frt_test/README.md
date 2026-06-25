@@ -5,14 +5,17 @@ artifacts under `frt_test_runs/` and do not modify the runtime FRTApp pipeline.
 
 ## Run All Stages
 
-Video input:
+Video input (hỗ trợ `.mp4`, `.mkv`, `.avi`, `.mov` và mọi định dạng OpenCV/FFmpeg có thể đọc):
 
 ```bash
 python tools/frt_test/frt_test_runner.py \
   --mode video \
-  --input path/to/video.mp4 \
+  --input path/to/video.mkv \
   --stage all
 ```
+
+Stage 1 is limited to `5 FPS` by default to match the FRTApp processing rate.
+Override with `--stage1-fps`, or use `--stage1-fps 0` to disable this limiter.
 
 Live camera input:
 
@@ -21,7 +24,8 @@ python tools/frt_test/frt_test_runner.py \
   --mode live \
   --camera /dev/video0 \
   --stage all \
-  --max-frames 300
+  --max-frames 300 \
+  --stage1-fps 5
 ```
 
 Each run creates:
@@ -43,7 +47,7 @@ Stage 1 only:
 ```bash
 python tools/frt_test/frt_test_runner.py \
   --mode video \
-  --input path/to/video.mp4 \
+  --input path/to/video.mkv \
   --stage 1
 ```
 
@@ -52,7 +56,7 @@ Stage 2 on an existing session:
 ```bash
 python tools/frt_test/frt_test_runner.py \
   --mode video \
-  --input path/to/video.mp4 \
+  --input path/to/video.mkv \
   --session-dir frt_test_runs/YYYYMMDD_HHMMSS \
   --stage 2
 ```
@@ -62,7 +66,7 @@ Stage 3 with an explicit detections file:
 ```bash
 python tools/frt_test/frt_test_runner.py \
   --mode video \
-  --input path/to/video.mp4 \
+  --input path/to/video.mkv \
   --stage 3 \
   --detections frt_test_runs/YYYYMMDD_HHMMSS/stage2_yolo/detections.json
 ```
@@ -72,7 +76,7 @@ Stage 4 with a virtual line:
 ```bash
 python tools/frt_test/frt_test_runner.py \
   --mode video \
-  --input path/to/video.mp4 \
+  --input path/to/video.mkv \
   --stage 4 \
   --tracks frt_test_runs/YYYYMMDD_HHMMSS/stage3_bytetrack/tracks.json \
   --line-type horizontal \
@@ -85,7 +89,7 @@ pixel coordinates and normalized using the visualization frame size.
 ## Direct Stage Scripts
 
 ```bash
-python tools/frt_test/stage1_mog2.py --input path/to/video.mp4 --output-dir /tmp/stage1
+python tools/frt_test/stage1_mog2.py --input path/to/video.mkv --output-dir /tmp/stage1 --target-fps 5
 python tools/frt_test/stage2_yolo_infer.py --selected-frames /tmp/stage1/selected_frames --output-dir /tmp/stage2
 python tools/frt_test/stage3_bytetrack.py --detections /tmp/stage2/detections.json --output-dir /tmp/stage3
 python tools/frt_test/stage4_linecross.py --tracks /tmp/stage3/tracks.json --output-dir /tmp/stage4

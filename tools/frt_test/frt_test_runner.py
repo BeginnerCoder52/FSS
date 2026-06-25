@@ -102,7 +102,7 @@ def write_final_artifacts(session_dir: Path, report: Dict) -> None:
         lines.append(f"- `{name}`: {info.get('status', 'unknown')}")
         if name == "stage1_mog2" and summary:
             lines.append(
-                "  processed={total_processed_frames} selected={selected_frames} skipped={skipped_frames}".format(
+                "  target_fps={target_fps} processed={total_processed_frames} selected={selected_frames} skipped={skipped_frames}".format(
                     **summary
                 )
             )
@@ -185,6 +185,7 @@ def run_requested_stages(args: argparse.Namespace) -> Dict:
                     output_dir=stage1_dir,
                     max_frames=max_frames,
                     frame_stride=max(1, args.frame_stride),
+                    target_fps=args.stage1_fps,
                     motion_threshold=args.motion_threshold,
                     jpeg_quality=args.jpeg_quality,
                 )
@@ -195,6 +196,7 @@ def run_requested_stages(args: argparse.Namespace) -> Dict:
                     output_dir=stage1_dir,
                     max_frames=max_frames,
                     frame_stride=max(1, args.frame_stride),
+                    target_fps=args.stage1_fps,
                     motion_threshold=args.motion_threshold,
                     jpeg_quality=args.jpeg_quality,
                 )
@@ -293,6 +295,12 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--max-frames", type=int, help="Default: video=all, live=300")
     parser.add_argument("--frame-stride", type=int, default=1)
+    parser.add_argument(
+        "--stage1-fps",
+        type=float,
+        default=5.0,
+        help="Limit stage 1 processing rate. Default matches FRTApp: 5 FPS. Use 0 to disable.",
+    )
     parser.add_argument("--motion-threshold", type=float, default=1.0)
 
     parser.add_argument("--selected-frames", type=Path, help="Override stage2 selected_frames input")

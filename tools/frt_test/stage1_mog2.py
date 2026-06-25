@@ -22,6 +22,7 @@ import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FRT_SRC = REPO_ROOT / "frt_app" / "py_ai_core" / "src"
+DEFAULT_TARGET_FPS = 5.0
 
 
 def import_motion_detector():
@@ -150,6 +151,7 @@ def run_stage1(
     output_dir: Path,
     max_frames: int = 0,
     frame_stride: int = 1,
+    target_fps: float = DEFAULT_TARGET_FPS,
     motion_threshold: float = 1.0,
     jpeg_quality: int = 90,
 ) -> Dict:
@@ -174,10 +176,20 @@ def run_stage1(
     processed = 0
     selected = 0
     skipped = 0
+    fps_skipped = 0
     source_frame_index = 0
     motion_ratios = []
+    target_interval_ms = 1000.0 / target_fps if target_fps and target_fps > 0 else 0.0
+    next_video_timestamp_ms = None
+    last_live_process_time = 0.0
+    processed_timestamps_ms = []
 
-    logging.info("Stage 1 MOG2 started: source=%s output=%s", source, output_dir)
+    logging.info(
+        "Stage 1 MOG2 started: source=%s output=%s target_fps=%.2f",
+        source,
+        output_dir,
+        target_fps,
+    )
 
     fieldnames = [
         "frame_id",
@@ -207,16 +219,41 @@ def run_stage1(
                     break
 
                 source_frame_index += 1
+                raw_stamp_ms = float(cap.get(cv2.CAP_PROP_POS_MSEC) or 0.0)
+                if raw_stamp_ms > 0:
+                    stamp_ms = raw_stamp_ms
+                elif fps > 0:
+                    stamp_ms = (source_frame_index - 1) * 1000.0 / fps
+                elif target_interval_ms > 0:
+                    stamp_ms = (source_frame_index - 1) * target_interval_ms
+                else:
+                    stamp_ms = 0.0
+
+                if source_type == "video" and target_interval_ms > 0:
+                    if next_video_timestamp_ms is None:
+                        next_video_timestamp_ms = stamp_ms
+                    if stamp_ms + 1e-6 < next_video_timestamp_ms:
+                        fps_skipped += 1
+                        continue
+                    next_video_timestamp_ms = stamp_ms + target_interval_ms
+
                 if frame_stride > 1 and (source_frame_index - 1) % frame_stride != 0:
                     continue
                 if max_frames > 0 and processed >= max_frames:
                     break
 
+                if source_type == "camera" and target_interval_ms > 0:
+                    target_interval_sec = target_interval_ms / 1000.0
+                    now = time.monotonic()
+                    if last_live_process_time > 0:
+                        sleep_sec = target_interval_sec - (now - last_live_process_time)
+                        if sleep_sec > 0:
+                            time.sleep(sleep_sec)
+                    last_live_process_time = time.monotonic()
+
                 processed += 1
                 frame_id = processed
-                stamp_ms = float(cap.get(cv2.CAP_PROP_POS_MSEC) or 0.0)
-                if stamp_ms <= 0 and fps > 0:
-                    stamp_ms = (source_frame_index - 1) * 1000.0 / fps
+                processed_timestamps_ms.append(stamp_ms)
 
                 background_before = detector.mog2_subtractor.getBackgroundImage()
                 background_available = background_before is not None
@@ -292,6 +329,16 @@ def run_stage1(
         cap.release()
 
     elapsed = time.time() - start_time
+    source_duration_sec = 0.0
+    if processed_timestamps_ms:
+        span_ms = processed_timestamps_ms[-1] - processed_timestamps_ms[0]
+        if target_interval_ms > 0:
+            source_duration_sec = (span_ms + target_interval_ms) / 1000.0
+        elif len(processed_timestamps_ms) > 1:
+            source_duration_sec = span_ms / 1000.0
+        elif fps > 0:
+            source_duration_sec = 1.0 / fps
+
     summary = {
         "stage": "stage1_mog2",
         "source_type": source_type,
@@ -301,6 +348,14 @@ def run_stage1(
         "finished_at": utc_now_iso(),
         "elapsed_sec": round(elapsed, 3),
         "input_fps": fps,
+        "target_fps": target_fps,
+        "fps_limited": bool(target_interval_ms > 0),
+        "fps_skipped_frames": fps_skipped,
+        "effective_processed_fps": float(processed / source_duration_sec)
+        if source_duration_sec > 0
+        else 0.0,
+        "processing_throughput_fps": float(processed / elapsed) if elapsed > 0 else 0.0,
+        "processed_source_duration_sec": source_duration_sec,
         "input_width": frame_width,
         "input_height": frame_height,
         "frame_stride": frame_stride,
@@ -340,6 +395,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-frames", type=int, default=0, help="0 means no limit")
     parser.add_argument("--frame-stride", type=int, default=1, help="Process every Nth frame")
     parser.add_argument(
+        "--target-fps",
+        type=float,
+        default=DEFAULT_TARGET_FPS,
+        help="Limit stage 1 processing rate. Default matches FRTApp: 5 FPS. Use 0 to disable.",
+    )
+    parser.add_argument(
         "--motion-threshold",
         type=float,
         default=1.0,
@@ -361,6 +422,7 @@ def main() -> int:
                 output_dir=args.output_dir,
                 max_frames=args.max_frames,
                 frame_stride=max(1, args.frame_stride),
+                target_fps=args.target_fps,
                 motion_threshold=args.motion_threshold,
                 jpeg_quality=args.jpeg_quality,
             )
@@ -371,6 +433,7 @@ def main() -> int:
                 output_dir=args.output_dir,
                 max_frames=args.max_frames,
                 frame_stride=max(1, args.frame_stride),
+                target_fps=args.target_fps,
                 motion_threshold=args.motion_threshold,
                 jpeg_quality=args.jpeg_quality,
             )
