@@ -112,6 +112,17 @@ def write_final_artifacts(session_dir: Path, report: Dict) -> None:
                     **summary
                 )
             )
+            if summary.get("evaluation"):
+                ev = summary["evaluation"]
+                lines.append(
+                    "  accuracy={:.4f} precision={:.4f} recall={:.4f} f1={:.4f} mean_iou={:.4f}".format(
+                        ev.get("detection_accuracy", 0.0),
+                        ev.get("precision", 0.0),
+                        ev.get("recall", 0.0),
+                        ev.get("f1", 0.0),
+                        ev.get("mean_iou", 0.0),
+                    )
+                )
         elif name == "stage3_bytetrack" and summary:
             lines.append(
                 "  tracks={total_tracks_created} lost_events={lost_event_count} id_switch_candidates={id_switch_candidate_count}".format(
@@ -210,12 +221,14 @@ def run_requested_stages(args: argparse.Namespace) -> Dict:
 
         if 2 in stages_to_run:
             report["stages"]["stage2_yolo"]["status"] = "running"
-            selected_frames = args.selected_frames or (stage1_dir / "selected_frames")
+            selected_frames = args.image_dir or args.selected_frames or (stage1_dir / "selected_frames")
             require_path(selected_frames, "selected_frames")
             summary = run_stage2(
                 selected_frames_dir=selected_frames,
                 output_dir=stage2_dir,
                 model_path=args.model,
+                labels_dir=args.labels_dir,
+                eval_iou_threshold=args.eval_iou_threshold,
                 confidence_threshold=args.confidence_threshold,
                 allow_c_fallback=not args.no_c_fallback,
                 jpeg_quality=args.jpeg_quality,
@@ -303,7 +316,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--motion-threshold", type=float, default=1.0)
 
-    parser.add_argument("--selected-frames", type=Path, help="Override stage2 selected_frames input")
+    parser.add_argument("--image-dir", type=Path, help="Dataset image directory for stage 2")
+    parser.add_argument("--selected-frames", type=Path, help="Legacy alias for stage2 image input")
+    parser.add_argument("--labels-dir", type=Path, help="YOLO label directory for stage 2 evaluation")
+    parser.add_argument("--eval-iou-threshold", type=float, default=0.5)
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL)
     parser.add_argument("--confidence-threshold", type=float, default=0.2)
     parser.add_argument("--no-c-fallback", action="store_true")

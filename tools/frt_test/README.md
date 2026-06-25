@@ -95,6 +95,22 @@ python tools/frt_test/stage3_bytetrack.py --detections /tmp/stage2/detections.js
 python tools/frt_test/stage4_linecross.py --tracks /tmp/stage3/tracks.json --output-dir /tmp/stage4
 ```
 
+## Stage 2 Dataset Evaluation
+
+Run model evaluation directly on a YOLO dataset image/label pair, without Stage 1:
+
+```bash
+python tools/frt_test/frt_test_runner.py \
+  --mode video \
+  --stage 2 \
+  --image-dir path/to/dataset/images \
+  --labels-dir path/to/dataset/labels \
+  --eval-iou-threshold 0.5
+```
+
+If `images/` and `labels/` are sibling directories, `--labels-dir` can be omitted.
+Stage 2 writes `eval_summary.json` and `eval_matches.csv` when labels are found.
+
 YOLO runtime preference is `ai_edge_litert`. If the existing C TFLite reader is
 used as fallback, `stage2_yolo/model_summary.json` and `final_report.json`
 record that explicitly.
