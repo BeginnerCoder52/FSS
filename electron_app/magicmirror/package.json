@@ -35,7 +35,7 @@
 		"lint:prettier": "prettier . --write",
 		"postinstall": "npm run install-vendor && npm run install-fonts && echo \"MagicMirror² installation finished successfully! \n\"",
 		"prepare": "[ -f node_modules/.bin/husky ] && husky || echo no husky installed.",
-		"server": "node ./serveronly",
+		"server": "bash -c 'TIMESTAMP=$(date +%Y%m%d_%H%M%S) && LOG_DIR=\"../../tests/logs/magicmirror/mm_log_${TIMESTAMP}\" && mkdir -p \"${LOG_DIR}\" && node ./serveronly 2>&1 | tee \"${LOG_DIR}/magicmirror.log\"'",
 		"start": "npm run start:x11",
 		"start:dev": "npm run start -- dev",
 		"start:wayland": "WAYLAND_DISPLAY=\"${WAYLAND_DISPLAY:=wayland-1}\" ./node_modules/.bin/electron js/electron.js --enable-features=UseOzonePlatform --ozone-platform=wayland",

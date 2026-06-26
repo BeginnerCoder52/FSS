@@ -19,10 +19,23 @@ const path = require("path");
  * @returns {string} Absolute path to python3 executable
  */
 function resolvePythonExecutable(moduleDir) {
-	const candidates = [
-		path.join(moduleDir, "py_bridge", "venv", "bin", "python3"),
-		"/usr/bin/python3",
-	];
+	const candidates = [];
+	if (process.env.VIRTUAL_ENV) {
+		candidates.push(path.join(process.env.VIRTUAL_ENV, "bin", "python3"));
+	}
+
+	// Dynamic traversal to find project-level .venv
+	let dir = moduleDir;
+	while (dir && dir !== path.parse(dir).root) {
+		const workspaceVenv = path.join(dir, ".venv", "bin", "python3");
+		if (fs.existsSync(workspaceVenv)) {
+			candidates.push(workspaceVenv);
+		}
+		dir = path.dirname(dir);
+	}
+
+	candidates.push(path.join(moduleDir, "py_bridge", "venv", "bin", "python3"));
+	candidates.push("/usr/bin/python3");
 
 	for (const candidate of candidates) {
 		if (fs.existsSync(candidate)) {
