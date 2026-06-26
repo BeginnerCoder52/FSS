@@ -9,6 +9,7 @@ module.exports = NodeHelper.create({
     start() {
         SessionLog.info("[MMM-FSS-Recommend] Node helper started");
         this.pythonProcess = null;
+        this.qrProcess = null;
         this.started = false;
         this.processReady = false;
         this.pendingQueue = [];
@@ -35,7 +36,9 @@ module.exports = NodeHelper.create({
                 this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
             }
         } else if (notification === "GENERATE_QR") {
-            this.handleGenerateQR(payload);
+            if (this.qrProcess && !this.qrProcess.killed) {
+                this.qrProcess.stdin.write(JSON.stringify({ type: "GENERATE_QR", data: payload }) + "\n");
+            }
         }
     },
 
@@ -61,6 +64,31 @@ module.exports = NodeHelper.create({
 
         const pythonExec = resolvePythonExecutable(__dirname);
         this.pythonProcess = spawn(pythonExec, [script]);
+
+        // Start QR server
+        const qrScript = path.join(__dirname, "py_bridge", "recipe_http_server.py");
+        if (fs.existsSync(qrScript)) {
+            this.qrProcess = spawn(pythonExec, [qrScript]);
+            
+            let qrBuffer = "";
+            this.qrProcess.stdout.on("data", (data) => {
+                qrBuffer += data.toString();
+                const lines = qrBuffer.split("\n");
+                qrBuffer = lines.pop();
+                for (const line of lines) {
+                    if (!line.trim()) continue;
+                    try {
+                        const msg = JSON.parse(line);
+                        if (msg.type === "QR_RESULT") {
+                            this.sendSocketNotification("QR_RESULT", msg.data);
+                        }
+                    } catch(e) {}
+                }
+            });
+            this.qrProcess.stderr.on("data", (data) => {
+                console.error(`[MMM-FSS-Recommend] QR Server stderr: ${data.toString()}`);
+            });
+        }
 
         let buffer = "";
         this.pythonProcess.stdout.on("data", (data) => {
@@ -209,16 +237,11 @@ module.exports = NodeHelper.create({
                 }
             }, 3000);
         }
-        if (this.httpServerProcess) {
-            this.httpServerProcess.kill("SIGTERM");
-            setTimeout(() => {
-                if (this.httpServerProcess && !this.httpServerProcess.killed) {
-                    this.httpServerProcess.kill("SIGKILL");
-                }
-            }, 3000);
+        if (this.qrProcess) {
+            this.qrProcess.kill("SIGTERM");
         }
         this.pythonProcess = null;
-        this.httpServerProcess = null;
+        this.qrProcess = null;
         this.pendingQueue = [];
     }
 });

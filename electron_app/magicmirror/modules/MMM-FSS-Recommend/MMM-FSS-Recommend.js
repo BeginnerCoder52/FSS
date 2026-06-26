@@ -12,6 +12,7 @@ Module.register("MMM-FSS-Recommend", {
         this.searchStartTime = null;
         this.pipelineTimeMs = null;
         this.availableRecipes = [];
+        this.suggestedRecipes = [];
         this.showRecipeList = false;
         this.suggestedRecipes = [];
         this.chipOffset = 0;
@@ -123,83 +124,48 @@ Module.register("MMM-FSS-Recommend", {
             shoppingPanel.appendChild(timeDisplay);
         }
 
-        // QR download button (shown after search result)
-        if (this.result && this.result.recipe_name) {
-            const qrBtn = document.createElement("div");
-            qrBtn.className = "fss-qr-btn";
-            qrBtn.textContent = "📱 Tải về";
-            qrBtn.addEventListener("click", () => {
-                this.qrError = null;
-                this.qrBase64 = null;
-                this.qrUrl = null;
-                this.showQrOverlay = false;
-                this.updateDom();
-                this.sendSocketNotification("GENERATE_QR", this.result);
-            });
-            qrBtn.addEventListener("touchend", (e) => {
-                e.preventDefault();
-                this.qrError = null;
-                this.qrBase64 = null;
-                this.qrUrl = null;
-                this.showQrOverlay = false;
-                this.updateDom();
-                this.sendSocketNotification("GENERATE_QR", this.result);
-            });
-            shoppingPanel.appendChild(qrBtn);
-        }
-
-        // QR code overlay
-        if (this.showQrOverlay) {
-            const overlay = document.createElement("div");
-            overlay.className = "fss-qr-overlay";
-
-            const qrContent = document.createElement("div");
-            qrContent.className = "fss-qr-content";
-
-            const qrTitle = document.createElement("div");
-            qrTitle.className = "fss-qr-title";
-            qrTitle.textContent = "Quét mã để xem công thức";
-            qrContent.appendChild(qrTitle);
-
-            if (this.qrError) {
-                const errMsg = document.createElement("div");
-                errMsg.className = "fss-qr-error";
-                errMsg.textContent = "❌ " + this.qrError;
-                qrContent.appendChild(errMsg);
-            } else if (this.qrBase64) {
-                const qrImg = document.createElement("img");
-                qrImg.className = "fss-qr-img";
-                qrImg.src = "data:image/png;base64," + this.qrBase64;
-                qrImg.alt = "QR Code";
-                qrContent.appendChild(qrImg);
-
-                const qrUrlDisplay = document.createElement("div");
-                qrUrlDisplay.className = "fss-qr-url";
-                qrUrlDisplay.textContent = this.qrUrl;
-                qrContent.appendChild(qrUrlDisplay);
+        // QR Code Download Section
+        if (this.hasSearched && this.result) {
+            const dlRow = document.createElement("div");
+            dlRow.style.marginTop = "1em";
+            dlRow.style.textAlign = "center";
+            
+            if (this.qrData) {
+                const qrBox = document.createElement("div");
+                qrBox.className = "fss-qr-box";
+                const img = document.createElement("img");
+                img.src = "data:image/png;base64," + this.qrData.qr_base64;
+                img.style.width = "120px";
+                img.style.borderRadius = "8px";
+                img.style.border = "4px solid white";
+                img.style.marginBottom = "0.5em";
+                qrBox.appendChild(img);
+                
+                const helpText = document.createElement("div");
+                helpText.textContent = "Quét mã bằng camera";
+                helpText.style.fontSize = "0.8em";
+                helpText.style.color = "var(--color-text-dimmed)";
+                qrBox.appendChild(helpText);
+                
+                dlRow.appendChild(qrBox);
             } else {
-                const spinner = document.createElement("div");
-                spinner.className = "fss-qr-spinner";
-                spinner.textContent = "Đang tạo mã QR...";
-                qrContent.appendChild(spinner);
+                const dlBtn = document.createElement("div");
+                dlBtn.className = "fss-chip";
+                dlBtn.style.display = "inline-flex";
+                dlBtn.style.backgroundColor = "var(--color-primary, #4facfe)";
+                dlBtn.style.color = "#ffffff";
+                dlBtn.style.border = "none";
+                dlBtn.innerHTML = '<i class="fas fa-qrcode" style="margin-right:0.5em;"></i> Tải danh sách về ĐT';
+                dlBtn.addEventListener("click", () => {
+                    this.sendSocketNotification("GENERATE_QR", this.result);
+                });
+                dlBtn.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    this.sendSocketNotification("GENERATE_QR", this.result);
+                });
+                dlRow.appendChild(dlBtn);
             }
-
-            const closeBtn = document.createElement("div");
-            closeBtn.className = "fss-qr-close";
-            closeBtn.textContent = "✕ Đóng";
-            closeBtn.addEventListener("click", () => {
-                this.showQrOverlay = false;
-                this.updateDom();
-            });
-            closeBtn.addEventListener("touchend", (e) => {
-                e.preventDefault();
-                this.showQrOverlay = false;
-                this.updateDom();
-            });
-            qrContent.appendChild(closeBtn);
-
-            overlay.appendChild(qrContent);
-            wrapper.appendChild(overlay);
+            shoppingPanel.appendChild(dlRow);
         }
 
         wrapper.appendChild(shoppingPanel);
@@ -262,60 +228,52 @@ Module.register("MMM-FSS-Recommend", {
         inputRow.style.touchAction = "manipulation";
         menuPanel.appendChild(inputRow);
 
-        // Suggested recipe chips (shown when no search has been done)
+        // Suggested recipes chips (shown when no search has been done)
         if (!this.hasSearched && this.suggestedRecipes.length > 0) {
-            const chipSection = document.createElement("div");
-            chipSection.className = "fss-chip-section";
+            const chipContainer = document.createElement("div");
+            chipContainer.className = "fss-chip-container";
 
-            const chipLabel = document.createElement("div");
-            chipLabel.className = "fss-chip-label";
-            chipLabel.textContent = "Gợi ý nhanh:";
-            chipSection.appendChild(chipLabel);
+            const chipTitle = document.createElement("div");
+            chipTitle.className = "fss-chip-title";
+            chipTitle.textContent = "Gợi ý nhanh:";
+            chipContainer.appendChild(chipTitle);
 
             const chipGrid = document.createElement("div");
             chipGrid.className = "fss-chip-grid";
 
-            this.suggestedRecipes.forEach((recipe) => {
+            this.suggestedRecipes.forEach(recipe => {
                 const chip = document.createElement("div");
                 chip.className = "fss-chip";
                 chip.textContent = recipe;
-                chip.setAttribute("data-recipe", recipe);
-
-                const doSearch = () => {
-                    if (this.hasSearched) return;
-                    this.hasSearched = true;
-                    this.searchStartTime = Date.now();
-                    this.pipelineTimeMs = null;
-                    this.searchedRecipes = [recipe];
-                    this.accumulatedResults = [];
-                    this.pendingCount = 1;
-                    this.updateDom();
-                    this.sendSocketNotification("RECIPE_SEARCH", { recipe: recipe });
-                };
-
-                chip.addEventListener("click", doSearch);
+                
+                chip.addEventListener("click", () => {
+                    this.triggerSearch(recipe);
+                });
                 chip.addEventListener("touchend", (e) => {
                     e.preventDefault();
-                    doSearch();
+                    this.triggerSearch(recipe);
                 });
-
+                
                 chipGrid.appendChild(chip);
             });
 
-            // Xem thêm button
+            // "Xem thêm" button
             const moreChip = document.createElement("div");
             moreChip.className = "fss-chip fss-chip-more";
-            moreChip.textContent = "Xem thêm ▾";
-
-            moreChip.addEventListener("click", () => this.advanceChips());
+            moreChip.innerHTML = "Xem thêm ▾";
+            moreChip.addEventListener("click", () => {
+                this.shuffleSuggestions();
+                this.updateDom();
+            });
             moreChip.addEventListener("touchend", (e) => {
                 e.preventDefault();
-                this.advanceChips();
+                this.shuffleSuggestions();
+                this.updateDom();
             });
-
             chipGrid.appendChild(moreChip);
-            chipSection.appendChild(chipGrid);
-            menuPanel.appendChild(chipSection);
+
+            chipContainer.appendChild(chipGrid);
+            menuPanel.appendChild(chipContainer);
         }
 
         // Scroll container for recipe history
@@ -408,6 +366,7 @@ Module.register("MMM-FSS-Recommend", {
             this.hasSearched = true;
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
+            this.qrData = null;
             this.updateDom();
             this.sendSocketNotification("RECIPE_SEARCH", payload);
         }
@@ -418,6 +377,7 @@ Module.register("MMM-FSS-Recommend", {
             this.hasSearched = true;
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
+            this.qrData = null;
             this.searchedRecipes = this.searchedRecipes.concat(recipes);
             this.accumulatedResults = [];
             this.pendingCount = this.searchedRecipes.length;
@@ -464,6 +424,27 @@ Module.register("MMM-FSS-Recommend", {
             this.showQrOverlay = true;
             this.updateDom();
         }
+    },
+    triggerSearch(recipe) {
+        if (!recipe) return;
+        this.hasSearched = true;
+        this.searchStartTime = Date.now();
+        this.pipelineTimeMs = null;
+        this.qrData = null;
+        
+        if (!this.searchedRecipes.includes(recipe)) {
+            this.searchedRecipes.push(recipe);
+        }
+        
+        this.accumulatedResults = [];
+        this.pendingCount = this.searchedRecipes.length;
+        this.updateDom();
+        this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
+    },
+    shuffleSuggestions() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) return;
+        const shuffled = [...this.availableRecipes].sort(() => 0.5 - Math.random());
+        this.suggestedRecipes = shuffled.slice(0, 5);
     },
     mergeResults(results) {
         if (!results || results.length === 0) return null;
