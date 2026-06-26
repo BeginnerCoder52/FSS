@@ -260,8 +260,8 @@ RS_DIR="$FSS_ROOT/recipe_extractor"
 sub "Directory Structure"
     ls -la "$RS_DIR/src/" 2>&1 || echo "[MISS] recipe_extractor/src/"
 
-sub "Trained Model"
-collect_file "$RS_DIR/models/fss_ner_crf_optimized.joblib" "models/fss_ner_crf_optimized.joblib"
+sub "Recipe Data"
+collect_file "$RS_DIR/data/" "data/"
 
 sub "Test Status"
 if [ -d "$RS_DIR/tests" ]; then

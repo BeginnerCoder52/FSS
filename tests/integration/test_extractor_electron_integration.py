@@ -46,7 +46,7 @@ import io
 from pathlib import Path
 from typing import Dict, List, Optional
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))  # FSS_ROOT
 
 logging.disable(logging.CRITICAL)
 
@@ -58,15 +58,15 @@ logging.disable(logging.CRITICAL)
 SAMPLE_EXTRACTOR_SUCCESS = {
     "status": "SUCCESS",
     "dish": "g\u1ecfi tr\u1ed9n kh\u00f4 m\u1ef1c",
-    "ingredients": [
-        {"ingredient": "B\u01b0\u1edfi", "quantity": "1"},
-        {"ingredient": "M\u1ef1c kh\u00f4", "quantity": "1 con (50g)"},
-        {"ingredient": "C\u00e0 r\u1ed1t", "quantity": "2"},
-        {"ingredient": "\u0110\u1eadu ph\u1ed9ng", "quantity": "1"},
+    "original_ingredients": [
+        "B\u01b0\u1edfi : 1 tr\u00e1i",
+        "M\u1ef1c kh\u00f4 : 1 con (50g)",
+        "C\u00e0 r\u1ed1t : 2 c\u1ee7",
+        "\u0110\u1eadu ph\u1ed9ng : 1"
     ],
     "batch_id": "test-batch-001",
     "persisted": True,
-    "processing_time_ms": 3.22,
+    "processing_time_ms": 0.01,
 }
 
 SAMPLE_EXTRACTOR_NOT_FOUND = {
@@ -85,7 +85,7 @@ SAMPLE_EXTRACTOR_ERROR = {
 SAMPLE_EXTRACTOR_EMPTY_INGREDIENTS = {
     "status": "SUCCESS",
     "dish": "empty test",
-    "ingredients": [],
+    "original_ingredients": [],
     "batch_id": "test-batch-003",
     "persisted": True,
     "processing_time_ms": 1.0,
@@ -96,18 +96,43 @@ SAMPLE_EXTRACTOR_EMPTY_INGREDIENTS = {
 # transform_ingredients (same logic as in recommend_dbus_listener.py)
 # ==============================================================================
 
+def parse_original_ingredients(raw_list: list) -> list:
+    """Parse original_ingredients strings into ingredient dicts."""
+    parsed = []
+    for item_str in raw_list:
+        parts = item_str.split(" : ", 1)
+        name = parts[0].strip()
+        qty = parts[1].strip() if len(parts) > 1 else "1"
+        parsed.append({"ingredient": name, "quantity": qty})
+    return parsed
+
+
 def transform_ingredients(result: dict) -> dict:
-    raw_ingredients = result.get("ingredients", [])
+    raw_ingredients = result.get("original_ingredients",
+                                 result.get("ingredients", []))
+    if isinstance(raw_ingredients, list) and raw_ingredients and isinstance(raw_ingredients[0], str):
+        raw_ingredients = parse_original_ingredients(raw_ingredients)
     if not isinstance(raw_ingredients, list):
         raw_ingredients = []
     transformed = []
     for item in raw_ingredients:
-        transformed.append({
-            "name": item.get("ingredient", ""),
-            "required": item.get("quantity", "1"),
-            "available": 0,
-            "status": "missing",
-        })
+        if isinstance(item, dict):
+            transformed.append({
+                "name": item.get("ingredient", ""),
+                "required": item.get("quantity", "1"),
+                "available": 0,
+                "status": "missing",
+            })
+        elif isinstance(item, str):
+            parts = item.split(" : ", 1)
+            name = parts[0].strip()
+            qty = parts[1].strip() if len(parts) > 1 else "1"
+            transformed.append({
+                "name": name,
+                "required": qty,
+                "available": 0,
+                "status": "missing",
+            })
 
     return {
         "recipe_name": result.get("dish", ""),
@@ -144,14 +169,14 @@ class TestTransformIngredients(unittest.TestCase):
         self.assertIn("available", first)
         self.assertIn("status", first)
         self.assertEqual(first["name"], "B\u01b0\u1edfi")
-        self.assertEqual(first["required"], "1")
+        self.assertEqual(first["required"], "1 tr\u00e1i")
         self.assertEqual(first["available"], 0)
         self.assertEqual(first["status"], "missing")
 
     def test_transform_ingredients_preserves_quantity(self):
         result = transform_ingredients(SAMPLE_EXTRACTOR_SUCCESS)
         self.assertEqual(result["ingredients"][1]["required"], "1 con (50g)")
-        self.assertEqual(result["ingredients"][2]["required"], "2")
+        self.assertEqual(result["ingredients"][2]["required"], "2 c\u1ee7")
 
     def test_transform_ingredients_empty(self):
         result = transform_ingredients(SAMPLE_EXTRACTOR_EMPTY_INGREDIENTS)
