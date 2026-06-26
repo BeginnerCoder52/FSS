@@ -327,6 +327,30 @@ class MonitorListener:
         except Exception as e:
             logger.error(f"Error in raw distance listener: {e}")
 
+    async def _listen_sensor_door(self):
+        """Listen for raw door state changes from sensor_daemon."""
+        if not self.sensor_proxy:
+            return
+            
+        try:
+            async for door_state in self.sensor_proxy.DoorStateChanged:
+                try:
+                    self.last_db_update_time = time.time()
+                    data = {
+                        "type": "DOOR_STATE_UPDATE",
+                        "doorState": str(door_state),
+                        "source": "raw_sensor",
+                        "timestamp": int(time.time() * 1000),
+                    }
+                    print(json.dumps(data), flush=True)
+                    logger.debug(f"Raw door state: {door_state}")
+                except Exception as e:
+                    logger.error(f"Error processing raw door state: {e}")
+        except asyncio.CancelledError:
+            logger.debug("Raw door listener task cancelled")
+        except Exception as e:
+            logger.error(f"Error in raw door listener: {e}")
+
     async def _listen_user_presence(self):
         """Listen for user presence detection (boolean) from sensor daemon."""
         if not self.sensor_proxy:
