@@ -16,10 +16,10 @@ Module.register("MMM-FSS-Recommend", {
         this.suggestedRecipes = [];
         this.chipOffset = 0;
         this.CHIPS_PER_PAGE = 5;
-        this.qrBase64 = null;
-        this.qrUrl = null;
-        this.showQrOverlay = false;
-        this.qrError = null;
+        // this.qrBase64 = null;
+        // this.qrUrl = null;
+        // this.showQrOverlay = false;
+        // this.qrError = null;
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -123,6 +123,7 @@ Module.register("MMM-FSS-Recommend", {
             shoppingPanel.appendChild(timeDisplay);
         }
 
+        /*
         // QR download button (shown after search result)
         if (this.result && this.result.recipe_name) {
             const qrBtn = document.createElement("div");
@@ -201,6 +202,7 @@ Module.register("MMM-FSS-Recommend", {
             overlay.appendChild(qrContent);
             wrapper.appendChild(overlay);
         }
+        */
 
         wrapper.appendChild(shoppingPanel);
 
@@ -454,15 +456,15 @@ Module.register("MMM-FSS-Recommend", {
             this.availableRecipes = payload.data || [];
             this.pickSuggestedRecipes();
             this.updateDom();
-        } else if (notification === "QR_CODE_READY") {
-            this.qrBase64 = payload.base64;
-            this.qrUrl = payload.url;
-            this.showQrOverlay = true;
-            this.updateDom();
-        } else if (notification === "QR_ERROR") {
-            this.qrError = payload.error || "Unknown error";
-            this.showQrOverlay = true;
-            this.updateDom();
+        // } else if (notification === "QR_CODE_READY") {
+        //     this.qrBase64 = payload.base64;
+        //     this.qrUrl = payload.url;
+        //     this.showQrOverlay = true;
+        //     this.updateDom();
+        // } else if (notification === "QR_ERROR") {
+        //     this.qrError = payload.error || "Unknown error";
+        //     this.showQrOverlay = true;
+        //     this.updateDom();
         }
     },
     mergeResults(results) {

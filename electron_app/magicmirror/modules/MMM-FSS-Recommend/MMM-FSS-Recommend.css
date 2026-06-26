@@ -203,7 +203,7 @@
     color: var(--color-text);
 }
 
-/* ── QR download button ── */
+/*
 .fss-qr-btn {
     display: flex;
     align-items: center;
@@ -231,7 +231,6 @@
     transform: scale(0.97);
 }
 
-/* ── QR overlay ── */
 .fss-qr-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -307,4 +306,5 @@
 .fss-qr-close:active {
     transform: scale(0.95);
 }
+*/
 

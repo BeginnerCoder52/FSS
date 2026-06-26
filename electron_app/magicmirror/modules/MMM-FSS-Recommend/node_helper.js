@@ -12,8 +12,8 @@ module.exports = NodeHelper.create({
         this.started = false;
         this.processReady = false;
         this.pendingQueue = [];
-        this.httpServerProcess = null;
-        this.httpServerReady = false;
+        // this.httpServerProcess = null;
+        // this.httpServerReady = false;
     },
 
     socketNotificationReceived(notification, payload) {
@@ -34,10 +34,9 @@ module.exports = NodeHelper.create({
             if (this.processReady && this.pythonProcess && !this.pythonProcess.killed) {
                 this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
             }
-        } else if (notification === "GENERATE_QR") {
-            this.handleGenerateQR(payload);
-        }
-    },
+        // } else if (notification === "GENERATE_QR") {
+        //     this.handleGenerateQR(payload);
+        },
 
     sendSearch(recipe) {
         if (!this.pythonProcess || this.pythonProcess.killed) {
@@ -122,6 +121,7 @@ module.exports = NodeHelper.create({
         this.started = true;
     },
 
+    /*
     startHttpServer() {
         if (this.httpServerProcess) {
             this.httpServerReady = true;
@@ -198,6 +198,7 @@ module.exports = NodeHelper.create({
             this.sendSocketNotification("QR_ERROR", { error: `HTTP request failed: ${e.message}` });
         }
     },
+    */
 
     stop() {
         SessionLog.info("[MMM-FSS-Recommend] Node helper stopped");
@@ -209,6 +210,7 @@ module.exports = NodeHelper.create({
                 }
             }, 3000);
         }
+        /*
         if (this.httpServerProcess) {
             this.httpServerProcess.kill("SIGTERM");
             setTimeout(() => {
@@ -217,8 +219,9 @@ module.exports = NodeHelper.create({
                 }
             }, 3000);
         }
+        */
         this.pythonProcess = null;
-        this.httpServerProcess = null;
+        // this.httpServerProcess = null;
         this.pendingQueue = [];
     }
 });

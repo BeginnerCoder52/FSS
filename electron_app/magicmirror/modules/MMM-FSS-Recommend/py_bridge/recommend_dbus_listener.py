@@ -132,33 +132,33 @@ while True:
             handle_search(msg["recipe"])
         elif msg_type == "GET_RECIPES":
             print(json.dumps({"type": "RECIPES", "data": KNOWN_RECIPES}), flush=True)
-        elif msg_type == "GET_RECIPE_DETAIL":
-            recipe_name = msg.get("recipe", "")
-            detail = {
-                "recipe_name": recipe_name,
-                "status": "SUCCESS",
-                "serving": "4 người",
-                "times": "30 Phút",
-                "difficulty": "Dễ",
-                "original_ingredients": [
-                    "Nguyên liệu 1 : 100g",
-                    "Nguyên liệu 2 : 200g",
-                    "Nguyên liệu 3 : 1 muỗng",
-                ],
-                "original_spices": ["Muối", "Tiêu", "Đường"],
-                "process": ["Bước sơ chế 1", "Bước sơ chế 2"],
-                "cook": ["Bước nấu 1", "Bước nấu 2"],
-                "usage": ["Dùng nóng với cơm"],
-                "tips": "Mẹo nhỏ cho món ăn thêm ngon",
-                "total_items": 3,
-                "ingredients": [
-                    {"name": "Nguyên liệu 1", "required": "100g", "available": 0, "shortage": 100, "status": "missing"},
-                    {"name": "Nguyên liệu 2", "required": "200g", "available": 0, "shortage": 200, "status": "missing"},
-                    {"name": "Nguyên liệu 3", "required": "1 muỗng", "available": 0, "shortage": 1, "status": "missing"},
-                ],
-                "summary": "❌ Còn thiếu 3 nguyên liệu",
-                "pipeline_time_ms": 0.5,
-            }
-            print(json.dumps({"type": "RESULT", "data": detail}), flush=True)
+#        elif msg_type == "GET_RECIPE_DETAIL":
+#            recipe_name = msg.get("recipe", "")
+#            detail = {
+#                "recipe_name": recipe_name,
+#                "status": "SUCCESS",
+#                "serving": "4 người",
+#                "times": "30 Phút",
+#                "difficulty": "Dễ",
+#                "original_ingredients": [
+#                    "Nguyên liệu 1 : 100g",
+#                    "Nguyên liệu 2 : 200g",
+#                    "Nguyên liệu 3 : 1 muỗng",
+#                ],
+#                "original_spices": ["Muối", "Tiêu", "Đường"],
+#                "process": ["Bước sơ chế 1", "Bước sơ chế 2"],
+#                "cook": ["Bước nấu 1", "Bước nấu 2"],
+#                "usage": ["Dùng nóng với cơm"],
+#                "tips": "Mẹo nhỏ cho món ăn thêm ngon",
+#                "total_items": 3,
+#                "ingredients": [
+#                    {"name": "Nguyên liệu 1", "required": "100g", "available": 0, "shortage": 100, "status": "missing"},
+#                    {"name": "Nguyên liệu 2", "required": "200g", "available": 0, "shortage": 200, "status": "missing"},
+#                    {"name": "Nguyên liệu 3", "required": "1 muỗng", "available": 0, "shortage": 1, "status": "missing"},
+#                ],
+#                "summary": "❌ Còn thiếu 3 nguyên liệu",
+#                "pipeline_time_ms": 0.5,
+#            }
+#            print(json.dumps({"type": "RESULT", "data": detail}), flush=True)
     except Exception as e:
         print(json.dumps({"type": "ERROR", "message": str(e)}), flush=True)
