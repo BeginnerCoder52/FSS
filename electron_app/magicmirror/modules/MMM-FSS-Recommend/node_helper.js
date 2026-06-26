@@ -1,5 +1,5 @@
 const NodeHelper = require("node_helper");
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const SessionLog = require("../../js/session_logger");
@@ -9,10 +9,12 @@ module.exports = NodeHelper.create({
     start() {
         SessionLog.info("[MMM-FSS-Recommend] Node helper started");
         this.pythonProcess = null;
-        this.qrProcess = null;
+        // this.qrProcess = null;
         this.started = false;
         this.processReady = false;
         this.pendingQueue = [];
+        // this.httpServerProcess = null;
+        // this.httpServerReady = false;
     },
 
     socketNotificationReceived(notification, payload) {
@@ -33,11 +35,12 @@ module.exports = NodeHelper.create({
             if (this.processReady && this.pythonProcess && !this.pythonProcess.killed) {
                 this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
             }
-        } else if (notification === "GENERATE_QR") {
-            if (this.qrProcess && !this.qrProcess.killed) {
-                this.qrProcess.stdin.write(JSON.stringify({ type: "GENERATE_QR", data: payload }) + "\n");
-            }
         }
+        /*
+        else if (notification === "GENERATE_QR") {
+            this.handleGenerateQR(payload);
+        }
+        */
     },
 
     sendSearch(recipe) {
@@ -63,6 +66,7 @@ module.exports = NodeHelper.create({
         const pythonExec = resolvePythonExecutable(__dirname);
         this.pythonProcess = spawn(pythonExec, [script]);
 
+        /*
         // Start QR server
         const qrScript = path.join(__dirname, "py_bridge", "recipe_http_server.py");
         if (fs.existsSync(qrScript)) {
@@ -87,6 +91,7 @@ module.exports = NodeHelper.create({
                 console.error(`[MMM-FSS-Recommend] QR Server stderr: ${data.toString()}`);
             });
         }
+        */
 
         let buffer = "";
         this.pythonProcess.stdout.on("data", (data) => {
@@ -148,6 +153,85 @@ module.exports = NodeHelper.create({
         this.started = true;
     },
 
+    /*
+    startHttpServer() {
+        if (this.httpServerProcess) {
+            this.httpServerReady = true;
+            return;
+        }
+        const script = path.join(__dirname, "py_bridge", "recipe_http_server.py");
+        if (!fs.existsSync(script)) {
+            console.error("[MMM-FSS-Recommend] HTTP server script not found");
+            return;
+        }
+        const pythonExec = resolvePythonExecutable(__dirname);
+        this.httpServerProcess = spawn(pythonExec, [script, "8081"], {
+            stdio: ["pipe", "pipe", "pipe"],
+            detached: false,
+        });
+        this.httpServerProcess.stderr.on("data", (data) => {
+            console.log(`[RecipeHTTP] ${data.toString().trim()}`);
+        });
+        this.httpServerProcess.on("error", (err) => {
+            console.error("[MMM-FSS-Recommend] HTTP server error:", err.message);
+            this.httpServerProcess = null;
+            this.httpServerReady = false;
+        });
+        this.httpServerProcess.on("close", (code) => {
+            console.warn(`[MMM-FSS-Recommend] HTTP server exited with code ${code}`);
+            this.httpServerProcess = null;
+            this.httpServerReady = false;
+        });
+        setTimeout(() => { this.httpServerReady = true; }, 1500);
+    },
+
+    handleGenerateQR(recipeData) {
+        if (!this.httpServerReady) {
+            this.startHttpServer();
+            setTimeout(() => this.handleGenerateQR(recipeData), 2000);
+            return;
+        }
+        const httpUrl = `http://127.0.0.1:8081/api/recipe`;
+        const body = JSON.stringify(recipeData);
+        try {
+            const result = execSync(
+                `curl -s -X POST "${httpUrl}" -H "Content-Type: application/json" -d '${body.replace(/'/g, "'\\''")}'`,
+                { timeout: 5000 }
+            );
+            const resp = JSON.parse(result.toString());
+            if (!resp.url) {
+                this.sendSocketNotification("QR_ERROR", { error: "No URL returned" });
+                return;
+            }
+            // Generate QR code from URL
+            const qrScript = path.join(__dirname, "py_bridge", "qr_generator.py");
+            const pythonExec = resolvePythonExecutable(__dirname);
+            const qrProcess = spawn(pythonExec, [qrScript]);
+            let qrOut = "";
+            qrProcess.stdout.on("data", (d) => { qrOut += d.toString(); });
+            qrProcess.on("close", () => {
+                try {
+                    const qrMsg = JSON.parse(qrOut.trim());
+                    if (qrMsg.type === "QR_DATA") {
+                        this.sendSocketNotification("QR_CODE_READY", {
+                            base64: qrMsg.base64,
+                            url: resp.url
+                        });
+                    } else {
+                        this.sendSocketNotification("QR_ERROR", { error: qrMsg.message || "QR generation failed" });
+                    }
+                } catch (e) {
+                    this.sendSocketNotification("QR_ERROR", { error: "Failed to parse QR output" });
+                }
+            });
+            qrProcess.stdin.write(JSON.stringify({ url: resp.url }) + "\n");
+            qrProcess.stdin.end();
+        } catch (e) {
+            this.sendSocketNotification("QR_ERROR", { error: `HTTP request failed: ${e.message}` });
+        }
+    },
+    */
+
     stop() {
         SessionLog.info("[MMM-FSS-Recommend] Node helper stopped");
         if (this.pythonProcess) {
@@ -158,11 +242,18 @@ module.exports = NodeHelper.create({
                 }
             }, 3000);
         }
-        if (this.qrProcess) {
-            this.qrProcess.kill("SIGTERM");
+        /*
+        if (this.httpServerProcess) {
+            this.httpServerProcess.kill("SIGTERM");
+            setTimeout(() => {
+                if (this.httpServerProcess && !this.httpServerProcess.killed) {
+                    this.httpServerProcess.kill("SIGKILL");
+                }
+            }, 3000);
         }
+        */
         this.pythonProcess = null;
-        this.qrProcess = null;
+        // this.httpServerProcess = null;
         this.pendingQueue = [];
     }
 });

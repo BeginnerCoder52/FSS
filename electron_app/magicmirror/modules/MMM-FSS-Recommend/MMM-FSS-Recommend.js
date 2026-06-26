@@ -14,7 +14,13 @@ Module.register("MMM-FSS-Recommend", {
         this.availableRecipes = [];
         this.suggestedRecipes = [];
         this.showRecipeList = false;
-        this.qrData = null;
+        this.suggestedRecipes = [];
+        this.chipOffset = 0;
+        this.CHIPS_PER_PAGE = 5;
+        // this.qrBase64 = null;
+        // this.qrUrl = null;
+        // this.showQrOverlay = false;
+        // this.qrError = null;
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -117,7 +123,7 @@ Module.register("MMM-FSS-Recommend", {
             timeDisplay.textContent = "⏱ Round-trip: " + this.pipelineTimeMs + "ms";
             shoppingPanel.appendChild(timeDisplay);
         }
-
+        /*
         // QR Code Download Section
         if (this.hasSearched && this.result) {
             const dlRow = document.createElement("div");
@@ -161,6 +167,7 @@ Module.register("MMM-FSS-Recommend", {
             }
             shoppingPanel.appendChild(dlRow);
         }
+        */
 
         wrapper.appendChild(shoppingPanel);
 
@@ -406,11 +413,17 @@ Module.register("MMM-FSS-Recommend", {
             }
         } else if (notification === "RECIPES") {
             this.availableRecipes = payload.data || [];
-            this.shuffleSuggestions();
+            this.pickSuggestedRecipes();
             this.updateDom();
-        } else if (notification === "QR_RESULT") {
-            this.qrData = payload;
-            this.updateDom();
+        // } else if (notification === "QR_CODE_READY") {
+        //     this.qrBase64 = payload.base64;
+        //     this.qrUrl = payload.url;
+        //     this.showQrOverlay = true;
+        //     this.updateDom();
+        // } else if (notification === "QR_ERROR") {
+        //     this.qrError = payload.error || "Unknown error";
+        //     this.showQrOverlay = true;
+        //     this.updateDom();
         }
     },
     triggerSearch(recipe) {
@@ -497,5 +510,36 @@ Module.register("MMM-FSS-Recommend", {
         } catch (e) {
             // Audio not available
         }
+    },
+
+    pickSuggestedRecipes() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) {
+            this.suggestedRecipes = [];
+            return;
+        }
+        const shuffled = [...this.availableRecipes];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const count = Math.min(this.CHIPS_PER_PAGE, shuffled.length);
+        this.suggestedRecipes = shuffled.slice(0, count);
+        this.chipOffset = count;
+    },
+
+    advanceChips() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) return;
+        const remaining = this.availableRecipes.length - this.chipOffset;
+        if (remaining <= 0) {
+            this.chipOffset = 0;
+        }
+        const count = Math.min(this.CHIPS_PER_PAGE, this.availableRecipes.length);
+        this.suggestedRecipes = [];
+        for (let i = 0; i < count; i++) {
+            const idx = (this.chipOffset + i) % this.availableRecipes.length;
+            this.suggestedRecipes.push(this.availableRecipes[idx]);
+        }
+        this.chipOffset = (this.chipOffset + count) % this.availableRecipes.length;
+        this.updateDom();
     }
 });

@@ -1,2 +1,6 @@
 # Recommend D-Bus listener dependencies
 sdbus>=0.14.0
+# QR code generation
+qrcode[pil]>=7.4
+# Recipe HTTP server
+flask>=2.3

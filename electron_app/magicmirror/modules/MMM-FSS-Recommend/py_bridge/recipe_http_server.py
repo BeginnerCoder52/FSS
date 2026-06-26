@@ -1,129 +1,159 @@
-#!/usr/bin/env python3
-import sys
-import json
-import uuid
-from flask import Flask, request, render_template_string, jsonify
-import threading
-import qrcode
-import base64
-from io import BytesIO
-import socket
-import logging
-
-# Disable Flask default logging to avoid cluttering MagicMirror stdout
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-
-app = Flask(__name__)
-recipes_db = {}
-
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(('10.255.255.255', 1))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = '127.0.0.1'
-    finally:
-        s.close()
-    return ip
-
-def generate_qr_base64(url):
-    qr = qrcode.QRCode(version=1, box_size=10, border=2)
-    qr.add_data(url)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    buffered = BytesIO()
-    img.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode('utf-8')
-
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Danh sách đi chợ: {{ recipe.recipe_name }}</title>
-    <style>
-        body { font-family: -apple-system, sans-serif; background-color: #121212; color: #ffffff; padding: 20px; line-height: 1.6; margin: 0; }
-        h1 { font-size: 24px; color: #4facfe; margin-bottom: 5px; }
-        .summary { color: #aaaaaa; font-size: 14px; margin-bottom: 20px; }
-        .category { font-weight: bold; margin-top: 20px; font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; }
-        ul { list-style: none; padding: 0; margin: 0; }
-        li { padding: 12px 15px; background-color: #1e1e1e; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .missing { border-left: 4px solid #ff4444; }
-        .available { border-left: 4px solid #00C851; }
-        .qty { font-weight: bold; color: #4facfe; background: rgba(79, 172, 254, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.9em; }
-        .name { flex: 1; margin-right: 10px; }
-        .empty { color: #888; font-style: italic; }
-    </style>
-</head>
-<body>
-    <h1>{{ recipe.recipe_name }}</h1>
-    <div class="summary">{{ recipe.summary }}</div>
-    
-    <div class="category">🛒 Cần mua</div>
-    <ul>
-        {% set has_missing = false %}
-        {% for item in recipe.ingredients if item.status == 'missing' %}
-            {% set has_missing = true %}
-            <li class="missing"><span class="name">{{ item.name }}</span><span class="qty">Thiếu {{ item.required - item.available }}</span></li>
-        {% endfor %}
-        {% if not has_missing %}
-            <li class="available empty"><span>(Không cần mua thêm gì)</span></li>
-        {% endif %}
-    </ul>
-
-    <div class="category">✅ Đã có ở nhà</div>
-    <ul>
-        {% set has_available = false %}
-        {% for item in recipe.ingredients if item.status == 'available' %}
-            {% set has_available = true %}
-            <li class="available"><span class="name">{{ item.name }}</span><span class="qty">Sẵn {{ item.available }}</span></li>
-        {% endfor %}
-        {% if not has_available %}
-            <li class="missing empty"><span>(Chưa có nguyên liệu nào)</span></li>
-        {% endif %}
-    </ul>
-</body>
-</html>
-"""
-
-@app.route('/r/<recipe_id>')
-def view_recipe(recipe_id):
-    recipe = recipes_db.get(recipe_id)
-    if not recipe:
-        return "Recipe not found or expired", 404
-    return render_template_string(HTML_TEMPLATE, recipe=recipe)
-
-def run_server():
-    app.run(host='0.0.0.0', port=8081, debug=False, use_reloader=False)
-
-if __name__ == '__main__':
-    server_thread = threading.Thread(target=run_server, daemon=True)
-    server_thread.start()
-    
-    while True:
-        try:
-            line = sys.stdin.readline()
-            if not line:
-                break
-            line = line.strip()
-            if not line:
-                continue
-            
-            msg = json.loads(line)
-            if msg.get("type") == "GENERATE_QR":
-                data = msg.get("data", {})
-                recipe_id = str(uuid.uuid4())[:8]
-                recipes_db[recipe_id] = data
-                
-                url = f"http://{get_ip_address()}:8081/r/{recipe_id}"
-                qr_b64 = generate_qr_base64(url)
-                
-                print(json.dumps({
-                    "type": "QR_RESULT", 
-                    "data": {"url": url, "qr_base64": qr_b64}
-                }), flush=True)
-        except Exception as e:
-            print(json.dumps({"type": "ERROR", "message": str(e)}), flush=True)
+# #!/usr/bin/env python3
+# """Lightweight Flask HTTP server serving recipe pages for QR code scanning.
+# 
+# Routes:
+#   POST /api/recipe  — Accept recipe JSON, return {"id": "...", "url": "..."}
+#   GET  /r/<id>      — Render recipe as a dark-themed HTML page
+# 
+# Run standalone:  python3 recipe_http_server.py [--port 8081]
+# Or import:       recipe_http_server.start_server(port=8081)
+# """
+# import sys, json, os, uuid, threading, logging
+# 
+# logging.basicConfig(level=logging.INFO, format="[RecipeHTTP] %(levelname)s: %(message)s")
+# logger = logging.getLogger(__name__)
+# 
+# try:
+#     from flask import Flask, request, jsonify, render_template_string
+# except ImportError:
+#     print("ERROR: flask not installed. Run: pip install flask", file=sys.stderr)
+#     sys.exit(1)
+# 
+# app = Flask(__name__)
+# 
+# STORAGE: dict[str, dict] = {}
+# HOSTNAME = os.uname().nodename if hasattr(os, 'uname') else "fss-rpi"
+# 
+# RECIPE_TEMPLATE = """<!DOCTYPE html>
+# <html lang="vi">
+# <head>
+# <meta charset="UTF-8">
+# <meta name="viewport" content="width=device-width, initial-scale=1.0">
+# <title>{{ recipe_name }} - FSS Recipe</title>
+# <style>
+#   * { margin: 0; padding: 0; box-sizing: border-box; }
+#   body {
+#     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+#     background: #1a1a2e; color: #e0e0e0; padding: 1.2rem; line-height: 1.6;
+#     max-width: 720px; margin: 0 auto;
+#   }
+#   h1 { font-size: 1.6rem; color: #fff; margin-bottom: 0.3rem; }
+#   .meta { color: #888; font-size: 0.85rem; margin-bottom: 1rem; }
+#   .meta span { margin-right: 1rem; }
+#   h2 { font-size: 1.1rem; color: #ffd700; margin: 1rem 0 0.4rem; }
+#   ul { padding-left: 1.2rem; margin-bottom: 0.6rem; }
+#   li { margin-bottom: 0.25rem; }
+#   .cook-step { margin-bottom: 0.5rem; padding-left: 0.5rem; border-left: 2px solid #ffd700; }
+#   .section { background: #16213e; border-radius: 8px; padding: 0.8rem; margin-bottom: 0.8rem; }
+#   .tag { display: inline-block; background: #0f3460; color: #e0e0e0; padding: 0.15rem 0.6rem;
+#          border-radius: 12px; font-size: 0.75rem; margin: 0.15rem; }
+#   hr { border: none; border-top: 1px solid #333; margin: 1rem 0; }
+#   .footer { text-align: center; color: #555; font-size: 0.7rem; margin-top: 1rem; }
+#   @media print { body { background: #fff; color: #000; }
+#     .section { background: #f5f5f5; } h2 { color: #b8860b; }
+#   }
+# </style>
+# </head>
+# <body>
+#   <h1>{{ recipe_name }}</h1>
+#   <div class="meta">
+#     {% if serving %}<span>🍽 {{ serving }}</span>{% endif %}
+#     {% if times %}<span>⏱ {{ times }}</span>{% endif %}
+#     {% if difficulty %}<span>📊 {{ difficulty }}</span>{% endif %}
+#   </div>
+# 
+#   {% if original_ingredients %}
+#   <div class="section">
+#     <h2>🧂 Nguyên liệu</h2>
+#     <ul>
+#     {% for item in original_ingredients %}
+#       <li>{{ item }}</li>
+#     {% endfor %}
+#     </ul>
+#   </div>
+#   {% endif %}
+# 
+#   {% if original_spices %}
+#   <div class="section">
+#     <h2>🌿 Gia vị</h2>
+#     <div>
+#     {% for spice in original_spices %}
+#       <span class="tag">{{ spice }}</span>
+#     {% endfor %}
+#     </div>
+#   </div>
+#   {% endif %}
+# 
+#   {% if process %}
+#   <div class="section">
+#     <h2>📋 Sơ chế</h2>
+#     {% for step in process %}
+#     <div class="cook-step">{{ step }}</div>
+#     {% endfor %}
+#   </div>
+#   {% endif %}
+# 
+#   {% if cook %}
+#   <div class="section">
+#     <h2>🍳 Cách nấu</h2>
+#     {% for step in cook %}
+#     <div class="cook-step">{{ step }}</div>
+#     {% endfor %}
+#   </div>
+#   {% endif %}
+# 
+#   {% if usage %}
+#   <div class="section">
+#     <h2>🍽 Cách dùng</h2>
+#     {% for step in usage %}
+#     <div class="cook-step">{{ step }}</div>
+#     {% endfor %}
+#   </div>
+#   {% endif %}
+# 
+#   {% if tips %}
+#   <div class="section">
+#     <h2>💡 Mẹo</h2>
+#     <div>{{ tips }}</div>
+#   </div>
+#   {% endif %}
+# 
+#   <hr>
+#   <div class="footer">FSS — Fridge Supervisor System</div>
+# </body>
+# </html>"""
+# 
+# 
+# @app.route("/api/recipe", methods=["POST"])
+# def api_create_recipe():
+#     data = request.get_json(silent=True)
+#     if not data:
+#         return jsonify({"error": "Invalid JSON"}), 400
+#     recipe_id = str(uuid.uuid4())[:8]
+#     STORAGE[recipe_id] = data
+#     url = f"http://{HOSTNAME}.local:8081/r/{recipe_id}"
+#     logger.info(f"Stored recipe {recipe_id}: {data.get('recipe_name', 'unknown')}")
+#     return jsonify({"id": recipe_id, "url": url})
+# 
+# 
+# @app.route("/r/<recipe_id>")
+# def view_recipe(recipe_id):
+#     data = STORAGE.get(recipe_id)
+#     if not data:
+#         return "<h1>Recipe not found</h1><p>This recipe may have expired.</p>", 404
+#     return render_template_string(RECIPE_TEMPLATE, **data)
+# 
+# 
+# @app.route("/api/health")
+# def health():
+#     return jsonify({"status": "ok", "recipes": len(STORAGE)})
+# 
+# 
+# def start_server(port: int = 8081, debug: bool = False):
+#     logger.info(f"Starting recipe HTTP server on port {port}")
+#     app.run(host="0.0.0.0", port=port, debug=debug, use_reloader=False)
+# 
+# 
+# if __name__ == "__main__":
+#     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8081
+#     start_server(port=port)
