@@ -156,7 +156,9 @@ done
 
 setup_log_directory() {
     if [[ ! -d "$LOG_DIR" ]]; then
-        sudo mkdir -p "$LOG_DIR" 2>/dev/null || LOG_DIR="${FSS_ROOT}/logs"
+        if [[ "$LOG_DIR" == /var/log/* ]]; then
+            sudo mkdir -p "$LOG_DIR" 2>/dev/null || LOG_DIR="${FSS_ROOT}/tests/logs/magicmirror/mm_log_$(date +%Y%m%d_%H%M%S)"
+        fi
         mkdir -p "$LOG_DIR" 2>/dev/null || true
     fi
     mkdir -p "$PID_DIR"
