@@ -41,6 +41,10 @@ try:
         def GenerateShoppingList(self, recipe_name: str, batch_id: str) -> str:
             pass
 
+        @dbus_method('', 's')
+        def GetAvailableRecipes(self) -> str:
+            pass
+
     proxy = RecommendDaemonInterface(RECOMMEND_SERVICE, RECOMMEND_PATH)
 except Exception as e:
     print(f"Warning: D-Bus not available ({e}). Running in MOCK mode.", file=sys.stderr)
@@ -131,7 +135,18 @@ while True:
         if msg_type == "SEARCH":
             handle_search(msg["recipe"])
         elif msg_type == "GET_RECIPES":
-            print(json.dumps({"type": "RECIPES", "data": KNOWN_RECIPES}), flush=True)
+            _sent = False
+            if proxy is not None and wait_for_service(timeout=2):
+                try:
+                    raw_recipes = proxy.GetAvailableRecipes()
+                    recipes = json.loads(raw_recipes)
+                    if isinstance(recipes, list) and recipes:
+                        print(json.dumps({"type": "RECIPES", "data": recipes}), flush=True)
+                        _sent = True
+                except Exception as e:
+                    logging.warning(f"D-Bus GetAvailableRecipes failed, falling back to static list: {e}")
+            if not _sent:
+                print(json.dumps({"type": "RECIPES", "data": KNOWN_RECIPES}), flush=True)
 #        elif msg_type == "GET_RECIPE_DETAIL":
 #            recipe_name = msg.get("recipe", "")
 #            detail = {

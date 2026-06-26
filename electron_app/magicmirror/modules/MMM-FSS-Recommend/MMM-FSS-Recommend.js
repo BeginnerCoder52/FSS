@@ -64,7 +64,7 @@ Module.register("MMM-FSS-Recommend", {
         let ingredientsToBuy = this.hasSearched ? [] : this.mockShoppingList;
         if (this.result && this.result.ingredients) {
             ingredientsToBuy = this.result.ingredients
-                .filter(i => i.status === 'missing')
+                .filter(i => i.status === 'missing' || i.status === 'needed')
                 .map(i => ({ name: i.name, qty: i.required - i.available }));
         }
 
