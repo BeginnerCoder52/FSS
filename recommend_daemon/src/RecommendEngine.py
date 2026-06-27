@@ -83,15 +83,19 @@ class RecommendEngine:
             shopping_items = []
 
             for ing in ingredients:
-                food_id = ing.get("ingredient", "").lower().strip()
-                req_qty = self._parse_quantity(ing.get("quantity", "1"))
+                display_name = ing.get("ingredient", "").strip()   # Original name for display
+                food_id = display_name.lower()                       # Lowercased for inventory matching
+                quantity_str = ing.get("quantity", "1")             # Full quantity string, e.g. "1 trái"
+                req_qty = self._parse_quantity(quantity_str)
                 inv_qty = inventory_map.get(food_id, 0)
-                unit = ing.get("unit")
+                unit = ing.get("unit")  # Optional separate unit (may be None for NLP output)
 
                 shortage = max(0, req_qty - inv_qty)
 
                 entry = {
                     "food_id": food_id,
+                    "display_name": display_name,       # Original ingredient name (proper case)
+                    "quantity_str": quantity_str,        # Full human-readable quantity, e.g. "1 trái"
                     "required_qty": req_qty,
                     "available_qty": inv_qty,
                     "shortage": shortage,
@@ -207,30 +211,33 @@ class RecommendEngine:
         ingredients = []
         for item in result.get("available", []):
             entry = {
-                "name": item.get("food_id", ""),
-                "required": item.get("required_qty", 0),
+                "name": item.get("display_name") or item.get("food_id", ""),
+                "required": item.get("quantity_str") or item.get("required_qty", 0),
                 "available": item.get("available_qty", 0),
                 "shortage": 0,
+                "unit": item.get("unit"),
                 "status": "available"
             }
             ingredients.append(entry)
 
         for item in result.get("needed", []):
             entry = {
-                "name": item.get("food_id", ""),
-                "required": item.get("required_qty", 0),
+                "name": item.get("display_name") or item.get("food_id", ""),
+                "required": item.get("quantity_str") or item.get("required_qty", 0),
                 "available": item.get("available_qty", 0),
                 "shortage": item.get("shortage", 0),
+                "unit": item.get("unit"),
                 "status": "needed"
             }
             ingredients.append(entry)
 
         for item in result.get("missing", []):
             entry = {
-                "name": item.get("food_id", ""),
-                "required": item.get("required_qty", 0),
+                "name": item.get("display_name") or item.get("food_id", ""),
+                "required": item.get("quantity_str") or item.get("required_qty", 0),
                 "available": 0,
-                "shortage": item.get("required_qty", 0),
+                "shortage": item.get("shortage", item.get("required_qty", 0)),
+                "unit": item.get("unit"),
                 "status": "missing"
             }
             ingredients.append(entry)
