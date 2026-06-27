@@ -436,10 +436,17 @@ Module.register("MMM-FSS-Recommend", {
                 // --- DEBUG: log full pipeline result to console ---
                 console.log("[MMM-FSS-Recommend] Pipeline result:", JSON.stringify(this.result, null, 2));
                 // Check if result is NOT_FOUND — show fuzzy suggestions
-                const status = this.accumulatedResults[0] && this.accumulatedResults[0].status;
+                const firstResult = this.accumulatedResults[0];
+                const status = firstResult && firstResult.status;
                 if (status === "NOT_FOUND" || (this.result && this.result.ingredients && this.result.ingredients.length === 0)) {
-                    this.fuzzySuggestions = this._fuzzyFindRecipes(this.lastRawInput);
-                    console.log("[MMM-FSS-Recommend] Fuzzy suggestions for '" + this.lastRawInput + "':", this.fuzzySuggestions);
+                    // Use server-supplied suggestions (Python backend handles difflib fuzzy matching)
+                    const serverSuggestions = firstResult && firstResult.suggestions;
+                    this.fuzzySuggestions = (serverSuggestions && serverSuggestions.length > 0)
+                        ? serverSuggestions
+                        : [];
+                    // Reset search state so UI shows fuzzy chips (not an empty recipe history)
+                    this.hasSearched = false;
+                    this.searchedRecipes = this.searchedRecipes.filter(r => r !== this.lastRawInput);
                 } else {
                     this.fuzzySuggestions = [];
                 }
@@ -580,46 +587,5 @@ Module.register("MMM-FSS-Recommend", {
         }
         this.chipOffset = (this.chipOffset + count) % this.availableRecipes.length;
         this.updateDom();
-    },
-
-    /**
-     * Fuzzy recipe search — substring + simplified bigram similarity.
-     * Returns top-5 candidates from availableRecipes matching the query.
-     * @param {string} query - Raw user input
-     * @returns {string[]}
-     */
-    _fuzzyFindRecipes(query) {
-        if (!query || !this.availableRecipes || this.availableRecipes.length === 0) return [];
-        const q = query.toLowerCase().trim();
-        if (!q) return [];
-
-        const scored = this.availableRecipes.map(name => {
-            const n = name.toLowerCase();
-            // Exact substring match → highest score
-            if (n.includes(q)) return { name, score: 1.0 };
-            // Word-level overlap
-            const qWords = q.split(/\s+/);
-            const nWords = n.split(/\s+/);
-            const matches = qWords.filter(w => nWords.some(nw => nw.includes(w) || w.includes(nw)));
-            const wordScore = matches.length / Math.max(qWords.length, nWords.length);
-            // Bigram similarity (difflib-like)
-            function bigrams(str) {
-                const set = new Set();
-                for (let i = 0; i < str.length - 1; i++) set.add(str.substring(i, i + 2));
-                return set;
-            }
-            const qBi = bigrams(q);
-            const nBi = bigrams(n);
-            let common = 0;
-            qBi.forEach(b => { if (nBi.has(b)) common++; });
-            const bigramScore = (2.0 * common) / (qBi.size + nBi.size + 1);
-            return { name, score: Math.max(wordScore, bigramScore) };
-        });
-
-        return scored
-            .filter(s => s.score > 0.25)
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 5)
-            .map(s => s.name);
     }
 });

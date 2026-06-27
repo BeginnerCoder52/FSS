@@ -70,33 +70,99 @@ def wait_for_service(timeout=5):
     return False
 
 
-KNOWN_RECIPES = [
-    "Phở bò", "Phở gà", "Bún chả", "Bún bò Huế", "Bún riêu cua",
-    "Cơm tấm", "Cơm chiên", "Cơm gà", "Cơm rang",
-    "Bánh mì", "Bánh xèo", "Bánh cuốn",
-    "Gỏi cuốn", "Chả giò", "Nem rán",
-    "Thịt kho tàu", "Cá kho tộ", "Gà kho gừng",
-    "Canh chua cá", "Canh rau củ", "Canh măng",
-    "Rau muống xào tỏi", "Bò xào", "Tôm xào",
-    "Lẩu Thái", "Lẩu gà", "Lẩu bò",
-    "Trứng chiên", "Đậu hũ sốt cà chua",
-    "Bún thịt nướng", "Hủ tiếu Nam Vang",
-]
+# ============================================================
+# Local NLP Fallback (used when D-Bus / RecommendDaemon is down)
+# Tries to import the recipe_extractor library directly from FSS repo.
+# ============================================================
+_local_nlp_engine = None
+_local_nlp_attempted = False
 
-MOCK_DATA_TEMPLATE = {
-    "status": "SUCCESS",
-    "pipeline_time_ms": 1500,
-    "total_items": 3,
-    "available_count": 0,
-    "needed_count": 0,
-    "missing_count": 3,
-    "ingredients": [
-        {"name": "Gạo", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
-        {"name": "Mắm", "required": "1", "available": 0, "shortage": 1, "status": "missing"},
-        {"name": "Thịt", "required": "2", "available": 0, "shortage": 2, "status": "missing"},
-    ],
-    "summary": "\u274c Còn thiếu 3 nguyên liệu"
-}
+def _get_local_nlp():
+    """Lazy-load RecipeAnalyzerEngine from recipe_extractor if available."""
+    global _local_nlp_engine, _local_nlp_attempted
+    if _local_nlp_attempted:
+        return _local_nlp_engine
+    _local_nlp_attempted = True
+    try:
+        # Resolve path relative to this bridge file: ../../../../../../recipe_extractor/src
+        bridge_dir = os.path.dirname(os.path.abspath(__file__))
+        # go up: py_bridge -> MMM-FSS-Recommend -> modules -> magicmirror -> electron_app -> FSS
+        fss_root = os.path.abspath(os.path.join(bridge_dir, "../../../../../"))
+        recipe_src = os.path.join(fss_root, "recipe_extractor", "src")
+        recipe_db  = os.path.join(fss_root, "recipe_extractor", "data", "recipes")
+        if not os.path.isdir(recipe_db):
+            logging.warning(f"[LocalNLP] recipe_db not found at {recipe_db}")
+            return None
+        if recipe_src not in sys.path:
+            sys.path.insert(0, recipe_src)
+        from RecipeAnalyzerAPI import RecipeAnalyzerEngine
+        _local_nlp_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db)
+        logging.info(f"[LocalNLP] Loaded RecipeAnalyzerEngine with {len(_local_nlp_engine.recipe_names)} recipes")
+    except Exception as e:
+        logging.warning(f"[LocalNLP] Cannot load RecipeAnalyzerEngine: {e}")
+        _local_nlp_engine = None
+    return _local_nlp_engine
+
+
+def _local_nlp_search(recipe):
+    """
+    Run a local NLP lookup using recipe_extractor as D-Bus fallback.
+    Returns a dict in the same format as RecommendDaemon's response.
+    """
+    engine = _get_local_nlp()
+    if engine is None:
+        return None
+
+    t0 = time.time()
+    # Try exact lookup first, then fuzzy
+    result = engine.generate_fss_request(recipe)
+    pipeline_ms = round((time.time() - t0) * 1000, 1)
+
+    status = result.get("status", "")
+    logging.info(f"[LocalNLP] '{recipe}' -> status={status} pipeline={pipeline_ms}ms")
+
+    if status == "NOT_FOUND":
+        # Return suggestions too so the UI can show fuzzy chips
+        suggestions = engine._suggest_recipe(recipe)
+        return {
+            "status": "NOT_FOUND",
+            "recipe_name": recipe,
+            "message": result.get("message", "Recipe not found"),
+            "suggestions": suggestions,
+            "pipeline_time_ms": pipeline_ms
+        }
+
+    if status != "SUCCESS":
+        return None
+
+    # Build ingredients list in the same format as RecommendDaemon format_result_for_ui
+    raw_ingredients = result.get("ingredients", [])
+    ui_ingredients = []
+    for ing in raw_ingredients:
+        name = ing.get("ingredient", "")
+        qty_str = ing.get("quantity", "1")
+        ui_ingredients.append({
+            "name": name,
+            "required": qty_str,
+            "available": 0,
+            "shortage": 1,     # no inventory data in local mode
+            "unit": None,
+            "status": "missing"
+        })
+
+    missing_count = len(ui_ingredients)
+    return {
+        "status": "SUCCESS",
+        "recipe_name": result.get("dish", recipe),
+        "batch_id": "local-nlp",
+        "pipeline_time_ms": pipeline_ms,
+        "total_items": missing_count,
+        "available_count": 0,
+        "needed_count": 0,
+        "missing_count": missing_count,
+        "ingredients": ui_ingredients,
+        "summary": f"\u274c C\u00f2n thi\u1ebfu {missing_count} nguy\u00ean li\u1ec7u (ch\u1ebf \u0111\u1ed9 offline)"
+    }
 
 
 def handle_search(recipe):
@@ -112,14 +178,24 @@ def handle_search(recipe):
                 print(json.dumps({"type": "RESULT", "data": parsed}), flush=True)
             return
         except Exception as e:
-            logging.warning(f"D-Bus call failed, falling back to mock: {e}")
+            logging.warning(f"D-Bus call failed, falling back to local NLP: {e}")
 
-    # Fallback: return mock data for any recipe
-    result = dict(MOCK_DATA_TEMPLATE)
-    result["recipe_name"] = recipe
-    result["batch_id"] = "mock-batch-id"
-    time.sleep(1.5)
-    print(json.dumps({"type": "RESULT", "data": result}), flush=True)
+    # Fallback 1: try local NLP engine (real ingredients, no D-Bus needed)
+    local_result = _local_nlp_search(recipe)
+    if local_result is not None:
+        print(json.dumps({"type": "RESULT", "data": local_result}), flush=True)
+        return
+
+    # Fallback 2: D-Bus AND local NLP both unavailable — return NOT_FOUND
+    # so the UI shows fuzzy suggestions instead of a fake generic list
+    fallback = {
+        "status": "NOT_FOUND",
+        "recipe_name": recipe,
+        "message": "RecommendDaemon and local NLP both unavailable",
+        "ingredients": [],
+        "pipeline_time_ms": 0
+    }
+    print(json.dumps({"type": "RESULT", "data": fallback}), flush=True)
 
 
 while True:
@@ -146,7 +222,10 @@ while True:
                 except Exception as e:
                     logging.warning(f"D-Bus GetAvailableRecipes failed, falling back to static list: {e}")
             if not _sent:
-                print(json.dumps({"type": "RECIPES", "data": KNOWN_RECIPES}), flush=True)
+                # Use local NLP engine's full recipe list (250+) if available
+                engine = _get_local_nlp()
+                local_recipes = engine.get_available_recipes() if engine else []
+                print(json.dumps({"type": "RECIPES", "data": local_recipes}), flush=True)
 #        elif msg_type == "GET_RECIPE_DETAIL":
 #            recipe_name = msg.get("recipe", "")
 #            detail = {

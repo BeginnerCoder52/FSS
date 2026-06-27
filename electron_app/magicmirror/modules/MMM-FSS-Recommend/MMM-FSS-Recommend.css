@@ -96,7 +96,7 @@
 }
 
 .fss-panel {
-    overflow: hidden;
+    /* Do NOT use overflow:hidden here — it clips children and prevents scroll */
     display: flex;
     flex-direction: column;
 }
@@ -105,12 +105,16 @@
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 22em;
+    /* touch-action: pan-y allows vertical swipe-to-scroll on touchscreen */
+    touch-action: pan-y;
     scrollbar-width: thin;
     scrollbar-color: var(--color-text-dimmed) transparent;
 }
 
 .fss-shopping-scroll::-webkit-scrollbar {
     width: 4px;
+    /* Override the global MM rule that hides all scrollbars */
+    display: block;
 }
 
 .fss-shopping-scroll::-webkit-scrollbar-thumb {
@@ -122,12 +126,14 @@
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 18em;
+    touch-action: pan-y;
     scrollbar-width: thin;
     scrollbar-color: var(--color-text-dimmed) transparent;
 }
 
 .fss-menu-scroll::-webkit-scrollbar {
     width: 4px;
+    display: block;
 }
 
 .fss-menu-scroll::-webkit-scrollbar-thumb {

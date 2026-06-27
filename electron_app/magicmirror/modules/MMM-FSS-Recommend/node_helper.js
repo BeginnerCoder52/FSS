@@ -19,6 +19,7 @@ module.exports = NodeHelper.create({
 
     socketNotificationReceived(notification, payload) {
         if (notification === "RECIPE_SEARCH") {
+            SessionLog.info(`[MMM-FSS-Recommend] RECIPE_SEARCH received: '${payload.recipe}'`);
             if (!this.started) {
                 this.startBridge();
             }
@@ -36,11 +37,6 @@ module.exports = NodeHelper.create({
                 this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
             }
         }
-        /*
-        else if (notification === "GENERATE_QR") {
-            this.handleGenerateQR(payload);
-        }
-        */
     },
 
     sendSearch(recipe) {
@@ -103,13 +99,22 @@ module.exports = NodeHelper.create({
                 try {
                     const msg = JSON.parse(line);
                     if (msg.type === "RESULT") {
+                        // Server-side debug log — appears in magicmirror.log
+                        const d = msg.data;
+                        const summary = `status=${d.status} recipe='${d.recipe_name}' ` +
+                            `total=${d.total_items} missing=${d.missing_count} ` +
+                            `pipeline_ms=${d.pipeline_time_ms} ` +
+                            `ingredients=${JSON.stringify((d.ingredients||[]).map(i=>i.name))}`;
+                        SessionLog.info(`[MMM-FSS-Recommend] PIPELINE RESULT: ${summary}`);
                         this.sendSocketNotification("RECOMMEND_RESULT", msg.data);
                     } else if (msg.type === "ERROR") {
                         console.error("[MMM-FSS-Recommend] Error:", msg.message);
+                        SessionLog.error(`[MMM-FSS-Recommend] Bridge error: ${msg.message}`);
                         this.sendSocketNotification("RECOMMEND_ERROR", { error: msg.message });
                     } else if (msg.type === "STATUS") {
                         console.log(`[MMM-FSS-Recommend] ${msg.message}`);
                     } else if (msg.type === "RECIPES") {
+                        SessionLog.info(`[MMM-FSS-Recommend] Loaded ${(msg.data||[]).length} available recipes`);
                         this.sendSocketNotification("RECIPES", { data: msg.data });
                     }
                 } catch (e) {
