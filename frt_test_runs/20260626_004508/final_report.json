@@ -1,0 +1,197 @@
+{
+  "status": "complete",
+  "mode": "video",
+  "source": "video/260625_checkout_apple.mkv",
+  "stage_request": "all",
+  "session_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508",
+  "started_at": "2026-06-25T17:45:08.390305Z",
+  "finished_at": "2026-06-25T17:45:36.298705Z",
+  "stages": {
+    "stage1_mog2": {
+      "status": "complete",
+      "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2",
+      "summary": {
+        "stage": "stage1_mog2",
+        "source_type": "video",
+        "source": "video/260625_checkout_apple.mkv",
+        "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2",
+        "started_at": "2026-06-25T17:45:08.550254Z",
+        "finished_at": "2026-06-25T17:45:16.802114Z",
+        "elapsed_sec": 8.252,
+        "input_fps": 30.0,
+        "target_fps": 4.0,
+        "fps_limited": true,
+        "fps_skipped_frames": 472,
+        "effective_processed_fps": 3.7450845764933525,
+        "processing_throughput_fps": 7.271111167098937,
+        "processed_source_duration_sec": 16.021,
+        "input_width": 640,
+        "input_height": 480,
+        "frame_stride": 1,
+        "max_frames": 0,
+        "motion_threshold_percent": 15.0,
+        "total_processed_frames": 60,
+        "selected_frames": 47,
+        "skipped_frames": 13,
+        "selection_rate": 0.7833333333333333,
+        "motion_ratio_min": 0.0112890625,
+        "motion_ratio_max": 1.0,
+        "motion_ratio_avg": 0.4044072808159722,
+        "outputs": {
+          "frames": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/frames",
+          "background": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/background",
+          "masks": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/masks",
+          "compare": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/compare",
+          "selected_frames": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/selected_frames",
+          "decisions_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/mog2_decision.csv"
+        }
+      },
+      "summary_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/mog2_summary.json"
+    },
+    "stage2_yolo": {
+      "status": "complete",
+      "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo",
+      "summary": {
+        "stage": "stage2_yolo",
+        "image_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/selected_frames",
+        "selected_frames_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage1_mog2/selected_frames",
+        "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo",
+        "started_at": "2026-06-25T17:45:16.901128Z",
+        "finished_at": "2026-06-25T17:45:34.871293Z",
+        "elapsed_sec": 17.968,
+        "model_path": "/home/richardmelvin52/FSS/frt_app/py_ai_core/models/YOLOv11n/YOLOv11n_260518_best_int8.tflite",
+        "runtime_preference": "ai_edge_litert",
+        "runtime_used": "ai_edge_litert",
+        "runtime_attempts": [
+          {
+            "runtime": "ai_edge_litert",
+            "ok": true
+          }
+        ],
+        "fallback_runtime_used": false,
+        "confidence_threshold": 0.2,
+        "labels_dir": null,
+        "eval_iou_threshold": 0.5,
+        "evaluation": null,
+        "frames_seen": 47,
+        "frames_processed": 47,
+        "total_detections": 29,
+        "latency_ms": {
+          "total_avg": 371.0742765957447,
+          "total_min": 355.994,
+          "total_max": 427.862,
+          "inference_avg": 362.8012127659574
+        },
+        "engine_details": {
+          "input_details": [
+            {
+              "name": "images",
+              "index": "0",
+              "shape": "[  1 640 640   3]",
+              "shape_signature": "[  1 640 640   3]",
+              "dtype": "<class 'numpy.float32'>",
+              "quantization": "(0.0, 0)",
+              "quantization_parameters": "{'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0, 'block_size': 0}",
+              "sparsity_parameters": "{}"
+            }
+          ],
+          "output_details": [
+            {
+              "name": "Identity",
+              "index": "559",
+              "shape": "[   1    9 8400]",
+              "shape_signature": "[   1    9 8400]",
+              "dtype": "<class 'numpy.float32'>",
+              "quantization": "(0.0, 0)",
+              "quantization_parameters": "{'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0, 'block_size': 0}",
+              "sparsity_parameters": "{}"
+            }
+          ]
+        },
+        "outputs": {
+          "annotated": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/annotated",
+          "raw_outputs": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/raw_outputs",
+          "detections_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/detections.json",
+          "detections_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/detections.csv",
+          "latency_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/latency.csv",
+          "eval_summary_json": "",
+          "eval_matches_csv": "",
+          "model_summary_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/model_summary.json"
+        },
+        "raw_output_file_count": 47
+      },
+      "summary_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/model_summary.json"
+    },
+    "stage3_bytetrack": {
+      "status": "complete",
+      "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack",
+      "summary": {
+        "stage": "stage3_bytetrack",
+        "input_detections_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage2_yolo/detections.json",
+        "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack",
+        "started_at": "2026-06-25T17:45:35.812822Z",
+        "finished_at": "2026-06-25T17:45:36.279502Z",
+        "tracker_config": {
+          "max_age": 30,
+          "high_thresh": 0.85,
+          "match_thresh": 0.8
+        },
+        "frames_processed": 47,
+        "total_tracks_created": 5,
+        "active_track_rows": 24,
+        "lost_event_count": 6,
+        "id_switch_candidate_count": 0,
+        "outputs": {
+          "tracked_frames": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/tracked_frames",
+          "tracks_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/tracks.json",
+          "tracks_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/tracks.csv",
+          "track_lifecycle_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/track_lifecycle.csv",
+          "id_switch_report_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/id_switch_report.json",
+          "trajectory_plot_jpg": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/trajectory_plot.jpg"
+        }
+      },
+      "summary_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/tracks.json"
+    },
+    "stage4_linecross": {
+      "status": "complete",
+      "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross",
+      "summary": {
+        "stage": "stage4_linecross",
+        "input_tracks_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage3_bytetrack/tracks.json",
+        "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross",
+        "started_at": "2026-06-25T17:45:36.287423Z",
+        "finished_at": "2026-06-25T17:45:36.297581Z",
+        "line": {
+          "type": "horizontal",
+          "pos": 0.66
+        },
+        "total_events": 1,
+        "in_events": 0,
+        "out_events": 1,
+        "net_by_class": {
+          "0": -1
+        },
+        "events_by_class": {
+          "0": {
+            "food_name": "apple",
+            "in": 0,
+            "out": 1,
+            "net": -1
+          }
+        },
+        "outputs": {
+          "linecross_events_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross/linecross_events.json",
+          "linecross_events_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross/linecross_events.csv",
+          "linecross_visualization_jpg": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross/linecross_visualization.jpg",
+          "event_summary_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross/event_summary.json"
+        }
+      },
+      "summary_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/stage4_linecross/event_summary.json"
+    }
+  },
+  "outputs": {
+    "final_report_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/final_report.json",
+    "final_summary_md": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/final_summary.md",
+    "final_stage_status_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_004508/final_stage_status.csv"
+  }
+}

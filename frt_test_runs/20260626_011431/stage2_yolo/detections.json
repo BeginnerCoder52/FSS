@@ -1,0 +1,2681 @@
+{
+  "stage": "stage2_yolo",
+  "image_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames",
+  "selected_frames_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames",
+  "model_path": "/home/richardmelvin52/FSS/frt_app/py_ai_core/models/YOLOv11n/YOLOv11n_260518_best_int8.tflite",
+  "runtime_used": "ai_edge_litert",
+  "runtime_attempts": [
+    {
+      "runtime": "ai_edge_litert",
+      "ok": true
+    }
+  ],
+  "confidence_threshold": 0.2,
+  "labels_dir": null,
+  "eval_iou_threshold": 0.5,
+  "evaluation": null,
+  "frames": [
+    {
+      "frame_id": 1,
+      "frame_name": "frame_000001",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000001.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000001_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000001_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 16.161,
+        "inference": 373.849,
+        "postprocess": 1.233,
+        "total": 391.244
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 2,
+      "frame_name": "frame_000004",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000004.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000004_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000004_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 14.642,
+        "inference": 385.201,
+        "postprocess": 1.014,
+        "total": 400.857
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 3,
+      "frame_name": "frame_000005",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000005.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000005_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000005_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.972,
+        "inference": 361.263,
+        "postprocess": 1.689,
+        "total": 368.923
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 4,
+      "frame_name": "frame_000006",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000006.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000006_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000006_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.31,
+        "inference": 430.983,
+        "postprocess": 1.073,
+        "total": 438.365
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 5,
+      "frame_name": "frame_000007",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000007.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000007_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000007_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.527,
+        "inference": 438.161,
+        "postprocess": 1.055,
+        "total": 445.742
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 6,
+      "frame_name": "frame_000008",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000008.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000008_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000008_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.394,
+        "inference": 442.324,
+        "postprocess": 1.043,
+        "total": 449.761
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 7,
+      "frame_name": "frame_000009",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000009.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000009_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000009_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.196,
+        "inference": 384.782,
+        "postprocess": 1.03,
+        "total": 392.009
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 8,
+      "frame_name": "frame_000010",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000010.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000010_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000010_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.811,
+        "inference": 362.92,
+        "postprocess": 2.126,
+        "total": 370.857
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8570472002029419,
+          "bbox": [
+            0.5040500164031982,
+            0.455044150352478,
+            0.8360669612884521,
+            0.7212457656860352
+          ],
+          "bbox_xyxy_norm": [
+            0.5040500164031982,
+            0.455044150352478,
+            0.8360669612884521,
+            0.7212457656860352
+          ],
+          "bbox_xyxy_pixels": [
+            323,
+            211,
+            535,
+            382
+          ],
+          "bbox_letterbox_pixels": [
+            323,
+            291,
+            535,
+            462
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 9,
+      "frame_name": "frame_000011",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000011.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000011_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000011_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.053,
+        "inference": 363.726,
+        "postprocess": 2.011,
+        "total": 371.791
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.3735688626766205,
+          "bbox": [
+            0.5000526309013367,
+            0.38635241985321045,
+            0.6269833445549011,
+            0.6318844556808472
+          ],
+          "bbox_xyxy_norm": [
+            0.5000526309013367,
+            0.38635241985321045,
+            0.6269833445549011,
+            0.6318844556808472
+          ],
+          "bbox_xyxy_pixels": [
+            320,
+            167,
+            401,
+            324
+          ],
+          "bbox_letterbox_pixels": [
+            320,
+            247,
+            401,
+            404
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.8953421711921692,
+          "bbox": [
+            0.5811181664466858,
+            0.38192087411880493,
+            0.8475237488746643,
+            0.6791195273399353
+          ],
+          "bbox_xyxy_norm": [
+            0.5811181664466858,
+            0.38192087411880493,
+            0.8475237488746643,
+            0.6791195273399353
+          ],
+          "bbox_xyxy_pixels": [
+            372,
+            164,
+            542,
+            355
+          ],
+          "bbox_letterbox_pixels": [
+            372,
+            244,
+            542,
+            435
+          ]
+        },
+        {
+          "detection_index": 2,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.6966615915298462,
+          "bbox": [
+            0.5022308826446533,
+            0.38797762989997864,
+            0.8464447259902954,
+            0.704803466796875
+          ],
+          "bbox_xyxy_norm": [
+            0.5022308826446533,
+            0.38797762989997864,
+            0.8464447259902954,
+            0.704803466796875
+          ],
+          "bbox_xyxy_pixels": [
+            321,
+            168,
+            542,
+            371
+          ],
+          "bbox_letterbox_pixels": [
+            321,
+            248,
+            542,
+            451
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 10,
+      "frame_name": "frame_000012",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000012.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000012_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000012_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.266,
+        "inference": 372.775,
+        "postprocess": 1.79,
+        "total": 380.832
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 4,
+          "category": "class_4",
+          "confidence": 0.29158997535705566,
+          "bbox": [
+            0.5288665294647217,
+            0.3512694835662842,
+            0.7972596883773804,
+            0.6496587991714478
+          ],
+          "bbox_xyxy_norm": [
+            0.5288665294647217,
+            0.3512694835662842,
+            0.7972596883773804,
+            0.6496587991714478
+          ],
+          "bbox_xyxy_pixels": [
+            338,
+            145,
+            510,
+            336
+          ],
+          "bbox_letterbox_pixels": [
+            338,
+            225,
+            510,
+            416
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.45800334215164185,
+          "bbox": [
+            0.5307013988494873,
+            0.351520299911499,
+            0.7976858615875244,
+            0.6473312973976135
+          ],
+          "bbox_xyxy_norm": [
+            0.5307013988494873,
+            0.351520299911499,
+            0.7976858615875244,
+            0.6473312973976135
+          ],
+          "bbox_xyxy_pixels": [
+            340,
+            145,
+            511,
+            334
+          ],
+          "bbox_letterbox_pixels": [
+            340,
+            225,
+            511,
+            414
+          ]
+        },
+        {
+          "detection_index": 2,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8150656819343567,
+          "bbox": [
+            0.45925483107566833,
+            0.3574066758155823,
+            0.7951160669326782,
+            0.6998311877250671
+          ],
+          "bbox_xyxy_norm": [
+            0.45925483107566833,
+            0.3574066758155823,
+            0.7951160669326782,
+            0.6998311877250671
+          ],
+          "bbox_xyxy_pixels": [
+            294,
+            149,
+            509,
+            368
+          ],
+          "bbox_letterbox_pixels": [
+            294,
+            229,
+            509,
+            448
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 11,
+      "frame_name": "frame_000013",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000013.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000013_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000013_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.961,
+        "inference": 364.814,
+        "postprocess": 1.851,
+        "total": 372.626
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 4,
+          "category": "class_4",
+          "confidence": 0.2969198524951935,
+          "bbox": [
+            0.5589114427566528,
+            0.3350735306739807,
+            0.8257815837860107,
+            0.6247581839561462
+          ],
+          "bbox_xyxy_norm": [
+            0.5589114427566528,
+            0.3350735306739807,
+            0.8257815837860107,
+            0.6247581839561462
+          ],
+          "bbox_xyxy_pixels": [
+            358,
+            134,
+            529,
+            320
+          ],
+          "bbox_letterbox_pixels": [
+            358,
+            214,
+            529,
+            400
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.8545279502868652,
+          "bbox": [
+            0.5601444840431213,
+            0.3346381187438965,
+            0.8237343430519104,
+            0.6258400678634644
+          ],
+          "bbox_xyxy_norm": [
+            0.5601444840431213,
+            0.3346381187438965,
+            0.8237343430519104,
+            0.6258400678634644
+          ],
+          "bbox_xyxy_pixels": [
+            358,
+            134,
+            527,
+            321
+          ],
+          "bbox_letterbox_pixels": [
+            358,
+            214,
+            527,
+            401
+          ]
+        },
+        {
+          "detection_index": 2,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.7601187229156494,
+          "bbox": [
+            0.4909243583679199,
+            0.34021759033203125,
+            0.8232232332229614,
+            0.6661052703857422
+          ],
+          "bbox_xyxy_norm": [
+            0.4909243583679199,
+            0.34021759033203125,
+            0.8232232332229614,
+            0.6661052703857422
+          ],
+          "bbox_xyxy_pixels": [
+            314,
+            138,
+            527,
+            346
+          ],
+          "bbox_letterbox_pixels": [
+            314,
+            218,
+            527,
+            426
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 12,
+      "frame_name": "frame_000014",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000014.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000014_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000014_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.202,
+        "inference": 367.726,
+        "postprocess": 1.593,
+        "total": 376.52
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.830104649066925,
+          "bbox": [
+            0.5302097797393799,
+            0.12566938996315002,
+            0.9177432060241699,
+            0.28295770287513733
+          ],
+          "bbox_xyxy_norm": [
+            0.5302097797393799,
+            0.12566938996315002,
+            0.9177432060241699,
+            0.28295770287513733
+          ],
+          "bbox_xyxy_pixels": [
+            339,
+            0,
+            587,
+            101
+          ],
+          "bbox_letterbox_pixels": [
+            339,
+            80,
+            587,
+            181
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 13,
+      "frame_name": "frame_000015",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000015.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000015_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000015_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.78,
+        "inference": 359.078,
+        "postprocess": 1.102,
+        "total": 365.96
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 14,
+      "frame_name": "frame_000017",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000017.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000017_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000017_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.727,
+        "inference": 373.759,
+        "postprocess": 1.048,
+        "total": 381.535
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 15,
+      "frame_name": "frame_000018",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000018.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000018_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000018_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.815,
+        "inference": 359.697,
+        "postprocess": 1.135,
+        "total": 368.647
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 16,
+      "frame_name": "frame_000023",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000023.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000023_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000023_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.741,
+        "inference": 365.953,
+        "postprocess": 1.607,
+        "total": 373.302
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8149852156639099,
+          "bbox": [
+            0.6481813788414001,
+            0.1272556632757187,
+            0.8465963006019592,
+            0.510217547416687
+          ],
+          "bbox_xyxy_norm": [
+            0.6481813788414001,
+            0.1272556632757187,
+            0.8465963006019592,
+            0.510217547416687
+          ],
+          "bbox_xyxy_pixels": [
+            415,
+            1,
+            542,
+            247
+          ],
+          "bbox_letterbox_pixels": [
+            415,
+            81,
+            542,
+            327
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 17,
+      "frame_name": "frame_000024",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000024.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000024_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000024_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.87,
+        "inference": 376.038,
+        "postprocess": 1.057,
+        "total": 382.965
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 18,
+      "frame_name": "frame_000025",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000025.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000025_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000025_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.323,
+        "inference": 361.018,
+        "postprocess": 1.034,
+        "total": 368.375
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 19,
+      "frame_name": "frame_000026",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000026.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000026_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000026_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.876,
+        "inference": 371.449,
+        "postprocess": 1.211,
+        "total": 378.536
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 20,
+      "frame_name": "frame_000027",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000027.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000027_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000027_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.181,
+        "inference": 367.666,
+        "postprocess": 1.094,
+        "total": 374.94
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 21,
+      "frame_name": "frame_000028",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000028.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000028_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000028_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.891,
+        "inference": 363.638,
+        "postprocess": 1.635,
+        "total": 371.164
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.21172872185707092,
+          "bbox": [
+            0.3202671408653259,
+            0.5868417024612427,
+            0.5217397809028625,
+            0.886006236076355
+          ],
+          "bbox_xyxy_norm": [
+            0.3202671408653259,
+            0.5868417024612427,
+            0.5217397809028625,
+            0.886006236076355
+          ],
+          "bbox_xyxy_pixels": [
+            205,
+            296,
+            334,
+            479
+          ],
+          "bbox_letterbox_pixels": [
+            205,
+            376,
+            334,
+            567
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 22,
+      "frame_name": "frame_000029",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000029.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000029_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000029_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.825,
+        "inference": 375.947,
+        "postprocess": 1.646,
+        "total": 383.418
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8815416097640991,
+          "bbox": [
+            0.38733577728271484,
+            0.41042986512184143,
+            0.6894490718841553,
+            0.7853695154190063
+          ],
+          "bbox_xyxy_norm": [
+            0.38733577728271484,
+            0.41042986512184143,
+            0.6894490718841553,
+            0.7853695154190063
+          ],
+          "bbox_xyxy_pixels": [
+            248,
+            183,
+            441,
+            423
+          ],
+          "bbox_letterbox_pixels": [
+            248,
+            263,
+            441,
+            503
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 23,
+      "frame_name": "frame_000030",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000030.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000030_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000030_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.404,
+        "inference": 366.409,
+        "postprocess": 1.697,
+        "total": 375.51
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8573566675186157,
+          "bbox": [
+            0.38709989190101624,
+            0.3200199604034424,
+            0.6437214612960815,
+            0.7221806049346924
+          ],
+          "bbox_xyxy_norm": [
+            0.38709989190101624,
+            0.3200199604034424,
+            0.6437214612960815,
+            0.7221806049346924
+          ],
+          "bbox_xyxy_pixels": [
+            248,
+            125,
+            412,
+            382
+          ],
+          "bbox_letterbox_pixels": [
+            248,
+            205,
+            412,
+            462
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 24,
+      "frame_name": "frame_000031",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000031.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000031_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000031_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.234,
+        "inference": 371.106,
+        "postprocess": 1.965,
+        "total": 379.306
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.9129497408866882,
+          "bbox": [
+            0.41966089606285095,
+            0.29589033126831055,
+            0.6454423666000366,
+            0.6794420480728149
+          ],
+          "bbox_xyxy_norm": [
+            0.41966089606285095,
+            0.29589033126831055,
+            0.6454423666000366,
+            0.6794420480728149
+          ],
+          "bbox_xyxy_pixels": [
+            269,
+            109,
+            413,
+            355
+          ],
+          "bbox_letterbox_pixels": [
+            269,
+            189,
+            413,
+            435
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 25,
+      "frame_name": "frame_000032",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000032.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000032_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000032_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.769,
+        "inference": 365.202,
+        "postprocess": 1.827,
+        "total": 372.798
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8611096143722534,
+          "bbox": [
+            0.4385073184967041,
+            0.25336235761642456,
+            0.6461983919143677,
+            0.5578566789627075
+          ],
+          "bbox_xyxy_norm": [
+            0.4385073184967041,
+            0.25336235761642456,
+            0.6461983919143677,
+            0.5578566789627075
+          ],
+          "bbox_xyxy_pixels": [
+            281,
+            82,
+            414,
+            277
+          ],
+          "bbox_letterbox_pixels": [
+            281,
+            162,
+            414,
+            357
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 26,
+      "frame_name": "frame_000033",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000033.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000033_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000033_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.888,
+        "inference": 362.584,
+        "postprocess": 1.737,
+        "total": 370.209
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.905716061592102,
+          "bbox": [
+            0.3642042279243469,
+            0.21544964611530304,
+            0.7843744158744812,
+            0.5294225811958313
+          ],
+          "bbox_xyxy_norm": [
+            0.3642042279243469,
+            0.21544964611530304,
+            0.7843744158744812,
+            0.5294225811958313
+          ],
+          "bbox_xyxy_pixels": [
+            233,
+            58,
+            502,
+            259
+          ],
+          "bbox_letterbox_pixels": [
+            233,
+            138,
+            502,
+            339
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 27,
+      "frame_name": "frame_000034",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000034.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000034_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000034_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.854,
+        "inference": 369.283,
+        "postprocess": 1.716,
+        "total": 376.853
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.4021541476249695,
+          "bbox": [
+            0.3598476052284241,
+            0.1793784201145172,
+            0.6381363272666931,
+            0.4056747257709503
+          ],
+          "bbox_xyxy_norm": [
+            0.3598476052284241,
+            0.1793784201145172,
+            0.6381363272666931,
+            0.4056747257709503
+          ],
+          "bbox_xyxy_pixels": [
+            230,
+            35,
+            408,
+            180
+          ],
+          "bbox_letterbox_pixels": [
+            230,
+            115,
+            408,
+            260
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.6271805167198181,
+          "bbox": [
+            0.3579237461090088,
+            0.2913408875465393,
+            0.7864606380462646,
+            0.5795973539352417
+          ],
+          "bbox_xyxy_norm": [
+            0.3579237461090088,
+            0.2913408875465393,
+            0.7864606380462646,
+            0.5795973539352417
+          ],
+          "bbox_xyxy_pixels": [
+            229,
+            106,
+            503,
+            291
+          ],
+          "bbox_letterbox_pixels": [
+            229,
+            186,
+            503,
+            371
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 28,
+      "frame_name": "frame_000035",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000035.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000035_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000035_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.769,
+        "inference": 368.12,
+        "postprocess": 1.752,
+        "total": 375.641
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8588922619819641,
+          "bbox": [
+            0.46385228633880615,
+            0.23999762535095215,
+            0.6444317102432251,
+            0.5496667623519897
+          ],
+          "bbox_xyxy_norm": [
+            0.46385228633880615,
+            0.23999762535095215,
+            0.6444317102432251,
+            0.5496667623519897
+          ],
+          "bbox_xyxy_pixels": [
+            297,
+            74,
+            412,
+            272
+          ],
+          "bbox_letterbox_pixels": [
+            297,
+            154,
+            412,
+            352
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 29,
+      "frame_name": "frame_000036",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000036.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000036_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000036_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.035,
+        "inference": 359.915,
+        "postprocess": 1.633,
+        "total": 367.583
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.5144741535186768,
+          "bbox": [
+            0.45382410287857056,
+            0.18563911318778992,
+            0.5263689756393433,
+            0.28117290139198303
+          ],
+          "bbox_xyxy_norm": [
+            0.45382410287857056,
+            0.18563911318778992,
+            0.5263689756393433,
+            0.28117290139198303
+          ],
+          "bbox_xyxy_pixels": [
+            290,
+            39,
+            337,
+            100
+          ],
+          "bbox_letterbox_pixels": [
+            290,
+            119,
+            337,
+            180
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 30,
+      "frame_name": "frame_000037",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000037.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000037_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000037_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.886,
+        "inference": 369.883,
+        "postprocess": 1.742,
+        "total": 377.511
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.604057788848877,
+          "bbox": [
+            0.4626886546611786,
+            0.1785312294960022,
+            0.6048715114593506,
+            0.48315244913101196
+          ],
+          "bbox_xyxy_norm": [
+            0.4626886546611786,
+            0.1785312294960022,
+            0.6048715114593506,
+            0.48315244913101196
+          ],
+          "bbox_xyxy_pixels": [
+            296,
+            34,
+            387,
+            229
+          ],
+          "bbox_letterbox_pixels": [
+            296,
+            114,
+            387,
+            309
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 31,
+      "frame_name": "frame_000038",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000038.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000038_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000038_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.938,
+        "inference": 375.631,
+        "postprocess": 1.805,
+        "total": 383.374
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8995616436004639,
+          "bbox": [
+            0.34808918833732605,
+            0.122017502784729,
+            0.7805392742156982,
+            0.34419891238212585
+          ],
+          "bbox_xyxy_norm": [
+            0.34808918833732605,
+            0.122017502784729,
+            0.7805392742156982,
+            0.34419891238212585
+          ],
+          "bbox_xyxy_pixels": [
+            223,
+            0,
+            500,
+            140
+          ],
+          "bbox_letterbox_pixels": [
+            223,
+            78,
+            500,
+            220
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 32,
+      "frame_name": "frame_000047",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000047.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000047_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000047_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.834,
+        "inference": 367.185,
+        "postprocess": 1.012,
+        "total": 374.031
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 33,
+      "frame_name": "frame_000048",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000048.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000048_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000048_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.187,
+        "inference": 421.41,
+        "postprocess": 1.067,
+        "total": 428.665
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 34,
+      "frame_name": "frame_000049",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000049.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000049_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000049_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.014,
+        "inference": 437.785,
+        "postprocess": 1.025,
+        "total": 444.824
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 35,
+      "frame_name": "frame_000050",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000050.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000050_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000050_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.91,
+        "inference": 442.924,
+        "postprocess": 1.015,
+        "total": 449.849
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 36,
+      "frame_name": "frame_000051",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000051.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000051_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000051_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.894,
+        "inference": 399.142,
+        "postprocess": 1.079,
+        "total": 406.115
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 37,
+      "frame_name": "frame_000052",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000052.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000052_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000052_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.517,
+        "inference": 380.03,
+        "postprocess": 1.056,
+        "total": 388.602
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 38,
+      "frame_name": "frame_000053",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000053.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000053_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000053_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 8.969,
+        "inference": 373.064,
+        "postprocess": 1.692,
+        "total": 383.725
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 4,
+          "category": "class_4",
+          "confidence": 0.5139572620391846,
+          "bbox": [
+            0.5337402820587158,
+            0.3159645199775696,
+            0.7586867809295654,
+            0.5436099171638489
+          ],
+          "bbox_xyxy_norm": [
+            0.5337402820587158,
+            0.3159645199775696,
+            0.7586867809295654,
+            0.5436099171638489
+          ],
+          "bbox_xyxy_pixels": [
+            342,
+            122,
+            486,
+            268
+          ],
+          "bbox_letterbox_pixels": [
+            342,
+            202,
+            486,
+            348
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.3978494703769684,
+          "bbox": [
+            0.5326430797576904,
+            0.3148356080055237,
+            0.7596027851104736,
+            0.5415682196617126
+          ],
+          "bbox_xyxy_norm": [
+            0.5326430797576904,
+            0.3148356080055237,
+            0.7596027851104736,
+            0.5415682196617126
+          ],
+          "bbox_xyxy_pixels": [
+            341,
+            121,
+            486,
+            267
+          ],
+          "bbox_letterbox_pixels": [
+            341,
+            201,
+            486,
+            347
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 39,
+      "frame_name": "frame_000054",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000054.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000054_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000054_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 8.097,
+        "inference": 380.989,
+        "postprocess": 1.914,
+        "total": 391.0
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 4,
+          "category": "class_4",
+          "confidence": 0.8529095649719238,
+          "bbox": [
+            0.5327608585357666,
+            0.31112587451934814,
+            0.7626605033874512,
+            0.5339961647987366
+          ],
+          "bbox_xyxy_norm": [
+            0.5327608585357666,
+            0.31112587451934814,
+            0.7626605033874512,
+            0.5339961647987366
+          ],
+          "bbox_xyxy_pixels": [
+            341,
+            119,
+            488,
+            262
+          ],
+          "bbox_letterbox_pixels": [
+            341,
+            199,
+            488,
+            342
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 40,
+      "frame_name": "frame_000055",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000055.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000055_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000055_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.04,
+        "inference": 367.652,
+        "postprocess": 1.567,
+        "total": 376.259
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.3873699903488159,
+          "bbox": [
+            0.5122373104095459,
+            0.20589153468608856,
+            0.777289867401123,
+            0.41111332178115845
+          ],
+          "bbox_xyxy_norm": [
+            0.5122373104095459,
+            0.20589153468608856,
+            0.777289867401123,
+            0.41111332178115845
+          ],
+          "bbox_xyxy_pixels": [
+            328,
+            52,
+            497,
+            183
+          ],
+          "bbox_letterbox_pixels": [
+            328,
+            132,
+            497,
+            263
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 41,
+      "frame_name": "frame_000067",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000067.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000067_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000067_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.902,
+        "inference": 375.521,
+        "postprocess": 1.595,
+        "total": 383.018
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.43975815176963806,
+          "bbox": [
+            0.4978336989879608,
+            0.1340406984090805,
+            0.9998986721038818,
+            0.5000811815261841
+          ],
+          "bbox_xyxy_norm": [
+            0.4978336989879608,
+            0.1340406984090805,
+            0.9998986721038818,
+            0.5000811815261841
+          ],
+          "bbox_xyxy_pixels": [
+            319,
+            6,
+            639,
+            240
+          ],
+          "bbox_letterbox_pixels": [
+            319,
+            86,
+            640,
+            320
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 42,
+      "frame_name": "frame_000068",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000068.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000068_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000068_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.859,
+        "inference": 382.994,
+        "postprocess": 1.078,
+        "total": 389.931
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 43,
+      "frame_name": "frame_000069",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000069.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000069_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000069_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.005,
+        "inference": 376.248,
+        "postprocess": 1.011,
+        "total": 383.264
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 44,
+      "frame_name": "frame_000070",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000070.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000070_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000070_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.904,
+        "inference": 369.268,
+        "postprocess": 1.048,
+        "total": 376.221
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 45,
+      "frame_name": "frame_000071",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000071.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000071_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000071_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.019,
+        "inference": 365.791,
+        "postprocess": 1.138,
+        "total": 372.948
+      },
+      "detections": []
+    },
+    {
+      "frame_id": 46,
+      "frame_name": "frame_000072",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000072.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000072_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000072_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.674,
+        "inference": 363.356,
+        "postprocess": 1.605,
+        "total": 371.634
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.8412508964538574,
+          "bbox": [
+            0.4462556540966034,
+            0.5297995805740356,
+            0.7236847877502441,
+            0.800970196723938
+          ],
+          "bbox_xyxy_norm": [
+            0.4462556540966034,
+            0.5297995805740356,
+            0.7236847877502441,
+            0.800970196723938
+          ],
+          "bbox_xyxy_pixels": [
+            286,
+            259,
+            463,
+            433
+          ],
+          "bbox_letterbox_pixels": [
+            286,
+            339,
+            463,
+            513
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 47,
+      "frame_name": "frame_000073",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000073.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000073_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000073_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.906,
+        "inference": 368.109,
+        "postprocess": 1.951,
+        "total": 375.967
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.5531620979309082,
+          "bbox": [
+            0.40197670459747314,
+            0.447259783744812,
+            0.672728419303894,
+            0.7173442840576172
+          ],
+          "bbox_xyxy_norm": [
+            0.40197670459747314,
+            0.447259783744812,
+            0.672728419303894,
+            0.7173442840576172
+          ],
+          "bbox_xyxy_pixels": [
+            257,
+            206,
+            431,
+            379
+          ],
+          "bbox_letterbox_pixels": [
+            257,
+            286,
+            431,
+            459
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8954222202301025,
+          "bbox": [
+            0.35835814476013184,
+            0.4487605094909668,
+            0.6701061725616455,
+            0.7243402004241943
+          ],
+          "bbox_xyxy_norm": [
+            0.35835814476013184,
+            0.4487605094909668,
+            0.6701061725616455,
+            0.7243402004241943
+          ],
+          "bbox_xyxy_pixels": [
+            229,
+            207,
+            429,
+            384
+          ],
+          "bbox_letterbox_pixels": [
+            229,
+            287,
+            429,
+            464
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 48,
+      "frame_name": "frame_000074",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000074.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000074_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000074_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.935,
+        "inference": 391.42,
+        "postprocess": 1.722,
+        "total": 399.076
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.9072696566581726,
+          "bbox": [
+            0.4221121370792389,
+            0.4286592900753021,
+            0.6875478029251099,
+            0.695466160774231
+          ],
+          "bbox_xyxy_norm": [
+            0.4221121370792389,
+            0.4286592900753021,
+            0.6875478029251099,
+            0.695466160774231
+          ],
+          "bbox_xyxy_pixels": [
+            270,
+            194,
+            440,
+            365
+          ],
+          "bbox_letterbox_pixels": [
+            270,
+            274,
+            440,
+            445
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 49,
+      "frame_name": "frame_000075",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000075.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000075_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000075_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 6.47,
+        "inference": 366.683,
+        "postprocess": 1.862,
+        "total": 375.015
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.9541453719139099,
+          "bbox": [
+            0.4178042709827423,
+            0.42881065607070923,
+            0.7017512321472168,
+            0.6972244381904602
+          ],
+          "bbox_xyxy_norm": [
+            0.4178042709827423,
+            0.42881065607070923,
+            0.7017512321472168,
+            0.6972244381904602
+          ],
+          "bbox_xyxy_pixels": [
+            267,
+            194,
+            449,
+            366
+          ],
+          "bbox_letterbox_pixels": [
+            267,
+            274,
+            449,
+            446
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8815065622329712,
+          "bbox": [
+            0.39354515075683594,
+            0.43191763758659363,
+            0.7040438652038574,
+            0.7138409614562988
+          ],
+          "bbox_xyxy_norm": [
+            0.39354515075683594,
+            0.43191763758659363,
+            0.7040438652038574,
+            0.7138409614562988
+          ],
+          "bbox_xyxy_pixels": [
+            252,
+            196,
+            451,
+            377
+          ],
+          "bbox_letterbox_pixels": [
+            252,
+            276,
+            451,
+            457
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 50,
+      "frame_name": "frame_000076",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000076.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000076_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000076_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 5.842,
+        "inference": 385.201,
+        "postprocess": 1.905,
+        "total": 392.948
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.4441649913787842,
+          "bbox": [
+            0.39708831906318665,
+            0.4090677797794342,
+            0.4976077973842621,
+            0.596199631690979
+          ],
+          "bbox_xyxy_norm": [
+            0.39708831906318665,
+            0.4090677797794342,
+            0.4976077973842621,
+            0.596199631690979
+          ],
+          "bbox_xyxy_pixels": [
+            254,
+            182,
+            318,
+            302
+          ],
+          "bbox_letterbox_pixels": [
+            254,
+            262,
+            318,
+            382
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.6631955504417419,
+          "bbox": [
+            0.42703211307525635,
+            0.4017180800437927,
+            0.7046002149581909,
+            0.6717190146446228
+          ],
+          "bbox_xyxy_norm": [
+            0.42703211307525635,
+            0.4017180800437927,
+            0.7046002149581909,
+            0.6717190146446228
+          ],
+          "bbox_xyxy_pixels": [
+            273,
+            177,
+            451,
+            350
+          ],
+          "bbox_letterbox_pixels": [
+            273,
+            257,
+            451,
+            430
+          ]
+        },
+        {
+          "detection_index": 2,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.9079135656356812,
+          "bbox": [
+            0.4018650949001312,
+            0.4014323949813843,
+            0.7041326761245728,
+            0.6814143657684326
+          ],
+          "bbox_xyxy_norm": [
+            0.4018650949001312,
+            0.4014323949813843,
+            0.7041326761245728,
+            0.6814143657684326
+          ],
+          "bbox_xyxy_pixels": [
+            257,
+            177,
+            451,
+            356
+          ],
+          "bbox_letterbox_pixels": [
+            257,
+            257,
+            451,
+            436
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 51,
+      "frame_name": "frame_000077",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000077.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000077_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000077_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.521,
+        "inference": 373.542,
+        "postprocess": 1.755,
+        "total": 382.817
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 0,
+          "category": "class_0",
+          "confidence": 0.43679165840148926,
+          "bbox": [
+            0.44624295830726624,
+            0.3326549530029297,
+            0.7106302976608276,
+            0.5983443856239319
+          ],
+          "bbox_xyxy_norm": [
+            0.44624295830726624,
+            0.3326549530029297,
+            0.7106302976608276,
+            0.5983443856239319
+          ],
+          "bbox_xyxy_pixels": [
+            286,
+            133,
+            455,
+            303
+          ],
+          "bbox_letterbox_pixels": [
+            286,
+            213,
+            455,
+            383
+          ]
+        },
+        {
+          "detection_index": 1,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8545774221420288,
+          "bbox": [
+            0.4054756164550781,
+            0.331157386302948,
+            0.7150287628173828,
+            0.6096998453140259
+          ],
+          "bbox_xyxy_norm": [
+            0.4054756164550781,
+            0.331157386302948,
+            0.7150287628173828,
+            0.6096998453140259
+          ],
+          "bbox_xyxy_pixels": [
+            260,
+            132,
+            458,
+            310
+          ],
+          "bbox_letterbox_pixels": [
+            260,
+            212,
+            458,
+            390
+          ]
+        }
+      ]
+    },
+    {
+      "frame_id": 52,
+      "frame_name": "frame_000078",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage1_mog2/selected_frames/frame_000078.jpg",
+      "annotated_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/annotated/frame_000078_annotated.jpg",
+      "width": 640,
+      "height": 480,
+      "letterbox": {
+        "scale": 1.0,
+        "new_width": 640,
+        "new_height": 480,
+        "pad_x": 0.0,
+        "pad_y": 80.0
+      },
+      "raw_output_files": [
+        "/home/richardmelvin52/FSS/frt_test_runs/20260626_011431/stage2_yolo/raw_outputs/frame_000078_output0.npy"
+      ],
+      "ground_truth": [],
+      "evaluation": null,
+      "latency_ms": {
+        "preprocess": 7.312,
+        "inference": 383.016,
+        "postprocess": 1.791,
+        "total": 392.12
+      },
+      "detections": [
+        {
+          "detection_index": 0,
+          "class_id": 1,
+          "category": "class_1",
+          "confidence": 0.8888107538223267,
+          "bbox": [
+            0.44563281536102295,
+            0.12719106674194336,
+            0.5160154104232788,
+            0.27744585275650024
+          ],
+          "bbox_xyxy_norm": [
+            0.44563281536102295,
+            0.12719106674194336,
+            0.5160154104232788,
+            0.27744585275650024
+          ],
+          "bbox_xyxy_pixels": [
+            285,
+            1,
+            330,
+            98
+          ],
+          "bbox_letterbox_pixels": [
+            285,
+            81,
+            330,
+            178
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,810 @@
+{
+  "stage": "stage3_bytetrack",
+  "input_detections_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage2_yolo/detections.json",
+  "tracker_config": {
+    "max_age": 30,
+    "high_thresh": 0.85,
+    "match_thresh": 0.8
+  },
+  "frames": [
+    {
+      "frame_id": 1,
+      "frame_name": "frame_000001",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000001.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000001_tracked.jpg",
+      "detections_count": 0,
+      "tracks": []
+    },
+    {
+      "frame_id": 2,
+      "frame_name": "frame_000005",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000005.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000005_tracked.jpg",
+      "detections_count": 2,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 3,
+      "frame_name": "frame_000006",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000006.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000006_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 4,
+      "frame_name": "frame_000007",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000007.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000007_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 5,
+      "frame_name": "frame_000008",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000008.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000008_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 6,
+      "frame_name": "frame_000009",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000009.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000009_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 7,
+      "frame_name": "frame_000010",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000010.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000010_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 8,
+      "frame_name": "frame_000011",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000011.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000011_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 9,
+      "frame_name": "frame_000012",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000012.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000012_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 10,
+      "frame_name": "frame_000013",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000013.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000013_tracked.jpg",
+      "detections_count": 0,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.9208534955978394,
+          "bbox_xywh_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.14672720432281494,
+            0.2704911231994629
+          ],
+          "bbox_xyxy_norm": [
+            0.30793869495391846,
+            0.12661659717559814,
+            0.4546658992767334,
+            0.39710772037506104
+          ],
+          "centroid_norm": [
+            0.3813022971153259,
+            0.2618621587753296
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 11,
+      "frame_name": "frame_000014",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000014.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000014_tracked.jpg",
+      "detections_count": 1,
+      "tracks": [
+        {
+          "track_id": 2,
+          "class_id": 1,
+          "confidence": 0.9447577595710754,
+          "bbox_xywh_norm": [
+            0.47443196177482605,
+            0.42339152097702026,
+            0.34804490208625793,
+            0.4262547492980957
+          ],
+          "bbox_xyxy_norm": [
+            0.47443196177482605,
+            0.42339152097702026,
+            0.822476863861084,
+            0.849646270275116
+          ],
+          "centroid_norm": [
+            0.648454412817955,
+            0.6365188956260681
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 12,
+      "frame_name": "frame_000015",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000015.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000015_tracked.jpg",
+      "detections_count": 1,
+      "tracks": [
+        {
+          "track_id": 2,
+          "class_id": 1,
+          "confidence": 0.9179049134254456,
+          "bbox_xywh_norm": [
+            0.5276725011673071,
+            0.40437826120163783,
+            0.3291919612681138,
+            0.398635086195528
+          ],
+          "bbox_xyxy_norm": [
+            0.5276725011673071,
+            0.40437826120163783,
+            0.8568644624354209,
+            0.8030133473971659
+          ],
+          "centroid_norm": [
+            0.692268481801364,
+            0.6036958042994018
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 13,
+      "frame_name": "frame_000016",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000016.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000016_tracked.jpg",
+      "detections_count": 1,
+      "tracks": [
+        {
+          "track_id": 2,
+          "class_id": 1,
+          "confidence": 0.9130880236625671,
+          "bbox_xywh_norm": [
+            0.5872966344424956,
+            0.3188525514192929,
+            0.2795083662050383,
+            0.3283857939423367
+          ],
+          "bbox_xyxy_norm": [
+            0.5872966344424956,
+            0.3188525514192929,
+            0.8668050006475339,
+            0.6472383453616296
+          ],
+          "centroid_norm": [
+            0.7270508175450148,
+            0.48304544839046126
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 14,
+      "frame_name": "frame_000017",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000017.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000017_tracked.jpg",
+      "detections_count": 1,
+      "tracks": [
+        {
+          "track_id": 2,
+          "class_id": 1,
+          "confidence": 0.8870234489440918,
+          "bbox_xywh_norm": [
+            0.599422193462459,
+            0.21726397434701203,
+            0.2711776518322006,
+            0.30677584535388897
+          ],
+          "bbox_xyxy_norm": [
+            0.599422193462459,
+            0.21726397434701203,
+            0.8705998452946595,
+            0.524039819700901
+          ],
+          "centroid_norm": [
+            0.7350110193785593,
+            0.3706518970239565
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 15,
+      "frame_name": "frame_000018",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000018.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000018_tracked.jpg",
+      "detections_count": 2,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.7833125591278076,
+          "bbox_xywh_norm": [
+            0.44645916717619044,
+            0.17287757329195785,
+            0.20336843640033953,
+            0.29715115464239783
+          ],
+          "bbox_xyxy_norm": [
+            0.44645916717619044,
+            0.17287757329195785,
+            0.64982760357653,
+            0.4700287279343557
+          ],
+          "centroid_norm": [
+            0.5481433853763602,
+            0.32145315061315677
+          ],
+          "state": "ACTIVE"
+        },
+        {
+          "track_id": 2,
+          "class_id": 1,
+          "confidence": 0.7056283950805664,
+          "bbox_xywh_norm": [
+            0.6310678244201748,
+            0.24611690736155567,
+            0.2238556117087595,
+            0.23619826617291606
+          ],
+          "bbox_xyxy_norm": [
+            0.6310678244201748,
+            0.24611690736155567,
+            0.8549234361289344,
+            0.48231517353447173
+          ],
+          "centroid_norm": [
+            0.7429956302745546,
+            0.3642160404480137
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 16,
+      "frame_name": "frame_000019",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000019.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000019_tracked.jpg",
+      "detections_count": 1,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.7168599367141724,
+          "bbox_xywh_norm": [
+            0.5232513267539515,
+            0.1785551109492302,
+            0.23397423411504656,
+            0.2528924313543871
+          ],
+          "bbox_xyxy_norm": [
+            0.5232513267539515,
+            0.1785551109492302,
+            0.7572255608689981,
+            0.4314475423036173
+          ],
+          "centroid_norm": [
+            0.6402384438114748,
+            0.30500132662642376
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 17,
+      "frame_name": "frame_000020",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000020.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000020_tracked.jpg",
+      "detections_count": 2,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.8531807661056519,
+          "bbox_xywh_norm": [
+            0.5727935607448712,
+            0.25219153025091284,
+            0.26522341146726597,
+            0.24683671237042173
+          ],
+          "bbox_xyxy_norm": [
+            0.5727935607448712,
+            0.25219153025091284,
+            0.8380169722121371,
+            0.4990282426213346
+          ],
+          "centroid_norm": [
+            0.7054052664785042,
+            0.3756098864361237
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 18,
+      "frame_name": "frame_000021",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000021.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000021_tracked.jpg",
+      "detections_count": 2,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.8201711177825928,
+          "bbox_xywh_norm": [
+            0.5565167998108191,
+            0.30212191156146373,
+            0.3379381901758097,
+            0.29868318665463195
+          ],
+          "bbox_xyxy_norm": [
+            0.5565167998108191,
+            0.30212191156146373,
+            0.8944549899866289,
+            0.6008050982160957
+          ],
+          "centroid_norm": [
+            0.725485894898724,
+            0.45146350488877973
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 19,
+      "frame_name": "frame_000022",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000022.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000022_tracked.jpg",
+      "detections_count": 2,
+      "tracks": [
+        {
+          "track_id": 1,
+          "class_id": 1,
+          "confidence": 0.8095352649688721,
+          "bbox_xywh_norm": [
+            0.5387002585827274,
+            0.36555829570333404,
+            0.3419486756370408,
+            0.2706919675958165
+          ],
+          "bbox_xyxy_norm": [
+            0.5387002585827274,
+            0.36555829570333404,
+            0.8806489342197682,
+            0.6362502632991505
+          ],
+          "centroid_norm": [
+            0.7096745964012479,
+            0.5009042795012423
+          ],
+          "state": "ACTIVE"
+        }
+      ]
+    },
+    {
+      "frame_id": 20,
+      "frame_name": "frame_000023",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000023.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000023_tracked.jpg",
+      "detections_count": 2,
+      "tracks": []
+    },
+    {
+      "frame_id": 21,
+      "frame_name": "frame_000024",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000024.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000024_tracked.jpg",
+      "detections_count": 0,
+      "tracks": []
+    },
+    {
+      "frame_id": 22,
+      "frame_name": "frame_000025",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000025.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000025_tracked.jpg",
+      "detections_count": 0,
+      "tracks": []
+    },
+    {
+      "frame_id": 23,
+      "frame_name": "frame_000026",
+      "source_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage1_mog2/selected_frames/frame_000026.jpg",
+      "tracked_frame_path": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames/frame_000026_tracked.jpg",
+      "detections_count": 0,
+      "tracks": []
+    }
+  ],
+  "trajectories": [
+    {
+      "track_id": 1,
+      "class_id": 1,
+      "points": [
+        {
+          "frame_id": 2,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 3,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 4,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 5,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 6,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 7,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 8,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 9,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 10,
+          "cx_norm": 0.3813022971153259,
+          "cy_norm": 0.2618621587753296,
+          "confidence": 0.9208534955978394
+        },
+        {
+          "frame_id": 15,
+          "cx_norm": 0.5481433853763602,
+          "cy_norm": 0.32145315061315677,
+          "confidence": 0.7833125591278076
+        },
+        {
+          "frame_id": 16,
+          "cx_norm": 0.6402384438114748,
+          "cy_norm": 0.30500132662642376,
+          "confidence": 0.7168599367141724
+        },
+        {
+          "frame_id": 17,
+          "cx_norm": 0.7054052664785042,
+          "cy_norm": 0.3756098864361237,
+          "confidence": 0.8531807661056519
+        },
+        {
+          "frame_id": 18,
+          "cx_norm": 0.725485894898724,
+          "cy_norm": 0.45146350488877973,
+          "confidence": 0.8201711177825928
+        },
+        {
+          "frame_id": 19,
+          "cx_norm": 0.7096745964012479,
+          "cy_norm": 0.5009042795012423,
+          "confidence": 0.8095352649688721
+        }
+      ],
+      "first_frame": 2,
+      "last_frame": 19
+    },
+    {
+      "track_id": 2,
+      "class_id": 1,
+      "points": [
+        {
+          "frame_id": 11,
+          "cx_norm": 0.648454412817955,
+          "cy_norm": 0.6365188956260681,
+          "confidence": 0.9447577595710754
+        },
+        {
+          "frame_id": 12,
+          "cx_norm": 0.692268481801364,
+          "cy_norm": 0.6036958042994018,
+          "confidence": 0.9179049134254456
+        },
+        {
+          "frame_id": 13,
+          "cx_norm": 0.7270508175450148,
+          "cy_norm": 0.48304544839046126,
+          "confidence": 0.9130880236625671
+        },
+        {
+          "frame_id": 14,
+          "cx_norm": 0.7350110193785593,
+          "cy_norm": 0.3706518970239565,
+          "confidence": 0.8870234489440918
+        },
+        {
+          "frame_id": 15,
+          "cx_norm": 0.7429956302745546,
+          "cy_norm": 0.3642160404480137,
+          "confidence": 0.7056283950805664
+        }
+      ],
+      "first_frame": 11,
+      "last_frame": 15
+    }
+  ],
+  "lifecycles": [
+    {
+      "track_id": 1,
+      "class_id": 1,
+      "first_frame": 2,
+      "last_active_frame": 19,
+      "active_frames": 14,
+      "lost_observations": 8,
+      "lost_events": 2,
+      "status": "LOST"
+    },
+    {
+      "track_id": 2,
+      "class_id": 1,
+      "first_frame": 11,
+      "last_active_frame": 15,
+      "active_frames": 5,
+      "lost_observations": 8,
+      "lost_events": 1,
+      "status": "LOST"
+    }
+  ],
+  "summary": {
+    "stage": "stage3_bytetrack",
+    "input_detections_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage2_yolo/detections.json",
+    "output_dir": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack",
+    "started_at": "2026-06-25T18:00:06.243145Z",
+    "finished_at": "2026-06-25T18:00:06.473377Z",
+    "tracker_config": {
+      "max_age": 30,
+      "high_thresh": 0.85,
+      "match_thresh": 0.8
+    },
+    "frames_processed": 23,
+    "total_tracks_created": 2,
+    "active_track_rows": 19,
+    "lost_event_count": 3,
+    "id_switch_candidate_count": 0,
+    "outputs": {
+      "tracked_frames": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracked_frames",
+      "tracks_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracks.json",
+      "tracks_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/tracks.csv",
+      "track_lifecycle_csv": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/track_lifecycle.csv",
+      "id_switch_report_json": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/id_switch_report.json",
+      "trajectory_plot_jpg": "/home/richardmelvin52/FSS/frt_test_runs/20260626_005951/stage3_bytetrack/trajectory_plot.jpg"
+    }
+  }
+}

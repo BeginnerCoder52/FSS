@@ -191,13 +191,15 @@ if SDBUS_AVAILABLE:
         def set_interface_instance(self, instance: RecommendDbusInterface):
             self._interface_instance = instance
 
-        @dbus_method_async('ss', 's')
+        @dbus_method_async('ss', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GenerateShoppingList(self, recipe_name: str,
                                         batch_id: str) -> str:
             if (self._interface_instance
                     and self._interface_instance._generate_callback):
                 try:
-                    result = self._interface_instance._generate_callback(
+                    import asyncio
+                    result = await asyncio.to_thread(
+                        self._interface_instance._generate_callback,
                         recipe_name, batch_id
                     )
                     return json.dumps(result, ensure_ascii=False)
@@ -213,12 +215,13 @@ if SDBUS_AVAILABLE:
                 "error": "Generate callback not set"
             })
 
-        @dbus_method_async('', 's')
+        @dbus_method_async('', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GetAvailableRecipes(self) -> str:
             if (self._interface_instance
                     and self._interface_instance._recipes_callback):
                 try:
-                    result = self._interface_instance._recipes_callback()
+                    import asyncio
+                    result = await asyncio.to_thread(self._interface_instance._recipes_callback)
                     return json.dumps(result, ensure_ascii=False)
                 except Exception as e:
                     logging.error(
@@ -227,14 +230,13 @@ if SDBUS_AVAILABLE:
                     return json.dumps([])
             return json.dumps([])
 
-        @dbus_method_async('s', 's')
+        @dbus_method_async('s', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GetShoppingList(self, batch_id: str) -> str:
             if (self._interface_instance
                     and self._interface_instance._shopping_list_callback):
                 try:
-                    result = self._interface_instance._shopping_list_callback(
-                        batch_id
-                    )
+                    import asyncio
+                    result = await asyncio.to_thread(self._interface_instance._shopping_list_callback, batch_id)
                     return json.dumps(result, ensure_ascii=False)
                 except Exception as e:
                     logging.error(
@@ -243,7 +245,7 @@ if SDBUS_AVAILABLE:
                     return json.dumps([])
             return json.dumps([])
 
-        @dbus_method_async('i', 'b')
+        @dbus_method_async('i', 'b', flags=sdbus.DbusUnprivilegedFlag)
         async def MarkItemPurchased(self, item_id: int) -> bool:
             if (self._interface_instance
                     and self._interface_instance._mark_purchased_callback):

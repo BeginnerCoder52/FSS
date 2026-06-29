@@ -1,0 +1,5 @@
+stage,status,output_dir,summary_path
+stage1_mog2,complete,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage1_mog2,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage1_mog2/mog2_summary.json
+stage2_yolo,complete,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage2_yolo,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage2_yolo/model_summary.json
+stage3_bytetrack,complete,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage3_bytetrack,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage3_bytetrack/tracks.json
+stage4_linecross,complete,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage4_linecross,/home/richardmelvin52/FSS/frt_test_runs/20260626_001250/stage4_linecross/event_summary.json

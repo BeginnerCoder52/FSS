@@ -123,7 +123,7 @@ class FrtMain:
     DEFAULT_LOOP_INTERVAL_MS = 33      # ~30 FPS target frame rate
     MAX_RECOVERY_ATTEMPTS = 3          # Maximum crash recovery attempts
     CAMERA_IDLE_TIMEOUT = 5.0          # Auto shut down camera after 5s idle (safety fallback)
-    MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"  # Model location
+    MODEL_PATH = "/opt/fss/models/0607_best_int8.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
     def __init__(self, bypass_door_sensor: bool = True,
@@ -159,7 +159,7 @@ class FrtMain:
 
         # C backend configuration (Phase 1 upgrade)
         self.use_c_backend: bool = True
-        self.c_model_path: str = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
+        self.c_model_path: str = "/opt/fss/models/0607_best_int8.tflite"
         self.model_precision: str = "int8"
 
         # Distance sensor configuration (Phase 1 upgrade)

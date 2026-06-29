@@ -57,7 +57,7 @@ class RecommendDbManager:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 recipe_name TEXT NOT NULL,
                 batch_id TEXT NOT NULL,
-                nlp_status TEXT,
+                analysis_status TEXT,
                 total_items INTEGER DEFAULT 0,
                 available_count INTEGER DEFAULT 0,
                 needed_count INTEGER DEFAULT 0,
@@ -104,7 +104,7 @@ class RecommendDbManager:
         self,
         recipe_name: str,
         batch_id: str,
-        nlp_status: str,
+        analysis_status: str,
         total_items: int,
         available_count: int,
         needed_count: int,
@@ -117,10 +117,10 @@ class RecommendDbManager:
         try:
             self._cursor.execute(f"""
                 INSERT INTO {self.RECOMMENDATION_LOG_TABLE}
-                (recipe_name, batch_id, nlp_status, total_items,
+                (recipe_name, batch_id, analysis_status, total_items,
                  available_count, needed_count, missing_count, result_json)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (recipe_name, batch_id, nlp_status, total_items,
+            """, (recipe_name, batch_id, analysis_status, total_items,
                   available_count, needed_count, missing_count, result_json))
             self._connection.commit()
             row_id = self._cursor.lastrowid
@@ -273,7 +273,7 @@ class RecommendDbManager:
             return None
         try:
             self._cursor.execute(f"""
-                SELECT id, recipe_name, batch_id, nlp_status, total_items,
+                SELECT id, recipe_name, batch_id, analysis_status, total_items,
                        available_count, needed_count, missing_count, status,
                        result_json, created_at, completed_at
                 FROM {self.RECOMMENDATION_LOG_TABLE}
@@ -287,7 +287,7 @@ class RecommendDbManager:
                     "id": row[0],
                     "recipe_name": row[1],
                     "batch_id": row[2],
-                    "nlp_status": row[3],
+                    "analysis_status": row[3],
                     "total_items": row[4],
                     "available_count": row[5],
                     "needed_count": row[6],

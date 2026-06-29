@@ -4,7 +4,7 @@ FSS Recipe Extractor - Test Suite
 
 Purpose:
     Unit and integration tests for the RecipeExtractor D-Bus service,
-    NLP pipeline (Filter+Sort), and data transformation.
+    Analyzer pipeline (Filter+Sort), and data transformation.
 
 Test Coverage:
     - RecipeAnalyzerAPI: Filter+Parse+Sort pipeline, recipe lookup, output format
@@ -21,7 +21,7 @@ ASPICE Compliance:
 
 Author: FSS QA Team
 Last Modified: 2026-06-21
-Version: 2.0.0 (Filter+Sort NLP rewrite)
+Version: 2.0.0 (Filter+Sort Analyzer rewrite)
 """
 
 __all__ = ["test_recipe_analyzer", "test_recipe_extractor_service", "test_recipe_extractor_main"]

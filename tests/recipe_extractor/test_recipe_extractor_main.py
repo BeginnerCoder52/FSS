@@ -38,7 +38,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "recipe_e
 from recipe_extractor_main import (
     RecipeExtractorMain,
     setup_logging,
-    NLP_RECIPE_DB_PATH,
+    RECIPE_DB_PATH,
 )
 
 logging.disable(logging.WARNING)
@@ -48,7 +48,7 @@ class TestRecipeExtractorMainInit(unittest.TestCase):
     def test_main_initialization(self):
         main = RecipeExtractorMain()
         self.assertFalse(main.is_running)
-        self.assertIsNone(main._nlp_engine)
+        self.assertIsNone(main._analyzer_engine)
         self.assertIsNotNone(main.dbus_service)
         self.assertIsNotNone(main.logger)
 
@@ -64,28 +64,28 @@ class TestRecipeExtractorMainInit(unittest.TestCase):
         main = RecipeExtractorMain()
         self.assertFalse(main.is_running)
 
-    def test_nlp_engine_not_loaded_at_init(self):
+    def test_analyzer_engine_not_loaded_at_init(self):
         main = RecipeExtractorMain()
-        self.assertIsNone(main._nlp_engine)
+        self.assertIsNone(main._analyzer_engine)
 
     def test_dbus_service_initially_has_no_engine(self):
         main = RecipeExtractorMain()
-        self.assertIsNone(main.dbus_service.nlp_engine)
+        self.assertIsNone(main.dbus_service.analyzer_engine)
 
     def test_nlp_recipe_db_path_defined(self):
-        self.assertIsInstance(NLP_RECIPE_DB_PATH, str)
-        self.assertTrue("recipes" in NLP_RECIPE_DB_PATH)
+        self.assertIsInstance(RECIPE_DB_PATH, str)
+        self.assertTrue("recipes" in RECIPE_DB_PATH)
 
 
 class TestRecipeExtractorMainLifecycle(unittest.TestCase):
     def setUp(self):
         self.main = RecipeExtractorMain()
-        self.main._nlp_engine = MagicMock()
-        self.main._nlp_engine.recipe_names = ["test_recipe"]
+        self.main._analyzer_engine = MagicMock()
+        self.main._analyzer_engine.recipe_names = ["test_recipe"]
         self.main.dbus_service = MagicMock()
         self.main.dbus_service.setup_bus_service.return_value = True
         self.main.dbus_service.poll_bus_events.return_value = None
-        self.main.dbus_service.nlp_engine = self.main._nlp_engine
+        self.main.dbus_service.analyzer_engine = self.main._analyzer_engine
 
     def test_init_service_success(self):
         result = self.main.init_service()
@@ -144,7 +144,7 @@ class TestRecipeExtractorMainLifecycle(unittest.TestCase):
         main = RecipeExtractorMain()
         with patch.object(main, '_load_engine', return_value=MagicMock()):
             main.init_service()
-            self.assertIsNotNone(main._nlp_engine)
+            self.assertIsNotNone(main._analyzer_engine)
 
     def test_init_service_engine_failure(self):
         main = RecipeExtractorMain()
@@ -199,18 +199,18 @@ class TestRecipeExtractorMainEdgeCases(unittest.TestCase):
 
     def test_start_service_without_init(self):
         main = RecipeExtractorMain()
-        main._nlp_engine = MagicMock()
+        main._analyzer_engine = MagicMock()
         main.dbus_service = MagicMock()
         main.dbus_service.poll_bus_events.return_value = None
         result = main.start_service()
         self.assertTrue(result)
         self.assertTrue(main.is_running)
 
-    def test_get_nlp_engine(self):
+    def test_get_analyzer_engine(self):
         main = RecipeExtractorMain()
         mock_engine = MagicMock()
-        main._nlp_engine = mock_engine
-        self.assertIs(main.get_nlp_engine(), mock_engine)
+        main._analyzer_engine = mock_engine
+        self.assertIs(main.get_analyzer_engine(), mock_engine)
 
 
 if __name__ == "__main__":

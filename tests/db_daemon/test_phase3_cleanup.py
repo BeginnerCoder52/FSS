@@ -161,11 +161,11 @@ class TestDbDaemonMainCleanup(unittest.TestCase):
         self.assertEqual(daemon.current_state, DaemonState.IDLE)
 
     def test_no_nlp_model_path_constants(self):
-        """DbDaemonMain must not import NLP model path constants."""
+        """DbDaemonMain must not import Analyzer model path constants."""
         daemon = DbDaemonMain()
         self.assertFalse(
-            hasattr(daemon, 'NLP_MODEL_PATH'),
-            "NLP_MODEL_PATH must be removed"
+            hasattr(daemon, 'Analyzer_MODEL_PATH'),
+            "Analyzer_MODEL_PATH must be removed"
         )
 
     @patch.object(DbDbusInterface, 'setup_bus_service', return_value=True)

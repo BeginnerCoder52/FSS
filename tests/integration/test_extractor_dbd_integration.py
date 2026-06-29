@@ -3,11 +3,11 @@ Integration Tests - RecipeExtractor ↔ DBDaemon
 ===============================================
 
 Purpose:
-    Validate the data flow between RecipeExtractor's NLP output format and
+    Validate the data flow between RecipeExtractor's Analyzer output format and
     DBDaemon's SqliteManager database operations.
 
 Test Coverage:
-    1. NLP output field mapping to insert_request_batch schema
+    1. Analyzer output field mapping to insert_request_batch schema
     2. FSS_Request.db round-trip via SqliteManager (insert -> retrieve)
     3. Batch ID consistency across recipe_extractor and db_daemon
     4. Vietnamese recipe name and ingredient storage
@@ -108,8 +108,8 @@ class TestExtractorToDbDataFormat(unittest.TestCase):
             self.assertIsInstance(ing, str)
 
     def test_nlp_to_batch_format_conversion(self):
-        nlp_result = create_nlp_output("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
-        batch_items = nlp_to_batch_format(nlp_result["original_ingredients"])
+        analyzer_result = create_nlp_output("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
+        batch_items = nlp_to_batch_format(analyzer_result["original_ingredients"])
         self.assertEqual(len(batch_items), 5)
         for item in batch_items:
             self.assertIn("food_id", item)
@@ -148,25 +148,25 @@ class TestExtractorToDbRoundTrip(unittest.TestCase):
         import shutil
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
-    def _insert_nlp_result(self, recipe_name: str) -> str:
+    def _insert_analyzer_result(self, recipe_name: str) -> str:
         batch_id = str(uuid.uuid4())
-        nlp_result = create_nlp_output(recipe_name)
-        if nlp_result["status"] != "SUCCESS":
+        analyzer_result = create_nlp_output(recipe_name)
+        if analyzer_result["status"] != "SUCCESS":
             return None
-        batch_items = nlp_to_batch_format(nlp_result["original_ingredients"])
+        batch_items = nlp_to_batch_format(analyzer_result["original_ingredients"])
         success = self.db_mgr.insert_request_batch(
-            recipe_name=nlp_result["dish"],
+            recipe_name=analyzer_result["dish"],
             ingredients_list=batch_items,
             batch_id=batch_id,
         )
         return batch_id if success else None
 
     def test_insert_request_batch_with_nlp_output(self):
-        batch_id = self._insert_nlp_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
+        batch_id = self._insert_analyzer_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
         self.assertIsNotNone(batch_id)
 
     def test_retrieve_requests_by_batch_id(self):
-        batch_id = self._insert_nlp_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
+        batch_id = self._insert_analyzer_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
         from SqliteManager import DatabaseType
         cursor = self.db_mgr._cursors[DatabaseType.REQUEST]
         cursor.execute(
@@ -179,7 +179,7 @@ class TestExtractorToDbRoundTrip(unittest.TestCase):
         self.assertIn("B\u01b0\u1edfi", food_ids)
 
     def test_retrieve_requests_by_recipe_name(self):
-        batch_id = self._insert_nlp_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
+        batch_id = self._insert_analyzer_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
         from SqliteManager import DatabaseType
         cursor = self.db_mgr._cursors[DatabaseType.REQUEST]
         cursor.execute(
@@ -190,14 +190,14 @@ class TestExtractorToDbRoundTrip(unittest.TestCase):
         self.assertGreater(len(rows), 0)
 
     def test_multiple_recipes_in_db(self):
-        batch1 = self._insert_nlp_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
-        batch2 = self._insert_nlp_result("Tr\u1ee9ng Chi\u00ean")
+        batch1 = self._insert_analyzer_result("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
+        batch2 = self._insert_analyzer_result("Tr\u1ee9ng Chi\u00ean")
         self.assertIsNotNone(batch1)
         self.assertIsNotNone(batch2)
         self.assertNotEqual(batch1, batch2)
 
     def test_quantity_stored_correctly(self):
-        batch_id = self._insert_nlp_result("Tr\u1ee9ng Chi\u00ean")
+        batch_id = self._insert_analyzer_result("Tr\u1ee9ng Chi\u00ean")
         from SqliteManager import DatabaseType
         cursor = self.db_mgr._cursors[DatabaseType.REQUEST]
         cursor.execute(
@@ -210,7 +210,7 @@ class TestExtractorToDbRoundTrip(unittest.TestCase):
         self.assertEqual(qty_map.get("D\u1ea7u \u0103n"), 2)
 
     def test_clear_request_batch(self):
-        batch_id = self._insert_nlp_result("Tr\u1ee9ng Chi\u00ean")
+        batch_id = self._insert_analyzer_result("Tr\u1ee9ng Chi\u00ean")
         self.assertIsNotNone(batch_id)
         result = self.db_mgr.clear_request_batch(batch_id)
         self.assertTrue(result)

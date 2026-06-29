@@ -20,10 +20,10 @@ def test_random_recipes(num_tests: int = 100):
     recipe_db_path = str(FSS_ROOT / "recipe_extractor" / "data" / "recipes")
     logger.info(f"Loading RecipeAnalyzerEngine from {recipe_db_path}...")
     
-    nlp_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db_path)
-    recommend_engine = RecommendEngine(nlp_engine=nlp_engine, db_manager=None)
+    analyzer_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db_path)
+    recommend_engine = RecommendEngine(analyzer_engine=analyzer_engine, db_manager=None)
     
-    available_recipes = nlp_engine.get_available_recipes()
+    available_recipes = analyzer_engine.get_available_recipes()
     if not available_recipes:
         logger.error("No recipes found in the database. Cannot run random tests.")
         return 1
@@ -39,10 +39,10 @@ def test_random_recipes(num_tests: int = 100):
         recipe_name = random.choice(available_recipes)
         
         try:
-            # 1. Test NLP Engine Generation
-            nlp_result = nlp_engine.generate_fss_request(recipe_name)
-            assert nlp_result["status"] == "SUCCESS", f"NLP Status not SUCCESS: {nlp_result['status']}"
-            assert "original_ingredients" in nlp_result, "Missing original_ingredients"
+            # 1. Test Analyzer Engine Generation
+            analyzer_result = analyzer_engine.generate_fss_request(recipe_name)
+            assert analyzer_result["status"] == "SUCCESS", f"Analyzer Status not SUCCESS: {analyzer_result['status']}"
+            assert "original_ingredients" in analyzer_result, "Missing original_ingredients"
             
             # 2. Test RecommendEngine Generation (with an empty inventory)
             recommend_result = recommend_engine.generate_shopping_list(recipe_name, inventory=[])

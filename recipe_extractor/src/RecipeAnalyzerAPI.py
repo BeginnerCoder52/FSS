@@ -1,9 +1,9 @@
 """
-Recipe Analyzer API - NLP Engine Wrapper
+Recipe Analyzer API - Filter-Sort Engine Wrapper
 =========================================
 
 Purpose:
-    Implements filter+parse+sort NLP pipeline for Vietnamese recipe analysis.
+    Implements filter+parse+sort Filter-Sort pipeline for Vietnamese recipe analysis.
     Replaces the previous CRF-based NER approach with direct structured JSON lookup.
 
     Core Pipeline:
@@ -30,7 +30,7 @@ ASPICE Compliance:
 
 Author: FSS AI Team
 Last Modified: 2026-06-21
-Version: 2.0.0 (Filter+Sort NLP rewrite)
+Version: 2.0.0 (Filter+Sort Filter-Sort rewrite)
 """
 
 import logging
@@ -42,7 +42,7 @@ import glob
 import difflib
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
-from RecipeProcessor import (
+from recipe_extractor.src.RecipeProcessor import (
     remove_special_characters,
     normalize_unicode,
     parse_ingredient_string,
@@ -52,12 +52,12 @@ logger = logging.getLogger(f"{__name__}")
 
 
 # ==============================================================================
-# Main NLP Engine Class
+# Main Filter-Sort Engine Class
 # ==============================================================================
 
 class RecipeAnalyzerEngine:
     """
-    Filter+Parse+Sort NLP engine for Vietnamese recipe ingredient extraction.
+    Filter+Parse+Sort Recipe analyzer for Vietnamese recipe ingredient extraction.
 
     Responsibilities:
         1. Load recipe database from JSON files into memory
@@ -144,7 +144,8 @@ class RecipeAnalyzerEngine:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
 
-                    recipe_name = data.get('recipe_name', '').strip().lower()
+                    raw_name = data.get('recipe_name', '')
+                    recipe_name = normalize_unicode(raw_name).strip().lower()
 
                     if recipe_name:
                         db[recipe_name] = data
@@ -203,7 +204,7 @@ class RecipeAnalyzerEngine:
                     "dish": recipe_name
                 }
 
-            normalized_dish = recipe_name.strip().lower()
+            normalized_dish = normalize_unicode(recipe_name).strip().lower()
 
             if normalized_dish not in self.recipe_db:
                 suggestions = self._suggest_recipe(normalized_dish)

@@ -1,0 +1,14 @@
+{
+  "iou_threshold": 0.5,
+  "frames_evaluated": 100,
+  "ground_truth_count": 94,
+  "prediction_count": 108,
+  "tp": 73,
+  "fp": 35,
+  "fn": 21,
+  "precision": 0.6759259259259259,
+  "recall": 0.776595744680851,
+  "f1": 0.7227722772277227,
+  "detection_accuracy": 0.5658914728682171,
+  "mean_iou": 0.8820769118954744
+}

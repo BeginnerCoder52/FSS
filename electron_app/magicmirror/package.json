@@ -42,7 +42,7 @@
 		"start:wayland:dev": "npm run start:wayland -- dev",
 		"start:windows": ".\\node_modules\\.bin\\electron js\\electron.js",
 		"start:windows:dev": "npm run start:windows -- dev",
-		"start:x11": "DISPLAY=\"${DISPLAY:=:0}\" ./node_modules/.bin/electron js/electron.js",
+		"start:x11": "DISPLAY=\"${DISPLAY:=:0}\" ./node_modules/.bin/electron js/electron.js --no-sandbox --disable-gpu",
 		"start:x11:dev": "npm run start:x11 -- dev",
 		"test": "NODE_ENV=test jest -i --forceExit",
 		"test:calendar": "node ./modules/default/calendar/debug.js",
@@ -106,7 +106,7 @@
 		"electron": "^35.7.5"
 	},
 	"engines": {
-		"node": ">=22.14.0"
+		"node": ">=18.0.0"
 	},
 	"_moduleAliases": {
 		"node_helper": "js/node_helper.js",

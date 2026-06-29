@@ -44,7 +44,8 @@ def get_dbus_config():
 dbus_config = get_dbus_config()
 
 try:
-    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async
+    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
+    set_default_bus(sd_bus_open_system())
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -106,7 +107,7 @@ class EnvironmentListener:
     def query_latest_environment_from_db(self) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float]]:
         """Query SQLite database for latest environment readings."""
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=5.0)
+            conn = sqlite3.connect(f"file:{DB_PATH}?immutable=1", uri=True, timeout=5.0)
             cursor = conn.cursor()
             
             # Query latest environment reading (both sensors)

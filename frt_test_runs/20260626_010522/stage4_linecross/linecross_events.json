@@ -1,0 +1,114 @@
+[
+  {
+    "event_id": 1,
+    "frame_id": 10,
+    "track_id": 1,
+    "class_id": 1,
+    "food_name": "carrot",
+    "direction": "IN",
+    "event_type": "CHECK_IN",
+    "delta": 1,
+    "line": {
+      "type": "horizontal",
+      "pos": 0.66
+    },
+    "centroid_norm": [
+      0.4904431876430386,
+      0.6791323691673645
+    ],
+    "food_detected_equivalent": {
+      "signal": "FoodDetected",
+      "food_items": [
+        {
+          "id": 1,
+          "qty": 1
+        }
+      ],
+      "event": "line_cross"
+    }
+  },
+  {
+    "event_id": 2,
+    "frame_id": 57,
+    "track_id": 3,
+    "class_id": 1,
+    "food_name": "carrot",
+    "direction": "IN",
+    "event_type": "CHECK_IN",
+    "delta": 1,
+    "line": {
+      "type": "horizontal",
+      "pos": 0.66
+    },
+    "centroid_norm": [
+      0.6393923275736682,
+      0.6709326892075435
+    ],
+    "food_detected_equivalent": {
+      "signal": "FoodDetected",
+      "food_items": [
+        {
+          "id": 1,
+          "qty": 1
+        }
+      ],
+      "event": "line_cross"
+    }
+  },
+  {
+    "event_id": 3,
+    "frame_id": 181,
+    "track_id": 6,
+    "class_id": 1,
+    "food_name": "carrot",
+    "direction": "IN",
+    "event_type": "CHECK_IN",
+    "delta": 1,
+    "line": {
+      "type": "horizontal",
+      "pos": 0.66
+    },
+    "centroid_norm": [
+      0.45408604851427714,
+      0.6685985890936306
+    ],
+    "food_detected_equivalent": {
+      "signal": "FoodDetected",
+      "food_items": [
+        {
+          "id": 1,
+          "qty": 1
+        }
+      ],
+      "event": "line_cross"
+    }
+  },
+  {
+    "event_id": 4,
+    "frame_id": 213,
+    "track_id": 9,
+    "class_id": 1,
+    "food_name": "carrot",
+    "direction": "IN",
+    "event_type": "CHECK_IN",
+    "delta": 1,
+    "line": {
+      "type": "horizontal",
+      "pos": 0.66
+    },
+    "centroid_norm": [
+      0.5779453283252796,
+      0.675566246440588
+    ],
+    "food_detected_equivalent": {
+      "signal": "FoodDetected",
+      "food_items": [
+        {
+          "id": 1,
+          "qty": 1
+        }
+      ],
+      "event": "line_cross"
+    }
+  }
+]

@@ -189,7 +189,8 @@ class FrtDbusInterface:
             logger.info("D-Bus connection initialized (service={})".format(self.SERVICE_NAME))
             return True
         except Exception as e:
-            logger.error(f"Async setup error: {e}")
+            import traceback
+            logger.error(f"Async setup error: {e}\n{traceback.format_exc()}")
             return False
 
     def _run_event_loop(self) -> None:

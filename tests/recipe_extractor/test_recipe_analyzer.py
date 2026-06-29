@@ -3,7 +3,7 @@ Unit Tests - RecipeAnalyzerAPI and RecipeProcessor (Filter+Sort)
 =================================================================
 
 Purpose:
-    Validate NLP engine functionality with filter+parse+sort pipeline.
+    Validate Analyzer engine functionality with filter+parse+sort pipeline.
 
 Test Coverage:
     1. RecipeAnalyzerAPI:

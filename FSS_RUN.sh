@@ -84,8 +84,8 @@ declare -A DAEMON_CMDS
 DAEMON_CMDS=(
     ["sensor"]="sudo ${FSS_SENSOR_EXEC}"
     ["db"]="sudo ${FSS_VENV_DB_DAEMON}/bin/python ${FSS_ROOT}/db_daemon/src/main.py"
-    ["camera"]="sudo ${FSS_CAMERA_EXEC}"
-    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend --model /opt/fss/models/YOLOv11n_260518_best_int8.tflite --model-precision int8 --bypass-door-sensor"
+    ["camera"]="sudo ${FSS_CAMERA_EXEC} --fps 10"
+    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend --model /opt/fss/models/0607_best_int8.tflite --model-precision int8"
     ["recipe"]="sudo ${FSS_VENV_RECIPE_EXTRACTOR}/bin/python ${FSS_ROOT}/recipe_extractor/src/recipe_extractor_main.py"
     ["recommend"]="sudo ${FSS_VENV_RECOMMEND_DAEMON}/bin/python ${FSS_ROOT}/recommend_daemon/src/main.py"
     ["magicmirror"]="pm2"
@@ -139,16 +139,7 @@ usage() {
 # Parse arguments
 # ==============================================================================
 
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --daemon)   SELECTED_DAEMONS="$2"; shift 2 ;;
-        --no-monitor) MONITOR=false; shift ;;
-        --status)   print_status; exit 0 ;;
-        --stop)     stop_all; exit 0 ;;
-        --help|-h)  usage ;;
-        *)          echo "Unknown: $1"; usage ;;
-    esac
-done
+
 
 # ==============================================================================
 # Initialization
@@ -158,17 +149,19 @@ setup_log_directory() {
     if [[ ! -d "$LOG_DIR" ]]; then
         if [[ "$LOG_DIR" == /var/log/* ]]; then
             sudo mkdir -p "$LOG_DIR" 2>/dev/null || LOG_DIR="${FSS_ROOT}/tests/logs/magicmirror/mm_log_$(date +%Y%m%d_%H%M%S)"
+            sudo chown -R "$USER:$USER" "$LOG_DIR" 2>/dev/null || true
         fi
         mkdir -p "$LOG_DIR" 2>/dev/null || true
     fi
     mkdir -p "$PID_DIR"
+    sudo chown -R "$USER:$USER" "$PID_DIR" 2>/dev/null || true
 }
 
 check_pm2() {
-    if ! command -v pm2 &>/dev/null; then
-        fss_log_error "PM2 not found. Install Node.js/PM2 first."
-        return 1
-    fi
+    # if ! command -v pm2 &>/dev/null; then
+    #     fss_log_error "PM2 not found. Install Node.js/PM2 first."
+    #     return 1
+    # fi
     if [[ ! -d "${FSS_ROOT}/electron_app/magicmirror/node_modules" ]]; then
         fss_log_error "MagicMirror node_modules missing. Run FSS_SETUP.sh first."
         return 1
@@ -265,7 +258,7 @@ start_daemon() {
 
     # Verify INT8 model file exists for AI daemon
     if [[ "$key" == "ai" ]]; then
-        local int8_model="/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
+        local int8_model="/opt/fss/models/0607_best_int8.tflite"
         if [[ ! -f "$int8_model" ]]; then
             fss_log_error "INT8 model not found at ${int8_model}. Run FSS_SETUP.sh to deploy models."
             return 1
@@ -275,28 +268,23 @@ start_daemon() {
 
     if [[ "$key" == "magicmirror" ]]; then
         # Fix PM2 version mismatch and clean old instances
-        pm2 update 2>/dev/null || true
-        pm2 delete MagicMirror 2>/dev/null || true
+        # pm2 update 2>/dev/null || true
+        # pm2 delete MagicMirror 2>/dev/null || true
         sleep 1
         cd "${FSS_ROOT}/electron_app/magicmirror"
-        pm2 start npm --name "MagicMirror" -- run start >> "$log" 2>&1
+        # DISPLAY=:0 pm2 start npm --name "MagicMirror" -- run start >> "$log" 2>&1
+        nohup bash -c "DISPLAY=:0 npm run start:x11" >> "$log" 2>&1 &
+        local pid=$!
+        disown $pid 2>/dev/null
         cd "${FSS_ROOT}"
         sleep 3
-        local raw_pid
-        raw_pid=$(pm2 pid MagicMirror 2>/dev/null | tail -1 || echo "")
-        local pid
-        pid=$(echo "$raw_pid" | grep -oE '[0-9]+' | head -1 || echo "")
-        if [[ -n "$pid" && "$pid" != "0" ]]; then
-            fss_log_ok "${name} started via PM2 (PID: ${pid})"
+        if kill -0 "$pid" 2>/dev/null; then
+            fss_log_ok "${name} started (PID: ${pid})"
             echo "$pid" > "$pidfile"
             DAEMON_RETRIES["$key"]=0
-            # Show recent PM2 logs for debugging
-            fss_log_info "  Recent MagicMirror PM2 logs:"
-            pm2 logs MagicMirror --lines 15 --nostream --raw 2>/dev/null | sed 's/^/    | /' || true
             return 0
         fi
-        fss_log_error "${name} failed to start via PM2. Check ${log}"
-        pm2 status MagicMirror >> "$log" 2>&1 || true
+        fss_log_error "${name} failed to start via npm. Check ${log}"
         return 1
     fi
 
@@ -339,9 +327,14 @@ stop_daemon() {
         local pid
         pid=$(cat "$pidfile")
         if [[ "$key" == "magicmirror" ]]; then
-            fss_log_info "Stopping ${name} via PM2..."
-            pm2 stop MagicMirror >> "${LOG_DIR}/magicmirror.log" 2>&1 || true
-            pm2 delete MagicMirror >> "${LOG_DIR}/magicmirror.log" 2>&1 || true
+            fss_log_info "Stopping ${name}..."
+            # pm2 stop MagicMirror >> "${LOG_DIR}/magicmirror.log" 2>&1 || true
+            # pm2 delete MagicMirror >> "${LOG_DIR}/magicmirror.log" 2>&1 || true
+            if kill -0 "$pid" 2>/dev/null; then
+                kill -SIGTERM "$pid" 2>/dev/null
+                sleep 2
+                kill -SIGKILL "$pid" 2>/dev/null || true
+            fi
             fss_log_ok "${name} stopped"
         elif kill -0 "$pid" 2>/dev/null; then
             fss_log_info "Stopping ${name} (PID: ${pid})..."
@@ -352,7 +345,7 @@ stop_daemon() {
             fi
             fss_log_ok "${name} stopped"
         fi
-        rm -f "$pidfile"
+        sudo rm -f "$pidfile"
     fi
 }
 
@@ -369,7 +362,7 @@ stop_all() {
         wait_for_dbus_release "$svc" || true
     done
 
-    rm -f "$PID_DIR"/*.pid 2>/dev/null || true
+    sudo rm -f "$PID_DIR"/*.pid 2>/dev/null || true
 }
 
 cleanup_stale() {
@@ -391,7 +384,7 @@ cleanup_stale() {
     fi
 
     for proc in sensor_daemon_exec camera_core_exec db_daemon recommend_daemon \
-                recipe_extractor frt_ai magicmirror; do
+                recipe_extractor py_ai_core magicmirror; do
         pids=$(pgrep -f "$proc" 2>/dev/null || true)
         if [[ -n "$pids" ]]; then
             fss_log_warn "Killing stale $proc (PIDs: $pids)"
@@ -402,7 +395,7 @@ cleanup_stale() {
         fi
     done
 
-    rm -f "$PID_DIR"/*.pid 2>/dev/null || true
+    sudo rm -f "$PID_DIR"/*.pid 2>/dev/null || true
     fss_log_ok "Stale processes cleaned"
 }
 
@@ -419,7 +412,27 @@ monitor_daemons() {
             if [[ -f "$pidfile" ]]; then
                 local pid
                 pid=$(cat "$pidfile" | head -1)
-                if ! kill -0 "$pid" 2>/dev/null; then
+                
+                local is_running=false
+                if [[ "$key" == "magicmirror" ]]; then
+                    # local current_pid=$(pm2 pid MagicMirror 2>/dev/null | grep -oE '[0-9]+' | head -1)
+                    # if [[ -n "$current_pid" && "$current_pid" != "0" ]]; then
+                    #     is_running=true
+                    #     # Update pidfile in case PM2 restarted it
+                    #     if [[ "$current_pid" != "$pid" ]]; then
+                    #         echo "$current_pid" > "$pidfile"
+                    #     fi
+                    # fi
+                    if kill -0 "$pid" 2>/dev/null; then
+                        is_running=true
+                    fi
+                else
+                    if kill -0 "$pid" 2>/dev/null; then
+                        is_running=true
+                    fi
+                fi
+
+                if [[ "$is_running" == false ]]; then
                     local retries=${DAEMON_RETRIES["$key"]}
                     if [[ "$retries" -ge "$MAX_RETRIES" ]]; then
                         fss_log_error "${name} has failed ${MAX_RETRIES} times. Giving up."
@@ -447,9 +460,28 @@ print_status() {
     for key in sensor db camera ai recipe recommend magicmirror; do
         local name="${DAEMON_NAMES[$key]}"
         local pidfile="${PID_DIR}/${key}.pid"
-        if [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
-            local pid
-            pid=$(cat "$pidfile")
+        
+        local is_running=false
+        local pid=""
+        if [[ -f "$pidfile" ]]; then
+            if [[ "$key" == "magicmirror" ]]; then
+                # pid=$(pm2 pid MagicMirror 2>/dev/null | grep -oE '[0-9]+' | head -1 || echo "")
+                # if [[ -n "$pid" && "$pid" != "0" ]]; then
+                #     is_running=true
+                # fi
+                pid=$(cat "$pidfile")
+                if kill -0 "$pid" 2>/dev/null; then
+                    is_running=true
+                fi
+            else
+                pid=$(cat "$pidfile")
+                if kill -0 "$pid" 2>/dev/null; then
+                    is_running=true
+                fi
+            fi
+        fi
+
+        if [[ "$is_running" == true ]]; then
             local log="${DAEMON_LOGS[$key]}"
             echo -e "  ${_FSS_GREEN}✓${_FSS_NC} ${name} RUNNING (PID: ${pid})"
             echo -e "     Log: ${log}"
@@ -461,10 +493,10 @@ print_status() {
 
     # D-Bus status
     echo "  D-Bus Services:"
-    for svc in vn.edu.uit.FSS.Sensor vn.edu.uit.FSS.FRTApp \
+    for svc in vn.edu.uit.FSS.FRTApp \
                vn.edu.uit.FSS.DBDaemon vn.edu.uit.FSS.RecommendDaemon \
                vn.edu.uit.FSS.RecipeExtractor; do
-        if dbus-send --system --dest=org.freedesktop.DBus \
+        if dbus-send --system --print-reply --dest=org.freedesktop.DBus \
             /org/freedesktop/DBus org.freedesktop.DBus.NameHasOwner \
             string:"$svc" 2>/dev/null | grep -q "boolean true"; then
             echo -e "     ${_FSS_GREEN}✓${_FSS_NC} ${svc}"
@@ -499,6 +531,17 @@ trap int_handler SIGINT
 # ==============================================================================
 # Main
 # ==============================================================================
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --daemon)   SELECTED_DAEMONS="$2"; shift 2 ;;
+        --no-monitor) MONITOR=false; shift ;;
+        --status)   print_status; exit 0 ;;
+        --stop)     stop_all; exit 0 ;;
+        --help|-h)  usage ;;
+        *)          echo "Unknown: $1"; usage ;;
+    esac
+done
 
 setup_log_directory
 cleanup_stale

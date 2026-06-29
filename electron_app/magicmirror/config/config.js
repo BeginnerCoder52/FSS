@@ -51,6 +51,11 @@ let config = {
 			classes: "known"
 		},
 		{
+			module: "MMM-FSS-Quit",
+			position: "top_right",
+			classes: "everyone"
+		},
+		{
 			module: "clock",
 			position: "top_right",
 			classes: "everyone",

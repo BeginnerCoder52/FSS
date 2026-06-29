@@ -5,9 +5,9 @@
  * This driver provides an interface to monitor the state of a magnetic door sensor (MC-38).
  * It uses libgpiod 2.1.1 for GPIO control on Raspberry Pi.
  * 
- * Hardware: Normally Closed (N.C.) Reed Switch Principle
- * - Without magnet: Reed contacts are CLOSED (circuit complete) → GPIO reads 0 (LOW)
- * - With magnet:    Reed contacts are OPEN (circuit open)      → GPIO reads 1 (HIGH)
+ * Hardware: Normally Open (N.O.) Reed Switch Principle (Standard MC-38)
+ * - Without magnet (Door Open): Reed contacts OPEN (circuit open) -> Pull-up makes GPIO read 1 (HIGH)
+ * - With magnet (Door Closed):  Reed contacts CLOSED to GND (circuit complete) -> GPIO reads 0 (LOW)
  * 
  * Semantic Door Status (User Perspective):
  * - GPIO 0 (no magnet): User can push door open → Status: "OPEN"
@@ -75,6 +75,14 @@ bool MC38::initialize() {
         // Set direction to input
         if (gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_INPUT) < 0) {
             std::cerr << "[MC38] Failed to set line direction to input" << std::endl;
+            gpiod_line_settings_free(settings);
+            gpiod_chip_close(chip);
+            return false;
+        }
+
+        // Enable internal pull-up resistor (required for N.C. reed switch connected to GND)
+        if (gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP) < 0) {
+            std::cerr << "[MC38] Failed to set line bias to pull-up" << std::endl;
             gpiod_line_settings_free(settings);
             gpiod_chip_close(chip);
             return false;
@@ -167,10 +175,10 @@ MC38::DoorStatus MC38::getStatus() {
             return DoorStatus::UNKNOWN;
         }
 
-        // N.C. switch: GPIO 0 = OPEN, GPIO 1 = CLOSED
-        // GPIOD_LINE_VALUE_INACTIVE (0) = OPEN
-        // GPIOD_LINE_VALUE_ACTIVE (1) = CLOSED
-        return (value == GPIOD_LINE_VALUE_INACTIVE) ? DoorStatus::CLOSED : DoorStatus::OPEN;
+        // N.O. switch with pull-up: GPIO 1 (HIGH) = OPEN, GPIO 0 (LOW) = CLOSED
+        // GPIOD_LINE_VALUE_ACTIVE (1) = OPEN
+        // GPIOD_LINE_VALUE_INACTIVE (0) = CLOSED
+        return (value == GPIOD_LINE_VALUE_ACTIVE) ? DoorStatus::OPEN : DoorStatus::CLOSED;
     } catch (const std::exception& e) {
         std::cerr << "[MC38] Read failed: " << e.what() << std::endl;
         return DoorStatus::UNKNOWN;
