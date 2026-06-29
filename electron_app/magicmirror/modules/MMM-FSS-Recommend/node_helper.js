@@ -9,15 +9,17 @@ module.exports = NodeHelper.create({
     start() {
         SessionLog.info("[MMM-FSS-Recommend] Node helper started");
         this.pythonProcess = null;
+        // this.qrProcess = null;
         this.started = false;
         this.processReady = false;
         this.pendingQueue = [];
-        this.httpServerProcess = null;
-        this.httpServerReady = false;
+        // this.httpServerProcess = null;
+        // this.httpServerReady = false;
     },
 
     socketNotificationReceived(notification, payload) {
         if (notification === "RECIPE_SEARCH") {
+            SessionLog.info(`[MMM-FSS-Recommend] RECIPE_SEARCH received: '${payload.recipe}'`);
             if (!this.started) {
                 this.startBridge();
             }
@@ -34,8 +36,6 @@ module.exports = NodeHelper.create({
             if (this.processReady && this.pythonProcess && !this.pythonProcess.killed) {
                 this.pythonProcess.stdin.write(JSON.stringify({ type: "GET_RECIPES" }) + "\n");
             }
-        } else if (notification === "GENERATE_QR") {
-            this.handleGenerateQR(payload);
         }
     },
 
@@ -62,6 +62,33 @@ module.exports = NodeHelper.create({
         const pythonExec = resolvePythonExecutable(__dirname);
         this.pythonProcess = spawn(pythonExec, [script]);
 
+        /*
+        // Start QR server
+        const qrScript = path.join(__dirname, "py_bridge", "recipe_http_server.py");
+        if (fs.existsSync(qrScript)) {
+            this.qrProcess = spawn(pythonExec, [qrScript]);
+            
+            let qrBuffer = "";
+            this.qrProcess.stdout.on("data", (data) => {
+                qrBuffer += data.toString();
+                const lines = qrBuffer.split("\n");
+                qrBuffer = lines.pop();
+                for (const line of lines) {
+                    if (!line.trim()) continue;
+                    try {
+                        const msg = JSON.parse(line);
+                        if (msg.type === "QR_RESULT") {
+                            this.sendSocketNotification("QR_RESULT", msg.data);
+                        }
+                    } catch(e) {}
+                }
+            });
+            this.qrProcess.stderr.on("data", (data) => {
+                console.error(`[MMM-FSS-Recommend] QR Server stderr: ${data.toString()}`);
+            });
+        }
+        */
+
         let buffer = "";
         this.pythonProcess.stdout.on("data", (data) => {
             buffer += data.toString();
@@ -72,13 +99,22 @@ module.exports = NodeHelper.create({
                 try {
                     const msg = JSON.parse(line);
                     if (msg.type === "RESULT") {
+                        // Server-side debug log — appears in magicmirror.log
+                        const d = msg.data;
+                        const summary = `status=${d.status} recipe='${d.recipe_name}' ` +
+                            `total=${d.total_items} missing=${d.missing_count} ` +
+                            `pipeline_ms=${d.pipeline_time_ms} ` +
+                            `ingredients=${JSON.stringify((d.ingredients||[]).map(i=>i.name))}`;
+                        SessionLog.info(`[MMM-FSS-Recommend] PIPELINE RESULT: ${summary}`);
                         this.sendSocketNotification("RECOMMEND_RESULT", msg.data);
                     } else if (msg.type === "ERROR") {
                         console.error("[MMM-FSS-Recommend] Error:", msg.message);
+                        SessionLog.error(`[MMM-FSS-Recommend] Bridge error: ${msg.message}`);
                         this.sendSocketNotification("RECOMMEND_ERROR", { error: msg.message });
                     } else if (msg.type === "STATUS") {
                         console.log(`[MMM-FSS-Recommend] ${msg.message}`);
                     } else if (msg.type === "RECIPES") {
+                        SessionLog.info(`[MMM-FSS-Recommend] Loaded ${(msg.data||[]).length} available recipes`);
                         this.sendSocketNotification("RECIPES", { data: msg.data });
                     }
                 } catch (e) {
@@ -122,6 +158,7 @@ module.exports = NodeHelper.create({
         this.started = true;
     },
 
+    /*
     startHttpServer() {
         if (this.httpServerProcess) {
             this.httpServerReady = true;
@@ -198,6 +235,7 @@ module.exports = NodeHelper.create({
             this.sendSocketNotification("QR_ERROR", { error: `HTTP request failed: ${e.message}` });
         }
     },
+    */
 
     stop() {
         SessionLog.info("[MMM-FSS-Recommend] Node helper stopped");
@@ -209,6 +247,7 @@ module.exports = NodeHelper.create({
                 }
             }, 3000);
         }
+        /*
         if (this.httpServerProcess) {
             this.httpServerProcess.kill("SIGTERM");
             setTimeout(() => {
@@ -217,8 +256,9 @@ module.exports = NodeHelper.create({
                 }
             }, 3000);
         }
+        */
         this.pythonProcess = null;
-        this.httpServerProcess = null;
+        // this.httpServerProcess = null;
         this.pendingQueue = [];
     }
 });

@@ -1,0 +1,19 @@
+{
+  "stage": "stage3_bytetrack",
+  "note": "No ground truth is available; id_switch_candidates are high-IoU adjacent-frame track-id changes.",
+  "lost_event_count": 2,
+  "lost_events": [
+    {
+      "track_id": 1,
+      "frame_id": 16
+    },
+    {
+      "track_id": 2,
+      "frame_id": 27
+    }
+  ],
+  "class_change_count": 0,
+  "class_changes": [],
+  "id_switch_candidate_count": 0,
+  "id_switch_candidates": []
+}

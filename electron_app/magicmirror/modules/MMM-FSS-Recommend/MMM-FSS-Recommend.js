@@ -12,14 +12,13 @@ Module.register("MMM-FSS-Recommend", {
         this.searchStartTime = null;
         this.pipelineTimeMs = null;
         this.availableRecipes = [];
-        this.showRecipeList = false;
         this.suggestedRecipes = [];
+        this.showRecipeList = false;
         this.chipOffset = 0;
         this.CHIPS_PER_PAGE = 5;
-        this.qrBase64 = null;
-        this.qrUrl = null;
-        this.showQrOverlay = false;
-        this.qrError = null;
+        // Fuzzy suggestions from wrong input
+        this.fuzzySuggestions = [];
+        this.lastRawInput = "";
 
         // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
         this.mockShoppingList = [
@@ -63,8 +62,20 @@ Module.register("MMM-FSS-Recommend", {
         let ingredientsToBuy = this.hasSearched ? [] : this.mockShoppingList;
         if (this.result && this.result.ingredients) {
             ingredientsToBuy = this.result.ingredients
-                .filter(i => i.status === 'missing')
-                .map(i => ({ name: i.name, qty: i.required - i.available }));
+                .filter(i => i.status === 'missing' || i.status === 'needed')
+                .map(i => ({
+                    // Original name from NLP (proper case preserved by backend)
+                    name: i.name
+                        ? i.name.charAt(0).toUpperCase() + i.name.slice(1)
+                        : "(không rõ)",
+                    // Use full quantity string (e.g. "1 trái", "300g") if available,
+                    // otherwise fall back to shortage number (with optional unit)
+                    qty: (typeof i.required === 'string' && i.required.trim())
+                        ? i.required
+                        : (i.shortage != null && i.shortage !== 0)
+                            ? (i.unit ? i.shortage + " " + i.unit : i.shortage)
+                            : (i.required || "")
+                }));
         }
 
         ingredientsToBuy.forEach((item, index) => {
@@ -110,11 +121,11 @@ Module.register("MMM-FSS-Recommend", {
 
         shoppingPanel.appendChild(shoppingScroll);
 
-        // Pipeline time display for Recommend (NLP)
+        // Pipeline time display for Recommend (Filter-Sort)
         if (this.result && this.result.pipeline_time_ms) {
             const timeDisplay = document.createElement("div");
             timeDisplay.className = "fss-pipeline-time";
-            timeDisplay.textContent = "⏱ NLP pipeline: " + this.result.pipeline_time_ms + "ms";
+            timeDisplay.textContent = "⏱ Filter-Sort pipeline: " + this.result.pipeline_time_ms + "ms";
             shoppingPanel.appendChild(timeDisplay);
         } else if (this.pipelineTimeMs !== null) {
             const timeDisplay = document.createElement("div");
@@ -122,85 +133,51 @@ Module.register("MMM-FSS-Recommend", {
             timeDisplay.textContent = "⏱ Round-trip: " + this.pipelineTimeMs + "ms";
             shoppingPanel.appendChild(timeDisplay);
         }
-
-        // QR download button (shown after search result)
-        if (this.result && this.result.recipe_name) {
-            const qrBtn = document.createElement("div");
-            qrBtn.className = "fss-qr-btn";
-            qrBtn.textContent = "📱 Tải về";
-            qrBtn.addEventListener("click", () => {
-                this.qrError = null;
-                this.qrBase64 = null;
-                this.qrUrl = null;
-                this.showQrOverlay = false;
-                this.updateDom();
-                this.sendSocketNotification("GENERATE_QR", this.result);
-            });
-            qrBtn.addEventListener("touchend", (e) => {
-                e.preventDefault();
-                this.qrError = null;
-                this.qrBase64 = null;
-                this.qrUrl = null;
-                this.showQrOverlay = false;
-                this.updateDom();
-                this.sendSocketNotification("GENERATE_QR", this.result);
-            });
-            shoppingPanel.appendChild(qrBtn);
-        }
-
-        // QR code overlay
-        if (this.showQrOverlay) {
-            const overlay = document.createElement("div");
-            overlay.className = "fss-qr-overlay";
-
-            const qrContent = document.createElement("div");
-            qrContent.className = "fss-qr-content";
-
-            const qrTitle = document.createElement("div");
-            qrTitle.className = "fss-qr-title";
-            qrTitle.textContent = "Quét mã để xem công thức";
-            qrContent.appendChild(qrTitle);
-
-            if (this.qrError) {
-                const errMsg = document.createElement("div");
-                errMsg.className = "fss-qr-error";
-                errMsg.textContent = "❌ " + this.qrError;
-                qrContent.appendChild(errMsg);
-            } else if (this.qrBase64) {
-                const qrImg = document.createElement("img");
-                qrImg.className = "fss-qr-img";
-                qrImg.src = "data:image/png;base64," + this.qrBase64;
-                qrImg.alt = "QR Code";
-                qrContent.appendChild(qrImg);
-
-                const qrUrlDisplay = document.createElement("div");
-                qrUrlDisplay.className = "fss-qr-url";
-                qrUrlDisplay.textContent = this.qrUrl;
-                qrContent.appendChild(qrUrlDisplay);
+        /*
+        // QR Code Download Section
+        if (this.hasSearched && this.result) {
+            const dlRow = document.createElement("div");
+            dlRow.style.marginTop = "1em";
+            dlRow.style.textAlign = "center";
+            
+            if (this.qrData) {
+                const qrBox = document.createElement("div");
+                qrBox.className = "fss-qr-box";
+                const img = document.createElement("img");
+                img.src = "data:image/png;base64," + this.qrData.qr_base64;
+                img.style.width = "120px";
+                img.style.borderRadius = "8px";
+                img.style.border = "4px solid white";
+                img.style.marginBottom = "0.5em";
+                qrBox.appendChild(img);
+                
+                const helpText = document.createElement("div");
+                helpText.textContent = "Quét mã bằng camera";
+                helpText.style.fontSize = "0.8em";
+                helpText.style.color = "var(--color-text-dimmed)";
+                qrBox.appendChild(helpText);
+                
+                dlRow.appendChild(qrBox);
             } else {
-                const spinner = document.createElement("div");
-                spinner.className = "fss-qr-spinner";
-                spinner.textContent = "Đang tạo mã QR...";
-                qrContent.appendChild(spinner);
+                const dlBtn = document.createElement("div");
+                dlBtn.className = "fss-chip";
+                dlBtn.style.display = "inline-flex";
+                dlBtn.style.backgroundColor = "var(--color-primary, #4facfe)";
+                dlBtn.style.color = "#ffffff";
+                dlBtn.style.border = "none";
+                dlBtn.innerHTML = '<i class="fas fa-qrcode" style="margin-right:0.5em;"></i> Tải danh sách về ĐT';
+                dlBtn.addEventListener("click", () => {
+                    this.sendSocketNotification("GENERATE_QR", this.result);
+                });
+                dlBtn.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    this.sendSocketNotification("GENERATE_QR", this.result);
+                });
+                dlRow.appendChild(dlBtn);
             }
-
-            const closeBtn = document.createElement("div");
-            closeBtn.className = "fss-qr-close";
-            closeBtn.textContent = "✕ Đóng";
-            closeBtn.addEventListener("click", () => {
-                this.showQrOverlay = false;
-                this.updateDom();
-            });
-            closeBtn.addEventListener("touchend", (e) => {
-                e.preventDefault();
-                this.showQrOverlay = false;
-                this.updateDom();
-            });
-            qrContent.appendChild(closeBtn);
-
-            overlay.appendChild(qrContent);
-            wrapper.appendChild(overlay);
+            shoppingPanel.appendChild(dlRow);
         }
+        */
 
         wrapper.appendChild(shoppingPanel);
 
@@ -227,7 +204,7 @@ Module.register("MMM-FSS-Recommend", {
         inputRow.style.padding = "0.8em 1.5em"; // Tránh chữ bị lẹm vào góc bo tròn
         inputRow.style.pointerEvents = "auto";
         inputRow.style.position = "relative";
-        inputRow.style.zIndex = "10";
+        inputRow.style.zIndex = "100";
 
         const searchIcon = document.createElement("i");
         searchIcon.className = "fas fa-search";
@@ -262,60 +239,70 @@ Module.register("MMM-FSS-Recommend", {
         inputRow.style.touchAction = "manipulation";
         menuPanel.appendChild(inputRow);
 
-        // Suggested recipe chips (shown when no search has been done)
-        if (!this.hasSearched && this.suggestedRecipes.length > 0) {
-            const chipSection = document.createElement("div");
-            chipSection.className = "fss-chip-section";
+        // Suggested recipes chips — shown before search (normal) OR as fuzzy suggestions after wrong input
+        const chipsToShow = (!this.hasSearched && this.suggestedRecipes.length > 0)
+            ? { title: "Gợi ý nhanh:", recipes: this.suggestedRecipes, showMore: true }
+            : (this.fuzzySuggestions.length > 0)
+                ? { title: "Ý bạn là...", recipes: this.fuzzySuggestions, showMore: false }
+                : null;
 
-            const chipLabel = document.createElement("div");
-            chipLabel.className = "fss-chip-label";
-            chipLabel.textContent = "Gợi ý nhanh:";
-            chipSection.appendChild(chipLabel);
+        if (chipsToShow) {
+            const chipContainer = document.createElement("div");
+            chipContainer.className = "fss-chip-container";
+            chipContainer.style.pointerEvents = "auto";
+            chipContainer.style.zIndex = "200";
+            chipContainer.style.position = "relative";
+
+            const chipTitle = document.createElement("div");
+            chipTitle.className = "fss-chip-title";
+            chipTitle.textContent = chipsToShow.title;
+            chipContainer.appendChild(chipTitle);
 
             const chipGrid = document.createElement("div");
             chipGrid.className = "fss-chip-grid";
+            chipGrid.style.pointerEvents = "auto";
 
-            this.suggestedRecipes.forEach((recipe) => {
+            chipsToShow.recipes.forEach(recipe => {
                 const chip = document.createElement("div");
                 chip.className = "fss-chip";
                 chip.textContent = recipe;
-                chip.setAttribute("data-recipe", recipe);
+                chip.style.pointerEvents = "auto";
+                chip.style.cursor = "pointer";
 
-                const doSearch = () => {
-                    if (this.hasSearched) return;
-                    this.hasSearched = true;
-                    this.searchStartTime = Date.now();
-                    this.pipelineTimeMs = null;
-                    this.searchedRecipes = [recipe];
-                    this.accumulatedResults = [];
-                    this.pendingCount = 1;
-                    this.updateDom();
-                    this.sendSocketNotification("RECIPE_SEARCH", { recipe: recipe });
-                };
-
-                chip.addEventListener("click", doSearch);
+                chip.addEventListener("click", () => {
+                    this.fuzzySuggestions = [];
+                    this.triggerSearch(recipe);
+                });
                 chip.addEventListener("touchend", (e) => {
                     e.preventDefault();
-                    doSearch();
+                    this.fuzzySuggestions = [];
+                    this.triggerSearch(recipe);
                 });
 
                 chipGrid.appendChild(chip);
             });
 
-            // Xem thêm button
-            const moreChip = document.createElement("div");
-            moreChip.className = "fss-chip fss-chip-more";
-            moreChip.textContent = "Xem thêm ▾";
+            if (chipsToShow.showMore) {
+                // "Xem thêm" button
+                const moreChip = document.createElement("div");
+                moreChip.className = "fss-chip fss-chip-more";
+                moreChip.innerHTML = "Xem thêm ▾";
+                moreChip.style.pointerEvents = "auto";
+                moreChip.style.cursor = "pointer";
+                moreChip.addEventListener("click", () => {
+                    this.shuffleSuggestions();
+                    this.updateDom();
+                });
+                moreChip.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    this.shuffleSuggestions();
+                    this.updateDom();
+                });
+                chipGrid.appendChild(moreChip);
+            }
 
-            moreChip.addEventListener("click", () => this.advanceChips());
-            moreChip.addEventListener("touchend", (e) => {
-                e.preventDefault();
-                this.advanceChips();
-            });
-
-            chipGrid.appendChild(moreChip);
-            chipSection.appendChild(chipGrid);
-            menuPanel.appendChild(chipSection);
+            chipContainer.appendChild(chipGrid);
+            menuPanel.appendChild(chipContainer);
         }
 
         // Scroll container for recipe history
@@ -340,14 +327,20 @@ Module.register("MMM-FSS-Recommend", {
             const trashBtn = document.createElement("div");
             trashBtn.className = "fss-trash-btn";
             trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            trashBtn.style.pointerEvents = "auto";
+            trashBtn.style.cursor = "pointer";
+            trashBtn.style.zIndex = "200";
+            trashBtn.style.position = "relative";
+            // Capture `index` at time of DOM creation (avoids closure-over-loop issue)
+            const capturedIndex = index;
             trashBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                this.deleteRecipe(index);
+                this.deleteRecipe(capturedIndex);
             });
             trashBtn.addEventListener("touchend", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                this.deleteRecipe(index);
+                this.deleteRecipe(capturedIndex);
             });
             leftDiv.appendChild(trashBtn);
 
@@ -408,6 +401,7 @@ Module.register("MMM-FSS-Recommend", {
             this.hasSearched = true;
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
+            this.qrData = null;
             this.updateDom();
             this.sendSocketNotification("RECIPE_SEARCH", payload);
         }
@@ -415,9 +409,12 @@ Module.register("MMM-FSS-Recommend", {
             const recipes = payload.message.split(",").map(s => s.trim()).filter(s => s);
             if (recipes.length === 0) return;
 
+            this.lastRawInput = recipes[recipes.length - 1]; // Track last for fuzzy
+            this.fuzzySuggestions = [];
             this.hasSearched = true;
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
+            this.qrData = null;
             this.searchedRecipes = this.searchedRecipes.concat(recipes);
             this.accumulatedResults = [];
             this.pendingCount = this.searchedRecipes.length;
@@ -435,6 +432,23 @@ Module.register("MMM-FSS-Recommend", {
                 if (this.searchStartTime) {
                     this.pipelineTimeMs = Date.now() - this.searchStartTime;
                     this.searchStartTime = null;
+                }
+                // --- DEBUG: log full pipeline result to console ---
+                console.log("[MMM-FSS-Recommend] Pipeline result:", JSON.stringify(this.result, null, 2));
+                // Check if result is NOT_FOUND — show fuzzy suggestions
+                const firstResult = this.accumulatedResults[0];
+                const status = firstResult && firstResult.status;
+                if (status === "NOT_FOUND" || (this.result && this.result.ingredients && this.result.ingredients.length === 0)) {
+                    // Use server-supplied suggestions (Python backend handles difflib fuzzy matching)
+                    const serverSuggestions = firstResult && firstResult.suggestions;
+                    this.fuzzySuggestions = (serverSuggestions && serverSuggestions.length > 0)
+                        ? serverSuggestions
+                        : [];
+                    // Reset search state so UI shows fuzzy chips (not an empty recipe history)
+                    this.hasSearched = false;
+                    this.searchedRecipes = this.searchedRecipes.filter(r => r !== this.lastRawInput);
+                } else {
+                    this.fuzzySuggestions = [];
                 }
                 this.updateDom();
                 this.playNotificationSound("recommend_done");
@@ -454,16 +468,30 @@ Module.register("MMM-FSS-Recommend", {
             this.availableRecipes = payload.data || [];
             this.pickSuggestedRecipes();
             this.updateDom();
-        } else if (notification === "QR_CODE_READY") {
-            this.qrBase64 = payload.base64;
-            this.qrUrl = payload.url;
-            this.showQrOverlay = true;
-            this.updateDom();
-        } else if (notification === "QR_ERROR") {
-            this.qrError = payload.error || "Unknown error";
-            this.showQrOverlay = true;
-            this.updateDom();
         }
+    },
+    triggerSearch(recipe) {
+        if (!recipe) return;
+        this.lastRawInput = recipe;
+        this.fuzzySuggestions = [];
+        this.hasSearched = true;
+        this.searchStartTime = Date.now();
+        this.pipelineTimeMs = null;
+        this.qrData = null;
+
+        if (!this.searchedRecipes.includes(recipe)) {
+            this.searchedRecipes.push(recipe);
+        }
+
+        this.accumulatedResults = [];
+        this.pendingCount = this.searchedRecipes.length;
+        this.updateDom();
+        this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
+    },
+    shuffleSuggestions() {
+        if (!this.availableRecipes || this.availableRecipes.length === 0) return;
+        const shuffled = [...this.availableRecipes].sort(() => 0.5 - Math.random());
+        this.suggestedRecipes = shuffled.slice(0, 5);
     },
     mergeResults(results) {
         if (!results || results.length === 0) return null;

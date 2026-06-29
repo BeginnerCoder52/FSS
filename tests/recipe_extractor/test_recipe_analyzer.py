@@ -1,28 +1,28 @@
 """
-Unit Tests - RecipeAnalyzerAPI and RecipeProcessor
-==================================================
+Unit Tests - RecipeAnalyzerAPI and RecipeProcessor (Filter+Sort)
+=================================================================
 
 Purpose:
-    Validate NLP engine functionality, text processing, and output accuracy.
+    Validate Analyzer engine functionality with filter+parse+sort pipeline.
 
 Test Coverage:
     1. RecipeAnalyzerAPI:
-       - Model initialization and lifecycle
-       - Recipe inference with known outputs
-       - Edge cases: unknown recipes, empty input, special characters
-       - Output format validation (FSS-Request JSON)
+       - Recipe database loading
+       - Recipe lookup (filter) — exact match, case-insensitive, not found
+       - Ingredient parsing (split on " : " delimiter)
+       - Recipe output with all fields
        - Fuzzy recipe suggestions
-    
+       - Edge cases: empty input, special characters
+
     2. RecipeProcessor:
-       - Vietnamese tokenization
-       - Feature extraction for CRF
        - Quantity normalization
+       - Quantity/unit detection
        - Unicode and special character handling
+       - parse_ingredient_string function
 
 Performance Targets:
-    - Model inference: <10ms per recipe
-    - Feature extraction: <1ms
-    - Total pipeline: <20ms
+    - Recipe lookup: <1ms per recipe
+    - Total pipeline: <5ms
 
 ASPICE Compliance:
     - Isolated unit tests (no external service dependencies)
@@ -31,8 +31,8 @@ ASPICE Compliance:
     - Performance assertion tests
 
 Author: FSS QA Team
-Version: 1.0.0
-Last Modified: 2026-05-23
+Version: 2.0.0
+Last Modified: 2026-06-21
 """
 
 import unittest
@@ -44,32 +44,20 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "recipe_extractor" / "src"))
 
-# ---------------------------------------------------------------------------
-# Production paths (model file + recipe dataset)
-# ---------------------------------------------------------------------------
-PROJECT_ROOT = Path(__file__).parent.parent
-MODEL_PATH = str(PROJECT_ROOT / "models" / "fss_ner_crf_optimized.joblib")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent / "recipe_extractor"
 RECIPE_DB_PATH = str(PROJECT_ROOT / "data" / "recipes")
 
-from src.RecipeAnalyzerAPI import (
-    RecipeAnalyzerEngine,
-    BIOTagSchema,
-    normalize_ingredient_text,
-    word2features,
-    sent2features,
-)
+from RecipeAnalyzerAPI import RecipeAnalyzerEngine
 
-from src.RecipeProcessor import (
-    extract_features,
+from RecipeProcessor import (
     normalize_quantity,
     detect_quantity_unit,
     remove_special_characters,
+    parse_ingredient_string,
 )
 
-# Configure logging for tests
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -77,489 +65,400 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# ==============================================================================
-# Test Fixtures & Utilities
-# ==============================================================================
-
 class TestRecipeDatabase:
-    """
-    Create temporary test recipe database for unit tests.
-    """
-    
+    """Create temporary test recipe database for unit tests."""
+
     @staticmethod
     def create_test_recipes(temp_dir: str) -> List[str]:
-        """
-        Create sample recipe JSON files in temp directory.
-        
-        Args:
-            temp_dir (str): Temporary directory path
-            
-        Returns:
-            List[str]: List of created file paths
-        """
         test_recipes = [
             {
                 "recipe_name": "Gỏi Trộn Khô Mực",
                 "serving": "4 người",
                 "times": "30 Phút",
+                "difficulty": "Dễ",
                 "normal_ingredients": [
-                    "Bưởi: 1 trái",
-                    "Mực khô: 1 con (50g)",
-                    "Thịt ba chỉ: 100g"
+                    "Bưởi : 1 trái",
+                    "Mực khô : 1 con (50g)",
+                    "Thịt ba chỉ : 100g",
+                    "Cà rốt : 2 củ",
+                    "Đậu phộng : 1"
                 ],
-                "spices": [
-                    "Muối",
-                    "Đường"
-                ]
+                "spices": ["Muối", "Đường"],
+                "process": ["Tôm luộc chín", "Bưởi bóc múi"],
+                "cook": ["Pha nước trộn"],
+                "usage": ["Bày gỏi ra dĩa"],
+                "tips": ["Chọn bưởi chưa chín hẳn"]
             },
             {
                 "recipe_name": "Trứng Chiên",
                 "serving": "2 người",
                 "times": "10 Phút",
+                "difficulty": "Dễ",
                 "normal_ingredients": [
-                    "Trứng gà: 2 quả",
-                    "Dầu ăn: 2 muỗng canh"
+                    "Trứng gà : 2 quả",
+                    "Dầu ăn : 2 muỗng canh"
                 ],
-                "spices": [
-                    "Muối",
-                    "Tiêu"
-                ]
+                "spices": ["Muối", "Tiêu"],
+                "process": ["Đập trứng ra bát"],
+                "cook": ["Chiên trứng trên chảo"],
+                "usage": ["Dọn ra đĩa"],
+                "tips": ["Lửa vừa"]
             },
         ]
-        
+
         created_files = []
         for i, recipe in enumerate(test_recipes, 1):
             file_path = os.path.join(temp_dir, f"{i}.json")
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(recipe, f, ensure_ascii=False, indent=2)
             created_files.append(file_path)
-        
+
         logger.info(f"Created {len(created_files)} test recipe files")
         return created_files
 
 
-# ==============================================================================
-# RecipeAnalyzerAPI Tests
-# ==============================================================================
+class TestRecipeFilter(unittest.TestCase):
+    """Test recipe name lookup (filter step)."""
 
-class TestRecipeAnalyzerEngineInitialization(unittest.TestCase):
-    """
-    Test RecipeAnalyzerEngine initialization and lifecycle.
-    """
-    
     def setUp(self):
-        """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()
         TestRecipeDatabase.create_test_recipes(self.temp_dir)
-        self.recipe_db_path = self.temp_dir
-    
+        self.engine = RecipeAnalyzerEngine(recipe_db_path=self.temp_dir)
+
     def tearDown(self):
-        """Clean up test fixtures."""
         import shutil
         if os.path.exists(self.temp_dir):
             shutil.rmtree(self.temp_dir)
-    
-    @unittest.skipIf(
-        not Path(MODEL_PATH).exists(),
-        f"Model file not found at {MODEL_PATH}"
-    )
-    def test_engine_initialization_success(self):
-        """
-        ASPICE Test: Verify engine initializes successfully with valid paths.
-        
-        Expected: Engine loads model and recipe database without errors
-        """
-        try:
-            engine = RecipeAnalyzerEngine(
-                model_path=MODEL_PATH,
-                recipe_db_path=self.recipe_db_path
-            )
-            
-            self.assertIsNotNone(engine.model)
-            self.assertIsNotNone(engine.recipe_db)
-            self.assertGreater(len(engine.recipe_names), 0)
-            
-            logger.info("✓ Engine initialization test passed")
-            
-        except Exception as e:
-            self.fail(f"Engine initialization failed: {str(e)}")
-    
-    def test_engine_initialization_invalid_model_path(self):
-        """
-        ASPICE Test: Verify engine raises FileNotFoundError for invalid model path.
-        
-        Expected: RuntimeError or FileNotFoundError is raised
-        """
-        with self.assertRaises((FileNotFoundError, RuntimeError)):
-            RecipeAnalyzerEngine(
-                model_path="nonexistent/path/model.joblib",
-                recipe_db_path=self.recipe_db_path
-            )
-    
-    @unittest.skipIf(
-        not Path(MODEL_PATH).exists(),
-        f"Model file not found at {MODEL_PATH}"
-    )
-    def test_engine_initialization_invalid_recipe_path(self):
-        """
-        ASPICE Test: Verify engine handles invalid recipe database path.
-        
-        Expected: Engine initializes but with empty recipe database
-        """
-        engine = RecipeAnalyzerEngine(
-            model_path=MODEL_PATH,
-            recipe_db_path="nonexistent/recipe/path"
-        )
-        self.assertIsNotNone(engine.recipe_db)
-        self.assertEqual(len(engine.recipe_names), 0)
+
+    def test_exact_match(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertEqual(result["status"], "SUCCESS")
+        self.assertEqual(result["dish"], "Gỏi Trộn Khô Mực")
+
+    def test_case_insensitive_match(self):
+        result = self.engine.generate_fss_request("gỏi trộn khô mực")
+        self.assertEqual(result["status"], "SUCCESS")
+
+    def test_not_found(self):
+        result = self.engine.generate_fss_request("Không tồn tại")
+        self.assertEqual(result["status"], "NOT_FOUND")
+        self.assertIn("suggestions", result)
+
+    def test_empty_name(self):
+        result = self.engine.generate_fss_request("")
+        self.assertEqual(result["status"], "ERROR")
+
+    def test_none_name(self):
+        result = self.engine.generate_fss_request(None)
+        self.assertEqual(result["status"], "ERROR")
+
+    def test_whitespace_trimmed(self):
+        result = self.engine.generate_fss_request("  Gỏi Trộn Khô Mực  ")
+        self.assertEqual(result["status"], "SUCCESS")
 
 
-# ==============================================================================
-# RecipeProcessor Tests
-# ==============================================================================
+class TestIngredientParser(unittest.TestCase):
+    """Test ingredient string parsing."""
+
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp()
+        TestRecipeDatabase.create_test_recipes(self.temp_dir)
+        self.engine = RecipeAnalyzerEngine(recipe_db_path=self.temp_dir)
+
+    def tearDown(self):
+        import shutil
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+
+    def test_parse_ingredient_string_with_delimiter(self):
+        result = parse_ingredient_string("Bưởi : 1 trái")
+        self.assertEqual(result["ingredient"], "Bưởi")
+        self.assertEqual(result["quantity"], "1 trái")
+
+    def test_parse_ingredient_string_no_delimiter(self):
+        result = parse_ingredient_string("Muối")
+        self.assertEqual(result["ingredient"], "Muối")
+        self.assertEqual(result["quantity"], "1")
+
+    def test_parse_ingredient_string_trailing_whitespace(self):
+        result = parse_ingredient_string("  Thịt bò  :  500g  ")
+        self.assertEqual(result["ingredient"], "Thịt bò")
+        self.assertEqual(result["quantity"], "500g")
+
+    def test_parse_ingredient_string_empty(self):
+        result = parse_ingredient_string("")
+        self.assertEqual(result["ingredient"], "")
+        self.assertEqual(result["quantity"], "1")
+
+    def test_original_ingredients_preserved(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertIn("original_ingredients", result)
+        self.assertEqual(len(result["original_ingredients"]), 5)
+        self.assertIn("Bưởi : 1 trái", result["original_ingredients"])
+
+    def test_parse_ingredients_method(self):
+        parsed = self.engine.parse_ingredients("gỏi trộn khô mực")
+        self.assertEqual(len(parsed), 5)
+        ingredients = [p["ingredient"] for p in parsed]
+        self.assertIn("Bưởi", ingredients)
+        self.assertIn("Mực khô", ingredients)
+
+
+class TestRecipeSorter(unittest.TestCase):
+    """Test alphabetical sorting of ingredients."""
+
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp()
+        TestRecipeDatabase.create_test_recipes(self.temp_dir)
+        self.engine = RecipeAnalyzerEngine(recipe_db_path=self.temp_dir)
+
+    def tearDown(self):
+        import shutil
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+
+    def test_alphabetical_sort(self):
+        parsed = self.engine.parse_ingredients("gỏi trộn khô mực")
+        names = [p["ingredient"] for p in parsed]
+        self.assertEqual(names, sorted(names))
+
+    def test_sort_stability(self):
+        parsed1 = self.engine.parse_ingredients("gỏi trộn khô mực")
+        parsed2 = self.engine.parse_ingredients("gỏi trộn khô mực")
+        self.assertEqual(parsed1, parsed2)
+
+
+class TestFullRecipeOutput(unittest.TestCase):
+    """Test full recipe output with all fields."""
+
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp()
+        TestRecipeDatabase.create_test_recipes(self.temp_dir)
+        self.engine = RecipeAnalyzerEngine(recipe_db_path=self.temp_dir)
+
+    def tearDown(self):
+        import shutil
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+
+    def test_all_fields_present(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        expected_fields = {
+            "status", "dish", "original_ingredients", "original_spices",
+            "serving", "times", "difficulty", "process",
+            "cook", "usage", "tips", "processing_time_ms"
+        }
+        self.assertTrue(expected_fields.issubset(result.keys()))
+
+    def test_serving_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertEqual(result["serving"], "4 người")
+
+    def test_times_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertEqual(result["times"], "30 Phút")
+
+    def test_difficulty_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertEqual(result["difficulty"], "Dễ")
+
+    def test_process_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertGreater(len(result["process"]), 0)
+
+    def test_cook_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertGreater(len(result["cook"]), 0)
+
+    def test_usage_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertGreater(len(result["usage"]), 0)
+
+    def test_tips_field(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertGreater(len(result["tips"]), 0)
+
+    def test_original_spices_present(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertIn("original_spices", result)
+        self.assertGreater(len(result["original_spices"]), 0)
+
+    def test_processing_time_ms_present(self):
+        result = self.engine.generate_fss_request("Gỏi Trộn Khô Mực")
+        self.assertIn("processing_time_ms", result)
+        self.assertIsInstance(result["processing_time_ms"], (int, float))
+
+
+class TestRecipeSuggestions(unittest.TestCase):
+    """Test fuzzy recipe matching."""
+
+    def setUp(self):
+        self.temp_dir = tempfile.mkdtemp()
+        TestRecipeDatabase.create_test_recipes(self.temp_dir)
+        self.engine = RecipeAnalyzerEngine(recipe_db_path=self.temp_dir)
+
+    def tearDown(self):
+        import shutil
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+
+    def test_keyword_suggestion(self):
+        result = self.engine.generate_fss_request("trộn")
+        self.assertEqual(result["status"], "NOT_FOUND")
+        self.assertGreater(len(result["suggestions"]), 0)
+
+    def test_fuzzy_suggestion(self):
+        result = self.engine.generate_fss_request("Goi Tron")
+        self.assertEqual(result["status"], "NOT_FOUND")
+        self.assertGreater(len(result["suggestions"]), 0)
+
+    def test_suggestion_contains_recipe(self):
+        result = self.engine.generate_fss_request("trứng")
+        self.assertEqual(result["status"], "NOT_FOUND")
+        suggestions_lower = [s.lower() for s in result["suggestions"]]
+        self.assertTrue(any("trứng" in s for s in suggestions_lower))
+
 
 class TestRecipeProcessor(unittest.TestCase):
-    """
-    Unit tests for RecipeProcessor utilities.
-    """
-    
-    def test_normalize_ingredient_text_removes_trademarks(self):
-        """
-        ASPICE Test: Verify special character removal.
-        
-        Expected: ® and ™ symbols removed
-        """
-        text = "Bưởi®, Mực khô™"
-        result = normalize_ingredient_text(text)
-        
-        self.assertEqual(len(result), 2)
-        self.assertNotIn('®', result[0])
-        self.assertNotIn('™', result[1])
-        logger.info(f"✓ Trademark removal test passed: {result}")
-    
-    def test_normalize_ingredient_text_removes_brand_names(self):
-        """
-        ASPICE Test: Verify brand name removal (Aji-ngon, etc.).
-        
-        Expected: Brand names removed, ingredients preserved
-        """
-        text = "Bưởi, Aji-ngon, AJI-NO-MOTO"
-        result = normalize_ingredient_text(text)
-        
-        self.assertIn("Bưởi", result)
-        self.assertEqual(len(result), 1)  # Only Bưởi should remain
-        logger.info(f"✓ Brand name removal test passed: {result}")
-    
-    def test_normalize_ingredient_text_empty_input(self):
-        """
-        ASPICE Test: Edge case - empty input handling.
-        
-        Expected: Empty list returned
-        """
-        result = normalize_ingredient_text("")
-        self.assertEqual(result, [])
-        
-        result = normalize_ingredient_text("   ")
-        self.assertEqual(result, [])
-        logger.info("✓ Empty input handling test passed")
-    
-    def test_extract_features_valid_input(self):
-        """
-        ASPICE Test: Verify feature extraction for CRF.
-        
-        Expected: All required features present
-        """
-        context = ['Bưởi', 'tươi', '1', 'trái']
-        features = extract_features('tươi', context, 1)
-        
-        # Verify key features exist
-        self.assertIn('bias', features)
-        self.assertIn('word.lower()', features)
-        self.assertIn('prev_word.lower()', features)
-        self.assertIn('next_word.lower()', features)
-        
-        # Verify correct values
-        self.assertEqual(features['word.lower()'], 'tươi')
-        self.assertEqual(features['prev_word.lower()'], 'bưởi')
-        self.assertEqual(features['next_word.lower()'], '1')
-        
-        logger.info(f"✓ Feature extraction test passed: {list(features.keys())}")
-    
-    def test_extract_features_beginning_of_sentence(self):
-        """
-        ASPICE Test: Verify BOS (Beginning of Sentence) marker.
-        
-        Expected: BOS=True for first token
-        """
-        context = ['Trứng', 'gà', '2', 'quả']
-        features = extract_features('Trứng', context, 0)
-        
-        self.assertIn('BOS', features)
-        self.assertTrue(features['BOS'])
-        logger.info("✓ BOS marker test passed")
-    
-    def test_extract_features_end_of_sentence(self):
-        """
-        ASPICE Test: Verify EOS (End of Sentence) marker.
-        
-        Expected: EOS=True for last token
-        """
-        context = ['Trứng', 'gà', '2', 'quả']
-        features = extract_features('quả', context, 3)
-        
-        self.assertIn('EOS', features)
-        self.assertTrue(features['EOS'])
-        logger.info("✓ EOS marker test passed")
-    
-    def test_extract_features_out_of_bounds(self):
-        """
-        ASPICE Test: Error handling - index out of bounds.
-        
-        Expected: IndexError raised
-        """
-        context = ['Bưởi', 'tươi']
-        
-        with self.assertRaises(IndexError):
-            extract_features('word', context, 5)
-        
-        logger.info("✓ Out of bounds error handling test passed")
-    
+    """Unit tests for RecipeProcessor utilities."""
+
     def test_normalize_quantity_default_value(self):
-        """
-        ASPICE Test: Default quantity to "1" when missing.
-        
-        Expected: qty="1" when empty string provided
-        """
         qty, unit = normalize_quantity("", "trái")
         self.assertEqual(qty, "1")
         self.assertEqual(unit, "trái")
-        logger.info(f"✓ Default quantity test passed: ({qty}, {unit})")
-    
+
     def test_normalize_quantity_unit_normalization(self):
-        """
-        ASPICE Test: Unit normalization (ki-lô → kg).
-        
-        Expected: Units mapped to standard forms
-        """
         qty, unit = normalize_quantity("2", "ki-lô")
         self.assertEqual(qty, "2")
         self.assertEqual(unit, "kg")
-        
+
         qty, unit = normalize_quantity("500", "gram")
         self.assertEqual(qty, "500")
         self.assertEqual(unit, "g")
-        
-        logger.info("✓ Unit normalization test passed")
-    
+
     def test_normalize_quantity_vietnamese_numbers(self):
-        """
-        ASPICE Test: Convert Vietnamese text numbers (một, hai, ba).
-        
-        Expected: Vietnamese text converted to numerics
-        """
         qty, unit = normalize_quantity("một", "muỗng")
         self.assertEqual(qty, "1")
-        
+
         qty, unit = normalize_quantity("hai", "")
         self.assertEqual(qty, "2")
-        
-        qty, unit = normalize_quantity("ba", "trái")
-        self.assertEqual(qty, "3")
-        
-        logger.info("✓ Vietnamese number conversion test passed")
-    
+
     def test_detect_quantity_unit_with_pattern(self):
-        """
-        ASPICE Test: Detect quantity and unit from ingredient string.
-        
-        Expected: Correct extraction of numeric quantity and unit
-        """
         qty, unit = detect_quantity_unit("2 kg thịt lợn")
         self.assertEqual(qty, "2")
         self.assertEqual(unit, "kg")
-        
+
         qty, unit = detect_quantity_unit("1 muỗng dầu ăn")
         self.assertEqual(qty, "1")
         self.assertEqual(unit, "muỗng")
-        
-        logger.info("✓ Quantity/unit detection test passed")
-    
+
     def test_detect_quantity_unit_no_pattern(self):
-        """
-        ASPICE Test: Handle ingredient without quantity.
-        
-        Expected: (None, None) returned
-        """
         qty, unit = detect_quantity_unit("cà rốt tươi")
         self.assertIsNone(qty)
         self.assertIsNone(unit)
-        
-        logger.info("✓ No pattern detection test passed")
-    
+
     def test_remove_special_characters(self):
-        """
-        ASPICE Test: Remove trademark/special symbols.
-        
-        Expected: Special characters removed, text preserved
-        """
         text = 'Bưởi® "tươi" ™'
         result = remove_special_characters(text)
-        
         self.assertNotIn('®', result)
         self.assertNotIn('™', result)
         self.assertNotIn('"', result)
-        logger.info(f"✓ Special character removal test passed: '{result}'")
+
+    def test_parse_ingredient_string_standard(self):
+        result = parse_ingredient_string("Bưởi : 1 trái")
+        self.assertEqual(result, {"ingredient": "Bưởi", "quantity": "1 trái"})
+
+    def test_parse_ingredient_string_fallback(self):
+        result = parse_ingredient_string("Muối")
+        self.assertEqual(result, {"ingredient": "Muối", "quantity": "1"})
 
 
-# ==============================================================================
-# BIO Tagging Schema Tests
-# ==============================================================================
+class TestRecipeAnalyzerInit(unittest.TestCase):
+    """Test RecipeAnalyzerEngine initialization."""
 
-class TestBIOTagSchema(unittest.TestCase):
-    """
-    Test BIO tagging constants.
-    """
-    
-    def test_bio_tag_schema_constants(self):
-        """
-        ASPICE Test: Verify BIO tag schema constants.
-        
-        Expected: All required tags defined
-        """
-        schema = BIOTagSchema()
-        
-        self.assertEqual(schema.O, "O")
-        self.assertEqual(schema.B_ING, "B-ING")
-        self.assertEqual(schema.I_ING, "I-ING")
-        self.assertEqual(schema.B_QTY, "B-QTY")
-        self.assertEqual(schema.I_QTY, "I-QTY")
-        
-        logger.info("✓ BIO schema constants test passed")
+    def test_engine_init_empty_db_path(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            engine = RecipeAnalyzerEngine(recipe_db_path=temp_dir)
+            self.assertEqual(len(engine.recipe_names), 0)
+        finally:
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    def test_engine_init_invalid_path(self):
+        engine = RecipeAnalyzerEngine(recipe_db_path="/nonexistent/path/recipes")
+        self.assertEqual(len(engine.recipe_names), 0)
+        self.assertEqual(len(engine.recipe_db), 0)
+
+    def test_engine_init_with_recipes(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            TestRecipeDatabase.create_test_recipes(temp_dir)
+            engine = RecipeAnalyzerEngine(recipe_db_path=temp_dir)
+            self.assertGreater(len(engine.recipe_names), 0)
+        finally:
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    def test_get_available_recipes(self):
+        temp_dir = tempfile.mkdtemp()
+        try:
+            TestRecipeDatabase.create_test_recipes(temp_dir)
+            engine = RecipeAnalyzerEngine(recipe_db_path=temp_dir)
+            recipes = engine.get_available_recipes()
+            self.assertEqual(len(recipes), 2)
+        finally:
+            import shutil
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
-# ==============================================================================
-# Integration Tests
-# ==============================================================================
+class TestEngineWithRealData(unittest.TestCase):
+    """Integration tests using real recipe dataset."""
 
-class TestRecipeAnalyzerIntegration(unittest.TestCase):
-    """
-    Integration tests for RecipeAnalyzerAPI.
-    """
-    
-    def setUp(self):
-        """Set up test fixtures using the production dataset."""
-        self.recipe_db_path = RECIPE_DB_PATH
-    
-    @unittest.skipIf(
-        not Path(MODEL_PATH).exists(),
-        f"Model file not found at {MODEL_PATH}"
-    )
     @unittest.skipIf(
         not Path(RECIPE_DB_PATH).exists() or not list(Path(RECIPE_DB_PATH).glob("*.json")),
         f"Recipe dataset not found at {RECIPE_DB_PATH}"
     )
-    def test_fss_request_generation_with_real_data(self):
-        """
-        ASPICE Test: End-to-end FSS-Request generation using real dataset.
-        
-        Expected: Valid FSS-Request JSON returned for a known recipe
-        """
-        engine = RecipeAnalyzerEngine(
-            model_path=MODEL_PATH,
-            recipe_db_path=self.recipe_db_path
-        )
-        
-        # Pick a recipe that exists in the real dataset
+    def test_fss_request_with_real_data(self):
+        engine = RecipeAnalyzerEngine(recipe_db_path=RECIPE_DB_PATH)
         known_recipe = None
         for name in engine.recipe_names:
-            if "trứng" in name or "thịt" in name or "gà" in name or "cá" in name:
+            if "trứng" in name or "thịt" in name:
                 known_recipe = name
                 break
         if not known_recipe and engine.recipe_names:
             known_recipe = engine.recipe_names[0]
-        
+
         self.assertIsNotNone(known_recipe, "No recipes loaded from dataset")
-        
         result = engine.generate_fss_request(known_recipe)
-        
-        self.assertIn('status', result)
-        self.assertIn('dish', result)
-        self.assertEqual(result['status'], 'SUCCESS',
-                         f"Recipe '{known_recipe}' should exist in dataset")
-        
-        logger.info(f"✓ Real-data FSS-Request test passed: '{known_recipe}' → {result['status']}")
-    
-    @unittest.skipIf(
-        not Path(MODEL_PATH).exists(),
-        f"Model file not found at {MODEL_PATH}"
-    )
-    def test_fss_request_generation_with_temp_data(self):
-        """
-        ASPICE Test: End-to-end FSS-Request generation using synthetic test recipes.
-        
-        Expected: Valid FSS-Request JSON returned
-        """
-        temp_dir = tempfile.mkdtemp()
-        try:
-            TestRecipeDatabase.create_test_recipes(temp_dir)
-            engine = RecipeAnalyzerEngine(
-                model_path=MODEL_PATH,
-                recipe_db_path=temp_dir
-            )
-            
-            result = engine.generate_fss_request("Gỏi Trộn Khô Mực")
-            
-            self.assertIn('status', result)
-            self.assertIn('dish', result)
-            self.assertIn(result['status'], ['SUCCESS', 'NOT_FOUND', 'ERROR'])
-            
-            logger.info(f"✓ Temp-data FSS-Request test passed: {result['status']}")
-        finally:
-            import shutil
-            shutil.rmtree(temp_dir, ignore_errors=True)
-    
-    @unittest.skipIf(
-        not Path(MODEL_PATH).exists(),
-        f"Model file not found at {MODEL_PATH}"
-    )
-    def test_recipe_suggestion(self):
-        """
-        ASPICE Test: Fuzzy recipe matching for misspellings.
-        
-        Expected: Suggestions returned for unknown recipe
-        """
-        engine = RecipeAnalyzerEngine(
-            model_path=MODEL_PATH,
-            recipe_db_path=self.recipe_db_path
-        )
-        
-        result = engine.generate_fss_request("Trứng Chín")  # Misspelling
-        
-        if result['status'] == 'NOT_FOUND':
-            self.assertIn('suggestions', result)
-            logger.info(f"✓ Recipe suggestion test passed: {result['suggestions']}")
+        self.assertEqual(result['status'], 'SUCCESS')
+        self.assertIn('original_ingredients', result)
 
+    @unittest.skipIf(
+        not Path(RECIPE_DB_PATH).exists() or not list(Path(RECIPE_DB_PATH).glob("*.json")),
+        f"Recipe dataset not found at {RECIPE_DB_PATH}"
+    )
+    def test_filter_and_parse_with_real_data(self):
+        engine = RecipeAnalyzerEngine(recipe_db_path=RECIPE_DB_PATH)
+        if engine.recipe_names:
+            recipe = engine.recipe_names[0]
+            result = engine.generate_fss_request(recipe)
+            self.assertEqual(result["status"], "SUCCESS")
+            self.assertGreater(len(result["original_ingredients"]), 0)
 
-# ==============================================================================
-# Main Test Runner
-# ==============================================================================
 
 if __name__ == '__main__':
-    # Create test suite
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
-    
-    # Add all test classes
-    suite.addTests(loader.loadTestsFromTestCase(TestRecipeAnalyzerEngineInitialization))
+    suite.addTests(loader.loadTestsFromTestCase(TestRecipeFilter))
+    suite.addTests(loader.loadTestsFromTestCase(TestIngredientParser))
+    suite.addTests(loader.loadTestsFromTestCase(TestRecipeSorter))
+    suite.addTests(loader.loadTestsFromTestCase(TestFullRecipeOutput))
+    suite.addTests(loader.loadTestsFromTestCase(TestRecipeSuggestions))
     suite.addTests(loader.loadTestsFromTestCase(TestRecipeProcessor))
-    suite.addTests(loader.loadTestsFromTestCase(TestBIOTagSchema))
-    suite.addTests(loader.loadTestsFromTestCase(TestRecipeAnalyzerIntegration))
-    
-    # Run tests with verbosity
+    suite.addTests(loader.loadTestsFromTestCase(TestRecipeAnalyzerInit))
+    suite.addTests(loader.loadTestsFromTestCase(TestEngineWithRealData))
+
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
-    
-    # Exit with appropriate code
     sys.exit(0 if result.wasSuccessful() else 1)
-
-

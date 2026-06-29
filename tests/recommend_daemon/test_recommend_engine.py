@@ -8,7 +8,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 from typing import Optional
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "recommend_daemon" / "src"))
 
 from RecommendDbManager import RecommendDbManager
 from RecommendEngine import RecommendEngine
@@ -33,7 +33,7 @@ class TestRecommendDbManager(unittest.TestCase):
         return self.db_mgr.insert_recommendation(
             recipe_name="Gỏi Trộn Khô Mực",
             batch_id="test-batch-001",
-            nlp_status="SUCCESS",
+            analysis_status="SUCCESS",
             total_items=5,
             available_count=2,
             needed_count=1,
@@ -61,7 +61,7 @@ class TestRecommendDbManager(unittest.TestCase):
         self.assertIn("id", columns)
         self.assertIn("recipe_name", columns)
         self.assertIn("batch_id", columns)
-        self.assertIn("nlp_status", columns)
+        self.assertIn("analysis_status", columns)
         self.assertIn("total_items", columns)
         self.assertIn("available_count", columns)
         self.assertIn("needed_count", columns)
@@ -89,7 +89,7 @@ class TestRecommendDbManager(unittest.TestCase):
         mgr = RecommendDbManager(db_dir=self.temp_dir)
         result = mgr.insert_recommendation(
             recipe_name="test", batch_id="b1",
-            nlp_status="ERROR", total_items=0,
+            analysis_status="ERROR", total_items=0,
             available_count=0, needed_count=0,
             missing_count=0, result_json="{}"
         )
@@ -174,7 +174,7 @@ class TestRecommendDbManager(unittest.TestCase):
         rec = self.db_mgr.get_recommendation("test-batch-001")
         self.assertIsNotNone(rec)
         self.assertEqual(rec["recipe_name"], "Gỏi Trộn Khô Mực")
-        self.assertEqual(rec["nlp_status"], "SUCCESS")
+        self.assertEqual(rec["analysis_status"], "SUCCESS")
         self.assertEqual(rec["total_items"], 5)
         self.assertEqual(rec["available_count"], 2)
         self.assertEqual(rec["missing_count"], 2)
@@ -208,20 +208,29 @@ class TestRecommendEngine(unittest.TestCase):
         self.mock_nlp.generate_fss_request.return_value = {
             "status": "SUCCESS",
             "dish": "gỏi trộn khô mực",
-            "ingredients": [
-                {"ingredient": "Bưởi", "quantity": "1"},
-                {"ingredient": "Mực khô", "quantity": "1"},
-                {"ingredient": "Cà rốt", "quantity": "2"},
-                {"ingredient": "Tắc", "quantity": "3"},
-                {"ingredient": "Đậu phộng", "quantity": "1"}
-            ]
+            "original_ingredients": [
+                "Bưởi : 1 trái",
+                "Mực khô : 1 con",
+                "Cà rốt : 2 củ",
+                "Tắc : 3 trái",
+                "Đậu phộng : 1 gói",
+            ],
+            "original_spices": [],
+            "serving": "4 người",
+            "times": "45 phút",
+            "difficulty": "Dễ",
+            "process": [],
+            "cook": "",
+            "usage": "",
+            "tips": "",
+            "processing_time_ms": 0.35
         }
         self.mock_nlp.get_available_recipes.return_value = [
             "gỏi trộn khô mực", "phở bò", "bún chả"
         ]
 
         self.engine = RecommendEngine(
-            nlp_engine=self.mock_nlp,
+            analyzer_engine=self.mock_nlp,
             db_manager=self.db_mgr
         )
 
@@ -301,14 +310,14 @@ class TestRecommendEngine(unittest.TestCase):
         self.assertEqual(result["status"], "ERROR")
 
     def test_generate_shopping_list_no_engine(self):
-        engine = RecommendEngine(nlp_engine=None)
+        engine = RecommendEngine(analyzer_engine=None)
         result = engine.generate_shopping_list(
             recipe_name="Test",
             batch_id="test-006",
             inventory=[]
         )
         self.assertEqual(result["status"], "ERROR")
-        self.assertIn("NLP engine not initialized", result["error"])
+        self.assertIn("Analyzer engine not initialized", result["error"])
 
     def test_generate_shopping_list_auto_batch_id(self):
         inventory = [
@@ -328,7 +337,7 @@ class TestRecommendEngine(unittest.TestCase):
         self.assertIn("phở bò", recipes)
 
     def test_get_available_recipes_no_engine(self):
-        engine = RecommendEngine(nlp_engine=None)
+        engine = RecommendEngine(analyzer_engine=None)
         recipes = engine.get_available_recipes()
         self.assertEqual(recipes, [])
 
@@ -342,7 +351,7 @@ class TestRecommendEngine(unittest.TestCase):
         self.assertEqual(len(items), 5)
 
     def test_get_shopping_list_no_db(self):
-        engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        engine = RecommendEngine(analyzer_engine=self.mock_nlp)
         result = engine.get_shopping_list("test-008")
         self.assertEqual(result, [])
 
@@ -359,7 +368,7 @@ class TestRecommendEngine(unittest.TestCase):
         self.assertTrue(result)
 
     def test_mark_item_purchased_no_db(self):
-        engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        engine = RecommendEngine(analyzer_engine=self.mock_nlp)
         result = engine.mark_item_purchased(1)
         self.assertFalse(result)
 
@@ -403,10 +412,10 @@ class TestRecommendEngine(unittest.TestCase):
         self.assertEqual(self.engine._parse_quantity(""), 1)
         self.assertEqual(self.engine._parse_quantity(None), 1)
 
-    def test_set_nlp_engine(self):
+    def test_set_analyzer_engine(self):
         new_mock = MagicMock()
-        self.engine.set_nlp_engine(new_mock)
-        self.assertIs(self.engine.nlp_engine, new_mock)
+        self.engine.set_analyzer_engine(new_mock)
+        self.assertIs(self.engine.analyzer_engine, new_mock)
 
     def test_set_db_manager(self):
         new_mgr = MagicMock()
@@ -437,10 +446,19 @@ class TestDbDbusInteraction(unittest.TestCase):
         self.mock_nlp.generate_fss_request.return_value = {
             "status": "SUCCESS",
             "dish": "phở bò",
-            "ingredients": [
-                {"ingredient": "Thịt bò", "quantity": "1"},
-                {"ingredient": "Bánh phở", "quantity": "1"},
-            ]
+            "original_ingredients": [
+                "Thịt bò : 1 kg",
+                "Bánh phở : 1 gói",
+            ],
+            "original_spices": [],
+            "serving": "2 người",
+            "times": "30 phút",
+            "difficulty": "Dễ",
+            "process": [],
+            "cook": "",
+            "usage": "",
+            "tips": "",
+            "processing_time_ms": 0.42
         }
 
     def tearDown(self):
@@ -450,7 +468,7 @@ class TestDbDbusInteraction(unittest.TestCase):
 
     def test_engine_prefers_provided_inventory(self):
         engine = RecommendEngine(
-            nlp_engine=self.mock_nlp,
+            analyzer_engine=self.mock_nlp,
             db_manager=self.db_mgr
         )
         inventory = [
@@ -467,7 +485,7 @@ class TestDbDbusInteraction(unittest.TestCase):
 
     def test_empty_inventory_list(self):
         engine = RecommendEngine(
-            nlp_engine=self.mock_nlp,
+            analyzer_engine=self.mock_nlp,
             db_manager=self.db_mgr
         )
         result = engine.generate_shopping_list(
@@ -479,7 +497,7 @@ class TestDbDbusInteraction(unittest.TestCase):
 
     def test_partial_inventory_units(self):
         engine = RecommendEngine(
-            nlp_engine=self.mock_nlp,
+            analyzer_engine=self.mock_nlp,
             db_manager=self.db_mgr
         )
         inventory = [

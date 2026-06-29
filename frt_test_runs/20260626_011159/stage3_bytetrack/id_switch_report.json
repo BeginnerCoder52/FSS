@@ -1,0 +1,91 @@
+{
+  "stage": "stage3_bytetrack",
+  "note": "No ground truth is available; id_switch_candidates are high-IoU adjacent-frame track-id changes.",
+  "lost_event_count": 20,
+  "lost_events": [
+    {
+      "track_id": 1,
+      "frame_id": 12
+    },
+    {
+      "track_id": 2,
+      "frame_id": 32
+    },
+    {
+      "track_id": 1,
+      "frame_id": 42
+    },
+    {
+      "track_id": 3,
+      "frame_id": 44
+    },
+    {
+      "track_id": 3,
+      "frame_id": 50
+    },
+    {
+      "track_id": 1,
+      "frame_id": 51
+    },
+    {
+      "track_id": 4,
+      "frame_id": 79
+    },
+    {
+      "track_id": 5,
+      "frame_id": 90
+    },
+    {
+      "track_id": 6,
+      "frame_id": 97
+    },
+    {
+      "track_id": 7,
+      "frame_id": 99
+    },
+    {
+      "track_id": 8,
+      "frame_id": 114
+    },
+    {
+      "track_id": 8,
+      "frame_id": 116
+    },
+    {
+      "track_id": 7,
+      "frame_id": 118
+    },
+    {
+      "track_id": 7,
+      "frame_id": 120
+    },
+    {
+      "track_id": 7,
+      "frame_id": 122
+    },
+    {
+      "track_id": 9,
+      "frame_id": 129
+    },
+    {
+      "track_id": 5,
+      "frame_id": 138
+    },
+    {
+      "track_id": 7,
+      "frame_id": 141
+    },
+    {
+      "track_id": 10,
+      "frame_id": 148
+    },
+    {
+      "track_id": 9,
+      "frame_id": 150
+    }
+  ],
+  "class_change_count": 0,
+  "class_changes": [],
+  "id_switch_candidate_count": 0,
+  "id_switch_candidates": []
+}

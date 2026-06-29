@@ -1,0 +1,2 @@
+event_id,frame_id,track_id,class_id,food_name,direction,event_type,delta,line_type,line_pos_norm,cx_norm,cy_norm
+1,41,5,0,apple,OUT,CHECK_OUT,-1,horizontal,0.66000000,0.43645884,0.63639783

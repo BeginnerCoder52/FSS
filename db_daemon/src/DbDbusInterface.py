@@ -589,7 +589,7 @@ if SDBUS_AVAILABLE:
         def set_interface_instance(self, instance: DbDbusInterface):
             self._interface_instance = instance
 
-        @dbus_method_async('', 'as')
+        @dbus_method_async('', 'as', flags=sdbus.DbusUnprivilegedFlag)
         async def GetMissingIngredients(self) -> List[str]:
             """
             D-Bus Method: Compare inventory vs request and return missing items.
@@ -607,7 +607,7 @@ if SDBUS_AVAILABLE:
         # Phase 3: Pure Database D-Bus Methods
         # ---------------------------------------------------------------------
 
-        @dbus_method_async('', 's')
+        @dbus_method_async('', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GetInventory(self) -> str:
             """
             D-Bus Method: Get all current inventory items.
@@ -622,7 +622,7 @@ if SDBUS_AVAILABLE:
                     return json.dumps({"status": "error", "message": str(e)})
             return json.dumps({"status": "error", "message": "Inventory callback not set"})
 
-        @dbus_method_async('', 's')
+        @dbus_method_async('', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GetRequests(self) -> str:
             """
             D-Bus Method: Get all recipe requests.
@@ -637,7 +637,7 @@ if SDBUS_AVAILABLE:
                     return json.dumps({"status": "error", "message": str(e)})
             return json.dumps({"status": "error", "message": "Requests callback not set"})
 
-        @dbus_method_async('sss', 'b')
+        @dbus_method_async('sss', 'b', flags=sdbus.DbusUnprivilegedFlag)
         async def InsertRequest(self, recipe_name: str, ingredients_json: str,
                                  batch_id: str) -> bool:
             """
@@ -659,7 +659,7 @@ if SDBUS_AVAILABLE:
                     return False
             return False
 
-        @dbus_method_async('s', 'b')
+        @dbus_method_async('s', 'b', flags=sdbus.DbusUnprivilegedFlag)
         async def ClearRequest(self, batch_id: str) -> bool:
             """
             D-Bus Method: Clear all ingredients from a recipe request batch.
@@ -675,7 +675,7 @@ if SDBUS_AVAILABLE:
                     return False
             return False
 
-        @dbus_method_async('s', 's')
+        @dbus_method_async('s', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GetRequestList(self, recipe_name: str) -> str:
             """
             D-Bus Method: Get recipe requests filtered by recipe name.
@@ -727,7 +727,7 @@ if SDBUS_AVAILABLE:
             """Signal: Unknown food detected, ask user to name it."""
             pass
 
-        @dbus_method_async('ss', 'b')
+        @dbus_method_async('ss', 'b', flags=sdbus.DbusUnprivilegedFlag)
         async def RegisterCustomFood(self, food_name: str, image_path: str) -> bool:
             """Method: Register a user-named custom food."""
             if self._interface_instance and self._interface_instance._register_custom_food_callback:
@@ -738,7 +738,7 @@ if SDBUS_AVAILABLE:
                     return False
             return False
 
-        @dbus_method_async('', 's')
+        @dbus_method_async('', 's', flags=sdbus.DbusUnprivilegedFlag)
         async def GetCustomFoods(self) -> str:
             """Method: Get all previously registered custom foods (JSON)."""
             if self._interface_instance and self._interface_instance._get_custom_foods_callback:

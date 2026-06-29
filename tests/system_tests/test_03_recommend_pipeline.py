@@ -61,7 +61,7 @@ def test_recommend_generate_shopping_list():
         
         assert "string" in result.stdout
         
-        # Give RecommendDaemon a moment to process the NLP and DB insertion
+        # Give RecommendDaemon a moment to process the Analyzer and DB insertion
         time.sleep(2.0)
         
         # Verify it was inserted into the database

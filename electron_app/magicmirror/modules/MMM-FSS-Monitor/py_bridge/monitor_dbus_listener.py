@@ -48,7 +48,8 @@ def get_dbus_config():
 dbus_config = get_dbus_config()
 
 try:
-    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async
+    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
+    set_default_bus(sd_bus_open_system())
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -116,7 +117,7 @@ class MonitorListener:
     def query_latest_sensors_from_db(self) -> Tuple[Optional[float], Optional[bool], Optional[str]]:
         """Query SQLite database for latest distance and door readings."""
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=5.0)
+            conn = sqlite3.connect(f"file:{DB_PATH}?immutable=1", uri=True, timeout=5.0)
             cursor = conn.cursor()
             
             # Query latest distance reading
@@ -326,6 +327,30 @@ class MonitorListener:
             logger.debug("Raw distance listener task cancelled")
         except Exception as e:
             logger.error(f"Error in raw distance listener: {e}")
+
+    async def _listen_sensor_door(self):
+        """Listen for raw door state changes from sensor_daemon."""
+        if not self.sensor_proxy:
+            return
+            
+        try:
+            async for door_state in self.sensor_proxy.DoorStateChanged:
+                try:
+                    self.last_db_update_time = time.time()
+                    data = {
+                        "type": "DOOR_STATE_UPDATE",
+                        "doorState": str(door_state),
+                        "source": "raw_sensor",
+                        "timestamp": int(time.time() * 1000),
+                    }
+                    print(json.dumps(data), flush=True)
+                    logger.debug(f"Raw door state: {door_state}")
+                except Exception as e:
+                    logger.error(f"Error processing raw door state: {e}")
+        except asyncio.CancelledError:
+            logger.debug("Raw door listener task cancelled")
+        except Exception as e:
+            logger.error(f"Error in raw door listener: {e}")
 
     async def _listen_user_presence(self):
         """Listen for user presence detection (boolean) from sensor daemon."""

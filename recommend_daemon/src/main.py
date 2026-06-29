@@ -16,9 +16,7 @@ FSS_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if FSS_ROOT not in sys.path:
     sys.path.insert(0, FSS_ROOT)
 
-NLP_MODEL_PATH = os.path.join(FSS_ROOT, "recipe_extractor", "models",
-                              "fss_ner_crf_optimized.joblib")
-NLP_RECIPE_DB_PATH = os.path.join(FSS_ROOT, "recipe_extractor", "data", "recipes")
+RECIPE_DB_PATH = os.path.join(FSS_ROOT, "recipe_extractor", "data", "recipes")
 DB_DIR = "/opt/fss/data"
 
 
@@ -59,20 +57,19 @@ def setup_logging(log_dir: str = "/var/log/fss") -> None:
               f"File logging disabled.")
 
 
-def _lazy_load_nlp_engine():
+def _lazy_load_analyzer_engine():
     try:
         from recipe_extractor.src.RecipeAnalyzerAPI import RecipeAnalyzerEngine
         engine = RecipeAnalyzerEngine(
-            model_path=NLP_MODEL_PATH,
-            recipe_db_path=NLP_RECIPE_DB_PATH
+            recipe_db_path=RECIPE_DB_PATH
         )
         logging.getLogger("RecommendDaemonMain").info(
-            "NLP engine loaded lazily on first recipe analysis"
+            "Recipe analyzer loaded lazily on first recipe analysis"
         )
         return engine
     except Exception as e:
         logging.getLogger("RecommendDaemonMain").error(
-            f"Failed to load NLP engine: {e}"
+            f"Failed to load Recipe analyzer: {e}"
         )
         return None
 
@@ -80,8 +77,8 @@ def _lazy_load_nlp_engine():
 class RecommendDaemonMain:
     def __init__(self):
         self.is_running = False
-        self._nlp_engine = None
-        self._nlp_loaded = False
+        self._analyzer_engine = None
+        self._analyzer_loaded = False
 
         self.engine = RecommendEngine()
         self.db_manager = RecommendDbManager(db_dir=DB_DIR)
@@ -126,7 +123,7 @@ class RecommendDaemonMain:
             )
             self.logger.info("D-Bus interface initialized")
 
-            self.logger.info("NLP engine will be loaded lazily on first request")
+            self.logger.info("Recipe analyzer will be loaded lazily on first request")
             self.logger.info("=" * 70)
             self.logger.info("RecommendDaemon initialization completed")
             self.logger.info("=" * 70)
@@ -167,13 +164,13 @@ class RecommendDaemonMain:
         except Exception as e:
             self.logger.error(f"Error during shutdown: {e}")
 
-    def _ensure_nlp_engine(self) -> bool:
-        if not self._nlp_loaded:
-            self._nlp_engine = _lazy_load_nlp_engine()
-            self._nlp_loaded = True
-            if self._nlp_engine:
-                self.engine.set_nlp_engine(self._nlp_engine)
-        return self._nlp_engine is not None
+    def _ensure_analyzer_engine(self) -> bool:
+        if not self._analyzer_loaded:
+            self._analyzer_engine = _lazy_load_analyzer_engine()
+            self._analyzer_loaded = True
+            if self._analyzer_engine:
+                self.engine.set_analyzer_engine(self._analyzer_engine)
+        return self._analyzer_engine is not None
 
     def _get_inventory_from_dbd(self) -> list:
         try:
@@ -199,10 +196,10 @@ class RecommendDaemonMain:
             f"GenerateShoppingList called: recipe='{recipe_name}', "
             f"batch_id='{batch_id}'"
         )
-        if not self._ensure_nlp_engine():
+        if not self._ensure_analyzer_engine():
             return {
                 "status": "ERROR",
-                "error": "NLP engine failed to initialize"
+                "error": "Recipe analyzer failed to initialize"
             }
 
         inventory = self._get_inventory_from_dbd()
@@ -229,7 +226,7 @@ class RecommendDaemonMain:
 
     def _handle_get_available_recipes(self) -> list:
         self.logger.info("GetAvailableRecipes called")
-        self._ensure_nlp_engine()
+        self._ensure_analyzer_engine()
         return self.engine.get_available_recipes()
 
     def _handle_get_shopping_list(self, batch_id: str) -> list:

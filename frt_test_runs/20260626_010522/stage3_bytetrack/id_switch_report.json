@@ -1,0 +1,59 @@
+{
+  "stage": "stage3_bytetrack",
+  "note": "No ground truth is available; id_switch_candidates are high-IoU adjacent-frame track-id changes.",
+  "lost_event_count": 12,
+  "lost_events": [
+    {
+      "track_id": 1,
+      "frame_id": 12
+    },
+    {
+      "track_id": 2,
+      "frame_id": 43
+    },
+    {
+      "track_id": 3,
+      "frame_id": 83
+    },
+    {
+      "track_id": 2,
+      "frame_id": 89
+    },
+    {
+      "track_id": 2,
+      "frame_id": 94
+    },
+    {
+      "track_id": 4,
+      "frame_id": 96
+    },
+    {
+      "track_id": 5,
+      "frame_id": 97
+    },
+    {
+      "track_id": 6,
+      "frame_id": 118
+    },
+    {
+      "track_id": 7,
+      "frame_id": 129
+    },
+    {
+      "track_id": 6,
+      "frame_id": 153
+    },
+    {
+      "track_id": 6,
+      "frame_id": 200
+    },
+    {
+      "track_id": 8,
+      "frame_id": 209
+    }
+  ],
+  "class_change_count": 0,
+  "class_changes": [],
+  "id_switch_candidate_count": 0,
+  "id_switch_candidates": []
+}

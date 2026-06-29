@@ -19,6 +19,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../..', 'db_daemon/src'))
 
+
+
 from DbDbusInterface import DbDbusInterface
 
 
@@ -126,7 +128,7 @@ class TestDBusServiceSetup:
         interface = DbDbusInterface()
         
         with patch('DbDbusInterface.SDBUS_AVAILABLE', True):
-            with patch('DbDbusInterface.sdbus.get_system_bus', 
+            with patch('DbDbusInterface.sdbus.sd_bus_open_system', 
                       side_effect=Exception("D-Bus not available")):
                 result = interface.setup_bus_service()
         
@@ -244,7 +246,7 @@ class TestSignalEmission:
         interface.is_connected = False
         
         with patch.object(interface.logger, 'warning') as mock_warn:
-            interface.emit_ui_update_signal("apple", 5, "/path/img.jpg")
+            interface.emit_ui_update_signal("apple", 5, "/path/img.jpg", 1)
             mock_warn.assert_called_with(
                 "Cannot emit signal: D-Bus not connected"
             )
@@ -278,9 +280,9 @@ class TestSignalEmission:
         mock_dbus_object = MagicMock()
         interface.dbus_object = mock_dbus_object
         
-        interface.emit_ui_update_signal("apple", 5, "/path/img.jpg")
-        
-        interface._loop.is_running.assert_called_once()
+        with patch('DbDbusInterface.asyncio.run_coroutine_threadsafe') as mock_run:
+            interface.emit_ui_update_signal("apple", 5, "/path/img.jpg", 1)
+            mock_run.assert_called_once()
 
     def test_emit_environment_update_signal_queues_when_connected(self):
         """
@@ -296,9 +298,9 @@ class TestSignalEmission:
         mock_dbus_object = MagicMock()
         interface.dbus_object = mock_dbus_object
         
-        interface.emit_environment_update_signal(22.5, 60.0)
-        
-        interface._loop.is_running.assert_called_once()
+        with patch('DbDbusInterface.asyncio.run_coroutine_threadsafe') as mock_run:
+            interface.emit_environment_update_signal(22.5, 60.0)
+            mock_run.assert_called_once()
 
 
 # ============================================================================
@@ -317,7 +319,7 @@ class TestErrorHandling:
         interface = DbDbusInterface()
         
         with patch('DbDbusInterface.SDBUS_AVAILABLE', True):
-            with patch('DbDbusInterface.sdbus.get_system_bus', 
+            with patch('DbDbusInterface.sdbus.sd_bus_open_system', 
                       side_effect=PermissionError("No access to system bus")):
                 result = interface.setup_bus_service()
         
@@ -347,8 +349,8 @@ class TestErrorHandling:
         interface.is_connected = False
         
         # Should not crash with various data types
-        interface.emit_ui_update_signal("", 0, "")
-        interface.emit_ui_update_signal(None, None, None)
+        interface.emit_ui_update_signal("", 0, "", 0)
+        interface.emit_ui_update_signal(None, None, None, None)
         
         assert True
 
@@ -399,7 +401,7 @@ class TestStateManagement:
         # Perform various operations
         interface.listen_frt_pipeline_events(MagicMock())
         interface.listen_sensor_dbus_events(MagicMock())
-        interface.emit_ui_update_signal("test", 1, "")
+        interface.emit_ui_update_signal("test", 1, "", 1)
         
         # State should not change unexpectedly
         # (unless setup was called)
@@ -499,7 +501,7 @@ class TestDbDbusInterfaceIntegration:
         
         # Try to emit signals (should not crash)
         interface.is_connected = False
-        interface.emit_ui_update_signal("apple", 5, "/path/img.jpg")
+        interface.emit_ui_update_signal("apple", 5, "/path/img.jpg", 1)
         interface.emit_environment_update_signal(22.5, 60.0)
         
         assert True

@@ -1,0 +1,82 @@
+{
+  "stage": "stage2_yolo",
+  "image_dir": "annotated/apple-annotated/test/images",
+  "selected_frames_dir": "annotated/apple-annotated/test/images",
+  "output_dir": "/tmp/stage2_eval",
+  "started_at": "2026-06-25T15:10:31.431300Z",
+  "finished_at": "2026-06-25T15:11:32.191015Z",
+  "elapsed_sec": 60.75,
+  "model_path": "/home/richardmelvin52/FSS/frt_app/py_ai_core/models/YOLOv11n/YOLOv11n_260518_best_int8.tflite",
+  "runtime_preference": "ai_edge_litert",
+  "runtime_used": "ai_edge_litert",
+  "runtime_attempts": [
+    {
+      "runtime": "ai_edge_litert",
+      "ok": true
+    }
+  ],
+  "fallback_runtime_used": false,
+  "confidence_threshold": 0.2,
+  "labels_dir": "annotated/apple-annotated/test/labels",
+  "eval_iou_threshold": 0.5,
+  "evaluation": {
+    "iou_threshold": 0.5,
+    "frames_evaluated": 100,
+    "ground_truth_count": 94,
+    "prediction_count": 117,
+    "tp": 44,
+    "fp": 73,
+    "fn": 50,
+    "precision": 0.37606837606837606,
+    "recall": 0.46808510638297873,
+    "f1": 0.41706161137440756,
+    "detection_accuracy": 0.2634730538922156,
+    "mean_iou": 0.920772285664254
+  },
+  "frames_seen": 100,
+  "frames_processed": 100,
+  "total_detections": 117,
+  "latency_ms": {
+    "total_avg": 589.92926,
+    "total_min": 483.825,
+    "total_max": 710.109,
+    "inference_avg": 575.5694
+  },
+  "engine_details": {
+    "input_details": [
+      {
+        "name": "images",
+        "index": "0",
+        "shape": "[  1 640 640   3]",
+        "shape_signature": "[  1 640 640   3]",
+        "dtype": "<class 'numpy.float32'>",
+        "quantization": "(0.0, 0)",
+        "quantization_parameters": "{'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0, 'block_size': 0}",
+        "sparsity_parameters": "{}"
+      }
+    ],
+    "output_details": [
+      {
+        "name": "Identity",
+        "index": "559",
+        "shape": "[   1    9 8400]",
+        "shape_signature": "[   1    9 8400]",
+        "dtype": "<class 'numpy.float32'>",
+        "quantization": "(0.0, 0)",
+        "quantization_parameters": "{'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0, 'block_size': 0}",
+        "sparsity_parameters": "{}"
+      }
+    ]
+  },
+  "outputs": {
+    "annotated": "/tmp/stage2_eval/annotated",
+    "raw_outputs": "/tmp/stage2_eval/raw_outputs",
+    "detections_json": "/tmp/stage2_eval/detections.json",
+    "detections_csv": "/tmp/stage2_eval/detections.csv",
+    "latency_csv": "/tmp/stage2_eval/latency.csv",
+    "eval_summary_json": "/tmp/stage2_eval/eval_summary.json",
+    "eval_matches_csv": "/tmp/stage2_eval/eval_matches.csv",
+    "model_summary_json": "/tmp/stage2_eval/model_summary.json"
+  },
+  "raw_output_file_count": 100
+}
