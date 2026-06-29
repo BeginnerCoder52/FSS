@@ -513,11 +513,23 @@ class DbDbusInterface:
     def _handle_food_detected(self, json_data: str) -> None:
         try:
             data = json.loads(json_data)
-            food_id = data.get("id")
-            score = data.get("score")
-            qty = data.get("qty")
-            
-            if food_id is not None:
+            events = []
+
+            if isinstance(data.get("food_items"), list):
+                for item in data["food_items"]:
+                    food_id = item.get("id")
+                    qty = item.get("qty", item.get("delta", 0))
+                    score = item.get("score", data.get("score", 1.0))
+                    if food_id is not None:
+                        events.append((food_id, score, qty))
+            else:
+                food_id = data.get("id")
+                score = data.get("score")
+                qty = data.get("qty")
+                if food_id is not None:
+                    events.append((food_id, score, qty))
+
+            for food_id, score, qty in events:
                 for callback in self._frt_event_callbacks:
                     try:
                         callback("food_detected", str(food_id), score, qty)
