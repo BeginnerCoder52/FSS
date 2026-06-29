@@ -123,7 +123,7 @@ class FrtMain:
     DEFAULT_LOOP_INTERVAL_MS = 33      # ~30 FPS target frame rate
     MAX_RECOVERY_ATTEMPTS = 3          # Maximum crash recovery attempts
     CAMERA_IDLE_TIMEOUT = 5.0          # Auto shut down camera after 5s idle (safety fallback)
-    MODEL_PATH = "/opt/fss/models/0607_best_int8.tflite"  # Model location
+    MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
     def __init__(self, bypass_door_sensor: bool = True,
@@ -159,7 +159,7 @@ class FrtMain:
 
         # C backend configuration (Phase 1 upgrade)
         self.use_c_backend: bool = True
-        self.c_model_path: str = "/opt/fss/models/0607_best_int8.tflite"
+        self.c_model_path: str = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
         self.model_precision: str = "int8"
 
         # Distance sensor configuration (Phase 1 upgrade)
@@ -183,6 +183,7 @@ class FrtMain:
         self.frame_count: int = 0
         self._inference_thread: Optional[threading.Thread] = None
         self._last_active_time: float = 0.0
+        self._pending_quantity_changes = {}
 
         logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
             self.current_state, self.bypass_door_sensor, self.confidence_threshold))
@@ -267,8 +268,8 @@ class FrtMain:
             self.current_state = AppState.TRACKING.value
             self._last_active_time = time.time()
             logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
-            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={})".format(
-                int(480 * self.boundary_ratio)))
+            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={:.2f})".format(
+                self.boundary_ratio))
             logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
             if self.dbus_interface:
                 self.dbus_interface.emit_camera_state("ON")
@@ -327,13 +328,12 @@ class FrtMain:
         # If bypass enabled and no door signal triggers AUTO_CALIBRATION,
         # set a default boundary line so crossing detection works immediately.
         if self.bypass_door_sensor:
-            default_y = int(480 * self.boundary_ratio)  # 480 as default frame height
             self.tracker.line_detector.boundary_line = {
                 'type': 'horizontal',
-                'pos': default_y
+                'pos': self.boundary_ratio
             }
-            logger.info("Default boundary line set at y={} (ratio={})".format(
-                default_y, self.boundary_ratio))
+            logger.info("Default boundary line set at y={:.2f} (ratio={})".format(
+                self.boundary_ratio, self.boundary_ratio))
 
         frame_count = 0
         fps_start_time = time.time()
@@ -473,6 +473,9 @@ class FrtMain:
                 # --- Boundary Crossing Events ---
                 changes = self.tracker.get_quantity_change()
                 for cid, delta in changes.items():
+                    self._pending_quantity_changes[cid] = (
+                        self._pending_quantity_changes.get(cid, 0) + delta
+                    )
                     event_type = "CHECK_IN" if delta > 0 else "CHECK_OUT"
                     food_name = self._get_food_name(cid)
                     abs_delta = abs(delta)
@@ -578,8 +581,13 @@ class FrtMain:
             return
 
         logger.info("Door event received: {}".format(door_state))
+        normalized_state = door_state.upper()
+        if normalized_state == "DOOR_OPEN":
+            normalized_state = "OPEN"
+        elif normalized_state == "DOOR_CLOSE":
+            normalized_state = "CLOSED"
 
-        if door_state.upper() == "OPEN":
+        if normalized_state == "OPEN":
             prev_state = self.current_state
             can_track = False
             if not self.distance_sensor_enabled:
@@ -593,6 +601,7 @@ class FrtMain:
                 self._last_active_time = time.time()
                 if self.tracker:
                     self.tracker.reset()
+                self._pending_quantity_changes.clear()
                 self.virtual_line_ready = False
                 self.frames_without_line = 0
                 if self.debug_mode:
@@ -605,7 +614,7 @@ class FrtMain:
                 if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:
                     self.camera_driver.open_camera_stream()
 
-        elif door_state.upper() == "CLOSED":
+        elif normalized_state == "CLOSED":
             prev_state = self.current_state
             if self.current_state == AppState.TRACKING.value:
                 logger.info("State: {} → IDLE (door CLOSED)".format(prev_state))
@@ -614,14 +623,26 @@ class FrtMain:
                     self.dbus_interface.emit_camera_state("OFF")
 
                 if self.tracker and self.dbus_interface:
-                    changes = self.tracker.get_quantity_change()
+                    changes = dict(self._pending_quantity_changes)
+                    if not changes:
+                        changes = self.tracker.get_quantity_change()
+                    changes = {k: v for k, v in changes.items() if v != 0}
                     if changes:
                         logger.info("Publishing {} boundary events to DBDaemon".format(len(changes)))
                         self.dbus_interface.publish_tracking_results({
-                            "food_items": [{"id": k, "qty": v} for k, v in changes.items()],
+                            "food_items": [
+                                {
+                                    "id": self._get_food_name(k),
+                                    "class_id": k,
+                                    "score": 1.0,
+                                    "qty": v
+                                }
+                                for k, v in changes.items()
+                            ],
                             "timestamp": time.time(),
                             "event": "door_closed"
                         })
+                        self._pending_quantity_changes.clear()
                     else:
                         logger.info("No boundary events to publish — no items crossed the line")
 

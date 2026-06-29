@@ -1,5 +1,0 @@
-event_id,frame_id,track_id,class_id,food_name,direction,event_type,delta,line_type,line_pos_norm,cx_norm,cy_norm
-1,10,1,1,carrot,IN,CHECK_IN,1,horizontal,0.66000000,0.49044319,0.67913237
-2,57,3,1,carrot,IN,CHECK_IN,1,horizontal,0.66000000,0.63939233,0.67093269
-3,181,6,1,carrot,IN,CHECK_IN,1,horizontal,0.66000000,0.45408605,0.66859859
-4,213,9,1,carrot,IN,CHECK_IN,1,horizontal,0.66000000,0.57794533,0.67556625

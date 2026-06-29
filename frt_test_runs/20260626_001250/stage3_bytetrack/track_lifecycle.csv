@@ -1,6 +1,0 @@
-track_id,class_id,first_frame,last_active_frame,active_frames,lost_observations,lost_events,status
-1,0,11,16,6,27,1,LOST
-2,3,17,17,1,26,1,LOST
-3,0,33,37,4,7,2,LOST
-4,3,37,40,4,3,1,LOST
-5,1,39,43,5,0,0,ACTIVE

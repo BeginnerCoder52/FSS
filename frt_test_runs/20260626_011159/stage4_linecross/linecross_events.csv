@@ -1,4 +1,0 @@
-event_id,frame_id,track_id,class_id,food_name,direction,event_type,delta,line_type,line_pos_norm,cx_norm,cy_norm
-1,43,3,0,apple,OUT,CHECK_OUT,-1,horizontal,0.66000000,0.57625111,0.64724925
-2,92,6,4,tomato,OUT,CHECK_OUT,-1,horizontal,0.66000000,0.57428274,0.62015867
-3,113,8,4,tomato,OUT,CHECK_OUT,-1,horizontal,0.66000000,0.72055715,0.57645614
