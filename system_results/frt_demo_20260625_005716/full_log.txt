@@ -1,0 +1,20 @@
+2026-06-25 00:57:22.642 | INFO     | YoloTfliteEngine:__init__:69 - YoloTfliteEngine initialized (model=/opt/fss/models/YOLOv11n_260518_best_int8.tflite)
+2026-06-25 00:57:22.643 | INFO     | YoloTfliteEngine:load_model_mmap:121 - Loading YOLOv11 model: /opt/fss/models/YOLOv11n_260518_best_int8.tflite
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+2026-06-25 00:57:22.815 | DEBUG    | YoloTfliteEngine:allocate_tensors:200 - Tensors allocated successfully
+2026-06-25 00:57:22.816 | INFO     | YoloTfliteEngine:load_model_mmap:150 - Model loaded successfully
+2026-06-25 00:57:22.818 | INFO     | ByteTracker:set_virtual_line:232 - LineCrossDetector updated with horizontal virtual line at 0
+2026-06-25 00:57:23.852 | DEBUG    | YoloTfliteEngine:invoke_inference:246 - Inference completed in 850.4ms
+2026-06-25 00:57:23.878 | INFO     | YoloTfliteEngine:get_output_boxes:442 - NMS: before=8 after=1 iou=0.35 conf=0.2
+2026-06-25 00:57:23.880 | INFO     | ByteTracker:update:330 - >>> notify start tracking: new Track ID 1 for 'tomato' (class_id=4, conf=0.90)
+2026-06-25 00:57:24.571 | DEBUG    | YoloTfliteEngine:invoke_inference:246 - Inference completed in 607.6ms
+2026-06-25 00:57:24.577 | INFO     | YoloTfliteEngine:get_output_boxes:442 - NMS: before=10 after=1 iou=0.35 conf=0.2
+2026-06-25 00:57:24.583 | INFO     | ByteTracker:update:330 - >>> notify start tracking: new Track ID 2 for 'tomato' (class_id=4, conf=0.91)
+Synthetic mode: 640x480 @ 10 FPS target
+MOG2 stream: system_results/frt_demo_20260625_005716/mog2_stream.mp4
+Recording 2s at 10 FPS...
+Duration: 2.0s | Frames: 20 | Video: 9.8 FPS
+CHECK IN total:  0
+CHECK OUT total: 0
+Boundary moment confidence: 0.000
+Video: annotated_video.mp4

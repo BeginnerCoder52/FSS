@@ -1,0 +1,61 @@
+{
+  "session": "frt_demo_20260625_005030",
+  "mode": "live",
+  "boundary_events": [],
+  "metrics": {
+    "fps_samples": [
+      10
+    ],
+    "fps_avg": 10,
+    "fps_min": 10,
+    "fps_max": 10,
+    "fps_stdev": 0,
+    "total_events": 0,
+    "check_in_count": 0,
+    "check_out_count": 0,
+    "unique_tracks": 0,
+    "total_detections": 1,
+    "detection_samples": [
+      {
+        "count": 0,
+        "conf": 0.0,
+        "class_id": -1
+      }
+    ],
+    "nms": {
+      "total_inferences": 0,
+      "boxes_before_nms_total": 0,
+      "boxes_after_nms_total": 0,
+      "boxes_before_nms_avg": 0,
+      "boxes_after_nms_avg": 0,
+      "boxes_before_nms_min": 0,
+      "boxes_before_nms_max": 0,
+      "boxes_after_nms_min": 0,
+      "boxes_after_nms_max": 0,
+      "iou_threshold": 0,
+      "confidence_threshold": 0,
+      "suppression_rate_avg": 0
+    }
+  },
+  "track_count": 0,
+  "fps_summary": {
+    "avg": 10,
+    "min": 10,
+    "max": 10,
+    "samples": 1
+  },
+  "nms_summary": {
+    "total_inferences": 0,
+    "boxes_before_nms_total": 0,
+    "boxes_after_nms_total": 0,
+    "boxes_before_nms_avg": 0,
+    "boxes_after_nms_avg": 0,
+    "boxes_before_nms_min": 0,
+    "boxes_before_nms_max": 0,
+    "boxes_after_nms_min": 0,
+    "boxes_after_nms_max": 0,
+    "iou_threshold": 0,
+    "confidence_threshold": 0,
+    "suppression_rate_avg": 0
+  }
+}

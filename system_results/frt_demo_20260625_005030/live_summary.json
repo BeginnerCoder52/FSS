@@ -1,0 +1,15 @@
+{
+  "duration_s": 17.1,
+  "frames": 1,
+  "video_fps": 0.1,
+  "target_fps": 10,
+  "backend": "ai-edge-litert",
+  "boundary_y_px": 192,
+  "total_check_in": 0,
+  "total_check_out": 0,
+  "crossing_events": 0,
+  "changes_by_class": {},
+  "check_in_by_class": {},
+  "check_out_by_class": {},
+  "boundary_moment_conf": 0
+}

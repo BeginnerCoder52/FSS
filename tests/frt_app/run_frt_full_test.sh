@@ -634,6 +634,7 @@ if ! $NO_SHM; then
             "$CAMERA_CORE_BIN" --device "$CAMERA_DEVICE" --width 640 --height 480 \
             >"$SHM_LOG" 2>&1
         SHM_EXIT=$?
+        sudo chmod 666 /dev/shm/fss_video_frame 2>/dev/null || true
         set -e
         if [[ -f "/dev/shm/fss_video_frame" ]]; then
             SHM_SIZE=$(stat -c%s "/dev/shm/fss_video_frame" 2>/dev/null || echo "?")

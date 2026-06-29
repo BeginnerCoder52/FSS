@@ -1,0 +1,24 @@
+{
+  "nms_samples": [
+    {
+      "before": 8,
+      "after": 1,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    },
+    {
+      "before": 10,
+      "after": 1,
+      "iou_threshold": 0.35,
+      "confidence_threshold": 0.2
+    }
+  ],
+  "summary": {
+    "total_inferences": 2,
+    "boxes_before_nms_avg": 9,
+    "boxes_after_nms_avg": 1,
+    "suppression_rate_avg": 88.89,
+    "iou_threshold": 0.35,
+    "confidence_threshold": 0.2
+  }
+}
