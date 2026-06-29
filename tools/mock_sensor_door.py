@@ -72,11 +72,13 @@ async def main() -> int:
     await asyncio.sleep(0.2)
 
     if args.distance is not None:
-        obj.DistanceDataChanged(args.distance)
+        # obj.DistanceDataChanged(args.distance)
+        obj.DistanceDataChanged.emit(args.distance)
         print(f"Emitted DistanceDataChanged({args.distance})", flush=True)
         await asyncio.sleep(0.1)
 
-    obj.DoorStateChanged(state)
+    # obj.DoorStateChanged(state)
+    obj.DoorStateChanged.emit(state)
     print(f"Emitted DoorStateChanged({state})", flush=True)
 
     await asyncio.sleep(args.settle)

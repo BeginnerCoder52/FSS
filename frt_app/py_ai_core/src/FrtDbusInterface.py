@@ -272,7 +272,8 @@ class FrtDbusInterface:
             self.dropped_messages_count += 1
 
     async def _async_emit_food_detected(self, json_data: str):
-        self.bus_connection.FoodDetected(json_data)
+        # self.bus_connection.FoodDetected(json_data)
+        self.bus_connection.FoodDetected.emit(json_data)
 
     def emit_camera_state(self, state: str) -> None:
         """
