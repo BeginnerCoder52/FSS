@@ -440,6 +440,12 @@ class YoloTfliteEngine:
                 len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
             )
             logger.info(nms_log)
+            self.last_nms_stats = {
+                "before": len(results),
+                "after": len(final_results),
+                "iou_threshold": self.IOU_THRESHOLD,
+                "confidence_threshold": self.CONFIDENCE_THRESHOLD
+            }
 
             return final_results
 

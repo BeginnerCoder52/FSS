@@ -1,0 +1,11 @@
+FRTApp Session Summary
+=============================================
+
+Session:  frt_demo_20260625_005716
+Mode:     live
+Duration: 2.046644687652588s
+
+Boundary crossings: 0
+  CHECK_IN  (enter):  0
+  CHECK_OUT (leave):  0
+

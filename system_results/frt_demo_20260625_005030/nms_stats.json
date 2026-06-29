@@ -1,0 +1,11 @@
+{
+  "nms_samples": [],
+  "summary": {
+    "total_inferences": 0,
+    "boxes_before_nms_avg": 0,
+    "boxes_after_nms_avg": 0,
+    "suppression_rate_avg": 0,
+    "iou_threshold": 0,
+    "confidence_threshold": 0
+  }
+}
