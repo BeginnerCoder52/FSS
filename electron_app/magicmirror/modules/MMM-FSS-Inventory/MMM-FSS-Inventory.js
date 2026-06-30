@@ -12,6 +12,27 @@ Module.register("MMM-FSS-Inventory", {
         "egg": "Trứng",
         "lemon": "Chanh",
         "tomato": "Cà chua",
+        "banana": "Chuối",
+        "orange": "Cam",
+        "bottle": "Chai nước",
+        "cup": "Cốc",
+        "bowl": "Bát",
+        "cake": "Bánh ngọt",
+        "donut": "Bánh donut",
+        "sandwich": "Bánh mì kẹp",
+        "broccoli": "Súp lơ",
+        "pizza": "Pizza",
+        "hot dog": "Xúc xích",
+        "milk": "Sữa",
+        "juice": "Nước ép",
+        "yogurt": "Sữa chua",
+        "cheese": "Phô mai",
+        "meat": "Thịt",
+        "fish": "Cá",
+        "bread": "Bánh mì",
+        "rice": "Gạo",
+        "noodles": "Mì",
+        "cookie": "Bánh quy"
     },
     _(name) {
         return this.FOOD_NAME_VI[name] || name;
@@ -130,7 +151,7 @@ Module.register("MMM-FSS-Inventory", {
             if (payload.source !== "database") {
                 this.sendNotification("FSS_NOTIFICATION", {
                     type: action === "removed" ? "food_removed" : "food_added",
-                    message: `Bạn vừa ${action === "removed" ? "lấy ra" : "thêm vào"} x${payload.delta || payload.quantity} ${this._(payload.className)}`
+                    message: `${payload.delta || payload.quantity} ${this._(payload.className)} đã ${action === "removed" ? "mang ra" : "thêm vào"} tủ lạnh`
                 });
             }
 

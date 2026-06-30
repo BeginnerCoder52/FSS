@@ -125,6 +125,7 @@ usage() {
     echo "  --no-monitor      Run without auto-restart monitoring"
     echo "  --status          Show daemon status and exit"
     echo "  --stop            Stop all running daemons"
+    echo "  --disable-door-sensor Run MagicMirror with door sensor disabled"
     echo "  --help            Show this help"
     echo ""
     echo "Examples:"
@@ -272,8 +273,17 @@ start_daemon() {
         # pm2 delete MagicMirror 2>/dev/null || true
         sleep 1
         cd "${FSS_ROOT}/electron_app/magicmirror"
-        # DISPLAY=:0 pm2 start npm --name "MagicMirror" -- run start >> "$log" 2>&1
-        nohup bash -c "DISPLAY=:0 npm run start:x11" >> "$log" 2>&1 &
+        local mm_env="DISPLAY=:0"
+        if [[ "${DISABLE_DOOR:-0}" == "1" ]]; then
+            mm_env="$mm_env FSS_DISABLE_DOOR_SENSOR=1"
+        fi
+        
+        if [[ $EUID -eq 0 ]]; then
+            local run_user="${SUDO_USER:-$(logname)}"
+            nohup sudo -E -u "$run_user" bash -c "cd ${FSS_ROOT}/electron_app/magicmirror && $mm_env npm run start:x11" >> "$log" 2>&1 &
+        else
+            nohup bash -c "$mm_env npm run start:x11" >> "$log" 2>&1 &
+        fi
         local pid=$!
         disown $pid 2>/dev/null
         cd "${FSS_ROOT}"
@@ -538,6 +548,7 @@ while [[ $# -gt 0 ]]; do
         --no-monitor) MONITOR=false; shift ;;
         --status)   print_status; exit 0 ;;
         --stop)     stop_all; exit 0 ;;
+        --disable-door-sensor) DISABLE_DOOR=1; shift ;;
         --help|-h)  usage ;;
         *)          echo "Unknown: $1"; usage ;;
     esac
