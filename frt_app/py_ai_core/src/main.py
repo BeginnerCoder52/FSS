@@ -118,6 +118,8 @@ def main():
                        help="Detection confidence threshold (0.0-1.0, default: 0.85)")
     parser.add_argument("--boundary-y", type=float, default=0.66,
                        help="Virtual boundary as fraction of frame height (default: 0.66)")
+    parser.add_argument("--shm-only", action="store_true",
+                       help="Read frames only from /dev/shm/fss_video_frame; do not fallback to /dev/video0")
 
     args = parser.parse_args()
     
@@ -170,6 +172,7 @@ def main():
     logger.info("Door sensor bypass: {}".format("ON (auto-TRACKING)" if bypass else "OFF (wait for MC-38)"))
     logger.info("Confidence threshold: {}".format(args.confidence))
     logger.info("Boundary Y ratio: {}".format(args.boundary_y))
+    logger.info("SHM only: {}".format("ON" if args.shm_only else "OFF"))
     
     # ========================================================================
     # SIGNAL HANDLERS
@@ -199,6 +202,7 @@ def main():
         app_instance.model_precision = args.model_precision
         app_instance.distance_sensor_enabled = not args.debug_no_distance
         app_instance.distance_threshold_cm = args.distance_threshold
+        app_instance.shm_only = args.shm_only
         
         # Initialize pipeline
         logger.info("Initializing pipeline...")

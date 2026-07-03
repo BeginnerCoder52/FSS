@@ -271,7 +271,7 @@ class FrtDbusInterface:
             self.dropped_messages_count += 1
 
     async def _async_emit_food_detected(self, json_data: str):
-        self.bus_connection.FoodDetected(json_data)
+        self.bus_connection.FoodDetected.emit(json_data)
 
     def emit_camera_state(self, state: str) -> None:
         """
@@ -294,7 +294,7 @@ class FrtDbusInterface:
             logger.exception("Failed to emit camera state: {}".format(e))
 
     async def _async_emit_camera_state(self, state: str):
-        self.bus_connection.CameraStateChanged(state)
+        self.bus_connection.CameraStateChanged.emit(state)
 
     def subscribe_distance_events(self, callback: Callable) -> None:
         """

@@ -144,6 +144,7 @@ class FrtMain:
 
         # Door sensor bypass flag (True = auto-TRACKING, no MC-38; False = wait for door signal)
         self.bypass_door_sensor: bool = bypass_door_sensor
+        self.shm_only: bool = False
 
         # Component instances (updated for Phase 2 - now using ShmReader instead of CameraUvcDriver)
         self.shm_reader = None  # POSIX SHM reader (from C++ camera core)
@@ -183,6 +184,7 @@ class FrtMain:
         self.frame_count: int = 0
         self._inference_thread: Optional[threading.Thread] = None
         self._last_active_time: float = 0.0
+        self._pending_quantity_changes = {}
 
         logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
             self.current_state, self.bypass_door_sensor, self.confidence_threshold))
@@ -272,7 +274,9 @@ class FrtMain:
             logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
             if self.dbus_interface:
                 self.dbus_interface.emit_camera_state("ON")
-            if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver:
+            if (not self.shm_only and
+                    (not self.shm_reader or not self.shm_reader.is_ready()) and
+                    self.camera_driver):
                 self.camera_driver.open_camera_stream()
         else:
             logger.info("FRTApp daemon started (waiting for door event)")
@@ -366,9 +370,13 @@ class FrtMain:
                 # ====================================================================
                 capture_start = time.time()
                 frame = None
-                if self.shm_reader and self.shm_reader.is_ready():
+                if self.shm_reader:
                     frame = self.shm_reader.read_frame()
                 
+                if frame is None and self.shm_only:
+                    time.sleep(0.033)
+                    continue
+
                 if frame is None and self.camera_driver and self.camera_driver.is_camera_open:
                     frame = self.camera_driver.read_frame()
                 elif frame is None and self.camera_driver and not self.camera_driver.is_camera_open:
@@ -473,6 +481,9 @@ class FrtMain:
                 # --- Boundary Crossing Events ---
                 changes = self.tracker.get_quantity_change()
                 for cid, delta in changes.items():
+                    self._pending_quantity_changes[cid] = (
+                        self._pending_quantity_changes.get(cid, 0) + delta
+                    )
                     event_type = "CHECK_IN" if delta > 0 else "CHECK_OUT"
                     food_name = self._get_food_name(cid)
                     abs_delta = abs(delta)
@@ -578,8 +589,13 @@ class FrtMain:
             return
 
         logger.info("Door event received: {}".format(door_state))
+        normalized_state = door_state.upper()
+        if normalized_state == "DOOR_OPEN":
+            normalized_state = "OPEN"
+        elif normalized_state == "DOOR_CLOSE":
+            normalized_state = "CLOSED"
 
-        if door_state.upper() == "OPEN":
+        if normalized_state == "OPEN":
             prev_state = self.current_state
             can_track = False
             if not self.distance_sensor_enabled:
@@ -593,6 +609,7 @@ class FrtMain:
                 self._last_active_time = time.time()
                 if self.tracker:
                     self.tracker.reset()
+                self._pending_quantity_changes.clear()
                 self.virtual_line_ready = False
                 self.frames_without_line = 0
                 if self.debug_mode:
@@ -602,26 +619,41 @@ class FrtMain:
                 
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("ON")
-                if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:
+                if (not self.shm_only and
+                        (not self.shm_reader or not self.shm_reader.is_ready()) and
+                        self.camera_driver and
+                        not self.camera_driver.is_camera_open):
                     self.camera_driver.open_camera_stream()
 
-        elif door_state.upper() == "CLOSED":
+        elif normalized_state == "CLOSED":
             prev_state = self.current_state
-            if self.current_state == AppState.TRACKING.value:
+            if self.current_state in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
                 logger.info("State: {} → IDLE (door CLOSED)".format(prev_state))
                 self.current_state = AppState.IDLE.value
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("OFF")
 
                 if self.tracker and self.dbus_interface:
-                    changes = self.tracker.get_quantity_change()
+                    changes = dict(self._pending_quantity_changes)
+                    if not changes:
+                        changes = self.tracker.get_quantity_change()
+                    changes = {k: v for k, v in changes.items() if v != 0}
                     if changes:
                         logger.info("Publishing {} boundary events to DBDaemon".format(len(changes)))
                         self.dbus_interface.publish_tracking_results({
-                            "food_items": [{"id": k, "qty": v} for k, v in changes.items()],
+                            "food_items": [
+                                {
+                                    "id": self._get_food_name(k),
+                                    "class_id": k,
+                                    "score": 1.0,
+                                    "qty": v
+                                }
+                                for k, v in changes.items()
+                            ],
                             "timestamp": time.time(),
                             "event": "door_closed"
                         })
+                        self._pending_quantity_changes.clear()
                     else:
                         logger.info("No boundary events to publish — no items crossed the line")
 
