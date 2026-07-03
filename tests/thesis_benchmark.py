@@ -7,6 +7,7 @@ from pathlib import Path
 
 # Ensure imports work properly
 FSS_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(FSS_ROOT))
 sys.path.insert(0, str(FSS_ROOT / "recipe_extractor" / "src"))
 sys.path.insert(0, str(FSS_ROOT / "recommend_daemon" / "src"))
 
@@ -21,15 +22,15 @@ def run_benchmark(num_tests: int = 100):
     
     # Measure cold start loading time
     start_time = time.time()
-    nlp_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db_path)
+    analyzer_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db_path)
     load_time_ms = (time.time() - start_time) * 1000
     
-    recommend_engine = RecommendEngine(nlp_engine=nlp_engine, db_manager=None)
+    recommend_engine = RecommendEngine(analyzer_engine=analyzer_engine, db_manager=None)
     
-    available_recipes = nlp_engine.get_available_recipes()
+    available_recipes = analyzer_engine.get_available_recipes()
     
     logger.info("=" * 60)
-    logger.info("FSS NLP PIPELINE - THESIS BENCHMARK REPORT")
+    logger.info("FSS RECIPE EXTRACTOR - THESIS BENCHMARK REPORT")
     logger.info("=" * 60)
     logger.info(f"Database Loaded: {len(available_recipes)} recipes")
     logger.info(f"Cold Start Load Time: {load_time_ms:.2f} ms")
@@ -37,7 +38,7 @@ def run_benchmark(num_tests: int = 100):
     logger.info("-" * 60)
 
     stats = {
-        "nlp_times": [],
+        "extractor_times": [],
         "bu_tru_times": [],
         "total_times": [],
         "input_ingredients_count": [],
@@ -53,11 +54,11 @@ def run_benchmark(num_tests: int = 100):
     logging.getLogger("RecommendEngine").setLevel(logging.WARNING)
     
     for idx, recipe_name in enumerate(test_recipes, 1):
-        # 1. NLP Pipeline Time
+        # 1. Extraction Pipeline Time
         t0 = time.time()
-        nlp_result = nlp_engine.generate_fss_request(recipe_name)
-        nlp_time = (time.time() - t0) * 1000
-        stats["nlp_times"].append(nlp_time)
+        extractor_result = analyzer_engine.generate_fss_request(recipe_name)
+        extractor_time = (time.time() - t0) * 1000
+        stats["extractor_times"].append(extractor_time)
         
         # 2. Bù Trừ Pipeline Time
         t1 = time.time()
@@ -65,25 +66,25 @@ def run_benchmark(num_tests: int = 100):
         bu_tru_time = (time.time() - t1) * 1000
         stats["bu_tru_times"].append(bu_tru_time)
         
-        total_time = nlp_time + bu_tru_time
+        total_time = extractor_time + bu_tru_time
         stats["total_times"].append(total_time)
         
-        stats["input_ingredients_count"].append(len(nlp_result.get("original_ingredients", [])))
+        stats["input_ingredients_count"].append(len(extractor_result.get("original_ingredients", [])))
         stats["output_missing_count"].append(recommend_result.get("missing_count", 0))
         
         if detailed_example is None:
             detailed_example = {
                 "recipe": recipe_name,
-                "nlp_output": nlp_result,
+                "extractor_output": extractor_result,
                 "recommend_output": recommend_result,
-                "nlp_time": nlp_time,
+                "extractor_time": extractor_time,
                 "bu_tru_time": bu_tru_time
             }
 
     # Calculate aggregations
-    avg_nlp = sum(stats["nlp_times"]) / len(stats["nlp_times"])
-    max_nlp = max(stats["nlp_times"])
-    min_nlp = min(stats["nlp_times"])
+    avg_extractor = sum(stats["extractor_times"]) / len(stats["extractor_times"])
+    max_extractor = max(stats["extractor_times"])
+    min_extractor = min(stats["extractor_times"])
     
     avg_bu_tru = sum(stats["bu_tru_times"]) / len(stats["bu_tru_times"])
     avg_total = sum(stats["total_times"]) / len(stats["total_times"])
@@ -92,7 +93,7 @@ def run_benchmark(num_tests: int = 100):
     avg_output = sum(stats["output_missing_count"]) / len(stats["output_missing_count"])
 
     logger.info("\n1. PERFORMANCE METRICS (Average over %d runs)", num_tests)
-    logger.info("  %-35s : %.3f ms (Max: %.3f ms, Min: %.3f ms)", "NLP Pipeline (Filter+Parse+Sort)", avg_nlp, max_nlp, min_nlp)
+    logger.info("  %-35s : %.3f ms (Max: %.3f ms, Min: %.3f ms)", "Extraction Pipeline (Filter+Parse+Sort)", avg_extractor, max_extractor, min_extractor)
     logger.info("  %-35s : %.3f ms", "Bù Trừ Pipeline (Comparison)", avg_bu_tru)
     logger.info("  %-35s : %.3f ms", "Total Pipeline Latency", avg_total)
     
@@ -105,17 +106,17 @@ def run_benchmark(num_tests: int = 100):
     logger.info("=" * 60)
     
     r = detailed_example["recipe"]
-    nlp = detailed_example["nlp_output"]
+    extractor_res = detailed_example["extractor_output"]
     rec = detailed_example["recommend_output"]
     
     logger.info(f"\n[STEP A] USER INPUT")
     logger.info(f"  Query: '{r}'")
     
-    logger.info(f"\n[STEP B] NLP PIPELINE OUTPUT (Time: {detailed_example['nlp_time']:.3f} ms)")
-    logger.info(f"  Status: {nlp['status']}")
-    logger.info(f"  Dish Name (Normalized): {nlp['dish']}")
-    logger.info(f"  Original Ingredients Parsed: {len(nlp['original_ingredients'])} items")
-    for ing in nlp['original_ingredients']:
+    logger.info(f"\n[STEP B] EXTRACTION PIPELINE OUTPUT (Time: {detailed_example['extractor_time']:.3f} ms)")
+    logger.info(f"  Status: {extractor_res['status']}")
+    logger.info(f"  Dish Name (Normalized): {extractor_res['dish']}")
+    logger.info(f"  Original Ingredients Parsed: {len(extractor_res['original_ingredients'])} items")
+    for ing in extractor_res['original_ingredients']:
         logger.info(f"    - {ing}")
         
     logger.info(f"\n[STEP C] BÙ TRỪ RECOMMENDATION ALGORITHM (Time: {detailed_example['bu_tru_time']:.3f} ms)")

@@ -8,15 +8,15 @@ from pathlib import Path
 class RecommendEngine:
     def __init__(
         self,
-        nlp_engine: Optional[Any] = None,
+        analyzer_engine: Optional[Any] = None,
         db_manager: Optional[Any] = None
     ):
-        self.nlp_engine = nlp_engine
+        self.analyzer_engine = analyzer_engine
         self.db_manager = db_manager
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    def set_nlp_engine(self, nlp_engine: Any) -> None:
-        self.nlp_engine = nlp_engine
+    def set_analyzer_engine(self, analyzer_engine: Any) -> None:
+        self.analyzer_engine = analyzer_engine
 
     def set_db_manager(self, db_manager: Any) -> None:
         self.db_manager = db_manager
@@ -27,33 +27,33 @@ class RecommendEngine:
         batch_id: Optional[str] = None,
         inventory: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
-        if not self.nlp_engine:
-            return {"status": "ERROR", "error": "NLP engine not initialized"}
+        if not self.analyzer_engine:
+            return {"status": "ERROR", "error": "Recipe analyzer not initialized"}
 
         if batch_id is None:
             batch_id = str(uuid.uuid4())
 
         try:
-            nlp_result = self.nlp_engine.generate_fss_request(recipe_name)
-            nlp_status = nlp_result.get("status", "ERROR")
+            analyzer_result = self.analyzer_engine.generate_fss_request(recipe_name)
+            analysis_status = analyzer_result.get("status", "ERROR")
 
-            if nlp_status != "SUCCESS":
+            if analysis_status != "SUCCESS":
                 self.logger.warning(
-                    f"NLP analysis failed for '{recipe_name}': {nlp_status}"
+                    f"Recipe analysis failed for '{recipe_name}': {analysis_status}"
                 )
                 return {
-                    "status": nlp_status,
-                    "message": nlp_result.get(
-                        "message", nlp_result.get("error", "NLP analysis failed")
+                    "status": analysis_status,
+                    "message": analyzer_result.get(
+                        "message", analyzer_result.get("error", "Recipe analysis failed")
                     ),
-                    "dish": nlp_result.get("dish", recipe_name),
-                    "suggestions": nlp_result.get("suggestions", []),
+                    "dish": analyzer_result.get("dish", recipe_name),
+                    "suggestions": analyzer_result.get("suggestions", []),
                     "batch_id": batch_id
                 }
 
-            pipeline_time_ms = nlp_result.get("processing_time_ms", None)
+            pipeline_time_ms = analyzer_result.get("processing_time_ms", None)
 
-            raw_strings = nlp_result.get("original_ingredients", [])
+            raw_strings = analyzer_result.get("original_ingredients", [])
             ingredients = []
             for item_str in raw_strings:
                 parts = item_str.split(" : ", 1)
@@ -88,7 +88,7 @@ class RecommendEngine:
                 quantity_str = ing.get("quantity", "1")             # Full quantity string, e.g. "1 trái"
                 req_qty = self._parse_quantity(quantity_str)
                 inv_qty = inventory_map.get(food_id, 0)
-                unit = ing.get("unit")  # Optional separate unit (may be None for NLP output)
+                unit = ing.get("unit")  # Optional separate unit (may be None for Analyzer output)
 
                 shortage = max(0, req_qty - inv_qty)
 
@@ -119,7 +119,7 @@ class RecommendEngine:
             result_snapshot = {
                 "recipe_name": recipe_name,
                 "batch_id": batch_id,
-                "nlp_status": nlp_status,
+                "analysis_status": analysis_status,
                 "pipeline_time_ms": pipeline_time_ms,
                 "total_items": total_items,
                 "available_count": available_count,
@@ -135,7 +135,7 @@ class RecommendEngine:
                 rec_id = self.db_manager.insert_recommendation(
                     recipe_name=recipe_name,
                     batch_id=batch_id,
-                    nlp_status=nlp_status,
+                    analysis_status=analysis_status,
                     total_items=total_items,
                     available_count=available_count,
                     needed_count=needed_count,
@@ -175,11 +175,11 @@ class RecommendEngine:
             }
 
     def get_available_recipes(self) -> List[str]:
-        if not self.nlp_engine:
-            self.logger.error("NLP engine not initialized for recipe lookup")
+        if not self.analyzer_engine:
+            self.logger.error("Recipe analyzer not initialized for recipe lookup")
             return []
         try:
-            return self.nlp_engine.get_available_recipes()
+            return self.analyzer_engine.get_available_recipes()
         except Exception as e:
             self.logger.error(f"Error getting available recipes: {e}")
             return []

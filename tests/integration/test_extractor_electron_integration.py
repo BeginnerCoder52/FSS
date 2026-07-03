@@ -79,7 +79,7 @@ SAMPLE_EXTRACTOR_NOT_FOUND = {
 
 SAMPLE_EXTRACTOR_ERROR = {
     "status": "ERROR",
-    "error": "NLP engine not initialized",
+    "error": "Analyzer engine not initialized",
 }
 
 SAMPLE_EXTRACTOR_EMPTY_INGREDIENTS = {
@@ -268,7 +268,7 @@ class TestJsonLineProtocol(unittest.TestCase):
         }, ensure_ascii=False)
         parsed = json.loads(line)
         self.assertEqual(parsed["type"], "ERROR")
-        self.assertEqual(parsed["message"], "NLP engine not initialized")
+        self.assertEqual(parsed["message"], "Analyzer engine not initialized")
 
     def test_result_json_has_required_frontend_fields(self):
         result = transform_ingredients(SAMPLE_EXTRACTOR_SUCCESS)

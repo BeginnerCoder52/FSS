@@ -4,12 +4,12 @@ Service Layer Tests - RecipeExtractorDbusService
 
 Purpose:
     Validate RecipeExtractorDbusService initialization, D-Bus lifecycle,
-    NLP persist flow with new original_ingredients format.
+    Analyzer persist flow with new original_ingredients format.
 
 Test Coverage:
     1. Service initialization (sdbus available/unavailable)
     2. D-Bus setup event loop management
-    3. _handle_extract_and_persist with mocked NLP engine (new format)
+    3. _handle_extract_and_persist with mocked Analyzer engine (new format)
     4. extract_and_persist synchronous wrapper
     5. D-Bus object ExtractAndPersistRecipe method
     6. Error handling: no engine, no event loop, invalid input
@@ -58,7 +58,7 @@ class MockNlpEngine:
                 "suggestions": ["g\u1ecfi tr\u1ed9n kh\u00f4 m\u1ef1c"]
             }
         if normalized == "error_test":
-            raise RuntimeError("Simulated NLP engine failure")
+            raise RuntimeError("Simulated Analyzer engine failure")
         return {
             "status": "SUCCESS",
             "dish": normalized,
@@ -85,7 +85,7 @@ class MockNlpEngine:
 class TestRecipeExtractorDbusServiceInit(unittest.TestCase):
     def test_service_initialization_default(self):
         service = RecipeExtractorDbusService()
-        self.assertIsNone(service.nlp_engine)
+        self.assertIsNone(service.analyzer_engine)
         self.assertIsNone(service.system_bus)
         self.assertFalse(service.is_connected)
         self.assertIsNone(service.dbus_object)
@@ -94,22 +94,22 @@ class TestRecipeExtractorDbusServiceInit(unittest.TestCase):
 
     def test_service_initialization_with_engine(self):
         mock_engine = MagicMock()
-        service = RecipeExtractorDbusService(nlp_engine=mock_engine)
-        self.assertIs(service.nlp_engine, mock_engine)
+        service = RecipeExtractorDbusService(analyzer_engine=mock_engine)
+        self.assertIs(service.analyzer_engine, mock_engine)
 
-    def test_set_nlp_engine(self):
+    def test_set_analyzer_engine(self):
         service = RecipeExtractorDbusService()
         mock_engine = MagicMock()
-        service.set_nlp_engine(mock_engine)
-        self.assertIs(service.nlp_engine, mock_engine)
+        service.set_analyzer_engine(mock_engine)
+        self.assertIs(service.analyzer_engine, mock_engine)
 
-    def test_set_nlp_engine_replacement(self):
+    def test_set_analyzer_engine_replacement(self):
         service = RecipeExtractorDbusService()
         engine1 = MagicMock()
         engine2 = MagicMock()
-        service.set_nlp_engine(engine1)
-        service.set_nlp_engine(engine2)
-        self.assertIs(service.nlp_engine, engine2)
+        service.set_analyzer_engine(engine1)
+        service.set_analyzer_engine(engine2)
+        self.assertIs(service.analyzer_engine, engine2)
 
     def test_service_constants(self):
         self.assertEqual(
@@ -181,7 +181,7 @@ class TestParseOriginalIngredients(unittest.TestCase):
 class TestRecipeExtractorDbusServicePersistFlow(unittest.TestCase):
     def setUp(self):
         self.service = RecipeExtractorDbusService()
-        self.service.nlp_engine = MockNlpEngine()
+        self.service.analyzer_engine = MockNlpEngine()
         self.service._call_dbus_insert_request = AsyncMock(return_value=True)
 
     def test_handle_extract_and_persist_success(self):
@@ -216,12 +216,12 @@ class TestRecipeExtractorDbusServicePersistFlow(unittest.TestCase):
         asyncio.run(run())
 
     def test_handle_extract_and_persist_no_engine(self):
-        self.service.nlp_engine = None
+        self.service.analyzer_engine = None
         async def run():
             result_json = await self.service._handle_extract_and_persist("Test")
             result = json.loads(result_json)
             self.assertEqual(result["status"], "ERROR")
-            self.assertIn("NLP engine not initialized", result["error"])
+            self.assertIn("Analyzer engine not initialized", result["error"])
         asyncio.run(run())
 
     def test_handle_extract_and_persist_engine_error(self):
@@ -244,7 +244,7 @@ class TestRecipeExtractorDbusServicePersistFlow(unittest.TestCase):
 
     def test_extract_and_persist_no_loop(self):
         service_no_loop = RecipeExtractorDbusService()
-        service_no_loop.nlp_engine = MockNlpEngine()
+        service_no_loop.analyzer_engine = MockNlpEngine()
         result_json = service_no_loop.extract_and_persist("Test")
         result = json.loads(result_json)
         self.assertEqual(result["status"], "ERROR")
@@ -254,7 +254,7 @@ class TestRecipeExtractorDbusServicePersistFlow(unittest.TestCase):
 class TestResponseFormatValidation(unittest.TestCase):
     def setUp(self):
         self.service = RecipeExtractorDbusService()
-        self.service.nlp_engine = MockNlpEngine()
+        self.service.analyzer_engine = MockNlpEngine()
         self.service._call_dbus_insert_request = AsyncMock(return_value=True)
 
     def test_success_response_format(self):
@@ -283,7 +283,7 @@ class TestResponseFormatValidation(unittest.TestCase):
         asyncio.run(run())
 
     def test_error_response_format(self):
-        self.service.nlp_engine = None
+        self.service.analyzer_engine = None
         async def run():
             result_json = await self.service._handle_extract_and_persist("Test")
             result = json.loads(result_json)

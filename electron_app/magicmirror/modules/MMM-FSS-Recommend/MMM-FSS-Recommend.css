@@ -107,6 +107,8 @@
     max-height: 22em;
     /* touch-action: pan-y allows vertical swipe-to-scroll on touchscreen */
     touch-action: pan-y;
+    pointer-events: auto;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--color-text-dimmed) transparent;
 }
@@ -127,6 +129,8 @@
     overflow-x: hidden;
     max-height: 18em;
     touch-action: pan-y;
+    pointer-events: auto;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--color-text-dimmed) transparent;
 }

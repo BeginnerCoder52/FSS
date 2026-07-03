@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 """
-Emit SensorDaemon-compatible D-Bus door signals for FRTApp demos.
+Emit SensorDaemon-compatible door signals for FRTApp demos.
+
+The real SensorDaemon emits DoorStateChanged on:
+    service:   vn.edu.uit.FSS.Sensor
+    path:      /vn/edu/uit/FSS/Sensor
+    interface: vn.edu.uit.FSS.Sensor
+
+Use this when demoing FRTApp + DBDaemon + Electron without physical MC-38 GPIO.
 """
 
 import argparse
 import asyncio
+import time
 
 try:
     import sdbus

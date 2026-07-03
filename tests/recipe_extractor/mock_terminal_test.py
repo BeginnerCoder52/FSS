@@ -1,11 +1,11 @@
 """
-Real Hardware Terminal Test — Recommend System with Filter+Sort NLP
+Real Hardware Terminal Test — Recommend System with Filter+Sort Analyzer
 ====================================================================
 
 Purpose:
     Simulate a real user typing recipe names in the terminal.
     Uses the actual RecipeAnalyzerEngine with:
-      - Filter+Sort NLP (no ML model needed)
+      - Filter+Sort Analyzer (no ML model needed)
       - Real recipe database (2470 Vietnamese recipes)
       - Full recipe data output
 
@@ -56,7 +56,7 @@ class RealRecipeEngineWrapper:
         )
         self.recipe_names = self.engine.get_available_recipes()
         print(f"  ✓ Loaded {len(self.recipe_names)} real recipes")
-        print(f"  ✓ Filter+Sort NLP engine ready (no ML model needed)")
+        print(f"  ✓ Filter+Sort Analyzer engine ready (no ML model needed)")
 
     def extract_recipe(self, name: str) -> Optional[Dict]:
         name = name.strip().lower()
@@ -202,7 +202,7 @@ def interactive_mode(wrapper: RealRecipeEngineWrapper) -> List[str]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Real hardware terminal test for Recommend System — uses Filter+Sort NLP + recipe DB"
+        description="Real hardware terminal test for Recommend System — uses Filter+Sort Analyzer + recipe DB"
     )
     parser.add_argument(
         "--recipe",
@@ -217,7 +217,7 @@ def main():
 
     print("\n  ╔══════════════════════════════════════════════╗")
     print("  ║   RECOMMEND SYSTEM — REAL HARDWARE TEST      ║")
-    print("  ║   Filter+Sort NLP + 2470 Vietnamese recipes  ║")
+    print("  ║   Filter+Sort Analyzer + 2470 Vietnamese recipes  ║")
     print("  ╚══════════════════════════════════════════════╝")
 
     wrapper = RealRecipeEngineWrapper()

@@ -1,6 +1,6 @@
 """
 @file test_phase1_schema.py
-@brief Unit tests for Phase 1: Database Schema Updates (NLP Recommendation System)
+@brief Unit tests for Phase 1: Database Schema Updates (Analyzer Recommendation System)
 
 This module provides comprehensive test coverage for Phase 1 database schema changes:
 - New inventory_history table for audit trail
@@ -718,10 +718,10 @@ class TestPhase1Integration:
     
     def test_complete_workflow_recipe_request_comparison(self, db_manager):
         """
-        Test complete workflow: NLP recipe → insert batch → compare with inventory.
+        Test complete workflow: Analyzer recipe → insert batch → compare with inventory.
         
         ASPICE: SQC.BP32 - Workflow validation
-        Scenario: User enters recipe → NLP generates ingredients → compare with inventory
+        Scenario: User enters recipe → Analyzer generates ingredients → compare with inventory
         """
         recipe_name = "Cơm Chiên"
         batch_id = str(uuid.uuid4())
@@ -730,7 +730,7 @@ class TestPhase1Integration:
         db_manager.update_inventory("rice", 2, 0.90)
         db_manager.update_inventory("egg", 3, 0.88)
         
-        # Step 2: NLP generates ingredients (Phase 1 batch API)
+        # Step 2: Analyzer generates ingredients (Phase 1 batch API)
         ingredients = [
             {"food_id": "rice", "quantity": 3, "unit": "cups"},
             {"food_id": "egg", "quantity": 2, "unit": "pieces"},

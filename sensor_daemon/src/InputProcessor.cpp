@@ -18,7 +18,7 @@ InputProcessor::InputProcessor()
     m_i2c_main = std::make_shared<I2cHandler>("/dev/i2c-1");
     m_i2c_ext = std::make_shared<I2cHandler>("/dev/i2c-6");
     m_i2c_env2 = std::make_shared<I2cHandler>("/dev/i2c-5"); // Add the new I2C-5 bus
-    m_gpio_handler = std::make_shared<GpioHandler>("gpiochip4");
+    m_gpio_handler = std::make_shared<GpioHandler>("/dev/gpiochip0");
 
     // Both sensors use default address 0x44, separated by physical bus
     sht3x = std::make_unique<Sht3xDriver>(m_i2c_main, 0x44);   // Ngăn mát (Bus 1)

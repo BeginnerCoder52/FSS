@@ -48,7 +48,8 @@ def get_dbus_config():
 dbus_config = get_dbus_config()
 
 try:
-    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async
+    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
+    set_default_bus(sd_bus_open_system())
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -116,7 +117,7 @@ class MonitorListener:
     def query_latest_sensors_from_db(self) -> Tuple[Optional[float], Optional[bool], Optional[str]]:
         """Query SQLite database for latest distance and door readings."""
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=5.0)
+            conn = sqlite3.connect(f"file:{DB_PATH}?immutable=1", uri=True, timeout=5.0)
             cursor = conn.cursor()
             
             # Query latest distance reading

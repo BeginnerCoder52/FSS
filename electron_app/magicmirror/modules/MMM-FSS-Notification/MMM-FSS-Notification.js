@@ -63,11 +63,11 @@ Module.register("MMM-FSS-Notification", {
     },
     notificationReceived(notification, payload, sender) {
         if (notification === "FSS_NOTIFICATION") {
-            this.playNotificationSound(payload.type);
-            const msg = { ...payload };
-            if (msg.type === "door_open") msg.message = "OPENING CAMERA";
-            else if (msg.type === "door_closed") msg.message = "CLOSING CAMERA";
-            this.addNotification(msg);
+            if (payload.type === "food_added" || payload.type === "food_removed") {
+                this.playNotificationSound(payload.type);
+                const msg = { ...payload };
+                this.addNotification(msg);
+            }
         }
     },
     addNotification(data, preventTimeout = false) {

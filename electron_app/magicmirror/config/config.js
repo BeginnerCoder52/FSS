@@ -51,6 +51,11 @@ let config = {
 			classes: "known"
 		},
 		{
+			module: "MMM-FSS-Quit",
+			position: "top_right",
+			classes: "everyone"
+		},
+		{
 			module: "clock",
 			position: "top_right",
 			classes: "everyone",
@@ -81,6 +86,7 @@ let config = {
 			position: "top_center"
 		},
 		{
+			disabled: true,
 			module: "MMM-FSS-Monitor",
 			position: "top_bar"
 		},
@@ -103,6 +109,7 @@ let config = {
 			}
 		},
 		{
+			disabled: true,
 			module: "MMM-FSS-LivePreview",
 			position: "top_right",
 			config: { previewFps: 10, timeoutAfterStable: 4000 }

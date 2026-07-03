@@ -121,11 +121,11 @@ Module.register("MMM-FSS-Recommend", {
 
         shoppingPanel.appendChild(shoppingScroll);
 
-        // Pipeline time display for Recommend (NLP)
+        // Pipeline time display for Recommend (Filter-Sort)
         if (this.result && this.result.pipeline_time_ms) {
             const timeDisplay = document.createElement("div");
             timeDisplay.className = "fss-pipeline-time";
-            timeDisplay.textContent = "⏱ NLP pipeline: " + this.result.pipeline_time_ms + "ms";
+            timeDisplay.textContent = "⏱ Filter-Sort pipeline: " + this.result.pipeline_time_ms + "ms";
             shoppingPanel.appendChild(timeDisplay);
         } else if (this.pipelineTimeMs !== null) {
             const timeDisplay = document.createElement("div");

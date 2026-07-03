@@ -5,7 +5,7 @@ Integration Tests - RecipeExtractor ↔ RecommendDaemon
 Purpose:
     Validate data flow and format compatibility between RecipeAnalyzerEngine
     (from recipe_extractor) and RecommendEngine (from recommend_daemon).
-    Tests the cross-component import, the Bù Trừ algorithm with new NLP
+    Tests the cross-component import, the Bù Trừ algorithm with new Analyzer
     output format (original_ingredients), and error propagation.
 
 Test Coverage:
@@ -13,13 +13,13 @@ Test Coverage:
     2. generate_fss_request -> generate_shopping_list data flow
     3. Bù Trừ algorithm with original_ingredients string format
     4. Recipe suggestion flow (NOT_FOUND -> fuzzy match)
-    5. NLP error propagation to RecommendEngine
-    6. format_result_for_ui with real NLP output
+    5. Analyzer error propagation to RecommendEngine
+    6. format_result_for_ui with real Analyzer output
     7. Quantity parsing from original_ingredients format
 
 Data Flow:
     RecipeAnalyzerEngine.generate_fss_request()
-        -> RecommendEngine.generate_shopping_list(nlp_result)
+        -> RecommendEngine.generate_shopping_list(analyzer_result)
         -> Bù Trừ comparison with inventory
         -> format_result_for_ui()
 
@@ -81,7 +81,7 @@ class MockRecipeAnalyzerEngine:
                 "processing_time_ms": 0.01,
             }
         if normalized == "error_test":
-            return {"status": "ERROR", "error": "Simulated NLP error"}
+            return {"status": "ERROR", "error": "Simulated Analyzer error"}
         suggestions = [n for n in self.recipe_names if normalized in n]
         return {
             "status": "NOT_FOUND",
@@ -114,7 +114,7 @@ class TestNlpToRecommendDataFlow(unittest.TestCase):
     def setUp(self):
         self.mock_nlp = MockRecipeAnalyzerEngine()
         from RecommendEngine import RecommendEngine
-        self.engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        self.engine = RecommendEngine(analyzer_engine=self.mock_nlp)
 
     def test_generate_shopping_list_accepts_nlp_output(self):
         result = self.engine.generate_shopping_list(
@@ -157,16 +157,16 @@ class TestNlpToRecommendDataFlow(unittest.TestCase):
         )
         self.assertEqual(result["recipe_name"], "Tr\u1ee9ng Chi\u00ean")
 
-    def test_processing_time_in_nlp_result(self):
-        nlp_result = self.mock_nlp.generate_fss_request("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
-        self.assertIn("processing_time_ms", nlp_result)
+    def test_processing_time_in_analyzer_result(self):
+        analyzer_result = self.mock_nlp.generate_fss_request("G\u1ecfi Tr\u1ed9n Kh\u00f4 M\u1ef1c")
+        self.assertIn("processing_time_ms", analyzer_result)
 
 
 class TestBuTruWithOriginalIngredients(unittest.TestCase):
     def setUp(self):
         self.mock_nlp = MockRecipeAnalyzerEngine()
         from RecommendEngine import RecommendEngine
-        self.engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        self.engine = RecommendEngine(analyzer_engine=self.mock_nlp)
 
     def test_bu_tru_all_missing(self):
         result = self.engine.generate_shopping_list(
@@ -227,7 +227,7 @@ class TestNlpErrorPropagation(unittest.TestCase):
     def setUp(self):
         self.mock_nlp = MockRecipeAnalyzerEngine()
         from RecommendEngine import RecommendEngine
-        self.engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        self.engine = RecommendEngine(analyzer_engine=self.mock_nlp)
 
     def test_not_found_propagates_from_nlp(self):
         result = self.engine.generate_shopping_list(
@@ -248,19 +248,19 @@ class TestNlpErrorPropagation(unittest.TestCase):
 
     def test_no_engine_returns_error(self):
         from RecommendEngine import RecommendEngine
-        engine_no_nlp = RecommendEngine(nlp_engine=None)
+        engine_no_nlp = RecommendEngine(analyzer_engine=None)
         result = engine_no_nlp.generate_shopping_list(
             recipe_name="Test", batch_id="err-003", inventory=[]
         )
         self.assertEqual(result["status"], "ERROR")
-        self.assertIn("NLP engine not initialized", result["error"])
+        self.assertIn("Analyzer engine not initialized", result["error"])
 
     def test_nlp_empty_original_ingredients_handled(self):
         mock_empty = MagicMock()
         mock_empty.generate_fss_request.return_value = {
             "status": "SUCCESS", "dish": "test", "original_ingredients": []
         }
-        self.engine.set_nlp_engine(mock_empty)
+        self.engine.set_analyzer_engine(mock_empty)
         result = self.engine.generate_shopping_list(
             recipe_name="test", batch_id="err-004", inventory=[]
         )
@@ -268,8 +268,8 @@ class TestNlpErrorPropagation(unittest.TestCase):
 
     def test_nlp_exception_caught_by_recommend_engine(self):
         mock_exception = MagicMock()
-        mock_exception.generate_fss_request.side_effect = RuntimeError("NLP crash")
-        self.engine.set_nlp_engine(mock_exception)
+        mock_exception.generate_fss_request.side_effect = RuntimeError("Analyzer crash")
+        self.engine.set_analyzer_engine(mock_exception)
         result = self.engine.generate_shopping_list(
             recipe_name="test", batch_id="err-005", inventory=[]
         )
@@ -280,7 +280,7 @@ class TestFormatResultForUi(unittest.TestCase):
     def setUp(self):
         self.mock_nlp = MockRecipeAnalyzerEngine()
         from RecommendEngine import RecommendEngine
-        self.engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        self.engine = RecommendEngine(analyzer_engine=self.mock_nlp)
 
     def test_format_result_ui_ingredients(self):
         result = self.engine.generate_shopping_list(
@@ -320,7 +320,7 @@ class TestNlpGetAvailableRecipes(unittest.TestCase):
     def setUp(self):
         self.mock_nlp = MockRecipeAnalyzerEngine()
         from RecommendEngine import RecommendEngine
-        self.engine = RecommendEngine(nlp_engine=self.mock_nlp)
+        self.engine = RecommendEngine(analyzer_engine=self.mock_nlp)
 
     def test_get_available_recipes_from_nlp(self):
         recipes = self.engine.get_available_recipes()
@@ -329,7 +329,7 @@ class TestNlpGetAvailableRecipes(unittest.TestCase):
 
     def test_get_available_recipes_no_engine(self):
         from RecommendEngine import RecommendEngine
-        engine = RecommendEngine(nlp_engine=None)
+        engine = RecommendEngine(analyzer_engine=None)
         recipes = engine.get_available_recipes()
         self.assertEqual(recipes, [])
 

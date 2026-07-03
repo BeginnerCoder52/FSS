@@ -66,9 +66,9 @@ fss_log_ok "Hardware groups configured"
 fss_log_info "--- Step 3: Creating runtime directories ---"
 sudo mkdir -p "${FSS_DATA_DIR}" "${FSS_MODEL_DIR}" "${FSS_ASSET_DIR}" \
             "${FSS_IMAGE_DIR}" "${FSS_LOG_DIR}"
-sudo chown -R "${FSS_RUNTIME_USER}:${FSS_RUNTIME_USER}" "${FSS_RUNTIME_DIR}"
+sudo chown -R "${FSS_RUNTIME_USER}:" "${FSS_RUNTIME_DIR}"
 sudo chmod -R 755 "${FSS_RUNTIME_DIR}"
-sudo chown -R "${FSS_RUNTIME_USER}:${FSS_RUNTIME_USER}" "${FSS_LOG_DIR}" 2>/dev/null || true
+sudo chown -R "${FSS_RUNTIME_USER}:" "${FSS_LOG_DIR}" 2>/dev/null || true
 fss_log_ok "Runtime directories created at ${FSS_RUNTIME_DIR}"
 
 # ==============================================================================

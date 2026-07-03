@@ -74,15 +74,15 @@ def wait_for_service(timeout=5):
 # Local NLP Fallback (used when D-Bus / RecommendDaemon is down)
 # Tries to import the recipe_extractor library directly from FSS repo.
 # ============================================================
-_local_nlp_engine = None
-_local_nlp_attempted = False
+_local_analyzer_engine = None
+_local_analyzer_attempted = False
 
-def _get_local_nlp():
+def _get_local_analyzer():
     """Lazy-load RecipeAnalyzerEngine from recipe_extractor if available."""
-    global _local_nlp_engine, _local_nlp_attempted
-    if _local_nlp_attempted:
-        return _local_nlp_engine
-    _local_nlp_attempted = True
+    global _local_analyzer_engine, _local_analyzer_attempted
+    if _local_analyzer_attempted:
+        return _local_analyzer_engine
+    _local_analyzer_attempted = True
     try:
         # Resolve path relative to this bridge file: ../../../../../../recipe_extractor/src
         bridge_dir = os.path.dirname(os.path.abspath(__file__))
@@ -91,25 +91,25 @@ def _get_local_nlp():
         recipe_src = os.path.join(fss_root, "recipe_extractor", "src")
         recipe_db  = os.path.join(fss_root, "recipe_extractor", "data", "recipes")
         if not os.path.isdir(recipe_db):
-            logging.warning(f"[LocalNLP] recipe_db not found at {recipe_db}")
+            logging.warning(f"[LocalAnalyzer] recipe_db not found at {recipe_db}")
             return None
         if recipe_src not in sys.path:
             sys.path.insert(0, recipe_src)
         from RecipeAnalyzerAPI import RecipeAnalyzerEngine
-        _local_nlp_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db)
-        logging.info(f"[LocalNLP] Loaded RecipeAnalyzerEngine with {len(_local_nlp_engine.recipe_names)} recipes")
+        _local_analyzer_engine = RecipeAnalyzerEngine(recipe_db_path=recipe_db)
+        logging.info(f"[LocalAnalyzer] Loaded RecipeAnalyzerEngine with {len(_local_analyzer_engine.recipe_names)} recipes")
     except Exception as e:
-        logging.warning(f"[LocalNLP] Cannot load RecipeAnalyzerEngine: {e}")
-        _local_nlp_engine = None
-    return _local_nlp_engine
+        logging.warning(f"[LocalAnalyzer] Cannot load RecipeAnalyzerEngine: {e}")
+        _local_analyzer_engine = None
+    return _local_analyzer_engine
 
 
-def _local_nlp_search(recipe):
+def _local_analyzer_search(recipe):
     """
-    Run a local NLP lookup using recipe_extractor as D-Bus fallback.
+    Run a local analyzer lookup using recipe_extractor as D-Bus fallback.
     Returns a dict in the same format as RecommendDaemon's response.
     """
-    engine = _get_local_nlp()
+    engine = _get_local_analyzer()
     if engine is None:
         return None
 
@@ -119,7 +119,7 @@ def _local_nlp_search(recipe):
     pipeline_ms = round((time.time() - t0) * 1000, 1)
 
     status = result.get("status", "")
-    logging.info(f"[LocalNLP] '{recipe}' -> status={status} pipeline={pipeline_ms}ms")
+    logging.info(f"[LocalAnalyzer] '{recipe}' -> status={status} pipeline={pipeline_ms}ms")
 
     if status == "NOT_FOUND":
         # Return suggestions too so the UI can show fuzzy chips
@@ -178,20 +178,20 @@ def handle_search(recipe):
                 print(json.dumps({"type": "RESULT", "data": parsed}), flush=True)
             return
         except Exception as e:
-            logging.warning(f"D-Bus call failed, falling back to local NLP: {e}")
+            logging.warning(f"D-Bus call failed, falling back to local analyzer: {e}")
 
-    # Fallback 1: try local NLP engine (real ingredients, no D-Bus needed)
-    local_result = _local_nlp_search(recipe)
+    # Fallback 1: try local Recipe analyzer (real ingredients, no D-Bus needed)
+    local_result = _local_analyzer_search(recipe)
     if local_result is not None:
         print(json.dumps({"type": "RESULT", "data": local_result}), flush=True)
         return
 
-    # Fallback 2: D-Bus AND local NLP both unavailable — return NOT_FOUND
+    # Fallback 2: D-Bus AND local analyzer both unavailable — return NOT_FOUND
     # so the UI shows fuzzy suggestions instead of a fake generic list
     fallback = {
         "status": "NOT_FOUND",
         "recipe_name": recipe,
-        "message": "RecommendDaemon and local NLP both unavailable",
+        "message": "RecommendDaemon and local analyzer both unavailable",
         "ingredients": [],
         "pipeline_time_ms": 0
     }
@@ -222,8 +222,8 @@ while True:
                 except Exception as e:
                     logging.warning(f"D-Bus GetAvailableRecipes failed, falling back to static list: {e}")
             if not _sent:
-                # Use local NLP engine's full recipe list (250+) if available
-                engine = _get_local_nlp()
+                # Use local Recipe analyzer's full recipe list (250+) if available
+                engine = _get_local_analyzer()
                 local_recipes = engine.get_available_recipes() if engine else []
                 print(json.dumps({"type": "RECIPES", "data": local_recipes}), flush=True)
 #        elif msg_type == "GET_RECIPE_DETAIL":
