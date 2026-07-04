@@ -185,6 +185,7 @@ class FrtMain:
         self._inference_thread: Optional[threading.Thread] = None
         self._last_active_time: float = 0.0
         self._pending_quantity_changes = {}
+        self._debug_frames_data = []
 
         logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
             self.current_state, self.bypass_door_sensor, self.confidence_threshold))
@@ -291,22 +292,32 @@ class FrtMain:
         try:
             if hasattr(self, 'tracker') and self.tracker and hasattr(self.tracker, 'line_detector'):
                 line_det = self.tracker.line_detector
-                logger.info("=" * 60)
-                logger.info("BOUNDARY CROSSING SUMMARY")
-                logger.info("  Boundary line: {} at pos {}".format(
-                    line_det.boundary_line.get('type', '?'),
-                    int(line_det.boundary_line.get('pos', 0)),
-                ))
+                # Extract metrics for file output without logging to console
                 changes = line_det.get_and_clear_changes()
-                if changes:
-                    logger.info("  Net quantity changes (class_id → delta):")
-                    for cid, delta in changes.items():
-                        logger.info("    Class {}: {:+.0f}".format(cid, delta))
                 total_entries = sum(1 for v in changes.values() if v > 0) if changes else 0
                 total_exits = sum(abs(v) for v in changes.values() if v < 0) if changes else 0
-                logger.info("  Total entries (CHECK_IN):  {}".format(total_entries))
-                logger.info("  Total exits  (CHECK_OUT): {}".format(total_exits))
-                logger.info("=" * 60)
+
+                # Write summary to file
+                debug_dir = getattr(self, 'debug_dir', '/opt/fss/debug_frames')
+                if not os.path.exists(debug_dir):
+                    os.makedirs(debug_dir, exist_ok=True)
+                summary_file = os.path.join(debug_dir, 'summary.txt')
+                try:
+                    with open(summary_file, 'w') as f:
+                        f.write("BOUNDARY CROSSING SUMMARY\n")
+                        f.write(f"Boundary line: {line_det.boundary_line.get('type', '?')} at pos {int(line_det.boundary_line.get('pos', 0))}\n\n")
+                        if changes:
+                            f.write("Net quantity changes:\n")
+                            for cid, delta in changes.items():
+                                f.write(f"  {self._get_food_name(cid)}: {delta:+.0f}\n")
+                        f.write(f"\nTotal entries (CHECK_IN): {total_entries}\n")
+                        f.write(f"Total exits  (CHECK_OUT): {total_exits}\n")
+                except Exception as e:
+                    logger.error(f"Failed to write summary: {e}")
+                    
+                # Export debug frames
+                if getattr(self, 'debug_mode', False) and hasattr(self, '_debug_frames_data') and self._debug_frames_data:
+                    self._export_debug_frames(debug_dir)
 
             if self.camera_driver:
                 self.camera_driver.release_camera()
@@ -503,7 +514,52 @@ class FrtMain:
                     logger.debug("Frame #{:<6d} | {:<7s} | {:>7.1f} | {:>7.1f} | {:>8.1f} | {:>7.1f} | {:>3d} | {:>6.1f} | {:>7.1f} | {:>7.2f} | {:>3d}|{:>3d}| {}".format(
                         frame_count, state_str, capture_time, motion_time, pre_time, infer_time,
                         len(detections), track_time, total_time, loop_fps,
-                        det_count, trk_count, class_breakdown))
+                        det_count, trk_count, class_breakdown)
+                    self._metrics_buf.append(log_str)
+                    
+                    # Add centroid vs virtual line debug info for active tracks
+                    if hasattr(self.tracker, 'line_detector') and self.tracker.line_detector.boundary_line:
+                        line_info = self.tracker.line_detector.boundary_line
+                        line_type = line_info.get('type')
+                        line_pos = line_info.get('pos', 0)
+                        
+                        for t in self.tracker.tracks:
+                            if t.state == "ACTIVE":
+                                if line_type == 'horizontal' and len(t.centroid_y_history) > 0:
+                                    c_pos = t.centroid_y_history[-1]
+                                    dist = c_pos - line_pos
+                                    self._metrics_buf.append("   └─ Track {:>2} (cls {}): Y={:>5.1f} (dist to line: {:>+6.1f}px)".format(
+                                        t.track_id, t.class_id, c_pos, dist))
+                                elif line_type == 'vertical' and len(t.centroid_x_history) > 0:
+                                    c_pos = t.centroid_x_history[-1]
+                                    dist = c_pos - line_pos
+                                    self._metrics_buf.append("   └─ Track {:>2} (cls {}): X={:>5.1f} (dist to line: {:>+6.1f}px)".format(
+                                        t.track_id, t.class_id, c_pos, dist))
+
+                # --- Debug Drawing (Save to memory list) ---
+                if self.debug_mode:
+                    try:
+                        if not hasattr(self, '_debug_frames_data'):
+                            self._debug_frames_data = []
+                        
+                        frame_data = {
+                            "frame_count": frame_count,
+                            "frame": frame.copy(),
+                            "line_info": dict(self.tracker.line_detector.boundary_line),
+                            "tracks": []
+                        }
+                        for t in self.tracker.tracks:
+                            if t.state == "ACTIVE":
+                                frame_data["tracks"].append({
+                                    "track_id": t.track_id,
+                                    "class_id": t.class_id,
+                                    "bbox": [int(v) for v in t.get_bbox()],
+                                    "centroid_x_history": list(t.centroid_x_history),
+                                    "centroid_y_history": list(t.centroid_y_history)
+                                })
+                        self._debug_frames_data.append(frame_data)
+                    except Exception as e:
+                        logger.error("Failed to store debug frame data: {}".format(e))
 
                 # --- Write preview frame for LivePreview UI (every 3rd frame) ---
                 if frame_count % 3 == 0:
@@ -702,6 +758,52 @@ class FrtMain:
         load = max(0.0, min(100.0, load))
         logger.info("Pipeline Metrics | FPS: {:.2f} | Load: {:.1f}% | State: {}".format(
             fps, load, self.current_state))
+            
+    def _export_debug_frames(self, debug_dir: str) -> None:
+        """Export stored debug frames sequentially at the end of execution."""
+        if hasattr(self, '_metrics_buf') and self._metrics_buf:
+            logger.info("=" * 120)
+            logger.info("        FRAME | STATE |   CAPTURE |  MOTION |  PREPROC |  INFER | NMS | TRACK |  TOTAL | LOOP FPS | DET|TRK| CLS_BREAKDOWN")
+            logger.info("-" * 120)
+            for m in self._metrics_buf:
+                logger.info(m)
+            logger.info("=" * 120)
+            
+        logger.info(f"Exporting {len(self._debug_frames_data)} debug frames to {debug_dir}...")
+        try:
+            for idx, item in enumerate(self._debug_frames_data):
+                debug_frame = item["frame"]
+                line_info = item["line_info"]
+                
+                # Draw boundary line
+                line_pos = int(line_info.get('pos', 0))
+                line_type = line_info.get('type', 'horizontal')
+                if line_type == 'horizontal':
+                    cv2.line(debug_frame, (0, line_pos), (debug_frame.shape[1], line_pos), (0, 0, 255), 2)
+                else:
+                    cv2.line(debug_frame, (line_pos, 0), (line_pos, debug_frame.shape[0]), (0, 0, 255), 2)
+                    
+                # Draw tracks and boxes
+                for t in item["tracks"]:
+                    x1, y1, w, h = t["bbox"]
+                    x2, y2 = x1 + w, y1 + h
+                    color = (0, 255, 0)
+                    cv2.rectangle(debug_frame, (x1, y1), (x2, y2), color, 2)
+                    label = "ID:{} {}".format(t["track_id"], self._get_food_name(t["class_id"]))
+                    cv2.putText(debug_frame, label, (x1, max(0, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    
+                    # Draw trajectory
+                    pts = list(zip(t["centroid_x_history"], t["centroid_y_history"]))
+                    pts = [(int(cx), int(cy)) for cx, cy in pts]
+                    for i in range(1, len(pts)):
+                        cv2.line(debug_frame, pts[i-1], pts[i], (255, 0, 0), 2)
+                        
+                debug_path = os.path.join(debug_dir, "frame_{:04d}.jpg".format(idx))
+                cv2.imwrite(debug_path, debug_frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+                
+            logger.info("Successfully exported all debug frames.")
+        except Exception as e:
+            logger.error(f"Error during debug frame export: {e}")
 
     # ========================================================================
     # INTERNAL HELPER METHODS

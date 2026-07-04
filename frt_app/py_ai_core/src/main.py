@@ -93,6 +93,8 @@ def main():
     
     parser.add_argument("--debug", action="store_true",
                        help="Enable debug logging")
+    parser.add_argument("--debug-dir", type=str, default="/opt/fss/debug_frames",
+                       help="Directory to save debug frames")
     parser.add_argument("--camera", default="/dev/video0",
                        help="Camera device path (default: /dev/video0)")
     parser.add_argument("--model", default="/opt/fss/models/0607_best_int8.tflite",
@@ -165,6 +167,7 @@ def main():
     logger.info("Model path: {}".format(args.model))
     logger.info("Log level: {}".format(log_level))
     logger.info("Debug mode: {}".format("ON" if args.debug else "OFF"))
+    logger.info("Debug dir: {}".format(args.debug_dir))
     logger.info("C backend: {}".format("ON" if args.use_c_backend else "OFF"))
     logger.info("Distance sensor: {}".format("OFF (debug)" if args.debug_no_distance else "ON"))
     logger.info("Distance threshold: {} cm".format(args.distance_threshold))
@@ -203,6 +206,7 @@ def main():
         app_instance.distance_sensor_enabled = not args.debug_no_distance
         app_instance.distance_threshold_cm = args.distance_threshold
         app_instance.shm_only = args.shm_only
+        app_instance.debug_dir = args.debug_dir
         
         # Initialize pipeline
         logger.info("Initializing pipeline...")
