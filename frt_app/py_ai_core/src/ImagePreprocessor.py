@@ -56,9 +56,22 @@ class ImagePreprocessor:
         self.target_width = target_width
         self.target_height = target_height
         self.normalize_scale = self.NORMALIZE_SCALE
+        self.output_dtype = np.float32
+        self.quant_scale = 0.0
+        self.quant_zero_point = 0
         
         logger.info("ImagePreprocessor initialized (target={}x{})".format(
             target_width, target_height))
+            
+    def set_quantization_params(self, dtype: type, scale: float, zero_point: int) -> None:
+        """
+        Set quantization parameters for INT8/UINT8 full integer models.
+        """
+        self.output_dtype = dtype
+        self.quant_scale = scale
+        self.quant_zero_point = zero_point
+        logger.info("Preprocessor quantization set to dtype={}, scale={}, zero_point={}".format(
+            self.output_dtype, self.quant_scale, self.quant_zero_point))
     
     def convert_bgr_to_rgb(self, frame: np.ndarray) -> np.ndarray:
         """
@@ -208,9 +221,21 @@ class ImagePreprocessor:
             # Convert to float32
             frame_float = frame.astype(np.float32)
             
-            # Normalize to [0, 1]
-            normalized = frame_float * self.normalize_scale
+            if self.output_dtype != np.float32 and self.quant_scale > 0.0:
+                # Combine normalization [0, 1] and quantization to save CPU cycles
+                # factor = (1/255) / scale = 1.0 / (255.0 * scale)
+                factor = self.normalize_scale / self.quant_scale
+                quantized = (frame_float * factor) + self.quant_zero_point
+                
+                if self.output_dtype == np.int8:
+                    quantized = np.clip(quantized, -128, 127)
+                elif self.output_dtype == np.uint8:
+                    quantized = np.clip(quantized, 0, 255)
+                    
+                return quantized.astype(self.output_dtype)
             
+            # Default Float32 Normalize to [0, 1]
+            normalized = frame_float * self.normalize_scale
             return normalized
             
         except Exception as e:
