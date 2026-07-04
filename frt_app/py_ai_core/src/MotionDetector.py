@@ -44,21 +44,23 @@ class MotionDetector:
     
     # MOG2 configuration parameters
     MOG2_HISTORY = 500              # Number of frames for background model
-    MOG2_THRESHOLD = 16.0           # Variance threshold
+    MOG2_THRESHOLD = 32.0           # Variance threshold (increased to filter out light flicker)
     MOG2_DETECT_SHADOWS = True      # Detect shadows as objects
     
     # Motion detection threshold (% of changed pixels)
     PIXEL_CHANGE_THRESHOLD = 1.0    # Trigger if > 1% of pixels changed
     
-    def __init__(self, threshold_percent: float = 1.0):
+    def __init__(self, threshold_percent: float = 1.0, mog2_variance: float = None):
         """
         Initialize motion detector.
         
         Arguments:
             threshold_percent (float): % of pixels that must change to trigger motion
+            mog2_variance (float): Optional override for MOG2_THRESHOLD
         """
         self.mog2_subtractor = None
         self.pixel_change_threshold = threshold_percent
+        self.mog2_variance_threshold = mog2_variance if mog2_variance is not None else self.MOG2_THRESHOLD
         
         logger.info("MotionDetector initialized (threshold={}%)".format(
             threshold_percent))
@@ -84,10 +86,10 @@ class MotionDetector:
             self.mog2_subtractor = cv2.createBackgroundSubtractorMOG2(
                 detectShadows=self.MOG2_DETECT_SHADOWS,
                 history=self.MOG2_HISTORY,
-                varThreshold=self.MOG2_THRESHOLD
+                varThreshold=self.mog2_variance_threshold
             )
             logger.info("MOG2 initialized (history={}, threshold={})".format(
-                self.MOG2_HISTORY, self.MOG2_THRESHOLD))
+                self.MOG2_HISTORY, self.mog2_variance_threshold))
             
         except Exception as e:
             logger.exception("Error initializing MOG2: {}".format(e))
