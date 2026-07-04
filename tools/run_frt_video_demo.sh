@@ -25,6 +25,13 @@ STOP_SYSTEMD="0"
 REUSE_DBDAEMON="0"
 USE_C_BACKEND="0"
 
+CONFIDENCE="0.6"
+IOU_THRESHOLD="0.5"
+BYTETRACK_MAX_AGE="30"
+BYTETRACK_MATCH_THRESH="0.6"
+MOG2_VARIANCE="32.0"
+MOG2_AREA_THRESHOLD="3.0"
+
 PIDS=()
 NAMES=()
 
@@ -52,6 +59,14 @@ Options:
   --stop-systemd           Stop fss-db/fss-ai/fss-camera/fss-sensor before starting demo.
   --reuse-dbdaemon         Do not start DBDaemon; use an already-running DBDaemon.
   --use-c-backend          Start FRTApp with --use-c-backend.
+  
+  AI & Tracking Tuning:
+  --confidence N           YOLO confidence (default: ${CONFIDENCE})
+  --iou-threshold N        YOLO NMS IoU threshold (default: ${IOU_THRESHOLD})
+  --bytetrack-max-age N    Max age for lost tracks (default: ${BYTETRACK_MAX_AGE})
+  --bytetrack-match-thresh N ByteTrack IoU match threshold (default: ${BYTETRACK_MATCH_THRESH})
+  --mog2-variance N        MOG2 variance threshold (default: ${MOG2_VARIANCE})
+  --mog2-area-threshold N  MOG2 area %% (default: ${MOG2_AREA_THRESHOLD})
   -h, --help               Show this help.
 
 Example:
@@ -263,6 +278,12 @@ while (($#)); do
             USE_C_BACKEND="1"
             shift
             ;;
+        --confidence) CONFIDENCE="$2"; shift 2 ;;
+        --iou-threshold) IOU_THRESHOLD="$2"; shift 2 ;;
+        --bytetrack-max-age) BYTETRACK_MAX_AGE="$2"; shift 2 ;;
+        --bytetrack-match-thresh) BYTETRACK_MATCH_THRESH="$2"; shift 2 ;;
+        --mog2-variance) MOG2_VARIANCE="$2"; shift 2 ;;
+        --mog2-area-threshold) MOG2_AREA_THRESHOLD="$2"; shift 2 ;;
         -h|--help)
             usage
             exit 0
@@ -349,6 +370,12 @@ FRT_ARGS=(
     --debug-no-distance
     --shm-only
     --boundary-y "${BOUNDARY_Y}"
+    --confidence "${CONFIDENCE}"
+    --iou-threshold "${IOU_THRESHOLD}"
+    --bytetrack-max-age "${BYTETRACK_MAX_AGE}"
+    --bytetrack-match-thresh "${BYTETRACK_MATCH_THRESH}"
+    --mog2-variance "${MOG2_VARIANCE}"
+    --mog2-area-threshold "${MOG2_AREA_THRESHOLD}"
 )
 
 if [[ "${USE_C_BACKEND}" == "1" ]]; then
