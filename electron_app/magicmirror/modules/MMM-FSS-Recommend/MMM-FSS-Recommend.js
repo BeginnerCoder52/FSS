@@ -20,17 +20,9 @@ Module.register("MMM-FSS-Recommend", {
         this.fuzzySuggestions = [];
         this.lastRawInput = "";
 
-        // Mock data để hiển thị giống mockup tạm thời, cho đến khi có dữ liệu thật
-        this.mockShoppingList = [
-            { name: "Thịt heo", qty: "500g" },
-            { name: "Thịt bò", qty: "500g" },
-            { name: "Táo tàu", qty: "100g" },
-            { name: "Hành tây", qty: "2 cây" }
-        ];
-        this.mockMenu = [
-            "Thịt kho măng",
-            "Cơm cuộn"
-        ];
+        // Xoá dữ liệu giả
+        this.mockShoppingList = [];
+        this.mockMenu = [];
 
         this.sendSocketNotification("GET_RECIPES", {});
     },
@@ -54,11 +46,26 @@ Module.register("MMM-FSS-Recommend", {
         shoppingTitle.style.marginBottom = "1.2em";
         shoppingPanel.appendChild(shoppingTitle);
 
+        // Nút cuộn lên
+        const upBtn = document.createElement("div");
+        upBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+        upBtn.className = "fss-scroll-btn fss-scroll-up";
+        const scrollUp = (e) => { e.preventDefault(); shoppingScroll.scrollTop -= 150; };
+        upBtn.addEventListener("click", scrollUp);
+        upBtn.addEventListener("touchend", scrollUp);
+        shoppingPanel.appendChild(upBtn);
+
         // Scroll container for shopping list
         const shoppingScroll = document.createElement("div");
         shoppingScroll.className = "fss-shopping-scroll";
 
-        // Hiển thị dữ liệu thực hoặc mock data
+        // Nút cuộn xuống
+        const downBtn = document.createElement("div");
+        downBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        downBtn.className = "fss-scroll-btn fss-scroll-down";
+        const scrollDown = (e) => { e.preventDefault(); shoppingScroll.scrollTop += 150; };
+        downBtn.addEventListener("click", scrollDown);
+        downBtn.addEventListener("touchend", scrollDown);
         let ingredientsToBuy = this.hasSearched ? [] : this.mockShoppingList;
         if (this.result && this.result.ingredients) {
             ingredientsToBuy = this.result.ingredients
@@ -120,6 +127,7 @@ Module.register("MMM-FSS-Recommend", {
         });
 
         shoppingPanel.appendChild(shoppingScroll);
+        shoppingPanel.appendChild(downBtn);
 
         // Pipeline time display for Recommend (Filter-Sort)
         if (this.result && this.result.pipeline_time_ms) {
@@ -243,7 +251,7 @@ Module.register("MMM-FSS-Recommend", {
         const chipsToShow = (!this.hasSearched && this.suggestedRecipes.length > 0)
             ? { title: "Gợi ý nhanh:", recipes: this.suggestedRecipes, showMore: true }
             : (this.fuzzySuggestions.length > 0)
-                ? { title: "Ý bạn là...", recipes: this.fuzzySuggestions, showMore: false }
+                ? { title: `Không tìm thấy "${this.lastRawInput}", có phải ý bạn là:`, recipes: this.fuzzySuggestions, showMore: false }
                 : null;
 
         if (chipsToShow) {
@@ -291,12 +299,12 @@ Module.register("MMM-FSS-Recommend", {
                 moreChip.style.cursor = "pointer";
                 moreChip.addEventListener("click", () => {
                     this.shuffleSuggestions();
-                    this.updateDom();
+                    this.updateDom(0);
                 });
                 moreChip.addEventListener("touchend", (e) => {
                     e.preventDefault();
                     this.shuffleSuggestions();
-                    this.updateDom();
+                    this.updateDom(0);
                 });
                 chipGrid.appendChild(moreChip);
             }
@@ -371,13 +379,14 @@ Module.register("MMM-FSS-Recommend", {
                 this.mockShoppingList.splice(idx, 1);
             }
         }
-        this.updateDom();
+        this.updateDom(0);
     },
 
     deleteRecipe(index) {
+        this.playNotificationSound("trash_delete");
         if (!this.hasSearched) {
             this.mockMenu.splice(index, 1);
-            this.updateDom();
+            this.updateDom(0);
             return;
         }
 
@@ -386,12 +395,12 @@ Module.register("MMM-FSS-Recommend", {
             this.hasSearched = false;
             this.result = null;
             this.accumulatedResults = [];
-            this.updateDom();
+            this.updateDom(0);
         } else {
             // Cập nhật ngầm: không đặt loading = true
             this.accumulatedResults = [];
             this.pendingCount = this.searchedRecipes.length;
-            this.updateDom();
+            this.updateDom(0);
             this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
         }
     },
@@ -402,7 +411,7 @@ Module.register("MMM-FSS-Recommend", {
             this.searchStartTime = Date.now();
             this.pipelineTimeMs = null;
             this.qrData = null;
-            this.updateDom();
+            this.updateDom(0);
             this.sendSocketNotification("RECIPE_SEARCH", payload);
         }
         if (notification === "KEYBOARD_INPUT" && payload.key === "recommendSearch") {
@@ -418,8 +427,52 @@ Module.register("MMM-FSS-Recommend", {
             this.searchedRecipes = this.searchedRecipes.concat(recipes);
             this.accumulatedResults = [];
             this.pendingCount = this.searchedRecipes.length;
-            this.updateDom();
+            this.updateDom(0);
             this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
+        }
+        
+        if (notification === "KEYBOARD_TYPING" && payload.key === "recommendSearch") {
+            const raw = payload.message || "";
+            const parts = raw.split(",").map(s => s.trim());
+            const currentPart = parts[parts.length - 1];
+            let suggestions = [];
+            
+            const stripAccents = (str) => {
+                return str.normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .replace(/đ/g, "d").replace(/Đ/g, "D");
+            };
+            
+            if (currentPart.length >= 2) {
+                const lower = stripAccents(currentPart.toLowerCase());
+                
+                // Tiêu chí 1: Bắt đầu chính xác bằng từ khóa
+                const startsWith = this.availableRecipes.filter(r => 
+                    stripAccents(r.toLowerCase()).startsWith(lower)
+                );
+                
+                // Tiêu chí 2: Có chứa từ khóa ở đầu một từ (vd: "thịt" trong "bánh mì kẹp thịt")
+                const wordStarts = this.availableRecipes.filter(r => {
+                    const rLower = stripAccents(r.toLowerCase());
+                    return rLower.includes(" " + lower) && !rLower.startsWith(lower);
+                });
+                
+                // Tiêu chí 3: Chứa từ khóa ở bất kỳ đâu
+                const includes = this.availableRecipes.filter(r => {
+                    const rLower = stripAccents(r.toLowerCase());
+                    return rLower.includes(lower) && 
+                           !rLower.startsWith(lower) && 
+                           !rLower.includes(" " + lower);
+                });
+
+                // Ưu tiên độ dài ngắn hơn cho các kết quả cùng cấp để tránh lock vào tên quá dài
+                startsWith.sort((a, b) => a.length - b.length);
+                wordStarts.sort((a, b) => a.length - b.length);
+                includes.sort((a, b) => a.length - b.length);
+
+                suggestions = [...startsWith, ...wordStarts, ...includes].slice(0, 4);
+            }
+            this.sendNotification("KEYBOARD_SUGGESTIONS", { key: payload.key, suggestions: suggestions });
         }
     },
     socketNotificationReceived(notification, payload) {
@@ -447,27 +500,42 @@ Module.register("MMM-FSS-Recommend", {
                     // Reset search state so UI shows fuzzy chips (not an empty recipe history)
                     this.hasSearched = false;
                     this.searchedRecipes = this.searchedRecipes.filter(r => r !== this.lastRawInput);
+                    
+                    let msg = `Chưa tìm thấy món "${firstResult.recipe_name || this.lastRawInput}"`;
+                    if (this.fuzzySuggestions.length > 0) {
+                        const suggStr = this.fuzzySuggestions.slice(0, 3).join(", ");
+                        msg += ` (Gợi ý: ${suggStr})`;
+                    }
+                    
+                    this.sendNotification("FSS_NOTIFICATION", {
+                        type: "recommend_done",
+                        message: msg
+                    });
                 } else {
                     this.fuzzySuggestions = [];
+                    this.sendNotification("FSS_NOTIFICATION", {
+                        type: "recommend_done",
+                        message: `Đã tìm thấy món "${firstResult.recipe_name || this.lastRawInput}"`
+                    });
                 }
-                this.updateDom();
+                this.updateDom(0);
                 this.playNotificationSound("recommend_done");
             }
         } else if (notification === "RECOMMEND_LOADING") {
             this.loading = true;
             this.result = null;
-            this.updateDom();
+            this.updateDom(0);
         } else if (notification === "RECOMMEND_ERROR") {
             console.warn("[MMM-FSS-Recommend] Search error:", payload);
             this.pendingCount = Math.max(0, this.pendingCount - 1);
             if (this.pendingCount <= 0) {
                 this.loading = false;
-                this.updateDom();
+                this.updateDom(0);
             }
         } else if (notification === "RECIPES") {
             this.availableRecipes = payload.data || [];
             this.pickSuggestedRecipes();
-            this.updateDom();
+            this.updateDom(0);
         }
     },
     triggerSearch(recipe) {
@@ -485,13 +553,13 @@ Module.register("MMM-FSS-Recommend", {
 
         this.accumulatedResults = [];
         this.pendingCount = this.searchedRecipes.length;
-        this.updateDom();
+        this.updateDom(0);
         this.searchedRecipes.forEach(r => this.sendSocketNotification("RECIPE_SEARCH", { recipe: r }));
     },
     shuffleSuggestions() {
         if (!this.availableRecipes || this.availableRecipes.length === 0) return;
         const shuffled = [...this.availableRecipes].sort(() => 0.5 - Math.random());
-        this.suggestedRecipes = shuffled.slice(0, 5);
+        this.suggestedRecipes = shuffled.slice(0, 4);
     },
     mergeResults(results) {
         if (!results || results.length === 0) return null;
@@ -536,7 +604,8 @@ Module.register("MMM-FSS-Recommend", {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const soundMap = {
-                "recommend_done": { freq: 550, dur: 150, count: 2, gap: 100, freq2: 770 }
+                "recommend_done": { freq: 550, dur: 150, count: 2, gap: 100, freq2: 770 },
+                "trash_delete": { freq: 330, dur: 200, count: 2, gap: 150 }
             };
             const s = soundMap[type] || { freq: 500, dur: 100, count: 1, gap: 0 };
             let startTime = ctx.currentTime;
@@ -586,6 +655,6 @@ Module.register("MMM-FSS-Recommend", {
             this.suggestedRecipes.push(this.availableRecipes[idx]);
         }
         this.chipOffset = (this.chipOffset + count) % this.availableRecipes.length;
-        this.updateDom();
+        this.updateDom(0);
     }
 });

@@ -268,6 +268,25 @@ class DbDbusInterface:
     async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str, delta: int):
         self.dbus_object.UIUpdateRequired.emit(food_id, quantity, image_path, delta)
 
+    def emit_food_notification(self, notification_type: str, message: str) -> None:
+        """Emit signal to broadcast a food notification."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                self.logger.warning("Cannot emit signal: D-Bus not connected")
+                return
+            
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_food_notification(notification_type, message),
+                self._loop
+            )
+            self.logger.debug(f"Queued food notification signal: {message}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to emit food notification signal: {e}")
+
+    async def _async_emit_food_notification(self, notification_type: str, message: str):
+        self.dbus_object.FoodNotification.emit(notification_type, message)
+
     def emit_environment_update_signal(self, temperature: float, humidity: float) -> None:
         """Emit signal to update UI with environmental data (Sensor 1)."""
         try:
@@ -697,6 +716,11 @@ if SDBUS_AVAILABLE:
             """Signal: UI requires update with new inventory data."""
             pass
         
+        @dbus_signal_async('ss')
+        def FoodNotification(self, notification_type: str, message: str) -> None:
+            """Signal: Broadcast a food notification."""
+            pass
+        
         @dbus_signal_async('dd')
         def EnvironmentUpdateRequired(self, temperature: float, humidity: float) -> None:
             """Signal: UI requires update with new environmental data."""
@@ -753,6 +777,7 @@ else:
     class DbDaemonDbusObject(ABC):
         """Placeholder D-Bus object implementation."""
         def UIUpdateRequired(self, *args, **kwargs): pass
+        def FoodNotification(self, *args, **kwargs): pass
         def EnvironmentUpdateRequired(self, *args, **kwargs): pass
         def SecondaryEnvironmentUpdateRequired(self, *args, **kwargs): pass
         def DoorStateUpdate(self, *args, **kwargs): pass

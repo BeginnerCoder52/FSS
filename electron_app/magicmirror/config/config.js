@@ -85,11 +85,12 @@ let config = {
 			module: "MMM-FSS-Notification",
 			position: "top_center"
 		},
+		/*
 		{
-			disabled: true,
 			module: "MMM-FSS-Monitor",
 			position: "top_bar"
 		},
+		*/
 		{
 			module: "MMM-FSS-Inventory",
 			position: "top_center",

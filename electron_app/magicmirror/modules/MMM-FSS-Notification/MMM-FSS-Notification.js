@@ -13,7 +13,8 @@ Module.register("MMM-FSS-Notification", {
         this.audioCtx = null;
         this.audioReady = false;
 
-        // Mock data removed. Notifications will be populated by D-Bus signals.
+        // Initialize backend node_helper
+        this.sendSocketNotification("MMM_FSS_NOTIFICATION_START", this.config);
     },
     getScripts() {
         return [];
@@ -63,7 +64,16 @@ Module.register("MMM-FSS-Notification", {
     },
     notificationReceived(notification, payload, sender) {
         if (notification === "FSS_NOTIFICATION") {
-            if (payload.type === "food_added" || payload.type === "food_removed") {
+            if (payload.type === "food_added" || payload.type === "food_removed" || payload.type === "recommend_done") {
+                this.playNotificationSound(payload.type);
+                const msg = { ...payload };
+                this.addNotification(msg);
+            }
+        }
+    },
+    socketNotificationReceived(notification, payload) {
+        if (notification === "FSS_NOTIFICATION") {
+            if (payload.type === "food_added" || payload.type === "food_removed" || payload.type === "recommend_done") {
                 this.playNotificationSound(payload.type);
                 const msg = { ...payload };
                 this.addNotification(msg);

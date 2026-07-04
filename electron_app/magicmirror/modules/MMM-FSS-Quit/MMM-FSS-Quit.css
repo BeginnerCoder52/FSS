@@ -3,6 +3,8 @@
     margin-bottom: 10px;
     font-family: 'Roboto', sans-serif;
     pointer-events: auto;
+    position: relative;
+    z-index: 9999;
 }
 
 .fss-quit-main-btn {

@@ -302,11 +302,65 @@ Module.register("MMM-Keyboard", {
     inputDiv.appendChild(send);
     inputDiv.appendChild(hideButton);
     this.kbContainer.appendChild(inputDiv);
+    
+    this.suggestionsDiv = document.createElement("div");
+    this.suggestionsDiv.id = "kbSuggestions";
+    this.suggestionsDiv.style.display = "flex";
+    this.suggestionsDiv.style.flexWrap = "wrap";
+    this.suggestionsDiv.style.justifyContent = "center";
+    this.suggestionsDiv.style.padding = "10px";
+    this.suggestionsDiv.style.gap = "10px";
+    this.suggestionsDiv.style.marginBottom = "20px";
+    this.suggestionsDiv.style.minHeight = "120px"; // Fixed height for 2 rows to prevent keyboard jumping
+    this.suggestionsDiv.style.alignContent = "flex-start";
+    this.kbContainer.appendChild(this.suggestionsDiv);
+    
     var kb = document.createElement("div");
     kb.className = "simple-keyboard";
     this.kbContainer.appendChild(kb);
     container.appendChild(this.kbContainer);
     return container;
+  },
+
+  renderSuggestions: function(suggestions) {
+    if (!this.suggestionsDiv) return;
+    this.suggestionsDiv.innerHTML = "";
+    if (!suggestions || suggestions.length === 0) return;
+    
+    suggestions.forEach(sug => {
+      var btn = document.createElement("div");
+      btn.textContent = sug;
+      btn.style.backgroundColor = "var(--color-primary, #4facfe)";
+      btn.style.color = "white";
+      btn.style.padding = "10px 15px";
+      btn.style.borderRadius = "20px";
+      btn.style.cursor = "pointer";
+      btn.style.fontSize = "20px";
+      btn.style.pointerEvents = "auto";
+      
+      btn.onclick = () => {
+         var kbInput = document.getElementById("kbInput");
+         var currentVal = kbInput.value;
+         var parts = currentVal.split(",");
+         parts.pop(); 
+         parts.push(" " + sug); 
+         var newVal = parts.join(",").trim();
+         if (newVal.startsWith(",")) newVal = newVal.substring(1).trim();
+         
+         this.keyboard.setInput(newVal);
+         kbInput.value = newVal;
+         this.renderSuggestions([]); 
+         this.sendNotification("KEYBOARD_TYPING", { key: this.currentKey, message: newVal, data: this.currentData });
+      };
+      
+      // Also handle touchend
+      btn.addEventListener("touchend", (e) => {
+         e.preventDefault();
+         btn.onclick();
+      });
+      
+      this.suggestionsDiv.appendChild(btn);
+    });
   },
 
   notificationReceived: function (noti, payload) {
@@ -323,6 +377,10 @@ Module.register("MMM-Keyboard", {
         layoutName: layout
       });
       this.showKeyboard();
+    } else if (noti == "KEYBOARD_SUGGESTIONS") {
+      if (payload.key === this.currentKey) {
+         this.renderSuggestions(payload.suggestions);
+      }
     }
   },
 
@@ -358,6 +416,7 @@ Module.register("MMM-Keyboard", {
     var kbInput = document.getElementById("kbInput");
     kbInput.value = displayValue;
     this.log("Input changed: " + displayValue);
+    this.sendNotification("KEYBOARD_TYPING", { key: this.currentKey, message: displayValue, data: this.currentData });
     if (kbInput.value == "" && this.config.startUppercase) {
       this.shiftState = 1;
       this.handleShift();
@@ -467,6 +526,7 @@ Module.register("MMM-Keyboard", {
     this.kbContainer.classList.add("show-keyboard");
     document.getElementById("inputDiv").style.display = "block";
     document.getElementById("kbInput").value = this.keyboard.getInput();
+    if(this.suggestionsDiv) this.suggestionsDiv.innerHTML = "";
   },
 
   hideKeyboard: function() {

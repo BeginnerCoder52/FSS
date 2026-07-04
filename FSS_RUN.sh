@@ -280,7 +280,9 @@ start_daemon() {
         
         if [[ $EUID -eq 0 ]]; then
             local run_user="${SUDO_USER:-$(logname)}"
-            nohup sudo -E -u "$run_user" bash -c "cd ${FSS_ROOT}/electron_app/magicmirror && $mm_env npm run start:x11" >> "$log" 2>&1 &
+            local run_uid=$(id -u "$run_user")
+            mm_env="HOME=/home/${run_user} XDG_RUNTIME_DIR=/run/user/${run_uid} XAUTHORITY=/home/${run_user}/.Xauthority DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${run_uid}/bus ${mm_env}"
+            nohup sudo -u "$run_user" bash -c "cd ${FSS_ROOT}/electron_app/magicmirror && $mm_env npm run start:x11" >> "$log" 2>&1 &
         else
             nohup bash -c "$mm_env npm run start:x11" >> "$log" 2>&1 &
         fi
@@ -298,7 +300,7 @@ start_daemon() {
         return 1
     fi
 
-    nohup $cmd >"$log" 2>&1 &
+    nohup $cmd >>"$log" 2>&1 &
     local pid=$!
     disown $pid 2>/dev/null
 
@@ -373,6 +375,11 @@ stop_all() {
     done
 
     sudo rm -f "$PID_DIR"/*.pid 2>/dev/null || true
+    # Kill the monitor loop if it's running
+    pids=$(pgrep -f "bash FSS_RUN.sh" | grep -v $$)
+    if [[ -n "$pids" ]]; then
+        kill $pids 2>/dev/null || true
+    fi
 }
 
 cleanup_stale() {
@@ -558,6 +565,8 @@ setup_log_directory
 cleanup_stale
 
 # Determine which daemons to start
+DISABLED_DAEMONS=("camera") # Default is disable fss-camera
+
 if [[ -z "$SELECTED_DAEMONS" ]]; then
     DAEMON_ORDER=("sensor" "db" "camera" "ai" "recipe" "recommend" "magicmirror")
 else
@@ -567,7 +576,17 @@ fi
 # Start daemons
 fss_log_info "Starting FSS daemons..."
 for key in "${DAEMON_ORDER[@]}"; do
+    if [[ " ${DISABLED_DAEMONS[@]} " =~ " ${key} " ]]; then
+        fss_log_info "Skipping ${DAEMON_NAMES[$key]} as it is disabled."
+        continue
+    fi
     start_daemon "$key" || fss_log_warn "${DAEMON_NAMES[$key]} failed to start, continuing..."
+    if [[ "$key" == "sensor" ]]; then
+        sleep 2
+        fss_log_info "--- Sensor Smoke Test ---"
+        python3 /home/richardmelvin52/FSS/tools/smoke_test.py
+        fss_log_info "-------------------------"
+    fi
 done
 
 print_status

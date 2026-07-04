@@ -50,6 +50,12 @@ from recipe_extractor.src.RecipeProcessor import (
 
 logger = logging.getLogger(f"{__name__}")
 
+def strip_accents(s: str) -> str:
+    """Remove Vietnamese accents for fuzzy matching."""
+    return ''.join(c for c in unicodedata.normalize('NFD', s)
+                  if unicodedata.category(c) != 'Mn').replace('đ', 'd').replace('Đ', 'D')
+
+
 
 # ==============================================================================
 # Main Filter-Sort Engine Class
@@ -285,18 +291,34 @@ class RecipeAnalyzerEngine:
             List[str]: Top 5 matching recipe names, sorted by length
         """
         query = query.lower()
+        query_no_accent = strip_accents(query)
 
         keyword_matches = [
             name for name in self.recipe_names
-            if query in name
+            if query in name or query_no_accent in strip_accents(name)
         ]
 
-        fuzzy_matches = difflib.get_close_matches(
-            query,
-            self.recipe_names,
-            n=5,
-            cutoff=cutoff
-        )
+        # Use unaccented names for difflib matching if the query lacks accents
+        if query == query_no_accent:
+            search_pool = [strip_accents(name) for name in self.recipe_names]
+            fuzzy_matches_raw = difflib.get_close_matches(
+                query_no_accent,
+                search_pool,
+                n=5,
+                cutoff=cutoff
+            )
+            # Map back to original names
+            fuzzy_matches = []
+            for match in fuzzy_matches_raw:
+                idx = search_pool.index(match)
+                fuzzy_matches.append(self.recipe_names[idx])
+        else:
+            fuzzy_matches = difflib.get_close_matches(
+                query,
+                self.recipe_names,
+                n=5,
+                cutoff=cutoff
+            )
 
         suggestions = list(set(keyword_matches + fuzzy_matches))
         suggestions = sorted(suggestions, key=len)[:5]

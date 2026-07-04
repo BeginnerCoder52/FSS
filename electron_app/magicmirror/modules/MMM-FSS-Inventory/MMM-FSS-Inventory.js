@@ -147,13 +147,7 @@ Module.register("MMM-FSS-Inventory", {
             const foodId = payload.foodId || `unknown_${Date.now()}`;
             const action = payload.action || "detected";
 
-            // Forward event to Notification module for showing popup box
-            if (payload.source !== "database") {
-                this.sendNotification("FSS_NOTIFICATION", {
-                    type: action === "removed" ? "food_removed" : "food_added",
-                    message: `${payload.delta || payload.quantity} ${this._(payload.className)} đã ${action === "removed" ? "mang ra" : "thêm vào"} tủ lạnh`
-                });
-            }
+            // FRT_UPDATE will be stored in inventoryData, no longer forwarding to Notification module directly here.
 
             if (payload.quantity > 0) {
                 this.inventoryData.foods[foodId] = {

@@ -171,6 +171,8 @@ class Track:
         self.state = "ACTIVE" # ACTIVE, LOST
         self.age = 0
         
+        self.class_history = [class_id]
+        
         # Line Crossing tracking
         # We store centroid history (x and y)
         self.centroid_x_history = []
@@ -185,11 +187,25 @@ class Track:
         # Kalman state
         self.mean, self.covariance = None, None
         
-    def update(self, bbox, score, kf):
+    def update(self, bbox, score, kf, class_id=None):
         """Update track with new detection."""
         self.score = score
         self.age = 0
         self.state = "ACTIVE"
+        
+        if class_id is not None:
+            self.class_history.append(class_id)
+            if len(self.class_history) > 7:
+                self.class_history.pop(0)
+            
+            # Majority vote
+            import collections
+            counter = collections.Counter(self.class_history)
+            max_count = max(counter.values())
+            # If current class_id is one of the top choices, keep it (tie-breaking)
+            if counter[self.class_id] != max_count:
+                # Otherwise, switch to the most common one
+                self.class_id = counter.most_common(1)[0][0]
         
         cx = bbox[0] + bbox[2] / 2
         cy = bbox[1] + bbox[3] / 2
@@ -224,6 +240,7 @@ class LineCrossDetector:
             'pos': boundary_y
         }
         self.qty_changes = {} # class_id -> change quantity (+ or -)
+        self.track_events = [] # list of tuples: (track_id, class_id, 'IN'/'OUT')
         
     def set_virtual_line(self, line_info: dict):
         """Set a dynamic virtual line detected from frame."""
@@ -258,23 +275,71 @@ class LineCrossDetector:
             
         logger.debug(f"Track {track.track_id} (class {track.class_id}): {line_type} centroid {end_pos:.1f} (start {start_pos:.1f}) vs line pos {pos:.1f}")
             
+        # Initialize state for crossing recovery
+        import time
+        current_time = time.time()
+        if not hasattr(self, 'lost_above_candidates'):
+            self.lost_above_candidates = {}
+            self.recovered_track_ids = set()
+
+        # Clean up old candidates (older than 1.5 seconds)
+        to_remove = [tid for tid, info in self.lost_above_candidates.items() if current_time - info['time'] > 1.5]
+        for tid in to_remove:
+            del self.lost_above_candidates[tid]
+
+        # Record tracks lost above the line (moving towards it)
+        if track.state == "LOST":
+            if not track.entry_counted and track.track_id not in self.lost_above_candidates:
+                if end_pos < pos and end_pos >= start_pos: # Above line and moving down/stationary
+                    self.lost_above_candidates[track.track_id] = {
+                        'class_id': track.class_id,
+                        'time': current_time
+                    }
+            return
+
+        # Crossing recovery logic: new track appears below the line
+        if track.state == "ACTIVE" and not track.entry_counted and track.track_id not in self.recovered_track_ids:
+            if end_pos >= pos and end_pos >= start_pos: # Below line and moving down/stationary
+                matched_tid = None
+                for tid, info in list(self.lost_above_candidates.items()):
+                    if info['class_id'] == track.class_id:
+                        matched_tid = tid
+                        break
+                
+                if matched_tid:
+                    class_id = track.class_id
+                    food_name = _get_food_name(class_id)
+                    self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) + 1
+                    if not hasattr(self, 'track_events'): self.track_events = []
+                    self.track_events.append((track.track_id, class_id, 'IN'))
+                    track.entry_counted = True
+                    track.exit_counted = False
+                    self.recovered_track_ids.add(track.track_id)
+                    del self.lost_above_candidates[matched_tid]
+                    logger.info(f">>> notify: Track ID {track.track_id} recovered CHECK_IN → '{food_name}' (class={class_id}, +1) via {line_type} line (matched lost track {matched_tid})")
+                    return
+
         # Outside to Inside (Entry)
         if start_pos < pos and end_pos >= pos and not track.entry_counted:
             class_id = track.class_id
             food_name = _get_food_name(class_id)
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) + 1
+            if not hasattr(self, 'track_events'): self.track_events = []
+            self.track_events.append((track.track_id, class_id, 'IN'))
             track.entry_counted = True
             track.exit_counted = False # Reset if it changes direction
-            logger.info(f">>> notify: Track ID {track.track_id} crossed IN → '"+food_name+f"' (class={class_id}, +1) via {line_type} line")
+            logger.info(f">>> notify: Track ID {track.track_id} crossed IN → '{food_name}' (class={class_id}, +1) via {line_type} line")
             
         # Inside to Outside (Exit)
         elif start_pos > pos and end_pos <= pos and not track.exit_counted:
             class_id = track.class_id
             food_name = _get_food_name(class_id)
             self.qty_changes[class_id] = self.qty_changes.get(class_id, 0) - 1
+            if not hasattr(self, 'track_events'): self.track_events = []
+            self.track_events.append((track.track_id, class_id, 'OUT'))
             track.exit_counted = True
             track.entry_counted = False # Reset if it changes direction
-            logger.info(f">>> notify: Track ID {track.track_id} crossed OUT → '"+food_name+f"' (class={class_id}, -1) via {line_type} line")
+            logger.info(f">>> notify: Track ID {track.track_id} crossed OUT → '{food_name}' (class={class_id}, -1) via {line_type} line")
 
     def get_and_clear_changes(self) -> Dict[int, int]:
         """Return the net changes and clear the buffer."""
@@ -282,6 +347,12 @@ class LineCrossDetector:
         self.qty_changes.clear()
         # Filter out 0 changes
         return {k: v for k, v in changes.items() if v != 0}
+
+    def get_summary_events(self) -> List[Tuple[int, int, str]]:
+        """Return all tracked crossing events for summary."""
+        if not hasattr(self, 'track_events'):
+            self.track_events = []
+        return self.track_events
 
 
 class ByteTracker:
@@ -306,16 +377,18 @@ class ByteTracker:
         """
         Update tracker with new detections.
         """
+        processed_detections = []
         for det in detections:
-            bbox = det.get('bbox')
-            if not bbox or len(bbox) != 4:
-                continue
-            x1, y1, x2, y2 = bbox
-            det['bbox'] = [x1, y1, x2 - x1, y2 - y1]
+            det_copy = dict(det)
+            bbox = det_copy.get('bbox')
+            if bbox and len(bbox) == 4:
+                x1, y1, x2, y2 = bbox
+                det_copy['bbox'] = [x1, y1, x2 - x1, y2 - y1]
+            processed_detections.append(det_copy)
 
         # Split detections into high and low score
-        det_high = [d for d in detections if d['confidence'] >= self.high_thresh]
-        det_low = [d for d in detections if d['confidence'] < self.high_thresh]
+        det_high = [d for d in processed_detections if d['confidence'] >= self.high_thresh]
+        det_low = [d for d in processed_detections if d['confidence'] < self.high_thresh]
         
         # Predict states of all active and lost tracks
         for track in self.tracks:
@@ -370,6 +443,10 @@ class ByteTracker:
         
     def _match(self, tracks: List[Track], detections: List[Dict]) -> Tuple[List[int], List[int]]:
         """Match tracks and detections using IoU and Hungarian Algorithm."""
+        if tracks and not detections:
+            for track in tracks:
+                track.mark_lost()
+            return list(range(len(tracks))), []
         if not tracks or not detections:
             return list(range(len(tracks))), list(range(len(detections)))
             
@@ -391,7 +468,7 @@ class ByteTracker:
             det = detections[c]
             
             # Update track
-            track.update(det['bbox'], det['confidence'], self.kf)
+            track.update(det['bbox'], det['confidence'], self.kf, class_id=det['class_id'])
             
             unmatched_tracks.remove(r)
             unmatched_dets.remove(c)
@@ -410,3 +487,5 @@ class ByteTracker:
         self.tracks.clear()
         self.next_track_id = 1
         self.line_detector.qty_changes.clear()
+        if hasattr(self.line_detector, 'track_events'):
+            self.line_detector.track_events.clear()

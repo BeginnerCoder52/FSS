@@ -124,6 +124,8 @@ def main():
                        help="Read frames only from /dev/shm/fss_video_frame; do not fallback to /dev/video0")
 
     # Tuning Parameters (AI & Tracking)
+    parser.add_argument("--low-confidence", type=float, default=0.1,
+                       help="Detection low confidence threshold (0.0-1.0, default: 0.1)")
     parser.add_argument("--iou-threshold", type=float, default=0.5,
                        help="NMS IoU threshold for YOLO (default: 0.5)")
     parser.add_argument("--bytetrack-max-age", type=int, default=30,
@@ -207,6 +209,7 @@ def main():
         logger.info("Creating FrtMain instance...")
         app_instance = FrtMain(bypass_door_sensor=bypass,
                                confidence_threshold=args.confidence,
+                               low_confidence_threshold=args.low_confidence,
                                boundary_ratio=args.boundary_y,
                                iou_threshold=args.iou_threshold,
                                bytetrack_max_age=args.bytetrack_max_age,
@@ -259,6 +262,41 @@ def main():
         logger.info("Shutting down FRTApp daemon...")
         app_instance.stop_daemon()
         logger.info("FRTApp daemon stopped successfully")
+        
+        # Display summary and check-in image
+        try:
+            summary_path = os.path.join(args.debug_dir, "summary.txt")
+            if os.path.exists(summary_path):
+                print("\n" + "="*60)
+                with open(summary_path, "r") as f:
+                    print(f.read())
+                print("="*60 + "\n")
+            
+            checkin_img = os.path.join(args.debug_dir, "last_checkin.jpg")
+            checkin_txt = os.path.join(args.debug_dir, "last_checkin.jpg.txt")
+            if os.path.exists(checkin_img):
+                frame_info = ""
+                if os.path.exists(checkin_txt):
+                    with open(checkin_txt, "r") as f:
+                        frame_info = f" (tại Frame {f.read().strip()})"
+                print(f">> Hiển thị khoảnh khắc CHECK_IN cuối cùng{frame_info}:\n")
+                os.system(f"timg -g 60x40 {checkin_img}")
+            else:
+                print(">> Không tìm thấy khoảnh khắc CHECK_IN nào.\n")
+
+            checkout_img = os.path.join(args.debug_dir, "last_checkout.jpg")
+            checkout_txt = os.path.join(args.debug_dir, "last_checkout.jpg.txt")
+            if os.path.exists(checkout_img):
+                frame_info = ""
+                if os.path.exists(checkout_txt):
+                    with open(checkout_txt, "r") as f:
+                        frame_info = f" (tại Frame {f.read().strip()})"
+                print(f">> Hiển thị khoảnh khắc CHECK_OUT cuối cùng{frame_info}:\n")
+                os.system(f"timg -g 60x40 {checkout_img}")
+            else:
+                print(">> Không tìm thấy khoảnh khắc CHECK_OUT nào.\n")
+        except Exception as e:
+            logger.error(f"Failed to display summary/image: {e}")
         
         logger.info("=" * 80)
         logger.info("FRTApp exited normally")

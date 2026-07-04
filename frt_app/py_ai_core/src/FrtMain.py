@@ -128,6 +128,7 @@ class FrtMain:
 
     def __init__(self, bypass_door_sensor: bool = True,
                  confidence_threshold: float = 0.85,
+                 low_confidence_threshold: float = 0.1,
                  boundary_ratio: float = 0.66,
                  debug_mode: bool = True,
                  iou_threshold: float = 0.5,
@@ -180,6 +181,7 @@ class FrtMain:
 
         # Confidence and boundary config
         self.confidence_threshold: float = confidence_threshold
+        self.low_confidence_threshold: float = low_confidence_threshold
         self.boundary_ratio: float = boundary_ratio
         self._boundary_event_callback: Optional[Callable] = None
 
@@ -315,9 +317,26 @@ class FrtMain:
             if hasattr(self, 'tracker') and self.tracker and hasattr(self.tracker, 'line_detector'):
                 line_det = self.tracker.line_detector
                 # Extract metrics for file output without logging to console
-                changes = line_det.get_and_clear_changes()
-                total_entries = sum(1 for v in changes.values() if v > 0) if changes else 0
-                total_exits = sum(abs(v) for v in changes.values() if v < 0) if changes else 0
+                summary_events = line_det.get_summary_events() if hasattr(line_det, 'get_summary_events') else []
+                changes = {}
+                track_ids = {}
+                total_entries = 0
+                total_exits = 0
+                
+                for tid, cid, action in summary_events:
+                    if cid not in changes:
+                        changes[cid] = 0
+                        track_ids[cid] = {'in': [], 'out': []}
+                    if action == 'IN':
+                        changes[cid] += 1
+                        total_entries += 1
+                        track_ids[cid]['in'].append(tid)
+                    elif action == 'OUT':
+                        changes[cid] -= 1
+                        total_exits += 1
+                        track_ids[cid]['out'].append(tid)
+                        
+                changes = {k: v for k, v in changes.items() if v != 0}
 
                 # Write summary to file
                 debug_dir = getattr(self, 'debug_dir', '/opt/fss/debug_frames')
@@ -331,7 +350,15 @@ class FrtMain:
                         if changes:
                             f.write("Net quantity changes:\n")
                             for cid, delta in changes.items():
-                                f.write(f"  {self._get_food_name(cid)}: {delta:+.0f}\n")
+                                info_str = []
+                                t_in = track_ids.get(cid, {}).get('in', [])
+                                t_out = track_ids.get(cid, {}).get('out', [])
+                                if t_in:
+                                    info_str.append(f"in: {','.join(map(str, t_in))}")
+                                if t_out:
+                                    info_str.append(f"out: {','.join(map(str, t_out))}")
+                                track_info = f" (Track IDs: {'; '.join(info_str)})" if info_str else ""
+                                f.write(f"  {self._get_food_name(cid)}: {delta:+.0f}{track_info}\n")
                         f.write(f"\nTotal entries (CHECK_IN): {total_entries}\n")
                         f.write(f"Total exits  (CHECK_OUT): {total_exits}\n")
                 except Exception as e:
@@ -572,6 +599,44 @@ class FrtMain:
                         event_type, abs_delta, food_name, cid))
                     if self._boundary_event_callback:
                         self._boundary_event_callback({"event_type": event_type, "class_id": cid, "delta": delta})
+                        
+                    if (event_type in ["CHECK_IN", "CHECK_OUT"]) and getattr(self, 'debug_mode', False):
+                        try:
+                            debug_dir = getattr(self, 'debug_dir', '/opt/fss/debug_frames')
+                            file_name = "last_checkin.jpg" if event_type == "CHECK_IN" else "last_checkout.jpg"
+                            img_path = os.path.join(debug_dir, file_name)
+                            os.makedirs(debug_dir, exist_ok=True)
+                            
+                            debug_frame = frame.copy()
+                            if hasattr(self.tracker, 'line_detector') and self.tracker.line_detector.boundary_line:
+                                line_info = self.tracker.line_detector.boundary_line
+                                line_pos = int(line_info.get('pos', 0))
+                                line_type = line_info.get('type', 'horizontal')
+                                if line_type == 'horizontal':
+                                    cv2.line(debug_frame, (0, line_pos), (debug_frame.shape[1], line_pos), (0, 0, 255), 2)
+                                else:
+                                    cv2.line(debug_frame, (line_pos, 0), (line_pos, debug_frame.shape[0]), (0, 0, 255), 2)
+                            
+                            for t in self.tracker.tracks:
+                                if t.state == "ACTIVE":
+                                    x1, y1, w, h = [int(v) for v in t.get_bbox()]
+                                    x2, y2 = x1 + w, y1 + h
+                                    color = (0, 255, 0) if t.class_id == cid else (200, 200, 200)
+                                    cv2.rectangle(debug_frame, (x1, y1), (x2, y2), color, 2)
+                                    label = f"ID:{t.track_id} {self._get_food_name(t.class_id)}"
+                                    cv2.putText(debug_frame, label, (x1, max(0, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                            
+                            # Draw frame number on the top left
+                            cv2.putText(debug_frame, f"Frame: {frame_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+                            
+                            cv2.imwrite(img_path, debug_frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+                            
+                            # Save frame number to text file for main.py to read
+                            txt_path = os.path.join(debug_dir, f"{file_name}.txt")
+                            with open(txt_path, "w") as f:
+                                f.write(str(frame_count))
+                        except Exception as e:
+                            logger.error(f"Failed to save {event_type} moment: {e}")
 
                 # --- Per-frame timing totals ---
                 total_time = (time.time() - loop_start) * 1000
@@ -904,9 +969,9 @@ class FrtMain:
                 use_c_backend=self.use_c_backend,
                 c_model_path=self.c_model_path,
                 c_precision=c_precision,
-                confidence_threshold=self.confidence_threshold,
+                confidence_threshold=self.low_confidence_threshold,
                 iou_threshold=self.iou_threshold
-            )# Let YOLO use its internal threshold (e.g. 0.2) to pass low-confidence boxes to ByteTrack.
+            )# Let YOLO use its internal threshold to pass low-confidence boxes to ByteTrack.
             # self.ai_engine.CONFIDENCE_THRESHOLD = self.confidence_threshold
             return self.ai_engine.load_model_mmap()
         except Exception as e:

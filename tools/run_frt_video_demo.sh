@@ -26,6 +26,7 @@ REUSE_DBDAEMON="0"
 USE_C_BACKEND="0"
 
 CONFIDENCE="0.6"
+LOW_CONFIDENCE="0.1"
 IOU_THRESHOLD="0.5"
 BYTETRACK_MAX_AGE="30"
 BYTETRACK_MATCH_THRESH="0.6"
@@ -61,7 +62,8 @@ Options:
   --use-c-backend          Start FRTApp with --use-c-backend.
   
   AI & Tracking Tuning:
-  --confidence N           YOLO confidence (default: ${CONFIDENCE})
+  --confidence N           YOLO high confidence (default: ${CONFIDENCE})
+  --low-confidence N       YOLO low confidence (default: ${LOW_CONFIDENCE})
   --iou-threshold N        YOLO NMS IoU threshold (default: ${IOU_THRESHOLD})
   --bytetrack-max-age N    Max age for lost tracks (default: ${BYTETRACK_MAX_AGE})
   --bytetrack-match-thresh N ByteTrack IoU match threshold (default: ${BYTETRACK_MATCH_THRESH})
@@ -279,6 +281,7 @@ while (($#)); do
             shift
             ;;
         --confidence) CONFIDENCE="$2"; shift 2 ;;
+        --low-confidence) LOW_CONFIDENCE="$2"; shift 2 ;;
         --iou-threshold) IOU_THRESHOLD="$2"; shift 2 ;;
         --bytetrack-max-age) BYTETRACK_MAX_AGE="$2"; shift 2 ;;
         --bytetrack-match-thresh) BYTETRACK_MATCH_THRESH="$2"; shift 2 ;;
@@ -369,8 +372,10 @@ FRT_ARGS=(
     --model "${MODEL_PATH}"
     --debug-no-distance
     --shm-only
+    --debug-dir "${LOG_DIR}/debug_frames"
     --boundary-y "${BOUNDARY_Y}"
     --confidence "${CONFIDENCE}"
+    --low-confidence "${LOW_CONFIDENCE}"
     --iou-threshold "${IOU_THRESHOLD}"
     --bytetrack-max-age "${BYTETRACK_MAX_AGE}"
     --bytetrack-match-thresh "${BYTETRACK_MATCH_THRESH}"

@@ -16,6 +16,13 @@ try:
     SDBUS_AVAILABLE = True
 except ImportError:
     SDBUS_AVAILABLE = False
+    SDBUS_AVAILABLE = False
+
+
+class DbdInterfaceProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
+    @dbus_method_async('', 's')
+    async def GetInventory(self) -> str:
+        pass
 
 
 class RecommendDbusInterface:
@@ -132,13 +139,7 @@ class RecommendDbusInterface:
 
     async def _call_dbus_get_inventory(self) -> str:
         try:
-            class DbdInterface(DbusInterfaceCommonAsync,
-                               interface_name=self.DBD_INTERFACE):
-                @dbus_method_async('', 's')
-                async def GetInventory(self) -> str:
-                    pass
-
-            proxy = DbdInterface.new_proxy(
+            proxy = DbdInterfaceProxy.new_proxy(
                 self.DBD_SERVICE, self.DBD_PATH
             )
             result = await proxy.GetInventory()

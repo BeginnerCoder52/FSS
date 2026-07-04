@@ -205,3 +205,18 @@
 .fss-chip-more:hover, .fss-chip-more:active {
     background-color: rgba(255, 255, 255, 0.05);
 }
+
+.fss-scroll-btn {
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin: 5px auto;
+  width: 80%;
+  color: var(--color-primary);
+  pointer-events: auto;
+}
+.fss-scroll-btn:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
