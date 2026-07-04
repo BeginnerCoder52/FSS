@@ -116,12 +116,24 @@ def main():
                        help="Bypass MC-38 door sensor (auto-enter TRACKING on start)")
     parser.add_argument("--no-bypass-door-sensor", action="store_true",
                        help="Disable bypass (wait for MC-38 door open signal)")
-    parser.add_argument("--confidence", type=float, default=0.85,
-                       help="Detection confidence threshold (0.0-1.0, default: 0.85)")
+    parser.add_argument("--confidence", type=float, default=0.6,
+                       help="Detection confidence threshold (0.0-1.0, default: 0.6)")
     parser.add_argument("--boundary-y", type=float, default=0.66,
                        help="Virtual boundary as fraction of frame height (default: 0.66)")
     parser.add_argument("--shm-only", action="store_true",
                        help="Read frames only from /dev/shm/fss_video_frame; do not fallback to /dev/video0")
+
+    # Tuning Parameters (AI & Tracking)
+    parser.add_argument("--iou-threshold", type=float, default=0.5,
+                       help="NMS IoU threshold for YOLO (default: 0.5)")
+    parser.add_argument("--bytetrack-max-age", type=int, default=30,
+                       help="Max age in frames before dropping a lost track (default: 30)")
+    parser.add_argument("--bytetrack-match-thresh", type=float, default=0.6,
+                       help="Match threshold for IoU matching in ByteTrack (default: 0.6)")
+    parser.add_argument("--mog2-variance", type=float, default=32.0,
+                       help="Variance threshold for MOG2 motion detection (default: 32.0)")
+    parser.add_argument("--mog2-area-threshold", type=float, default=3.0,
+                       help="Minimum area %% changed to trigger motion (default: 3.0)")
 
     args = parser.parse_args()
     
@@ -195,7 +207,12 @@ def main():
         logger.info("Creating FrtMain instance...")
         app_instance = FrtMain(bypass_door_sensor=bypass,
                                confidence_threshold=args.confidence,
-                               boundary_ratio=args.boundary_y)
+                               boundary_ratio=args.boundary_y,
+                               iou_threshold=args.iou_threshold,
+                               bytetrack_max_age=args.bytetrack_max_age,
+                               bytetrack_match_thresh=args.bytetrack_match_thresh,
+                               mog2_variance=args.mog2_variance,
+                               mog2_area_threshold=args.mog2_area_threshold)
         
         # Override camera device if provided
         app_instance.CAMERA_DEVICE = args.camera

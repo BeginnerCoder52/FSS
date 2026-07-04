@@ -217,7 +217,7 @@ class Track:
 
 class LineCrossDetector:
     """Detects when objects cross a virtual boundary line."""
-    def __init__(self, boundary_y: int = 240):
+    def __init__(self, boundary_y: int = 0.66):
         # Default to horizontal line
         self.boundary_line = {
             'type': 'horizontal',
@@ -229,7 +229,11 @@ class LineCrossDetector:
         """Set a dynamic virtual line detected from frame."""
         if line_info:
             self.boundary_line = line_info
-            logger.info(f"LineCrossDetector updated with {line_info['type']} virtual line at {int(line_info['pos'])}")
+            logger.info(
+                "LineCrossDetector updated with {} virtual line at {:.3f}".format(
+                    line_info['type'], float(line_info['pos'])
+                )
+            )
 
     def check_crossing(self, track: Track):
         """
@@ -251,6 +255,8 @@ class LineCrossDetector:
         else: # vertical
             start_pos = track.centroid_x_history[0]
             end_pos = track.centroid_x_history[-1]
+            
+        logger.debug(f"Track {track.track_id} (class {track.class_id}): {line_type} centroid {end_pos:.1f} (start {start_pos:.1f}) vs line pos {pos:.1f}")
             
         # Outside to Inside (Entry)
         if start_pos < pos and end_pos >= pos and not track.entry_counted:
@@ -285,7 +291,7 @@ class ByteTracker:
     1. High confidence detections matched via Kalman + IoU.
     2. Low confidence detections matched to remaining tracks via IoU to handle occlusion.
     """
-    def __init__(self, max_age: int = 30, high_thresh: float = 0.85, match_thresh: float = 0.8):
+    def __init__(self, max_age: int = 30, high_thresh: float = 0.8, match_thresh: float = 0.4):
         self.max_age = max_age
         self.high_thresh = high_thresh
         self.match_thresh = match_thresh
@@ -294,12 +300,19 @@ class ByteTracker:
         self.tracks: List[Track] = []
         self.next_track_id = 1
         
-        self.line_detector = LineCrossDetector(boundary_y=240)
+        self.line_detector = LineCrossDetector(boundary_y=0.66)
         
     def update(self, detections: List[Dict]) -> List[Dict]:
         """
         Update tracker with new detections.
         """
+        for det in detections:
+            bbox = det.get('bbox')
+            if not bbox or len(bbox) != 4:
+                continue
+            x1, y1, x2, y2 = bbox
+            det['bbox'] = [x1, y1, x2 - x1, y2 - y1]
+
         # Split detections into high and low score
         det_high = [d for d in detections if d['confidence'] >= self.high_thresh]
         det_low = [d for d in detections if d['confidence'] < self.high_thresh]

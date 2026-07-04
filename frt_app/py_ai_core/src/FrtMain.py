@@ -129,7 +129,12 @@ class FrtMain:
     def __init__(self, bypass_door_sensor: bool = True,
                  confidence_threshold: float = 0.85,
                  boundary_ratio: float = 0.66,
-                 debug_mode: bool = True):
+                 debug_mode: bool = True,
+                 iou_threshold: float = 0.5,
+                 bytetrack_max_age: int = 30,
+                 bytetrack_match_thresh: float = 0.6,
+                 mog2_variance: float = 32.0,
+                 mog2_area_threshold: float = 3.0):
         """
         Initialize FrtMain application controller.
 
@@ -137,6 +142,11 @@ class FrtMain:
             bypass_door_sensor: If True, auto-enter TRACKING on start (no MC-38 needed).
             confidence_threshold: Min confidence for YOLO + ByteTrack high/low split.
             boundary_ratio: Virtual boundary line position as fraction of frame height.
+            iou_threshold: NMS IoU threshold for YOLO.
+            bytetrack_max_age: Max age in frames before dropping a lost track.
+            bytetrack_match_thresh: Match threshold for IoU matching in ByteTrack.
+            mog2_variance: Variance threshold for MOG2 motion detection.
+            mog2_area_threshold: Minimum area % changed to trigger motion.
         """
         self.current_state: str = AppState.INIT.value
         self.is_running: bool = False
@@ -172,6 +182,18 @@ class FrtMain:
         self.confidence_threshold: float = confidence_threshold
         self.boundary_ratio: float = boundary_ratio
         self._boundary_event_callback: Optional[Callable] = None
+
+        # Fixed virtual line configurations (for video demo)
+        self.fixed_virtual_line_enabled: bool = True
+        self.fixed_virtual_line_type: str = "horizontal"
+        self.fixed_virtual_line_pos_ratio: float = 0.66
+
+        # Tuning Parameters
+        self.iou_threshold: float = iou_threshold
+        self.bytetrack_max_age: int = bytetrack_max_age
+        self.bytetrack_match_thresh: float = bytetrack_match_thresh
+        self.mog2_variance: float = mog2_variance
+        self.mog2_area_threshold: float = mog2_area_threshold
 
         # Food class name lookup (from class.yaml or built-in defaults)
         self.class_names: dict = _load_class_labels()
@@ -334,30 +356,43 @@ class FrtMain:
         logger.info("Starting inference loop")
 
         from ByteTracker import ByteTracker
-        self.tracker = ByteTracker(max_age=30, high_thresh=self.confidence_threshold)
+        self.tracker = ByteTracker(
+            max_age=self.bytetrack_max_age,
+            high_thresh=self.confidence_threshold,
+            match_thresh=self.bytetrack_match_thresh
+        )
         
-        from VirtualLineDetector import VirtualLineDetector
-        self.virtual_line_detector = VirtualLineDetector()
+        if self.fixed_virtual_line_enabled:
+            self.virtual_line_detector = None
+            logger.info(
+                "Fixed virtual line enabled (type={}, pos={:.3f})".format(
+                    self.fixed_virtual_line_type,
+                    self.fixed_virtual_line_pos_ratio,
+                )
+            )
+        else:
+            from VirtualLineDetector import VirtualLineDetector
+            self.virtual_line_detector = VirtualLineDetector()
 
         # If bypass enabled and no door signal triggers AUTO_CALIBRATION,
         # set a default boundary line so crossing detection works immediately.
         if self.bypass_door_sensor:
-            self.tracker.line_detector.boundary_line = {
-                'type': 'horizontal',
-                'pos': self.boundary_ratio
+            line_info = {
+                'type': self.fixed_virtual_line_type,
+                'pos': self.fixed_virtual_line_pos_ratio * 480, # Assuming 480 height, will be updated if needed
+                'start': 0.0,
+                'end': 1.0,
             }
-            logger.info("Default boundary line set at y={:.2f} (ratio={})".format(
-                self.boundary_ratio, self.boundary_ratio))
+            self.tracker.line_detector.set_virtual_line(line_info)
+            logger.info("Default boundary line set: {} at {:.3f} (approx {} px)".format(
+                self.fixed_virtual_line_type, self.fixed_virtual_line_pos_ratio, line_info['pos']))
 
         frame_count = 0
+        fps_frame_count = 0
         fps_start_time = time.time()
-        metrics_buf = []
+        active_time_accumulator = 0.0
+        self._metrics_buf = []
 
-        # Debug header
-        if self.debug_mode:
-            logger.debug("=" * 120)
-            logger.debug("        FRAME | STATE |   CAPTURE |  MOTION |  PREPROC |  INFER | NMS | TRACK |  TOTAL | LOOP FPS | DET|TRK| CLS_BREAKDOWN")
-            logger.debug("-" * 120)
 
         while self.is_running:
             try:
@@ -402,11 +437,35 @@ class FrtMain:
                     continue
 
                 frame_count += 1
+                fps_frame_count += 1
 
                 # ====================================================================
                 # AUTO-CALIBRATION PHASE
                 # ====================================================================
                 if self.current_state == AppState.AUTO_CALIBRATION.value:
+                    if self.fixed_virtual_line_enabled:
+                        pos_pixel = self.fixed_virtual_line_pos_ratio * frame.shape[0] if self.fixed_virtual_line_type == 'horizontal' else self.fixed_virtual_line_pos_ratio * frame.shape[1]
+                        line_info = {
+                            'type': self.fixed_virtual_line_type,
+                            'pos': pos_pixel,
+                            'start': 0.0,
+                            'end': 1.0,
+                        }
+                        self.tracker.line_detector.set_virtual_line(line_info)
+                        self.virtual_line_ready = True
+                        self.current_state = AppState.TRACKING.value
+                        self._last_active_time = time.time()
+                        axis = "y" if self.fixed_virtual_line_type == "horizontal" else "x"
+                        logger.info(
+                            "State: AUTO_CALIBRATION → TRACKING (fixed {} virtual line at {}={:.3f} -> {}px)".format(
+                                self.fixed_virtual_line_type,
+                                axis,
+                                self.fixed_virtual_line_pos_ratio,
+                                int(pos_pixel)
+                            )
+                        )
+                        continue
+
                     if self.virtual_line_detector is not None:
                         line_info = self.virtual_line_detector.detect_virtual_line(frame)
                         if line_info:
@@ -473,6 +532,18 @@ class FrtMain:
                 detections = self.ai_engine.get_output_boxes()
                 infer_time = (time.time() - infer_start) * 1000
 
+                # Scale detections from normalized [0,1] to pixel coordinates
+                frame_h, frame_w = frame.shape[:2]
+                for det in detections:
+                    if 'bbox' in det:
+                        x1, y1, x2, y2 = det['bbox']
+                        det['bbox'] = [
+                            x1 * frame_w,
+                            y1 * frame_h,
+                            x2 * frame_w,
+                            y2 * frame_h
+                        ]
+
                 # Detection breakdown by class
                 class_counts = {}
                 for d in detections:
@@ -511,7 +582,7 @@ class FrtMain:
                     state_str = self.current_state[:7]
                     det_count = len(detections)
                     trk_count = len(tracked) if isinstance(tracked, list) else (len(tracked.get("tracks", [])) if isinstance(tracked, dict) else 0)
-                    logger.debug("Frame #{:<6d} | {:<7s} | {:>7.1f} | {:>7.1f} | {:>8.1f} | {:>7.1f} | {:>3d} | {:>6.1f} | {:>7.1f} | {:>7.2f} | {:>3d}|{:>3d}| {}".format(
+                    log_str = "Frame #{:<6d} | {:<7s} | {:>7.1f} | {:>7.1f} | {:>8.1f} | {:>7.1f} | {:>3d} | {:>6.1f} | {:>7.1f} | {:>7.2f} | {:>3d}|{:>3d}| {}".format(
                         frame_count, state_str, capture_time, motion_time, pre_time, infer_time,
                         len(detections), track_time, total_time, loop_fps,
                         det_count, trk_count, class_breakdown)
@@ -598,16 +669,19 @@ class FrtMain:
                     except Exception:
                         pass
 
+                # --- Loop rate control ---
+                loop_time = (time.time() - loop_start) * 1000
+                active_time_accumulator += loop_time / 1000.0
+                sleep_time = max(0, self.loop_interval_ms - loop_time) / 1000.0
+
                 # --- FPS metrics every second ---
                 elapsed = time.time() - fps_start_time
                 if elapsed >= 1.0:
-                    self.log_pipeline_metrics(frame_count / elapsed, 0.0)
-                    frame_count = 0
+                    load_percent = (active_time_accumulator / elapsed) * 100.0
+                    self.log_pipeline_metrics(fps_frame_count / elapsed, load_percent)
+                    fps_frame_count = 0
+                    active_time_accumulator = 0.0
                     fps_start_time = time.time()
-
-                # --- Loop rate control ---
-                loop_time = (time.time() - loop_start) * 1000
-                sleep_time = max(0, self.loop_interval_ms - loop_time) / 1000.0
                 if sleep_time > 0:
                     time.sleep(sleep_time)
 
@@ -826,12 +900,13 @@ class FrtMain:
             c_precision = precision_map.get(self.model_precision, 2)
             from YoloTfliteEngine import YoloTfliteEngine
             self.ai_engine = YoloTfliteEngine(
-                self.MODEL_PATH,
+                model_path=self.MODEL_PATH,
                 use_c_backend=self.use_c_backend,
-                c_precision=c_precision
-            )
-            # DO NOT override YOLO's threshold with ByteTrack's high threshold!
-            # Let YOLO use its internal threshold (e.g. 0.2) to pass low-confidence boxes to ByteTrack.
+                c_model_path=self.c_model_path,
+                c_precision=c_precision,
+                confidence_threshold=self.confidence_threshold,
+                iou_threshold=self.iou_threshold
+            )# Let YOLO use its internal threshold (e.g. 0.2) to pass low-confidence boxes to ByteTrack.
             # self.ai_engine.CONFIDENCE_THRESHOLD = self.confidence_threshold
             return self.ai_engine.load_model_mmap()
         except Exception as e:
@@ -869,7 +944,10 @@ class FrtMain:
         """Initialize motion detector with MOG2."""
         try:
             from MotionDetector import MotionDetector
-            self.motion_detector = MotionDetector(threshold_percent=1.0)
+            self.motion_detector = MotionDetector(
+                threshold_percent=self.mog2_area_threshold,
+                mog2_variance=self.mog2_variance
+            )
             self.motion_detector.init_mog2()
             return True
         except Exception as e:
@@ -881,6 +959,11 @@ class FrtMain:
         try:
             from ImagePreprocessor import ImagePreprocessor
             self.preprocessor = ImagePreprocessor(640, 640)
+            
+            if self.ai_engine:
+                dtype, scale, zp = self.ai_engine.get_input_quant_params()
+                self.preprocessor.set_quantization_params(dtype, scale, zp)
+                
             return True
         except Exception as e:
             logger.exception("Preprocessor initialization failed: {}".format(e))
