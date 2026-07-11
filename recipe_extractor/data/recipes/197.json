@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Salad Bắp Nướng",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú 300g",
+        "Bắp Mỹ 1 trái",
+        "Bơ chín 1/2 quả",
+        "Cà chua bi 50g",
+        "Cần tây 50g",
+        "Hành tây 50g",
+        "Chanh vàng 1 trái",
+        "Hành lá, ngò rí cắt nhỏ, ớt băm",
+        "Muối, tương ớt, bơ mặn, dầu oliu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Pha hỗn hợp gia vị gồm 1M bơ mặn, 1M dầu oliu, 1/2m hạt nêm Aji-ngon®, hành lá, trộn đều. Bắp Mỹ cắt khúc, chẻ đôi, phết gia vị lên, cho vào lò nướng chín, lấy ra cắt lấy hạt.",
+        "Tôm sú làm sạch, xẻ dọc sống lưng, ướp 1m hạt nêm Aji-ngon®, nướng cùng với bắp vừa chín. Lột vỏ tôm, cắt hạt lựu.",
+        "Bơ cắt hạt lựu. Cà chua bi cắt đôi. Vỏ chanh vàng cắt sợi lấy 1m, ruột vắt lấy nước. Cần tây cắt lát xéo. Hành tây cắt lát, ướp đá."
+    ],
+    "cook": [],
+    "usage": [],
+    "tips": [
+        "Nên để nguyên vỏ tôm Nướng xong mới lột vỏ giúp tôm giữ được vị ngọt và món ăn có màu đẹp.",
+        "Thêm chút tương ớt giúp nước trộn dễ bám dính vào nguyên liệu hơn."
+    ]
+}

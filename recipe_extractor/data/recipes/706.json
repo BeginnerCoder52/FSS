@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Mì Trộn Tôm Trứng Mayonnaise",
+    "serving": "4 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú 100g",
+        "Trứng gà 2 quả",
+        "Mì koreno 2 gói",
+        "Cà rốt 50g",
+        "Hành tây 50g",
+        "Cải bó xôi 50g",
+        "Hành phi 5g",
+        "Dầu ăn 20g",
+        "Hành tỏi băm 20g"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Tôm bóc vỏ, chừ đuôi, chẻ đôi dọc sống lưng, ướp 1m hành tỏi băm, 1 ít hạt nêm, để thấm.",
+        "Cà rốt cắt sợi. Hành tây cắt múi cau. Cải bó xôi cắt khúc 5cm.",
+        "Mì koreno trụng sẵn, xả lạnh, để ráo.",
+        "Trứng gà ốp la."
+    ],
+    "cook": [],
+    "usage": [],
+    "tips": []
+}

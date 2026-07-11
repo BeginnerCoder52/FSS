@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Bì Bún Chay",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đậu hũ 1 miếng 150g",
+        "Củ sắn 100g",
+        "Khoai tây 100g",
+        "Khoai tây 100g",
+        "Thính gạo rang 1M",
+        "Nước dừa 1 chén",
+        "Đậu phộng rang giã dập",
+        "Dầu hành lá",
+        "Tỏi ớt băm, nước cốt chanh",
+        "Muối, tiêu xay, đường",
+        "Ăn kèm: rau thơm, dưa leo, giá sống"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Đậu hũ cắt lát mỏng, chiên vàng, vớt ra để ráo dầu, thái sợi.",
+        "Khoai tây, củ sắn bào sợi rồi chiên vừa vàng, vớt ra để ráo dầu.",
+        "Bún tàu ngâm mềm, trụng nước sôi khoảng 1 phút, vớt ra nhúng vào tô nước lọc, rồi vớt ra để cho thật ráo nước. Sau đó đem cắt ngắn khoảng 5cm."
+    ],
+    "cook": [
+        "Trộn đều đậu hũ chiên, khoai tây, củ sắn, bún tàu cùng với 1M thính gạo rang, 1m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1/3m tiêu xay, 1/4m muối, 1/4m đường.",
+        "Nước tương chua ngọt: Lấy 1 chén nước dừa xiêm, pha với 2M đường, 2M nước tương “Phú Sĩ”, 1/2m muối, 2M nước cốt chanh, khuấy cho tan đường, thêm tỏi ớt băm."
+    ],
+    "usage": [
+        "Bún bì chay ăn với rau thơm cắt nhỏ, dưa leo, giá sống, dầu hành và đậu phộng rang cùng với nước tương chua ngọt."
+    ],
+    "tips": [
+        "Cho hạt nêm vào nhồi kỹ với bún tàu để hạt nêm thấm rồi mới trộn với các nguyên liệu khác.",
+        "Dùng khoai tây xắt nhuyễn trộn chung với đậu hũ tạo mùi thơm hấp dẫn cho bì chay."
+    ]
+}

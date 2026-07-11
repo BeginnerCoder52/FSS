@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Súp Nấm Ngưu Bàng",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nước dùng rau củ 1,5 lít",
+        "Củ năng 50g",
+        "Cà rốt 50g",
+        "Đậu hũ non 1 miếng",
+        "Nấm rơm búp 100g",
+        "Nấm mèo 1 miếng",
+        "Ngưu bàng tươi 1 khúc 2 tấc",
+        "Nấm hương sapa 3 tai",
+        "Gia vị: muối, đường, tiêu, bột năng, poa rô cắt lát (1 chén), ngò rí, dầu, dầu mè."
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Củ năng, cà rốt Cắt sợi nhỏ.",
+        "Đậu hũ non cắt khối vuông nhỏ.",
+        "Nấm rơm búp cắt lát.",
+        "Nấm mèo ngâm mềm, cắt sợi nhuyễn.",
+        "Ngưu bàng tươi cạo vỏ, rửa cắt sợi.",
+        "Nấm hương sapa rửa sạch, cắt sợi nhuyễn"
+    ],
+    "cook": [
+        "Đậu hũ cắt khối vuông nhỏ.",
+        "Bắc chảo dầu phi poa-rô cho thơm. Vớt poa-rô ra, dầu còn lại trong chảo xào qua nấm rơm, nêm 1/2m Hạt nêm Aji-ngon® NẤM.",
+        "Tắt lửa cho nấm mèo và nấm hương, thêm 1/3m tiêu vào đảo cho thơm, trút ra tô.."
+    ],
+    "usage": [],
+    "tips": []
+}

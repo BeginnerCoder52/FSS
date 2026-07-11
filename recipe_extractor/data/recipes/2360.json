@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Cá Trắm Kho Khế",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá trắm 400g",
+        "Thịt ba chỉ 100g",
+        "Khế chua 200g",
+        "Nước trà xanh 3 chén",
+        "Riềng cắt lát, ớt hiểm đập dập",
+        "Hành tím băm, hành lá cắt khúc",
+        "Tiêu, đường, muối",
+        "Nước mắm, nước màu, dầu điều"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt cắt miếng hình chữ nhật, ướp với 1/2m đường, 1/2m tiêu, 1M nước mắm, 1/2m bột ngọt AJI-NO-MOTO®, để thấm.",
+        "Cá làm sạch, ướp với 1m muối, 2M nước mắm, 1M đường, 1/2m bột ngọt AJI-NO-MOTO®, 1/2M hạt nêm Aji-ngon®, 1M hành tím băm, 1/2m nước màu, 1/2m tiêu, 2M nước khế, để thấm.",
+        "Khế 1 trái cắt nhỏ, vắt lấy 2M nước khế. Khế còn lại cắt lát dày khoảng 7 li."
+    ],
+    "cook": [],
+    "usage": [],
+    "tips": [
+        "Ướp nước khế vào cá giúp tạo vị chua, khử mùi tanh và thịt cá sẽ săn sau khi kho.",
+        "Kho với lửa nhỏ và đậy nắp trong quá trình kho để cá chín kỹ, không bị mất nước và thấm đều gia vị."
+    ]
+}

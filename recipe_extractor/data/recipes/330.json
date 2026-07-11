@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Salad Cam Tình Yêu",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú (size 35): 350g",
+        "Xà lách Mỹ: 100g",
+        "Xà lách lolo: 100g",
+        "Cà chua bi: 100g",
+        "Rau mầm: 50g",
+        "Bắp cải tím: 1/3 bắp",
+        "Cam Mỹ: 1 trái",
+        "Gia vị: muối, tiêu, đường, bột cam tang,dầu ôliu, mù tạt vàng"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Ngọt Dịu"
+    ],
+    "process": [
+        "Tôm sú: bóc vỏ, chừa đuôi.",
+        "Xà lách Mỹ, xà lách lolo : rửa sạch, cắt miếng vừa ăn",
+        "Cà chua bi: cắt đôi.",
+        "Bắp cải tím: bào mỏng",
+        "Cam Mỹ: 1/3 trái tách lấy tép, còn lại vắt lấy nước",
+        "Các loại rau sơ chế sạch, trộn đều, xếp ra dĩa, bảo quản lạnh",
+        "Pha xốt: 4M nước cam Mỹ, 1/2m muối, 1.5m đường, 1m bột cam Tang, 1m mù tạt vàng, 4M Xốt Mayonnaise Aji-mayo® vị ngọt dịu, 2M dâu oliu, trộn đều."
+    ],
+    "cook": [
+        "Đun nóng 1M bơ lạt, áp chảo tôm, rắc thêm ít tiêu.",
+        "Xếp tôm lên dĩa salad, topping xốt pha."
+    ],
+    "usage": [],
+    "tips": []
+}

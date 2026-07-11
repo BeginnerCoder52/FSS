@@ -1,0 +1,42 @@
+{
+    "recipe_name": "Phở Gà",
+    "serving": "4 người",
+    "times": "180 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh phở:",
+        "Xương gà: 1kg",
+        "Thịt gà: 600g",
+        "Xương heo: 300g",
+        "Gừng, hành tím: 50g",
+        "Sá sùng: 25g",
+        "Đường phèn: 20g",
+        "Hành tây: 1/2 củ",
+        "Hành boaro: 1 cây",
+        "Cần tây: 1/2 cọng",
+        "Lá chanh Bắc: 6 lá",
+        "Muối hột rang, nước mắm",
+        "Tiêu sọ xay, tương ớt Bắc",
+        "Hành lá, ngò gai, chanh, ớt sừng, rễ ngò"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Xương gà, xương heo rửa sạch, chần qua nước sôi rồi rửa lại bằng nước lạnh. Ướp thịt gà với 1 ít muối, tiêu, bột ngọt AJI-NO-MOTO® và nước mắm.",
+        "Nướng sơ qua gừng, hành tím và rễ ngò. Bọc gừng, hành tím, rễ ngò trong 1 miếng vải mùng, buộc lại.",
+        "Cho xương vào nồi với 5 lít nước lạnh, đun sôi rồi giảm lửa, hớt bọt kỹ. Thêm cần tây, boaro, gừng, hành tím, rễ ngò đã nướng. Nấu nhỏ lửa khoảng 2 – 3h sau đó lọc lấy 3 lít nước dùng.",
+        "Hành lá cắt lấy đầu trắng, trụng qua nước sôi, phần lá cắt nhỏ. Hành tây cắt lát mỏng. Lá chanh rửa sạch, cắt sợi nhỏ. Ngò gai rửa sạch, để ráo."
+    ],
+    "cook": [
+        "Nấu sôi nước dùng, nêm 2M muối hột, 1M nước mắm, 1m hạt nêm Aji-ngon®, 20g đường phèn và 2m bột ngọt AJI-NO-MOTO®.",
+        "Thịt gà rửa sạch, cho vào nồi nước dùng luộc chín, vớt ra ngâm vào thau nước đá rồi lọc lấy thịt xé sợi."
+    ],
+    "usage": [
+        "Khi ăn nhúng bánh phở vào nước nóng, vẩy ráo rồi cho vào tô. Xếp thịt gà, hành lá, hành tây, ngò gai và lá chanh lên trên. Chan nước dùng đang sôi vào tô phở, dọn kèm nước mắm nguyên chất, ớt cắt lát và chanh, ăn nóng."
+    ],
+    "tips": [
+        "Nêm muối hột và đường phèn để nước dùng ngọt thanh."
+    ]
+}

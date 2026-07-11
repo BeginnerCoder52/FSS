@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Salad Tôm Dâu Tây Táo Đỏ",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú 300g",
+        "Táo đỏ 1 quả",
+        "Dâu tây 9 quả",
+        "Bắp cải tím 100g",
+        "Xà lách carol 100g",
+        "Sữa chua không đường 2M",
+        "Sữa đặc có đường 2.5M",
+        "Chanh 2 quả",
+        "Rau húng lủi",
+        "Dầu ăn, muối, tiêu"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm sú bóc vỏ, chừa đuôi, chẻ lưng, lấy chỉ lưng.",
+        "Táo đỏ để vỏ, cắt sợi nhỏ, ngâm vào tô nước có ít muối để giúp táo không bị thâm rồi vớt ra để ráo.",
+        "Dâu tây bỏ cuống, cắt lát mỏng theo chiều dọc.",
+        "Bắp cải tím cắt sợi nhuyễn. Xà lách carol cắt khúc ngắn 3cm. Chanh vắt nước cốt, phần vỏ chanh mài nhỏ."
+    ],
+    "cook": [
+        "Tôm sú nêm 1/4m muối, 1/4m bột ngọt AJI-NO-MOTO®, 1/4m tiêu, 1/2m nước cốt chanh.",
+        "Pha xốt: 1/4m muối, 2M sữa chua không đường, 2.5M sữa đặc có đường, 3M nước cốt chanh, 3M xốt Mayonnaise Aji-mayo® và 2/3m vỏ chanh cà nhỏ.",
+        "Cho ít dầu vào chảo, đun nóng rồi cho tôm vào chiên áp chảo cho vàng 2 mặt."
+    ],
+    "usage": [],
+    "tips": [
+        "Táo đỏ để nguyên vỏ để giúp tạo độ giòn cho táo và giữ nguyên các chất vitamin có trong táo.",
+        "Cho ít nước chanh vào tôm để khử mùi tanh của tôm."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Vịt Xào Măng",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ức vịt: 300g",
+        "Măng luộc: 300g",
+        "Hành tây: 1/2 củ",
+        "Cà rốt: 50g",
+        "Nước dừa tươi: 1 chén",
+        "Hành lá, ngò rí, ớt sừng, hành tỏi băm",
+        "Rượu trắng, tiêu xay, đường, dầu ăn",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Ức vịt rửa sạch với rượu và gừng, cắt lát mỏng, ướp với 1/2 m đường, 2m hành tỏi băm, 1/2 m tiêu, 1/2 m Hạt nêm Aji-ngon®, 1M Nước tương LISA để thấm.",
+        "Măng cắt miếng dày 3 ly, ngang 5cm ướp với 1/2 m Hạt nêm Aji-ngon®.",
+        "Cà rốt cắt sợi dày 5 ly. Hành tây cắt múi cau. Ớt sừng băm nhỏ. Ngò rí cắt khúc."
+    ],
+    "cook": [
+        "Phi 2M dầu ăn với 2m hành tỏi băm cho thơm, cho thịt vịt vào xào săn, thêm 1m rượu trắng, cà rốt, măng, nước dừa, nếm lại cho vừa ăn. Cuối cùng cho hành tây, tắt lửa, cho hành lá, ớt và rắc thêm tiêu."
+    ],
+    "usage": [
+        "Múc ra dĩa, trang trí với ngò rí, dùng nóng."
+    ],
+    "tips": [
+        "Để khử mùi hôi của vịt nên rửa vịt với nước có pha gừng và rượu trắng.",
+        "Thêm rượu trắng trong lúc xào để thịt thơm hơn.",
+        "Luộc măng trước khi chế biến để loại bỏ chất độc trong măng."
+    ]
+}

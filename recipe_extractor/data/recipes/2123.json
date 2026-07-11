@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Bánh Rôti Cuộn Thịt Gà",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt đùi gà không xương : 300g",
+        "Bơ : 20g",
+        "Bánh rô ti : 5 cái",
+        "Phô mai Mozarella cắt nhỏ : 50g",
+        "Cà rốt cắt sợi: 1/2 củ",
+        "Củ Đậu Hà Lan : 50g",
+        "Nước dùng gà : 1 chén",
+        "Cơm : 1 chén",
+        "Hành lá : 3 nhánh",
+        "Bột nghệ : 1m",
+        "Hành tím băm",
+        "Tiêu, xốt tabasco, dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Gà cắt miếng vừa ăn, ướp 1m bột nghệ, 2M nước tương “Phú Sĩ”, 1/3m tiêu, 1m hành tím băm, để thấm.",
+        "Đậu Hà Lan cắt khúc xéo dài 3cm. Hành lá cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm hành lá, cho bơ, thịt gà vào xào, cho tiếp cà rốt, đậu Hà Lan và nước dùng gà vào, tiếp theo cho cơm vào trộn đều, tắt lửa.",
+        "Áp chảo bánh rô ti vừa chín. Trải bánh ra, cho hỗn hợp đã xào vào cuốn tròn, xếp vào khay, rắc phô mai lên trên.",
+        "Mở lò nóng sẵn, đặt khay vào lò nướng khoảng 2 phút là được."
+    ],
+    "usage": [
+        "Dùng nóng."
+    ],
+    "tips": [
+        "Ướp nước tương “Phú Sĩ” vào gà tạo hương vị đặc trưng. Khi xào gà không bị khô.",
+        "Bánh rô ti không cần rã đông, áp chảo vừa chín không để vàng quá sẽ khó cuốn.",
+        "Trộn thêm cơm và đậu Hà Lan tạo sự cân bằng về dinh dưỡng cho một bữa ăn hoàn chỉnh."
+    ]
+}

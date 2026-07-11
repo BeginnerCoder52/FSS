@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cá Trứng Chấm Tương Me",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá trứng Nhật: 250G",
+        "Tương ớt Hàn quốc: 1M",
+        "Bơ đậu phộng: 1M",
+        "Tỏi băm : 1m",
+        "Me vắt: 1M (Ngâm mềm lược lấy nước)",
+        "Sả băm: 1m (Lấy phần lõi non băm)",
+        "Tắc: 1 quả",
+        "Lõi sả: 1 cây",
+        "ĂN KÈM: Rau xà lách hỗn hợp: Rau cần cạn, rau thơm, dưa leo, cà chua ….",
+        "Gia vị: Dầu ăn, đường, nước mắm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Băm nhuyễn tỏi và lõi sả.",
+        "Ngâm cá trứng với ít nước đá lạnh và nước tắc xăm xắp cá khoảng 5 phút, vớt ra rửa lại với nước lạnh, để ráo, thấm khô."
+    ],
+    "cook": [
+        "Đun dầu nóng vừa (140oC). Cho cá vào tô với 1 gói Gia vị nêm sẵn Aji-Quick® Bột tẩm khô chiên giòn lắc đều.",
+        "Cho cá vào chiên chín vàng đều. Vớt ra thấm bớt dầu.",
+        "Pha xốt chấm : 1M tương ớt HQ, 1M bơ đậu phộng,1M nước me, 1M nước mắm, 2M nước lọc,1m tỏi băm, 1m sả băm, 1/2m bột ngọt, 1m đường khuấy đều."
+    ],
+    "usage": [
+        "Dùng nóng, chấm chung với nước xốt và rau ghém."
+    ],
+    "tips": [
+        "Dùng lõi sả băm để nước chấm thơm và không bị xơ từ sả.",
+        "Ngâm cá trong nước tắc để khử mùi tanh của cá.",
+        "Lắc cá với bột để cá được bám đều bột nhanh hơn và tiện dụng."
+    ]
+}

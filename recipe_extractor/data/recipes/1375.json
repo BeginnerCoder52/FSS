@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Canh Lươn Nấu Bắp Chuối Hột",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lươn: 300g",
+        "Bắp chuối hột: 200g",
+        "Lá lốt: 10 lá",
+        "Khế chua: 1 trái",
+        "Ớt sừng: 1 trái",
+        "Chanh: 1 trái",
+        "Ngò gai",
+        "Sả: 1 cây",
+        "Tiêu, muối, đường, nước mắm, dầu ăn",
+        "Hành tỏi băm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Lươn làm sạch, luộc chín với 1 lít nước, nêm 1m muối, 1m bột ngọt AJI-NO-MOTO®, đập dập tép sả bỏ vào nước luộc lươn. Vớt lươn ra để nguội, lấy thịt, xương tiếp tục nấu nước dùng. Ướp lươn với 1m hành tím băm, 1/2m tiêu, 1m đường, 1m bột ngọt AJI-NO-MOTO® và 1M nước mắm.",
+        "Bắp chuối cắt mỏng, ngâm nước có pha chanh. Lá lốt, ngò gai cắt nhỏ. Khế cắt lát. Ớt sừng cắt lát."
+    ],
+    "cook": [
+        "Phi thơm hành tỏi, cho lươn vào xào, thêm ớt xắt và ngò gai, rắc thêm tiêu, tắt bếp.",
+        "Thêm 0.5 lít nước vào nước luộc lươn nấu sôi, vớt xương ra, cho phần bắp chuối hột vào, khế, cho lươn vào nấu sôi trở lại, thêm lá lốt, ngò gai, tắt bếp."
+    ],
+    "usage": [
+        "Múc canh ra tô, rắc tiêu, dùng nóng."
+    ],
+    "tips": [
+        "Dùng khế chua hoặc phèn chua, hoặc giấm hay chanh để làm sạch nhớt lươn.",
+        "Xào thịt lươn trước để thịt lươn đậm đà và không bị tanh."
+    ]
+}

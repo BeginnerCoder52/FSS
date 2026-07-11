@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Xôi Chay Ngũ Sắc",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gạo nếp cái hoa vàng 300g",
+        "Lá cẩm (hoặc lá nếp) 20g",
+        "Cà rốt cắt sợi nhỏ 1/2 củ",
+        "Bí ngòi vàng 50g",
+        "Nấm hương 10 tai",
+        "Nấm bào ngư 100g",
+        "Mì căn 2 cây",
+        "Hành boa-ro băm, dầu boaro phi, ngò rí, ớt sợi",
+        "Muối, đường, tiêu, mè rang vàng, bột nghệ."
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Lá cẩm rửa sạch cắt nhỏ, cho nước săm sấp mặt, nấu đến khi nước sôi lên, lá mềm sau đó gạn lấy nước.",
+        "Gạo nếp vo sạch, ngâm với nước lá cẩm 30 phút, vớt ra để ráo. Cho 2M dầu boa-ro phi và 1/2m muối vào trộn đều với gạo, rồi nấu chín bằng nồi cơm điện.",
+        "Nấm bào ngư xé sợi vừa ăn. Nấm hương ngâm nở, bỏ chân, cắt lát nhỏ. Bí ngòi vàng cắt sợi."
+    ],
+    "cook": [
+        "Mì căn xé sợi nhỏ, ướp với 1/4m bột nghệ, 1/2m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1m nước tương “Phú Sĩ”, 1/3m đường, ít tiêu, để thấm 5 phút. Sau đó vắt ráo nước cho vào chiên ngập dầu, đến khi vàng giòn, vớt ra thấm bớt dầu.",
+        "Phi thơm boa-ro, cho lần lượt nấm hương, nấm bào ngư, cà rốt và bí ngòi vào xào chín tới, nêm vớt 1/4m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1/2M nước tương “Phú Sĩ” và ít tiêu, rồi trút ra để riêng từng loại."
+    ],
+    "usage": [],
+    "tips": [
+        "Mì căn vắt hết nước trước khi chiên để mì căn được giòn hơn.",
+        "Nấu gạo nếp với ít muối và boa rô phi giúp món ăn có vị béo nhẹ và vừa ăn hơn."
+    ]
+}

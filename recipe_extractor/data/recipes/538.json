@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Thịt Nướng Xí Muội",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt heo đầu vai 300g",
+        "Hành tây 1/4 củ",
+        "Que xiên tre 10 cái",
+        "Hành tỏi băm 2M",
+        "Hành lá cắt nhỏ 1/2 chén",
+        "ĂN KÈM: bánh hỏi, rau sống các loại, và nước mắm chua ngọt",
+        "Gia vị: ngũ vị hương, muối, đường, mật ong, tương xí muội, dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt heo cắt miếng mỏng. Hành tây cắt miếng vuông.",
+        "Xào hành tỏi: đun nóng 2M dầu ăn, cho hành tỏi băm vào xào thơm, không vàng, tắt lửa.",
+        "Làm dầu hành: cho vào chén hành lá cắt nhỏ 1/4m muối, đun nóng 3M dầu ăn rồi đổ vào chén hành, đảo đều.",
+        "Que xiên tre ngâm nước rồi để ráo."
+    ],
+    "cook": [
+        "Ướp thịt: ướp thịt và hành tây với 1/2m bột ngũ vị hương, 1/2m muối, 1m bột ngọt AJI-NO-MOTO®, 1m đường, 1m mật ong, 1M xốt xí muội, 1/2M nước tương “Phú Sĩ”, hành tỏi băm phi thơm, để thấm 30 phút rồi xiên thịt vào que xiên.",
+        "Nướng: mở lò nóng 180 độ, xếp xiên thịt vào nướng đến khi thịt chín vàng, thơm."
+    ],
+    "usage": [],
+    "tips": []
+}

@@ -77,28 +77,28 @@ void OutputProcessor::broadcast_env_data_updated(const std::map<std::string, flo
         // Add temperature (primary sensor)
         if (data.count("temp")) {
             if (!first) json_stream << ", ";
-            json_stream << "\"temp\": " << std::fixed << std::setprecision(1) << data.at("temp");
+            json_stream << "\"temp\": " << std::fixed << std::setprecision(2) << data.at("temp");
             first = false;
         }
         
         // Add humidity (primary sensor)
         if (data.count("humid")) {
             if (!first) json_stream << ", ";
-            json_stream << "\"humid\": " << std::fixed << std::setprecision(1) << data.at("humid");
+            json_stream << "\"humid\": " << std::fixed << std::setprecision(2) << data.at("humid");
             first = false;
         }
         
         // Add temperature (secondary sensor)
         if (data.count("temp_2")) {
             if (!first) json_stream << ", ";
-            json_stream << "\"temp_2\": " << std::fixed << std::setprecision(1) << data.at("temp_2");
+            json_stream << "\"temp_2\": " << std::fixed << std::setprecision(2) << data.at("temp_2");
             first = false;
         }
         
         // Add humidity (secondary sensor)
         if (data.count("humid_2")) {
             if (!first) json_stream << ", ";
-            json_stream << "\"humid_2\": " << std::fixed << std::setprecision(1) << data.at("humid_2");
+            json_stream << "\"humid_2\": " << std::fixed << std::setprecision(2) << data.at("humid_2");
             first = false;
         }
         

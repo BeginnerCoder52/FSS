@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Bánh Ít Nhân Tôm Thịt",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột nếp ngon: 300g",
+        "Nấm mèo: 2 tai",
+        "Đậu xanh:150g",
+        "Thịt nạc dăm: 200g",
+        "Tôm khô: 100g",
+        "Ngò băm: 1M",
+        "Hành lá: 3 cây",
+        "Lá chuối: 4kg",
+        "Muối, tiêu, đường, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Đậu xanh ngâm nở, nấu chín, xay nhuyễn.",
+        "Thịt nạc dăm rửa sạch, cắt nhỏ. Tôm khô ngâm nước ấm, cắt nhỏ",
+        "Đầu hành lá băm nhỏ. Nấm mèo rửa sạch, băm nhỏ, cắt sợi."
+    ],
+    "cook": [
+        "Xào nhân: phi thơm đầu hành rồi cho tôm, thịt vào xào săn, nêm 1/2m muối, 1m tiêu, 2m hạt nêm Aji-ngon®, thêm ngò rí, nấm mèo và đậu xanh vào đảo đều, để nguội.",
+        "Làm bột vỏ: Bột bóp nhuyễn với 1,5 chén nước sôi, nêm 1/2m muối, 1m dầu, nhồi thật mịn đến khi bột nguội chia thành những viên tròn. Nắn bột mỏng, cho nhân vào túm kín lại rồi vo tròn nhúng vô chén dầu.",
+        "Gói bánh: xé lá chuối cỡ 25 cm, hơ cho dịu lá, gấp làm bốn rồi cắt thành hình tròn đường kính 15cm. Gấp đôi lá chuối, gấp 1 cạnh phía trước, 1 cạnh ra sau rồi gấp 4 lại sau đó mở giữa lá ra cho nhân vào, xếp 4 cạnh dưới lại.",
+        "Hấp bánh: cho bánh vào xửng hấp 15 phút với lửa to."
+    ],
+    "usage": [
+        "Bóc vỏ, xếp bánh ra dĩa."
+    ],
+    "tips": [
+        "Để bánh ngon ta nên chọn nếp trắng và dẻo. Nhồi bột với nước sôi sẽ giúp bột nở nhanh và có độ dẻo, dễ tạo hình."
+    ]
+}

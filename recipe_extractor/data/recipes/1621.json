@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Cơm Tím Gà Khìa",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gà ta Gò Công 1/2 con",
+        "Nước dừa tươi 2 chén",
+        "Gạo trắng 2/3 chén",
+        "Gạo tím 1/3 chén",
+        "Lá dứa 3 lá",
+        "Nước dùng gà 1 chén",
+        "ĂN KÈM: Đồ chua, dưa leo",
+        "Gia vị: Sả cây, ngũ vị hương, hành tỏi băm, dầu hào, đường, dầu ăn, dầu hành lá"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Gà"
+    ],
+    "process": [
+        "Gà làm sạch, phần mỡ gà thắng lấy nước mỡ, gà chặt làm 3, luồn đầu dao dưới da khứa dọc nhẹ phần thịt gà để gà thấm vị hơn. Ướp gà với 2M nước hành tỏi băm (xác hành tỏi để lại), 1M đường, 2m Hạt nêm Aji-ngon® Gà, 2M Nước tương “Phú Sĩ”, 1m dầu hào, 1/2m ngũ vị hương, 2 cây sả đập dập. để thấm 30 – 45 phút."
+    ],
+    "cook": [
+        "Chiên gà với nước mỡ gà đến khi sém vàng 2 mặt, thêm xác hành tỏi và nước dừa săm sắp mặt thịt. Đậy vung khìa đến khi gà chín và cạn nước. Tắt lửa.",
+        "Trộn đều 2 loại gạo, nấu cơm với lá dứa, nước dùng gà, 2M mỡ gà và 1/3m Hạt nêm Aji-ngon® Gà."
+    ],
+    "usage": [
+        "Xới cơm ra dĩa, đặt miếng thịt gà lên trên, rưới mỡ gà, dầu hành lá. Bày thêm dưa leo, đồ chua, củ kiệu.",
+        "Ăn kèm Nước tương “Phú Sĩ” và ớt cắt lát."
+    ],
+    "tips": [
+        "Trộn gạo tím với gạo trắng theo tỉ lệ 1:3 rồi nấu, không cần ngâm nước.",
+        "Ướp nước hành tỏi vào gà để khi chiên không bị cháy.",
+        "Luồn đầu dao dưới da khứa dọc nhẹ phần thịt gà để gà thấm vị hơn."
+    ]
+}

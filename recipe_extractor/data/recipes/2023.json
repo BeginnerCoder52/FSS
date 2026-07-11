@@ -1,0 +1,44 @@
+{
+    "recipe_name": "Cơm Gạo Lứt Trộn",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gạo lứt: 150g",
+        "Ham chay: 80g",
+        "Đậu hũ chiên: 1 miếng",
+        "Hạt sen: 100g",
+        "Nấm đông cô khô: 5 tai",
+        "Nấm mèo: 2 tai",
+        "Ớt chuông đỏ: 50g",
+        "Ớt chuông xanh: 50g",
+        "Hành boaro: 1 nhánh",
+        "Gừng: 1 củ nhỏ",
+        "Mè trắng rang: 1M",
+        "Sữa tươi không đường: 1/2 chén",
+        "RAU NÊM: Ngò rí",
+        "ĂN KÈM: Dưa cải chua",
+        "Gia vị: Tiêu, đường, dầu ăn, dầu mè, tương ớt, tương cà"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Gạo lứt vo sạch, ngâm nước 1 – 2h.",
+        "Ham chay, đậu hũ chiên, ớt chuông xanh/đỏ cắt hạt lựu 1cm. Hạt sen luộc chín.",
+        "Hành boaro băm nhỏ lấy 2M. Gừng cắt sợi. Nấm đông cô khô, nấm mèo ngâm mềm, bỏ chân, cắt sợi."
+    ],
+    "cook": [
+        "Nấu cơm: Gạo lứt sau khi ngâm cho vào nồi cơm điện với nước và 1/2 chén sữa tươi không đường (tổng lượng nước gấp đôi gạo), nêm 1/2M Hạt nêm Aji-ngon® (Nấm hương & Hạt sen) vào, nấu chín.",
+        "Chiên đậu hũ: Đun nóng dầu, cho gừng sợi vào chiên thơm, vớt ra để riêng. Tiếp tục cho đậu hũ vào chiên vàng, vớt ra để ráo dầu.",
+        "Xào rau củ: Phi thơm hành boaro, cho nấm hương và nấm mèo vào xào thơm, cho ớt chuông xanh, đỏ vào, nêm 2m Hạt nêm Aji-ngon® (Nấm hương & Hạt sen), 2M Nước tương “Phú Sĩ”, 1m đường, 1/2m tiêu, sau đó cho hạt sen vào, xóc cho tất cả thấm đều gia vị, cuối cùng cho đậu hũ chiên, ham chay, 1m dầu mè vào xóc đều rồi tắt lửa.",
+        "Pha nước tương mè rang: Trộn đều 3M nước tương “Phú Sĩ”, 2M tương cà, 1M tương ớt, 1m Giấm gạo lên men LISA®, 2m đường, 1m dầu mè đen, 1M mè rang, 1M nước khuấy tan."
+    ],
+    "usage": [],
+    "tips": [
+        "Chiên gừng trước để tăng mùi thơm cho đậu hũ chiên sau.",
+        "Trộn nhân với cơm gạo lứt giúp cơm gạo lứt có độ mềm và ẩm.",
+        "Cho sữa tươi và hạt nêm vào khi nấu cơm sẽ giúp cơm mềm, béo, thơm và thấm đều vị."
+    ]
+}

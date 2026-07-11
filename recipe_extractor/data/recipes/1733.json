@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Chả Giò Hàu",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Hàu thịt 300g",
+        "Tôm tươi 200g",
+        "Su hào 100g",
+        "Thì là băm 1M",
+        "Đầu hành thái nhỏ 2M",
+        "Hành lá thái nhỏ 2M",
+        "Hành tây 1/4 củ",
+        "Bánh pía tươi 1 gói",
+        "Trứng gà 1 quả",
+        "RAU NÊM: Gừng đập dập",
+        "ĂN KÈM: Salad, rau thơm, cà chua",
+        "Gia vị: dầu ăn, tiêu, rượu trắng, tương ớt"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Hàu thịt chần qua nước sôi có gừng và rượu, sau đó để ráo, thái nhỏ. Tôm bóc vỏ, băm nhỏ.",
+        "Su hào bào sợi, vắt ráo nước. Hành tây thái hạt lựu nhỏ. Trứng gà đánh tan."
+    ],
+    "cook": [
+        "Trộn nhân: trộn hàu cùng với tôm, đầu hành, hành lá, hành tây, su hào và thì là băm, nêm 1m tiêu, 1,5m Hạt nêm Aji-ngon® (Heo), trộn đều nhẹ tay.",
+        "Cuốn chả giò: Trải bánh pía ra dĩa, cho 1M nhân vào, gấp gọn 2 đầu và cuộn lại, dùng 1 ít trứng gà để dán mí, lần lượt cuốn đến khi hết nhân.",
+        "Chiên chả giò: Đun dầu nóng, cho chả giò vào chiên với lửa vừa đến khi chín vàng, vớt ra giấy thấm dầu."
+    ],
+    "usage": [],
+    "tips": [
+        "Chần hàu qua nước sôi có gừng rượu giúp hàu không bị tanh.",
+        "Cho thì là vào nhân giúp tăng hương vị cho món ăn."
+    ]
+}

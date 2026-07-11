@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Cơm Chiên Trứng Cá",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm: 3 chén",
+        "Trứng cá chuồn: 50g",
+        "Cần tây: 1 cọng",
+        "Trứng gà: 2 quả",
+        "Bột năng: 1M",
+        "Hành lá: 3nhánh",
+        "Tỏi băm",
+        "Dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Cần tây chẻ đôi, cắt xéo. Hành lá xắt nhuyễn.",
+        "Hòa tan 1M bột năng với 1/3 chén nước.",
+        "Đánh tan 2 trứng gà với 1M nước bột năng, 1/2M hạt nêm Aji-ngon®.",
+        "Tráng trứng thành miếng mỏng. Cho ra thớt,cuộn tròn cắt nhuyễn."
+    ],
+    "cook": [
+        "Phi thơm tỏi, cho cơm vào chiên cho hạt cơm săn lại, nêm 1m hạt nêm Aji-ngon®, đảo đều cho cơm thấm gia vị. Tiếp tục cho rau cần vào, sau đó thêm trứng cá chuồn, hành lá và trứng cắt sợi vào đảo đều. Tắt lửa."
+    ],
+    "usage": [
+        "Dọn cơm chiên ra dĩa, trang trí sợi trứng và ngò rí. Dọn kèm với nước tương “Phú Sĩ” và ớt cắt khoanh."
+    ],
+    "tips": [
+        "Cho 1 ít nước bột năng giúp tráng trứng mỏng và dai không bị rách.",
+        "Không cho rau cần tây vào quá sớm để giữ độ giòn, ngọt cho nguyên liệu và giữ màu xanh non đẹp mắt."
+    ]
+}

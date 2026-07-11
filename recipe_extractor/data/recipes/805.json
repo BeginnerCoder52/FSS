@@ -1,0 +1,28 @@
+{
+    "recipe_name": "Canh Chua Thịt Băm",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt băm: 100g",
+        "Cà chua: 150g",
+        "Giá đỗ: 50g",
+        "Hành củ, tỏi củ, hành hoa, ngò om, ngò gai",
+        "Gia vị: dầu ăn"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cà chua: bổ múi cau.",
+        "Giá đỗ: nhặt sạch.",
+        "Hành củ, tỏi củ, hành hoa, ngò om, ngò gai: tất cả thái nhỏ"
+    ],
+    "cook": [
+        "Phi thơm hành tỏi, cho thịt băm vào xào, sau đó cho cà chua vào đảo chín.",
+        "Thêm 1 lít nước, đun sôi vớt bọt và nêm 4M Gia vị nêm sẵn Aji-Quick® Lẩu Thái, sau đó đun sôi và tắt lửa.",
+        "Cho giá đỗ, các loại rau thơm vào bát, sau đó múc canh nóng vào."
+    ],
+    "usage": [],
+    "tips": []
+}

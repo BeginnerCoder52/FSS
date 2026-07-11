@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Bánh Mì Bì Sài Gòn",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt nách hoặc thịt ba chỉ: 300g",
+        "Da heo: 150g",
+        "Thính: 3M",
+        "Bánh mì: 4 ổ",
+        "Nước dừa: 1 chén",
+        "Đồ chua, ớt, ngò rí, hành tỏi",
+        "Ớt, hành lá, đường, muối",
+        "Nước mắm, ngũ vị hương, dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Hành tỏi ớt băm nhỏ, lấy 1m nước cốt hành tỏi. Phi thơm 1 ít tỏi.",
+        "Ướp thịt với 2m nước hành tỏi, 1/2m tiêu, 1/2m Hạt nêm Aji-ngon®, 1/3m ngũ vị hương, để thấm 30 phút.",
+        "Làm bì: da heo luộc qua nước có pha 1m Hạt nêm Aji-ngon® vừa chín tới vớt ra ngâm nước đá. Sau đó, nghiêng dao lạng thật mỏng rồi cắt sợi.",
+        "Làm mỡ hành: phi 2M dầu nóng chế vào chén đựng hành lá có 1/2m muối và khuấy đều."
+    ],
+    "cook": [
+        "Pha nước mắm: trộn đều 5M nước, 2M nước mắm, 1M Giấm gạo lên men LISA®, 2M đường, 1/2m tỏi băm.",
+        "Đun nóng ít đầu, chiên thịt xém mắt, sau đó thêm nước dừa và nấu nhỏ lửa đến khi thịt chín, để nguội, cắt sợi cỡ cọng giá.",
+        "Trộn đều thịt, da, thính, tỏ băm, tỏi phi, 1/4m muối, 1/2m đường, 1/2m Bột ngọt AJI-NO-MOTO®.",
+        "Nướng lại bánh mì cho nóng, cắt dọc, phết mỡ hành, sau đó xếp bì, đồ chua, đầu hành, ngò rí, ớt cắt sợi. Chan nước mắm chua ngọt, kẹp lại."
+    ],
+    "usage": [
+        "Dùng khi bánh mì còn nóng sẽ ngon hơn."
+    ],
+    "tips": [
+        "Để thịt có độ giòn ngon hơn ta nên chọn phần thịt nách.",
+        "Nên để thịt thật nguội rồi mới cắt để thịt có sợi đẹp và không bị nát."
+    ]
+}

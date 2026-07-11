@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Bánh Canh Cua Phồng Tôm",
+    "serving": "0 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bắp đùi heo 150g",
+        "Tôm sú tươi 100g (4 con)",
+        "Gạch cua 50g",
+        "Thịt cua rỉa 100g",
+        "Nấm rơm 100g",
+        "Bánh phồng tôm 100g (Ngâm 1 tiếng để bánh mềm đều)",
+        "Nước dùng (hầm từ xương heo, hành tím nướng, tôm khô) 1,5l",
+        "Bột năng",
+        "Muối, dầu điều, nước mắm, đường phèn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt bắp đùi heo ướp với 1m hạt nêm Aji-ngon®, luộc trong nồi nước dùng đến khi thịt chín, vớt ra ngâm vào nước lọc cho nguội rồi cắt lát. Nấm rơm xào với hành tím phi vàng. Hành lá, ngò rí rửa sạch, cắt nhỏ.",
+        "Tôm luộc chín trong nước dùng, vớt ra ngâm nước, bóc bỏ vỏ. Cho 1/2M dầu điều, 1m hành tím băm, xào sơ gạch cua, nêm 1/3m hạt nêm Aji-ngon®Heo, xào tiếp gạch cua, rồi trút toàn bộ vào nồi nước dùng.",
+        "Bánh phồng tôm ngâm 1h để bánh mềm đều."
+    ],
+    "cook": [
+        "Nêm lại nước dùng với 1m muối, 1m hạt nêm Aji-ngon®Heo, 1m bột ngọt AJI-NO-MOTO® và 1,5m đường phèn.",
+        "Cho gạch cua và nấm rơm vào nồi nước dùng nấu chín rồi thêm bánh phồng tôm vào, khuấy ít nước bột năng vào cho nước hơi sánh lại.",
+        "Thêm 1M dầu điều, đầu hành lá, ngò rí và hành phi, nêm thêm 1/2M nước mắm và 1/2m tiêu."
+    ],
+    "usage": [],
+    "tips": []
+}

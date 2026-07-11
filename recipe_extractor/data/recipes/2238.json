@@ -1,0 +1,45 @@
+{
+    "recipe_name": "Burger Cua Lột",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cua lột 4 con 500g",
+        "Hành tây 1/2 củ",
+        "Bắp cải tím 50g",
+        "Bắp cải trắng 50g",
+        "Cà chua 1 trái",
+        "Xà lách 4 lá",
+        "Trứng gà 4 quả",
+        "Bánh mỳ burger đen 4 cái",
+        "Khoai lang 200g",
+        "RAU NÊM: lá quế",
+        "ĂN KÈM: khoai lang chiên",
+        "Gia vị: dầu ăn, tiêu, mù tạt vàng"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Aji-Quick® Bột Chiên Giòn"
+    ],
+    "process": [
+        "Cua gỡ bỏ yếm và phổi cua. Hành tây cắt mỏng.",
+        "Bắp cải hai loại bào sợi. Cà chua cắt khoanh. Khoai lang cắt sợi.",
+        "Nướng sơ 2 mặt bánh mì burger."
+    ],
+    "cook": [
+        "Cua ướp cùng với 1/2m tiêu và 1/2m Bột ngọt AJI-NO-MOTO®, áo một lớp bột Gia vị nêm sẵn Aji-Quick® Bột chiên giòn mỏng, sau đó nhúng vào Gia vị nêm sẵn Aji-Quick® Bột chiên giòn được pha theo hướng dẫn trên bao bì và chiên ngập dầu cho cua chín vàng giòn, vớt ra để ráo dầu.",
+        "Tiếp tục chiên giòn khoai lang. Sau đó chiên opla trứng gà.",
+        "Pha xốt : trộn đều 1M tương cà và 1M mù tạt vàng cùng 1M Xốt Mayonnaise Aji-mayo®.",
+        "Trộn đều bắp cải trắng và tím, sau đó trộn cùng với 2M Xốt Mayonnaise Aji-mayo®."
+    ],
+    "usage": [
+        "Phết xốt lên 2 mặt bánh mì burger, cho xà lách, ốp la lên mặt đế của bánh mỳ cùng với cà chua, bắp cải trộn, tiếp theo là cua chiên, hành tây bào.",
+        "Trang trí thêm lá quế xen vào giữa cua chiên và đậy miếng nắp của bánh mỳ lên trên, kẹp lại, dùng kèm khoai lang chiên."
+    ],
+    "tips": [
+        "Dùng kèm với khoai lang chiên giúp tạo hương vị mới lạ cho món ăn.",
+        "Cho lá quế để tạo hương vị đặc trưng cho món ăn.",
+        "Áo bột mỏng và rủ bớt bột trước khi bỏ vào chiên để cua giòn đều."
+    ]
+}

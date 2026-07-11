@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Mì Trường Thọ",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì sợi vàng: 500g",
+        "Dưa cải chua: 100g",
+        "Cần tây: 50g",
+        "Bông hẹ: 100g",
+        "Vịt quay: 1/2 con",
+        "Hành tây: 1/2 củ",
+        "Nấm đông cô: 4 tai",
+        "Cà rốt: 1/2 củ",
+        "Dầu hào, đường, tiêu, dầu ăn",
+        "Ngò rí, hành lá, ớt, tỏi băm"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Vịt quay rút xương, thịt cắt sợi, xương cho vào nồi nước nấu cho ra nước ngọt.",
+        "Nấm đông cô ngâm mềm, cho vào nồi xương luộc chín, cắt sợi.",
+        "Cà rốt, cần tây, bông hẹ cắt sợi dài khoảng 10cm. Hành tây, cải chua cắt sợi nhuyễn. Hành lá, ngò rí cắt nhỏ. Ớt cắt nhỏ.",
+        "Pha nước gia vị: trộn đều 1 chén nước dùng với 1M dầu hào, 1/2m tiêu, 1M đường, 2m hạt nêm Aji-ngon® và 1M nước tương Phú Sĩ."
+    ],
+    "cook": [
+        "Phi thơm tỏi, cho mì vào xào đến khi sợi mì se mặt, nêm 1M nước gia vị, trút ra dĩa.",
+        "Tiếp tục phi thơm tỏi, cho cà rốt, cần tây vào xào nhanh, thêm bông hẹ, hành tây, cải chua và nấm đông cô vào xào thêm 1 chút, cho nước gia vị vừa xắp mặt rau, đợi sôi lại thì tắt bếp."
+    ],
+    "usage": [
+        "Xếp mì ra dĩa, xếp rau và thịt vịt quay cắt sợi lên trên. Trang trí với ngò rí, hành lá và ớt cắt sợi."
+    ],
+    "tips": [
+        "Khi xào rau nên xào trên lửa lớn, đảo nhanh tay, rau sẽ không bị ra nước và giữ được độ giòn. – Nên cắt rau củ có kích cỡ đều nhau để rau chín đều."
+    ]
+}

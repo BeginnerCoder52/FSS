@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Canh Chua Chem Chép",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Chem chép: 300g",
+        "Cà chua: 2 trái",
+        "Khế: 2 trái",
+        "Hành tím, rau om, hành lá, ngò rí",
+        "Dầu ăn, nước mắm",
+        "Muối, tiêu, đường"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Chem chép ngâm nước muối pha loãng khoảng 1 giờ cho ra hết đất, rửa sạch, luộc với 1 tô nước sôi. Khi chem chép vừa hé miệng thì vớt ra, xả qua nước lạnh, rửa sạch đất cát còn sót, gỡ lấy thịt. Ướp chem chép với 1 ít hạt nêm Aji-ngon®, tiêu và nước mắm. Lọc lấy nước luộc chem chép bằng rây, đổ nhẹ tay bỏ phần cát lắng ở đáy nồi.",
+        "Cà chua cắt múi cau. Khế gọt viền, cắt dọc. Hành lá cắt khúc. Hành tím đập dập, băm nhuyễn. Ngò rí, rau om cắt khúc."
+    ],
+    "cook": [
+        "Phi thơm hành tím, cho thịt chem chép vào xào nhanh, trút ra để riêng.",
+        "Đun sôi nước luộc chem chép, cho cà chua, khế vào nồi nấu chín. Nêm 1/2m bột ngọt AJI-NO-MOTO®, 1/2m hạt nêm Aji-ngon®, 1/2m muối, 1/2m đường, 1m Giấm gạo lên men LISA®, cho thịt chem chép vào tắt lửa rồi nêm thêm 1m nước mắm."
+    ],
+    "usage": [
+        "Múc canh ra tô, thêm hành lá, ngò rí, rau om dùng nóng."
+    ],
+    "tips": [
+        "Luộc chem chép trong nước thật sôi với liều lượng thích hợp, chem chép vừa hé miệng là vớt ra ngay, chem chép sẽ ngon và không bị dai.",
+        "Trước khi nấu, ta nên ngâm chem chép trong nước muối pha loãng để chem chép nhả bớt đất cát bên ngoài."
+    ]
+}

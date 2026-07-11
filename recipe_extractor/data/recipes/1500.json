@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Bún Gạo Xào Thập Cẩm",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bún gạo khô: 150g",
+        "Jambon: 100g",
+        "Chả lụa: 100g",
+        "Trứng vịt: 1 quả",
+        "Cà rốt, bông hẹ, nấm đông cô, hành tây, hành ngò",
+        "Đường, rượu trắng, nước mắm",
+        "Dầu mè, dầu ăn",
+        "Bột năng",
+        "Tỏi băm, ớt trái, tiêu",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Bún gạo ngâm nước ấm 5 phút, vớt ra để ráo, cắt ngắn bớt.",
+        "Hành tây, cà rốt, jambon, chả lụa, nấm đông cô cắt sợi. Bông hẹ cắt khúc 5cm. Ớt băm nhỏ, 1/2 cắt sợi, 1/2 cắt lát. Hành ngò cắt nhỏ.",
+        "Trứng vịt đánh tan, nêm 1/2m hạt nêm Aji-ngon®, 1/2m rượu trắng, 1m nước, 1/2m bột năng, sau đó đem tráng mỏng và cắt sợi."
+    ],
+    "cook": [
+        "Phi thơm tỏi, cho cà rốt, nấm đông cô, chả lụa, jambon, thêm 1 chén nước dùng, nêm 2m hạt nêm Aji-ngon®, 1m đường, 1/2m bột ngọt AJI-NO-MOTO® , xào với lửa lớn, tiếp tục cho bún gạo, bông hẹ, hành tây, vào đảo nhanh tay, thêm dầu mè, tắt bếp.",
+        "Pha nước chấm: trộn đều 3M nước tương LISA, 1m nước, 1m Giấm gạo lên men LISA®, 1m đường, 1m tỏi ớt băm."
+    ],
+    "usage": [
+        "Cho bún gạo ra dĩa, rắc thêm trứng sợi, hành ngò, ớt sợi và tiêu. Khi ăn chấm nước tương LISA và ớt cắt lát."
+    ],
+    "tips": [
+        "Ta nên ngâm bún gạo với nước ấm cho nở và dai. Không nên trụng vì bún sẽ bị mềm.",
+        "Ta cho 1 ít rượu trắng vào trứng vịt sẽ làm giảm mùi tanh khi tráng.",
+        "Bột năng giúp trứng được dai, dễ tráng mỏng hơn."
+    ]
+}

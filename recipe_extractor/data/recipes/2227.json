@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Miến Trộn Kiểu Thái",
+    "serving": "2 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm: 200g (Bóc vỏ, chừa đuôi)",
+        "Miến: 3 vắt",
+        "Đậu phộng rang: 3M (Giã nhỏ)",
+        "Đậu bún: 60g (cắt khúc 2cm)",
+        "Cà chua bi: 6 trái (cắt đôi)",
+        "Hành tím: 1 củ (cắt lát)",
+        "Ớt hiểm: 1 trái",
+        "Ớt xiêm: 1 trái",
+        "Hành tỏi băm: 1m",
+        "RAU NÊM: Ngò gai cắt nhỏ",
+        "Gia vị: Dầu ăn, đường, nước mắm, tương ớt"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Miến chần nước sôi, vớt ra xả nước lạnh, để ráo.",
+        "Pha xốt trộn: Cho ớt hiểm, ớt xiêm, cà chua, đậu bún, 1M ngò gai vào cối, nêm 2M Aji Quick Lẩu Thái, 1.5M đường, 1M nước mắm, 1m tương ớt dùng chày giã đều nguyên liệu."
+    ],
+    "cook": [
+        "Phi thơm hành tỏi băm, xào thơm tôm, nêm 1/2m Aji Quick Lẩu Thái, xóc đều, để riêng.",
+        "Trộn đều miếng với xốt trộn."
+    ],
+    "usage": [],
+    "tips": []
+}

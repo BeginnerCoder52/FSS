@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Lẩu Cá Kèo Lá Giang",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá kèo : 400g",
+        "Lá giang : 50g",
+        "Thơm : 1/4 trái",
+        "Cà chua : 1 trái",
+        "Rau đắng : 200g",
+        "Rau muống bào : 200g",
+        "Rau nhút : 200g",
+        "Hành tỏi băm : 1M",
+        "Rau om, ngò gai",
+        "Bún tươi : 500g",
+        "Ớt hiểm",
+        "Nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cá kèo tươi rửa sạch.",
+        "Cà chua cắt múi cau. Thơm cắt miếng mỏng. Các loại rau lặt rửa sạch, xếp ra dĩa."
+    ],
+    "cook": [
+        "Cho vào nồi 1/2 chén dầu ăn (~7M), phi thơm hành tỏi, cho cà chua, thơm vào xào kĩ đến khi mềm, thêm vào 1.5 lít nước, đun sôi. Lá giang vò sơ cho vào nồi rồi nêm gói Aji-Quick® Gia vị nêm sẵn Lẩu Thái, khuấy đều."
+    ],
+    "usage": [
+        "Khi ăn, cho cá và các loại rau vào từ từ, chấm cá với nước mắm ớt, ăn kèm bún."
+    ],
+    "tips": [
+        "Rửa cá kèo qua nước pha giấm hoặc chanh sau đó rửa lại bằng nước sạch cho hết nhớt trong cá.",
+        "Vò lá giang để chất chua trong lá giang có thể ra hết."
+    ]
+}

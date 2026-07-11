@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Chả Cá Chiên Cốm",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá thác lác nạo 150g",
+        "Giò sống 50g",
+        "Tôm sú lột vỏ 50g",
+        "Cốm dẹp màu xanh 150g",
+        "Ớt sừng cắt nhỏ 2M",
+        "Trứng gà 2 quả",
+        "Bột mì 1/2 chén",
+        "Cọng ngò rí băm 1M",
+        "Cọng cần tây băm 1M",
+        "Tiêu sọ rang giã bể 1/2M",
+        "Tương xí muội, dầu ăn"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Tôm sú cắt hạt lựu, trứng gà đánh tan.",
+        "Trộn chung cá thác lác, tôm, 1M ớt sừng, 1m cọng ngò rí, 1M cọng cần tây, 1/2m tiêu, 1m hạt nêm Aji-ngon®, tiếp tục trộn với giò sống. Đập cho kết dính.",
+        "Chia làm những phần nhỏ, khoảng 1M. Tạo hình ngón tay. Cho vào tủ mát giữ lạnh 10 phút."
+    ],
+    "cook": [
+        "Pha xốt chấm gồm tương xí muội và xốt Mayonnaise Aji-Mayo® trộn theo tỉ lệ 1:1.",
+        "Lăn viên chả lần lượt qua bột mì, trứng, cốm dẹp, cho vào dầu nóng, chiên chín giòn, vớt ra để ráo dầu."
+    ],
+    "usage": [
+        "Trình bày chả ra dĩa. Ăn nóng, dọn kèm xốt đã pha."
+    ],
+    "tips": [
+        "Dùng tiêu sọ rang giã bể giúp chả cá thơm hơn."
+    ]
+}

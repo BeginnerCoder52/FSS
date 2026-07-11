@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Canh Nghêu Mồng Tơi",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nghêu: 500g",
+        "Rau mồng tơi",
+        "Sả, gừng, hành tím, ớt hiểm",
+        "Nước mắm, muối, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Nghêu rửa sạch, luộc vừa chín tới, ướp với 1m nước mắm và 1/2m bột ngọt AJI-NO-MOTO®",
+        "Nước luộc nghêu lọc qua rây, đổ nhẹ tay bỏ phần cát lắng ở đáy nồi.",
+        "Sả, ớt hiểm đập dập. Gừng cắt lát. Hành tím đập dập, bằm nhuyễn."
+    ],
+    "cook": [
+        "Đun nóng dầu, phi thơm hành, cho thịt nghêu vào xào sơ, trút ra dĩa.",
+        "Đun sôi nước luộc nghêu, cho sả, gừng, ớt vào nồi nước luộc và nêm 2m hạt nêm Aji-ngon®, 1m muối, 1m nước mắm, 1M Giấm gạo lên men LISA®, sau đó cho rau mồng tơi vào nấu chín và cuối cùng là cho nghêu vào rồi tắt bếp."
+    ],
+    "usage": [
+        "Múc canh ra tô, rắc thêm tiêu, dùng nóng."
+    ],
+    "tips": [
+        "Nghêu luộc vừa chín tới thịt sẽ mềm và ngon hơn.",
+        "Sử dụng Giấm gạo lên men LISA® khi nêm sẽ làm món canh nghêu tăng thêm hương vị."
+    ]
+}

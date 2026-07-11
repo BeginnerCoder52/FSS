@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Ốc Móng Tay Nướng Chanh Sả",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Ốc móng tay: 1,5kg",
+        "Sả xay: 2M",
+        "Ớt xay: 2M",
+        "Lá chúc: 10 lá",
+        "Tỏi xay: 1M",
+        "Mỡ heo: 200g",
+        "Hành lá: 100g",
+        "Chanh vàng: 1 trái",
+        "Gia vị: đường"
+    ],
+    "spices": [
+        "Bột canh"
+    ],
+    "process": [
+        "Ốc tách vỏ, lấy ra thịt ốc vẫn giữ 1 phần vỏ, rửa ốc và vỏ qua vòi nước cho sạch, để ráo. Nấu nước sôi trong đó có chút rượu và gừng đập dập, rồi xối qua ốc móng tay và để ráo.",
+        "Vỏ chanh mài nhuyễn, cắt chanh vắt lấy nước. Lá chúc thái sợi nhỏ. Hành lá cắt nhỏ. Mỡ heo cắt nhỏ."
+    ],
+    "cook": [
+        "Cho mỡ heo vào chảo thắng cho ra nước mỡ. Múc nửa lượng mỡ nóng ra làm mỡ hành.",
+        "Phần mỡ còn lại phi 1M tỏi, 2M sả, 2M ớt sừng cho thơm, đem ra trộn thêm lá chúc, 2M vỏ chanh mài, 3M nước chanh, 1/2m BỘT CANH cho đều, đem ướp với thịt ốc.",
+        "Nướng: Đặt thịt ốc vào vỏ, đem nướng chín tới, cho mỡ hành lên trên.",
+        "Làm muối chấm: 2M BỘT CANH, 1M đường, 2M nước cốt chanh, 1m lá chúc băm nhỏ, 1M vỏ chanh mài, 1/2m ớt hiểm băm."
+    ],
+    "usage": [
+        "Bày ốc móng tay nướng lên dĩa, dùng kèm muối chấm và rau răm."
+    ],
+    "tips": [
+        "Làm sạch ôc bằng nước vo gạo hoặc nước muối loãng và 1-2 trái ớt cắt nhỏ, ngâm ốc 1-2 giờ rồi sả lại nước nhiều lần.",
+        "Trộn ốc với gia vị có mỡ thắng để sau khi nướng ốc bóng và thơm.",
+        "Chọn những con ốc có màu vàng sáng, lớp vỏ ngoài nguyên vẹn, không bị mẻ, nhìn thấy thịt ốc mịn và trong."
+    ]
+}

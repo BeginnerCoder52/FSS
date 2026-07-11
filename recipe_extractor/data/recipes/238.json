@@ -1,0 +1,42 @@
+{
+    "recipe_name": "Mít Non Trộn Đậu Hũ Ky",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mít non luộc: 600g",
+        "Chả lụa chay",
+        "Tàu hũ chiên: 1 miếng",
+        "Tàu hũ ky chiên sẵn: 1 miếng",
+        "Dưa leo, cà rốt cắt sợi răng cưa",
+        "Rau răm, cần tàu, ớt sừng",
+        "Đậu phộng rang",
+        "Mè trắng rang, ớt sừng băm nhuyễn, dầu boaro phi, dưa kiệu cắt sợi",
+        "Đường, muối, tiêu",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Mít luộc cắt miếng 2cm theo sớ mít.",
+        "Tàu hũ chiên và chả lụa cắt miếng dày 0,5cm.",
+        "Tàu hũ ky chiên giòn, bẻ nhỏ.",
+        "Dưa leo, cà rốt cắt khúc dày 0,5cm, trộn với 2m đường, để 5 phút rồi vắt bớt nước.",
+        "Cần tàu cắt khúc. Ớt cắt sợi, rau răm cắt nhỏ.",
+        "Pha nước trộn: trộn đều 2M giấm Giấm gạo lên men LISA®, 2M đường, 1/2m muối, 1/2 m Bột ngọt AJI-NO-MOTO®, 1M nước tương LISA, ớt băm, dầu đã phi boaro và dưa kiệu.",
+        "Pha nước tương ăn kèm: 2M nước tương LISA, 1/2m Giấm gạo lên men LISA®, 1M nước lọc, 1m đường, 1/2m ớt băm, dưa kiệu cắt sợi."
+    ],
+    "cook": [
+        "Trộn các nguyên liệu trên, trừ tàu hũ ky, với nước trộn, rau răm, đậu phộng và mè trắng."
+    ],
+    "usage": [
+        "Bày ra dĩa, rắc tàu hũ ky và đậu phộng lên trên, thêm ớt sợi lên mặt, khi ăn chấm nước tương pha. Ăn kèm bánh tráng mè nướng."
+    ],
+    "tips": [
+        "Chọn mít: chọn mít non vừa, hạt chưa cứng.",
+        "Cà rốt, dưa leo ướp đường sẽ giòn hơn khi ướp muối."
+    ]
+}

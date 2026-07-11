@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Vịt Nấu Thơm",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt vit: 800g",
+        "Thơm: 1 trái",
+        "Dừa tươi: 1 trái",
+        "Hành tây: 1 củ",
+        "Nước ép thơm: 1 chén",
+        "Nước dùng gà: 600ml",
+        "Đinh hương, quế chi, lá thơm Ớt sừng, gừng, nước cốt hành tím",
+        "Dầu ăn, dầu điều, bột năng Muối, tiêu, đường, rượu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Dùng gừng giã và rượu rửa sạch da vịt để tẩy mùi hôi lông, xả sạch, để ráo. Khứa vài đường trên da vịt rồi chiên cho ra bớt mỡ, khứa dọc bên trong má đùi và đùi vịt để dễ thấm gia vị. Ướp vịt với 2M nước cốt hành tím, 2M nước tương “Phú Sĩ”, 1/2m muối, 1/2m tiêu và 1.5m hạt nêm Aji-ngon® để thấm 30 phút.",
+        "Thơm gọt vỏ, tỉa sọc đứng, cắt miếng vừa ăn, khoét bỏ lõi, ướp với 1 ít đường và muối. Dừa tươi chặt lấy nước.",
+        "Hành tây cắt múi, ớt sừng cắt lát.",
+        "Hòa tan 1M bột năng với 1/2 chén nước."
+    ],
+    "cook": [
+        "Cho vịt vào nồi nấu không cần dầu, nêm 1M dầu điều, 1 nhánh quế, 4-5 nụ đinh hương, 1 nhánh lá thơm, cho thêm 1 chén nước cốt thơm và nước dừa tươi, nấu lửa to đến khi sôi thì giảm lửa.",
+        "Nêm 1M hạt nêm Aji-ngon®, cho thơm và hành tây vào rồi nấu đến khi vịt chín mềm. Khuấy bột năng cho vào từ từ đến khi nước sánh vừa, tắt bếp."
+    ],
+    "usage": [
+        "Múc thịt vịt ra đĩa sâu lòng, rắc thêm tiêu và trang trí với ngò rí, ăn kèm bánh mì, nước tương “Phú Sĩ” và ớt cắt lát tùy khẩu vị."
+    ],
+    "tips": [
+        "Khứa những đường song song trên da vịt để khi chiên mỡ vịt chảy ra bớt.",
+        "Nếu thích ăn béo thì giữ lại phần mỡ khi chiên thịt để nấu."
+    ]
+}

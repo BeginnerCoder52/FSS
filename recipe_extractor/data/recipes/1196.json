@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cá Trê Kho Rau Răm",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá trê: 2 con (500g)",
+        "Thịt ba chỉ: 100g",
+        "Rau răm: 1 chén",
+        "Nước cơm sôi: 1/2 chén",
+        "Hành tím băm: 1m",
+        "Đầu hành lá cắt nhỏ: 1M",
+        "Ớt hiểm: 2 trái",
+        "Dầu điều, nước mắm",
+        "Muối, đường, tiêu hạt giã bể, ớt bột"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Cá làm sạch, bỏ máu tanh ở 2 bên ngạnh cá. Dùng nước muối/chanh hoặc giấm chà lên mình cá rồi dùng dao vuốt thân cá sạch rồi rửa sạch.Cắt cá khứa dài 3cm.",
+        "Thịt ba chị cắt sợi dày 1cm.",
+        "Rau răm cắt nhỏ. Ớt hiểm đập dập,",
+        "Ướp thịt, cá với 1/2m muối, 1m bột ngọt AJI-NO-MOTO®, 1m ớt bột, 1m hành tím băm, 1m tiêu, 2 trái ớt hiểm đập dập, 1m đầu hành lá, 1M đường, 1M nước mắm, 2M nước tương “Phú Sĩ”, 1/2 lượng rau răm cắt nhỏ"
+    ],
+    "cook": [
+        "Lót rau răm dưới đáy nồi đất, cho cá thịt đã ướp lên.",
+        "Kho riu Kho lúc đầu lửa to cho thịt cá săn lại, cho thêm 1/2 chén nước nóng vào kho tiếp với lửa riu riu, thỉnh thoảng trở mặt cá, cho thêm 1M dầu điều vào cùng 1/2 chén nước cơm sôi, kho cho nước sanh sánh lại.",
+        "Tắt lửa, rắc rau răm cắt nhỏ còn lại trên mặt cá."
+    ],
+    "usage": [
+        "Dùng nóng với cơm."
+    ],
+    "tips": [
+        "Làm cá trê thì bỏ phần máu tanh ở 2 bên ngạnh cá giúp cá hết tanh.",
+        "Dùng nước cơm sôi để kho cá giúp nước kho có độ sánh, béo, thơm hơn khi chỉ dùng nước nóng thông thường."
+    ]
+}

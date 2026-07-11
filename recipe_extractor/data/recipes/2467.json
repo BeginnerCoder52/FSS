@@ -1,0 +1,43 @@
+{
+    "recipe_name": "Cá Cuốn Tôm Chiên",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt cá lóc rút xương: 300gr",
+        "Giò sống: 100gr",
+        "Tôm đất: 200gr",
+        "Thịt nạc dăm xay: 100gr",
+        "Trứng gà: 1 quả",
+        "Bột mì: 100gr",
+        "Bột xù: 100gr",
+        "Hành tây: 1 củ",
+        "Ớt sừng: 1 trái",
+        "Gừng: 1 củ",
+        "Tiêu, muối, dầu ăn",
+        "Ngò rí, đầu hành, thì là, hành tỏi băm",
+        "Xốt Mayonnaise LISA"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Gừng, đầu hành lá, thì là băm nhuyễn. Trứng gà đánh tan.",
+        "Thịt cá cắt lát mỏng dài 8cm, ướp với thì là băm, gừng băm, 1/2m hạt nêm Aji-ngon®, 1/2m tiêu, trộn đều và để thấm trong 10 phút.",
+        "Ướp thịt xay 1/3m hạt nêm, 1/3m tiêu, 1M hành tỏi băm, trộn đều rồi cho giò  sống vào trộn chung.",
+        "Tôm luộc chín, lột vỏ, chừa đuôi.",
+        "Trải một miếng cá ra dĩa, cho phần thịt, rồi đến một con tôm. Cuốn tròn lại."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, lăn từng cuốn cá qua bột mì, trứng, bột xù, sau đó đem chiên vàng. Vớt ra để ráo dầu.",
+        "Pha xốt: Trộn đều 4M xốt Mayonnaise LISA với 2M tương ớt, 2m hành tây băm và 1m thì là."
+    ],
+    "usage": [
+        "Xếp cá ra dĩa, khi ăn chấm với xốt mayonnaise đã pha."
+    ],
+    "tips": [
+        "Hướng dẫn phân biệt cá lóc đồng và cá lóc nuôi:",
+        "Cá lóc đồng: thân tròn, mình ngắn, nhìn trạng thái săn chắc. Đầu, mình cân đối, có màu bùn đất.",
+        "Cá lóc nuôi: con to, đầu to, xương sống yếu nên nhìn con cá nhão, nhiều nước, thân cá cong oằn."
+    ]
+}

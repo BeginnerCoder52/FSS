@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Heo Thấu",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ba chỉ: 300g",
+        "Khế chua: 2 trái",
+        "Chuối chat non ngâm chua: 3 trái",
+        "Ớt sừng: 1 trái",
+        "Ớt hiểm: 2 trái",
+        "Rau răm: 30g",
+        "Hành tím phi, tỏi, riềng, mè trắng, kiệu chua",
+        "Rượu ngũ vị hương, mật ong",
+        "Muối, đường, nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt heo luộc từ nước lạnh với 2 củ hành tím đập dập, 1m hạt nêm Aji-ngon® và 1m muối. Thịt chín vớt ra ngâm vào nước lạnh rối cắt sợi dài khoảng 5cm.",
+        "Khế chua cắt sợi, ướp với ½ m đường, 1/2m muối để 10 phút rồi dùng khăn vải mùng vắt nhẹ cho bớt nước.",
+        "Chuối vắt bớt nước, cắt miếng xéo vừa ăn. Ớt sừng, riềng cắt sợi. Kiệu chẻ nhỏ. Tỏi, ớt hiểm băm nhỏ. Rau răm rửa sạch, cắt nhỏ."
+    ],
+    "cook": [
+        "Pha nước trộn: trộn đều 2M giấm gạo lên men LISA® với 4M đường, 1M nước mắm, 1m bột ngọt AJI-NO-MOTO® và 2m tỏi, ớt băm.",
+        "Trộn chung tất cả nguyên liệu với nước trộn, 1M mè rang, rau răm và 1M hành phi."
+    ],
+    "usage": [
+        "Cho món heo thấu ra đĩa, rắc thêm 1M mè rang và hành phi lên trên. Dọn kèm nước mắm chua ngọt và bánh tráng mè nướng."
+    ],
+    "tips": [
+        "Thịt chín vớt ra cho ngay vào nước lạnh để thịt được trắng và giòn.",
+        "Muốn chuối chát không bị thâm đen, khi cắt nên ngâm vào nước có pha ít nước cốt chanh hoặc giấm."
+    ]
+}

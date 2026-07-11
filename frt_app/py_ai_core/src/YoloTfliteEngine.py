@@ -1,0 +1,489 @@
+"""
+YoloTfliteEngine.py - YOLOv11 TFLite Inference Engine
+Version: 1.0
+SDD v1.1.0 Compliance: All 6 APIs implemented
+
+Purpose:
+    Load and run YOLOv11 TensorFlow Lite models for food object detection.
+    Optimized for Raspberry Pi 4B ARM inference with minimal latency.
+
+Model Details:
+    - Format: TFLite (.tflite)
+    - Model: YOLOv11 Nano (yolov11n)
+    - Input: (1, 640, 640, 3) float32 [0.0, 1.0]
+    - Output: (1, 84, 8400) - YOLOv11 format
+    - Inference Speed: ~100-300ms per frame on Raspberry Pi
+
+Author: FSS Project Team
+License: Proprietary
+"""
+
+import cv2
+import numpy as np
+import os
+import time
+import ctypes
+from typing import List, Dict, Optional, Tuple
+from loguru import logger
+
+class YoloTfliteEngine:
+    """
+    YOLOv11 TFLite Inference Engine
+    """
+    
+    DEFAULT_MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
+    
+    # Default inference parameters (overridable via constructor)
+    CONFIDENCE_THRESHOLD = 0.8      # Minimum confidence for detection
+    IOU_THRESHOLD = 0.5            # Per-class NMS IoU threshold
+    
+    def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
+                 c_precision: int = 2, confidence_threshold: float = None,
+                 iou_threshold: float = None, c_model_path: str = None):
+        """
+        Initialize YOLO TFLite engine.
+        
+        Args:
+            confidence_threshold: Override default confidence threshold (default: 0.35)
+            iou_threshold: Override default NMS IoU threshold
+            c_model_path: Explicit path to the model used for C backend
+        """
+        self.model_path = model_path
+        self.c_model_path = c_model_path if c_model_path else model_path
+        self.interpreter = None
+        self.input_details = None
+        self.output_details = None
+        self.is_initialized = False
+        self.use_c_backend = use_c_backend
+        self._c_lib = None
+        self._c_reader = None
+        self._c_input_size = 0
+        self._input_tensor = None
+        
+        # Override thresholds if provided
+        if confidence_threshold is not None:
+            self.CONFIDENCE_THRESHOLD = confidence_threshold
+        if iou_threshold is not None:
+            self.IOU_THRESHOLD = iou_threshold
+        
+        # Class names (example for food items)
+        self.classes = ["food_item"] # To be updated with actual model classes
+        
+        if self.use_c_backend:
+            self._init_c_backend()
+        
+        logger.info("YoloTfliteEngine initialized (model={})".format(model_path))
+    
+    def _init_c_backend(self) -> None:
+        """
+        Initialize C backend via ctypes (optional, fallback to Python on failure).
+        """
+        try:
+            self._c_lib = ctypes.CDLL("libtflite_reader.so")
+
+            self._c_lib.tflite_reader_create.argtypes = [ctypes.c_char_p, ctypes.c_int]
+            self._c_lib.tflite_reader_create.restype = ctypes.c_void_p
+
+            self._c_lib.tflite_reader_get_input_dims.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_int), ctypes.c_int
+            ]
+            self._c_lib.tflite_reader_get_input_dims.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_get_input_size.argtypes = [ctypes.c_void_p]
+            self._c_lib.tflite_reader_get_input_size.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_run_inference.argtypes = [
+                ctypes.c_void_p, ctypes.c_void_p, ctypes.c_size_t
+            ]
+            self._c_lib.tflite_reader_run_inference.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_get_output.argtypes = [
+                ctypes.c_void_p, ctypes.POINTER(ctypes.c_int)
+            ]
+            self._c_lib.tflite_reader_get_output.restype = ctypes.POINTER(ctypes.c_float)
+
+            self._c_lib.tflite_reader_get_precision.argtypes = [ctypes.c_void_p]
+            self._c_lib.tflite_reader_get_precision.restype = ctypes.c_int
+
+            self._c_lib.tflite_reader_destroy.argtypes = [ctypes.c_void_p]
+            self._c_lib.tflite_reader_destroy.restype = None
+
+            self._c_lib.tflite_reader_is_xnnpack_available.argtypes = []
+            self._c_lib.tflite_reader_is_xnnpack_available.restype = ctypes.c_int
+            xnnpack_avail = self._c_lib.tflite_reader_is_xnnpack_available()
+            if xnnpack_avail:
+                logger.info("XNNPACK delegate enabled in C backend (4 threads)")
+
+            logger.info("C TFLite backend library loaded successfully")
+        except Exception as e:
+            logger.warning("C backend unavailable ({}), falling back to Python".format(e))
+            self.use_c_backend = False
+            self._c_lib = None
+
+    def load_model_mmap(self) -> bool:
+        """
+        Load TFLite model using memory mapping.
+        """
+        logger.info("Loading YOLOv11 model: {}".format(self.model_path))
+        
+        try:
+            # Check file exists
+            if not os.path.exists(self.model_path):
+                logger.error("Model file not found: {}".format(self.model_path))
+                return False
+            
+            # Always load Python interpreter to get metadata (quantization params)
+            try:
+                import tflite_runtime.interpreter as tflite
+            except ImportError:
+                try:
+                    import ai_edge_litert.interpreter as tflite
+                except ImportError:
+                    import tensorflow.lite as tflite
+            
+            self.interpreter = tflite.Interpreter(model_path=self.model_path, num_threads=4)
+            self.interpreter.allocate_tensors()
+            self.input_details = self.interpreter.get_input_details()
+            self.output_details = self.interpreter.get_output_details()
+            
+            if self.use_c_backend and self._c_lib:
+                return self._load_model_c()
+                
+            self.is_initialized = True
+            logger.info("Model loaded successfully via Python")
+            return True
+            
+        except Exception as e:
+            logger.exception("Error loading model: {}".format(e))
+            return False
+    
+    def _load_model_c(self) -> bool:
+        """
+        Load model using C TFLite reader backend.
+        """
+        try:
+            precision_enum = 2
+            model_path_bytes = self.c_model_path.encode('utf-8')
+            self._c_reader = self._c_lib.tflite_reader_create(model_path_bytes, precision_enum)
+            if not self._c_reader:
+                logger.error("C reader returned NULL, falling back to Python")
+                self.use_c_backend = False
+                return False
+
+            dims_arr = (ctypes.c_int * 4)()
+            num_dims = self._c_lib.tflite_reader_get_input_dims(
+                self._c_reader, dims_arr, 4
+            )
+            if num_dims < 0:
+                logger.error("C reader failed to get input dims")
+                self.use_c_backend = False
+                return False
+
+            self._c_input_size = self._c_lib.tflite_reader_get_input_size(self._c_reader)
+            if self._c_input_size < 0:
+                logger.error("C reader failed to get input size")
+                self.use_c_backend = False
+                return False
+
+            self.is_initialized = True
+            logger.info("Model loaded via C backend ({} bytes input)".format(self._c_input_size))
+            return True
+        except Exception as e:
+            logger.warning("C backend load failed ({}), falling back to Python".format(e))
+            self.use_c_backend = False
+            return False
+
+    def allocate_tensors(self) -> None:
+        """
+        Allocate tensor buffers.
+        """
+        try:
+            if self.interpreter is not None:
+                self.interpreter.allocate_tensors()
+                logger.debug("Tensors allocated successfully")
+        except Exception as e:
+            logger.exception("Error allocating tensors: {}".format(e))
+            self.handle_tensor_allocation_error()
+    
+    def set_input_tensor(self, tensor_data: np.ndarray) -> None:
+        """
+        Set input tensor for inference.
+        """
+        try:
+            if not self.is_initialized:
+                return
+
+            self._input_tensor = tensor_data
+
+            if self.use_c_backend and self._c_lib and self._c_reader:
+                return
+
+            self.interpreter.set_tensor(self.input_details[0]['index'], tensor_data)
+        except Exception as e:
+            logger.exception("Error setting input tensor: {}".format(e))
+    
+    def invoke_inference(self) -> None:
+        """
+        Run YOLO inference.
+        """
+        try:
+            if not self.is_initialized:
+                return
+
+            if self.use_c_backend and self._c_lib and self._c_reader:
+                start_time = time.time()
+                input_data = self._input_tensor.ctypes.data_as(ctypes.c_void_p)
+                ret = self._c_lib.tflite_reader_run_inference(
+                    self._c_reader, input_data, self._c_input_size
+                )
+                inference_time = (time.time() - start_time) * 1000
+                if ret != 0:
+                    logger.error("C backend inference failed with code {}".format(ret))
+                    return
+                logger.debug("C inference completed in {:.1f}ms".format(inference_time))
+                return
+            
+            start_time = time.time()
+            self.interpreter.invoke()
+            inference_time = (time.time() - start_time) * 1000
+            logger.debug("Inference completed in {:.1f}ms".format(inference_time))
+            
+        except Exception as e:
+            logger.exception("Error during inference: {}".format(e))
+            self.handle_tensor_allocation_error()
+            
+    def get_input_quant_params(self) -> Tuple[type, float, int]:
+        """
+        Get input quantization parameters (dtype, scale, zero_point).
+        """
+        if not self.input_details:
+            return np.float32, 0.0, 0
+            
+        dtype = self.input_details[0].get('dtype', np.float32)
+        quantization = self.input_details[0].get('quantization', (0.0, 0))
+        scale = quantization[0] if quantization[0] > 0 else 0.0
+        zero_point = quantization[1]
+        
+        return dtype, scale, zero_point
+    
+    @staticmethod
+    def _run_per_class_nms(results: List[Dict], conf_threshold: float, iou_threshold: float) -> List[Dict]:
+        if not results:
+            return []
+        by_class = {}
+        for i, det in enumerate(results):
+            cid = det["class_id"]
+            by_class.setdefault(cid, []).append(i)
+        survivors = []
+        for cid, indices in by_class.items():
+            class_boxes = []
+            class_scores = []
+            for idx in indices:
+                bx1, by1, bx2, by2 = results[idx]["bbox"]
+                class_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
+                class_scores.append(results[idx]["confidence"])
+            if not class_boxes:
+                continue
+            nms_idx = cv2.dnn.NMSBoxes(class_boxes, class_scores, conf_threshold, iou_threshold)
+            if len(nms_idx) > 0:
+                for i in nms_idx.flatten():
+                    survivors.append(indices[i])
+        survivors.sort()
+        return [results[i] for i in survivors]
+
+    def _get_output_boxes_c(self) -> List[Dict]:
+        """
+        Extract detection boxes from C backend output.
+        """
+        try:
+            num_out = ctypes.c_int(0)
+            out_ptr = self._c_lib.tflite_reader_get_output(self._c_reader, ctypes.byref(num_out))
+            if not out_ptr or num_out.value <= 0:
+                logger.warning("C backend returned no output")
+                return []
+
+            num_elements = num_out.value
+            out_array = np.ctypeslib.as_array(out_ptr, shape=(num_elements,)).copy()
+
+            YOLO_GRID_CELLS = 8400
+            actual_per_det = num_elements // YOLO_GRID_CELLS
+            num_classes = actual_per_det - 4
+
+            if num_elements % YOLO_GRID_CELLS != 0 or num_classes <= 0:
+                logger.warning("C output size {}: expected multiple of {}, got {} values per det ({} classes)".format(
+                    num_elements, YOLO_GRID_CELLS, actual_per_det, num_classes))
+                return []
+
+            num_detections = YOLO_GRID_CELLS
+            output_data = out_array.reshape(num_detections, actual_per_det)
+
+            boxes = output_data[:, :4]
+            scores = output_data[:, 4:]
+
+            if scores.max() > 1.0:
+                scores = 1.0 / (1.0 + np.exp(-np.clip(scores, -15, 15)))
+
+            class_ids = np.argmax(scores, axis=1)
+            max_scores = np.max(scores, axis=1)
+
+            mask = max_scores > self.CONFIDENCE_THRESHOLD
+            boxes = boxes[mask]
+            max_scores = max_scores[mask]
+            class_ids = class_ids[mask]
+
+            if len(boxes) == 0:
+                return []
+
+            # Boxes are in [x_center, y_center, width, height] normalized to [0,1]
+            # (YOLOv11 TFLite outputs normalized coords; if range > 2.0, it's pixel-space)
+            if boxes.max() > 2.0:
+                inv_size = 1.0 / 640.0
+            else:
+                inv_size = 1.0
+
+            results = []
+            for i in range(len(boxes)):
+                xc, yc, w, h = boxes[i]
+                x1 = float((xc - w/2) * inv_size)
+                y1 = float((yc - h/2) * inv_size)
+                x2 = float((xc + w/2) * inv_size)
+                y2 = float((yc + h/2) * inv_size)
+                
+                # Clip coordinates to standard image ratio [0.0, 1.0]
+                x1 = max(0.0, min(1.0, x1))
+                y1 = max(0.0, min(1.0, y1))
+                x2 = max(0.0, min(1.0, x2))
+                y2 = max(0.0, min(1.0, y2))
+                
+                # Skip collapsed bounding boxes
+                if x2 <= x1 or y2 <= y1:
+                    continue
+
+                results.append({
+                    "class_id": int(class_ids[i]),
+                    "confidence": float(max_scores[i]),
+                    "bbox": [x1, y1, x2, y2],
+                    "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
+                })
+
+            final_results = self._run_per_class_nms(
+                results, self.CONFIDENCE_THRESHOLD, self.IOU_THRESHOLD
+            )
+
+            nms_log = "NMS: before={} after={} iou={} conf={}".format(
+                len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
+            )
+            logger.info(nms_log)
+
+            return final_results
+
+        except Exception as e:
+            logger.exception("Error extracting C backend output boxes: {}".format(e))
+            return []
+
+    def get_output_boxes(self) -> List[Dict]:
+        """
+        Extract detection boxes from YOLO output.
+        """
+        try:
+            if not self.is_initialized:
+                return []
+
+            if self.use_c_backend and self._c_lib and self._c_reader:
+                return self._get_output_boxes_c()
+
+            output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
+            
+            # Dequantize if the model output is quantized (Full Integer Quantization)
+            dtype = self.output_details[0].get('dtype', np.float32)
+            if dtype != np.float32:
+                quantization = self.output_details[0].get('quantization', (0.0, 0))
+                scale = quantization[0]
+                zp = quantization[1]
+                if scale > 0:
+                    output_data = (output_data.astype(np.float32) - zp) * scale
+            
+            if output_data.shape[1] < output_data.shape[2]:
+                output_data = output_data.transpose(0, 2, 1)
+            
+            predictions = output_data[0]
+            
+            num_classes = predictions.shape[1] - 4
+            self.classes = [f"class_{i}" for i in range(num_classes)] if num_classes != len(self.classes) else self.classes
+            
+            boxes = predictions[:, :4]
+            scores = predictions[:, 4:]
+            
+            if scores.max() > 1.0:
+                scores = 1.0 / (1.0 + np.exp(-np.clip(scores, -15, 15)))
+            
+            class_ids = np.argmax(scores, axis=1)
+            max_scores = np.max(scores, axis=1)
+            
+            mask = max_scores > self.CONFIDENCE_THRESHOLD
+            boxes = boxes[mask]
+            max_scores = max_scores[mask]
+            class_ids = class_ids[mask]
+            
+            if len(boxes) == 0:
+                return []
+            
+            if boxes.max() > 2.0:
+                inv_size = 1.0 / 640.0
+            else:
+                inv_size = 1.0
+            
+            results = []
+            for i in range(len(boxes)):
+                xc, yc, w, h = boxes[i]
+                x1 = float((xc - w/2) * inv_size)
+                y1 = float((yc - h/2) * inv_size)
+                x2 = float((xc + w/2) * inv_size)
+                y2 = float((yc + h/2) * inv_size)
+                
+                # Clip coordinates to standard image ratio [0.0, 1.0]
+                x1 = max(0.0, min(1.0, x1))
+                y1 = max(0.0, min(1.0, y1))
+                x2 = max(0.0, min(1.0, x2))
+                y2 = max(0.0, min(1.0, y2))
+                
+                # Skip collapsed bounding boxes
+                if x2 <= x1 or y2 <= y1:
+                    continue
+                
+                results.append({
+                    "class_id": int(class_ids[i]),
+                    "confidence": float(max_scores[i]),
+                    "bbox": [x1, y1, x2, y2],
+                    "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
+                })
+            
+            final_results = self._run_per_class_nms(
+                results, self.CONFIDENCE_THRESHOLD, self.IOU_THRESHOLD
+            )
+
+            nms_log = "NMS: before={} after={} iou={} conf={}".format(
+                len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
+            )
+            logger.info(nms_log)
+
+            return final_results
+
+        except Exception as e:
+            logger.exception("Error extracting output boxes: {}".format(e))
+            return []
+    
+    def handle_tensor_allocation_error(self) -> None:
+        """
+        Handle tensor allocation/inference errors.
+        """
+        logger.critical("Tensor error detected, resetting interpreter")
+        self.is_initialized = False
+        self.interpreter = None
+        # Attempt to reload model
+        self.load_model_mmap()
+
+if __name__ == "__main__":
+    logger.info("YoloTfliteEngine - Test Entry Point")
+    engine = YoloTfliteEngine()
+    engine.load_model_mmap()

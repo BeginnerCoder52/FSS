@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Ếch Xào Chua Ngọt",
+    "serving": "Nan",
+    "times": "Nan",
+    "difficulty": "Nan",
+    "normal_ingredients": [
+        "Đùi ếch 400g",
+        "Ớt Đà Lạt xanh, đỏ, vàng 3 trái (mỗi loại)",
+        "Hành tây tím 1/2 củ",
+        "Gừng cắt nhuyễn 15g",
+        "Tỏi băm 1M",
+        "Củ kiệu chua cắt sợi 20g",
+        "Nước củ kiệu 2M",
+        "Gia vị: Đường, tiêu, bột mì, tương ớt, tương cà (ketchup), rượu nếp, dầu ăn"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Chuẩn bị: Đùi ếch rửa sạch để ráo ướp 1m tiêu, 1m hạt nêm Aji-ngon®, 1/2m bột ngọt AJI-NO-MOTO®, 1M rượu nếp trộn đều để 15 phút cho thấm gia vị.",
+        "Ớt Đà Lạt xanh, đỏ, vàng, hành tây cắt miếng vuông 2cm."
+    ],
+    "cook": [
+        "Chiên ếch: Lăn đều ếch qua bột mì, làm nóng dầu cho ếch vào chiên chín vàng giòn vớt ra.",
+        "Pha xốt xào: Hòa tan 1m hạt nêm Aji-ngon®, 1/2M đường, 1M giấm gạo lên men của Ajinomoto, 1M nước tương “Phú Sĩ”, 2M nước củ kiệu, 2M tương cà.",
+        "Xào ếch: Đun nóng 2M dầu, cho tỏi gừng băm vào xào thơm, cho kiệu chua, ớt Đà Lạt, hành tây, ếch chiên vào đảo nhanh tay. Cuối cùng cho xốt xào vào xốc đều, tắt bếp."
+    ],
+    "usage": [],
+    "tips": [
+        "Nên chọn đùi ếch có kích thước đều nhau để sau khi chiên chín đồng đều, đẹp mắt.",
+        "Nên tẩm thịt ếch qua bột mì giúp ếch sau khi chiên sẽ giữ được vị ngọt của thịt ếch."
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Cá Thu Chiên Nghệ",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá thu: 2 khoanh (~250g)",
+        "Xoài keo: 1 trái",
+        "Nước cốt nghệ tươi: 2M",
+        "Hành tím cắt lát: 5 củ",
+        "Lá húng lủi",
+        "Ớt sừng: 2 trái",
+        "Ngò rí: 2 cọng",
+        "Thính gạo rang giã nhỏ: 1M",
+        "Dầu ăn, tiêu, đường, nước mắm, ớt bột"
+    ],
+    "spices": [
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Ướp cá thu với 2M nước nghệ, 1/2m tiêu, tẩm sơ qua Aji-Quick® Bột tẩm khô chiên giòn.",
+        "Xoài cắt sợi bào 2mm.",
+        "Ớt sừng 1 trái băm nhỏ, 1 trái cắt sợi. Cọng ngò rí cắt nhỏ.",
+        "Pha nước mắm: Hòa đều 4M đường, 2M nước mắm, 2M Giấm gạo lên men Ajinomoto, 1m ớt bột, 2M cọng ngò rí, 1M hành tím cắt lát, thính gạo rang và 1M ớt băm."
+    ],
+    "cook": [
+        "Làm gỏi: Ướp xoài, hành tím bào, ớt sợi với 1m đường, để 5 phút cho thấm. Thêm lá húng lủi, trộn đều.",
+        "Đun nóng dầu ăn, tẩm cá qua Aji-Quick® Bột tẩm khô chiên giòn, chiên áp chảo cá đã tẩm với lửa vừa đến khi chín vàng, vớt ra để ráo dầu."
+    ],
+    "usage": [],
+    "tips": [
+        "Ướp cá với nghệ để khử mùi tanh của cá.",
+        "Tẩm cá qua bột 2 lần để cá thấm gia vị và tạo độ giòn trên bề mặt cá."
+    ]
+}

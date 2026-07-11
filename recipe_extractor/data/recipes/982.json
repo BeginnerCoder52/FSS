@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Canh Chua Bông So Đũa Chay",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bông so đũa: 100g",
+        "Nấm bào ngư: 100g",
+        "Tàu hũ ky chiên: 1 lá",
+        "Nước me: 3M",
+        "Cà chua : 2 trái",
+        "Thơm: 1/4 trái",
+        "Hành boaro 1 cây",
+        "Rau om, ngò gai, ớt sừng",
+        "Sả, ớt xay",
+        "Tiêu, đường"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Bông so đũa ngắt bỏ nhụy.",
+        "Nấm bào ngư xé sợi, ướp 1m sả, ớt xay, 1m hạt nêm Aji-Ngon® từ nấm hương và hạt sen, 1m đường.",
+        "Cà chua cắt múi. Thơm xắt lát mỏng. Ớt sừng cắt khoanh. Boaro băm nhỏ. Rau om, ngò gai cắt nhỏ."
+    ],
+    "cook": [
+        "Đặt nồi lên bếp, phi boaro cho thơm, cho nấm vào xào nhanh tay. Trút cà chua và thơm vào xào, nêm 1,5M đường, 1M hạt nêm Aji-Ngon® từ nấm hương và hạt sen. Cho 1 lít nước vào nồi, nấu sôi với 3M nước me.",
+        "Cho bông so đũa vào với ớt sừng. Nấu vừa sôi, nhắc xuống, cho tàu hủ ky chiên vào. Rắc ngò gai, rau om lên trên."
+    ],
+    "usage": [
+        "Dùng nóng với cơm."
+    ],
+    "tips": [
+        "Nấm bào ngư ướp sả trước khi chiên giúp nấm có hương vị thơm ngon hơn.",
+        "Bỏ nhụy bông so đũa giúp bông so đũa không có vị nhẫn."
+    ]
+}

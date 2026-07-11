@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Tôm Chiên Dừa Xốt Bạc Hà",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 500g",
+        "Dừa sấy: 70g",
+        "Lá húng lủi: 1M",
+        "Nước cốt chanh : 2.5M",
+        "Vỏ chanh mài: 1m",
+        "Ớt bột",
+        "Sữa đặc: 1M",
+        "Mù tạc xanh: 1/2m",
+        "ĂN KÈM: Xà lách, cà chua, dưa leo",
+        "Gia vị: dầu ăn"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Tôm bóc vỏ, chẻ lưng ướp 1M nước cốt chanh và 1m ớt bột, trộn đều.",
+        "Lá húng lủi băm nhuyễn. Trộn đều 1 gói Gia vị nêm sẵn Aji-Quick® Bột tẩm khô chiên giòn trộn đều cùng với 70g dừa sấy."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, tẩm đều tôm với hỗn hợp bột tẩm khô và dừa, sau đó chiên tôm lửa vừa đến khi vàng giòn, vớt ra để ráo dầu.",
+        "Pha xốt chấm: Trộn đều 3M Xốt Mayonnaise Aji-mayo® với 1M sữa đặc, 1.5M nước cốt chanh, 1M lá húng lủi băm, 1m vỏ chanh mài và 1/2m mù tạc xanh."
+    ],
+    "usage": [
+        "Trình bày tôm ra đĩa cùng với xà lách, cà chua và dưa leo, chấm xốt đã pha."
+    ],
+    "tips": [
+        "Tôm ướp cùng với nước chanh giúp khử mùi tanh của tôm.",
+        "Vỏ chanh mài và lá húng lủi cho vào trong sốt giúp tạo mùi thơm đặc trưng cho món ăn.",
+        "Cắt gai nhọn của đuôi tôm để an toàn khi sơ chế và ăn."
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Cá Chép Kho Quả Sấu",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá chép: 500g",
+        "Thịt ba chỉ: 100g",
+        "Quả sấu non: 150g",
+        "Mía cây: 1 khúc 3 tấc",
+        "Hành tỏi băm: 1M",
+        "Hành lá: 3 cây",
+        "Ớt hiểm: 2 trái",
+        "Ớt sừng: 1 trái",
+        "Dầu điều: 2M",
+        "Nước màu dừa: 1m",
+        "Tiêu giã bể, nước mắm, muối, đường"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Hành lá cắt khúc 2cm, đầu hành đập dập. Ớt sừng cắt lát. Ớt hiểm đập dập. Mía chẻ dọc thành những lát mỏng, chiều dài chẻ sao cho vừa đáy nồi.",
+        "Cá sơ chế sạch, để ráo, cắt làm 2. Thịt cắt sợi 1cm x 5cm. Ướp cá và thịt với 1/2m tiêu giã, 1m muối, 1m bột ngọt AJI-NO-MOTO®, 1m nước màu dừa, 2m đường, 1M hành tỏi băm, 4M nước mắm, và nhét đầu hành đập dập vào bụng cá. Để thấm 15 phút.",
+        "Sấu cắt bớt đầu và cuống, khứa làm 4."
+    ],
+    "cook": [
+        "Lót mía vào đáy nồi, cho sấu, cá và thịt xen kẽ, thêm ớt hiểm, 2M dầu điều, bắc lên bếp kho, cho 2 chén nước sôi, lúc đầu lửa to cho cá săn lại, trở cá, kho đậy vung với lửa vừa cho đến khi cá và sấu chín mềm, thấm gia vị, kho tiếp cho nước sánh lại.",
+        "Tắt lửa và thêm hành lá, ớt sừng, tiêu giã."
+    ],
+    "usage": [
+        "Dùng nóng với cơm."
+    ],
+    "tips": [
+        "Lót mía vào đáy nồi giúp món kho thơm ngọt mùi vị của mía, đồng thời thịt cá không bị dính vào đáy nồi.",
+        "Đậy vung lại và kho lửa vừa để thịt cá mềm."
+    ]
+}

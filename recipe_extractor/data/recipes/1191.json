@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Cá Tai Tượng Hấp",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá tai tượng : 1 con ( khoảng 1kg)",
+        "Củ sắn : 150g",
+        "Cà rốt : 100g",
+        "Đậu phộng rang",
+        "Hành lá, tỏi băm, ớt băm",
+        "Bánh tráng, bún",
+        "Xà lách, rau thơm",
+        "Muối, tiêu, đường, dầu ăn, nước mắm",
+        "Giấm gạo lên men của Ajinomoto"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Cá làm sạch, khứa vài đường trên thân cá. Ướp cá với 1m bột ngọt AJI-NO-MOTO®, 1/2m muối, 1/2m tiêu, để thấm khoảng 15 phút.",
+        "Củ sắn, cà rốt gọt vỏ, cắt sợi. Hành lá cắt nhỏ. Xà lách, rau thơm rửa sạch, để ráo.",
+        "Hành lá cắt nhỏ. Đun nóng một ít dầu làm mỡ hành.",
+        "Pha mắm chua ngọt: Hòa tan 3M đường, 3M giấm gạo lên men của Ajinomoto, 3M nước mắm và 3M nước lọc, thêm 1m tỏi ớt băm."
+    ],
+    "cook": [
+        "Đun sôi nồi hấp, cho cá vào hấp khi nước sôi.",
+        "Phi thơm một ít tỏi băm, cho cà rốt và củ sắn vào xào với lửa lớn, nêm 1/2 m bột ngọt AJI-NO-MOTO®, 1/4m muối, 1/2m đường, xào đến khi rau củ vừa chín.",
+        "Khi hấp cá được 15 phút, cho củ sắn và cà rốt đã xào vào hấp chung với cá khoảng 10 phút nữa thì tắt lửa."
+    ],
+    "usage": [
+        "Khi dùng, cho mỡ hành và rắc đậu phộng rang lên trên cá, ăn kèm với bún và rau sống, chấm nước mắm chua ngọt."
+    ],
+    "tips": [
+        "Xào củ sắn và cà rốt trước khi cho vào hấp cùng với cá để món ăn chín đều.",
+        "Nên chọn bánh tráng dẻo và có độ dày tương đối để khi cuốn không bị rách."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Cơm Chiên Nấm Thịt Bò",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò phi lê: 100g",
+        "Nấm rơm: 100g",
+        "Cà rốt: 50g",
+        "Đậu bi: 50g",
+        "Cơm: 3 chén",
+        "Ngò rí: 2 cây",
+        "Thơm băm nhuyễn: 1M",
+        "Muối, tiêu, tỏi băm, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt bò cắt hạt lựu nhỏ, ướp với 1m thơm băm, 1m tỏi băm, 1/2m hạt nêm Aji-ngon®, 1M nước tương LISA và 1/2m tiêu, để thấm.",
+        "Nấm rơm ngâm nước muối, rửa sạch, chần sơ trong nước pha muối cùng với cà rốt, đậu bi rồi cho tất cả vào tô nước lạnh, sau đó đem cắt hạt lựu. Ngò rí rửa sạch, cắt nhỏ.",
+        "Cơm trộn đều với 1m hạt nêm Aji-ngon® và 1/2m muối."
+    ],
+    "cook": [
+        "Phi thơm 1m tỏi băm, xào thịt bò vừa chín tới, trút ra dĩa. Thêm 1M dầu ăn vào chảo xào săn cơm và nấm rơm, thêm cà rốt và đậu bi xào cho  ngấm gia vị, cuối cùng thêm thịt bò vào đảo đều rồi tắt bếp."
+    ],
+    "usage": [
+        "Cho cơm chiên ra dĩa, trang trí với ngò rí, dùng nóng kèm nước tương LISA với ớt cắt lát"
+    ],
+    "tips": [
+        "Ướp thịt bò với thơm giúp thịt bò mềm hơn.",
+        "Chần nấm rơm trước để giữ được vị ngọt của nấm."
+    ]
+}

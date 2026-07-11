@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Mì Nưa Xào Kim Chi Thịt Bò",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì nưa 2 gói (500gr)",
+        "Kim chi Hàn Quốc 300gr (lấy 2M nước kim chi)",
+        "Thịt bò phi lê cắt lát mỏng 200gr",
+        "Bông hẹ 50g",
+        "Hành lá, ngò rí 30g",
+        "Hành tỏi băm 1M",
+        "Gia vị: Tiêu, đường, bột năng, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Kim chi cắt ngắn 1cm. Mì nưa bỏ nước, luộc trong nước có ít muối khoảng 3 phút, vớt ra để ráo.",
+        "Bông hẹ cắt khúc 4cm. Hành lá, ngò rí rửa sạch cắt ngắn 2cm.",
+        "Thịt bò ướp với 1/3m tiêu, 1/2m hạt nêm Aji-ngon®, 1/2m bột ngọt AJI-NO-MOTO®, 1m bột năng, 1M nước tương “Phú sĩ”, 1/2M hành tỏi băm, 2M dầu ăn, trộn đều để thấm 15 phút."
+    ],
+    "cook": [
+        "Mì nưa sau khi luộc trộn đều với 1/2m hạt nêm Aji-ngon®, 1M nước tương “Phú Sĩ”, 2M nước kim chi.",
+        "Xào: Sử dụng chảo không dính, đun nóng 2M dầu ăn, cho mì nưa áp chảo cho sợi mì săn và thơm, trút ra dĩa. Cho thịt bò vào xào săn rồi cho kim chi vào, nêm 1/2m bột ngọt AJI-NO-MOTO®, 1/2M hạt nêm Aji-ngon®, 1m đường, 2M nước tương “Phú Sĩ”, đảo đều, xào thịt bò chín tới thì cho hành ngò vào trộn đều rồi tắt lửa."
+    ],
+    "usage": [],
+    "tips": [
+        "Ướp thịt bò với ít bột năng để khi xào thịt không ra nước sẽ mềm và ngọt hơn.",
+        "Áp chảo mì nưa để mì săn và thấm gia vị."
+    ]
+}

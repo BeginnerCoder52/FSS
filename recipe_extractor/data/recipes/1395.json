@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bún Gạo Xào Thịt Bò",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bún gạo khô : 200g",
+        "Thịt bò filet : 200g",
+        "Cà rốt cắt sợi : 50g",
+        "Nấm đông cô : 8 tai nhỏ",
+        "Bông hẹ : 50g",
+        "Cần tàu : 30g",
+        "Ớt sừng cắt sợi : 1 trái",
+        "Tỏi băm, ngò rí",
+        "Muối, đường, tiêu, bột năng, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Bún gạo ngâm vào nước ấm khoảng 15 phút cho mềm, vớt ra để ráo nước.",
+        "Thịt bò cắt lát mỏng, ướp với 1M tỏi băm, 1m đường,1/2m bột ngọt AJI-NO-MOTO®, 1M nước tương “Phú Sĩ”, 1/2m tiêu và 1/2m bột năng, để thấm.",
+        "Nấm đông cô cắt lát mỏng, bông hẹ và cần tàu cắt khúc 4cm."
+    ],
+    "cook": [
+        "Khuấy đều hỗn hợp gia vị gồm: 1M đường, 1/2m bột ngọt AJI-NO-MOTO®, 2M nước tương “ Phú Sĩ” và 2M nước.",
+        "Đun nóng dầu phi thơm tỏi, cho thịt bò vào xào nhanh tay, trút ra. Cho tiếp dầu vào phi tỏi, cho cà rốt, nấm vào xào nhanh, cho tiếp bông hẹ, cần tàu, ớt sừng vào, nêm 2M hỗn hợp gia vị và cho bún gạo vào, trộn nhanh tay cho các nguyên liệu đều nhau, nêm gia vị còn lại vào, xào 2 phút. Trút thịt bò vào chung, trộn đều. Tắt lửa."
+    ],
+    "usage": [
+        "Múc thịt bò xào ra đĩa, thêm vài cọng ngò rí, rắc tiêu"
+    ],
+    "tips": [
+        "Bún gạo ngâm nước nóng để có độ dai, không bị bở."
+    ]
+}

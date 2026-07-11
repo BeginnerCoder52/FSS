@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Nghêu Hấp Thái",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nghêu: 500g",
+        "Thơm: 100g",
+        "Sả: 3 cây",
+        "Lá chanh Thá: 5 lá",
+        "Sả băm: 1M",
+        "Tỏi băm: 1m",
+        "Hành tím băm: 1m",
+        "Lá quế: 2 cây",
+        "Gia vị: dầu điều, nước mắm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Nghêu: ngâm rửa sạch.",
+        "Thơm: cắt hình rẽ quạt.",
+        "Cây sả: đập dập, cắt khúc.",
+        "Lá chanh Thái, 2 cây lá quế: lặt rửa sạch, một ít cắt nhỏ, một ít vò nhẹ."
+    ],
+    "cook": [
+        "Phi thơm hành tím băm, sả băm, tỏi băm, sả đập dập với dầu điều.",
+        "Thêm 0.5 lít nước đun sôi, nêm 1M Gia vị nêm sẵn Aji-Quick® Lẩu Thái, 1m Bột ngọt AJI-NO-MOTO®, 1m nước mắm, cho nghêu vào nấu chín.",
+        "Thêm lá chanh và lá quế vào, đảo đều rồi dùng nóng."
+    ],
+    "usage": [],
+    "tips": []
+}

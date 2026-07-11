@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Tôm Chiên Cốm",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 300g",
+        "Cốm dẹp: 200g",
+        "Cà chua: 1 trái",
+        "Trứng gà: 2 quả",
+        "Bột mì: 150g",
+        "Hành tỏi băm, tiêu, dầu ăn, muối",
+        "Cần tây, ngò rí, ớt sừng, dưa leo, xà lách"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm lấy chỉ lưng, bóc vỏ, bỏ đầu chừa đuôi, rửa sơ qua nước muối, cắt chéo bụng rồi nắn tôm cho thẳng, lau khô.",
+        "Trộn đều hỗn hợp gia vị gồm: 1m nước hành tỏi băm, 1/3m hạt nêm Aji-ngon® và 1/2m tiêu. Cho tôm vào ướp khoảng 5 phút cho thấm gia vị.",
+        "Trứng gà đập ra tô, đánh tan. Cần tây và ớt băm nhỏ."
+    ],
+    "cook": [
+        "Lăn tôm qua bột mì, nhúng qua trứng rồi lăn qua cốm dẹp cho cốm bám đều xung quanh tôm rồi cho vào chảo dầu nóng chiên chín tới, vớt ra để ráo dầu.",
+        "Pha xốt: trộn đều 4M xốt Mayonnaise Aji-Mayo® với 1m cần tây băm và 2m ớt băm."
+    ],
+    "usage": [
+        "Xếp tôm chiên cốm ra dĩa, khi ăn chấm với hỗn hợp xốt vừa trộn."
+    ],
+    "tips": [
+        "Nên cắt tôm sâu 2cm để khi chiên tôm tạo hình con bướm.",
+        "Sau khi chiên xong nên vớt vụn cốm để dầu không bị đen khi chiên lần 2."
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Tôm Sú Xốt Gấc",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú 300g",
+        "Gấc 1/2 trái",
+        "Hành tây 1 củ nhỏ",
+        "Rượu trắng 1M",
+        "Rau mầm 100g",
+        "Húng lũi",
+        "Hành tỏi băm",
+        "Dầu ăn, muối"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm luộc chín, lột vỏ, bỏ đầu, chừa đuôi. Hành tây cắt múi cau.",
+        "Gấc lấy muỗng múc hết phần hạt, tách bỏ hạt. Tiếp tục dùng muỗng nạo luôn phần thịt vàng của quả gấc cho ra tô lấy 150g."
+    ],
+    "cook": [
+        "Cho 1M rượu trắng và 1/2m muối vào 150g phần thịt gấc và màng gấc, tán nhuyễn.",
+        "Phi thơm hành tỏi cho hỗn hợp gấc vào, nấu sôi. Cho tôm và hành tây vào đảo đều. Tắt lửa. Cuối cùng cho 2M xốt Mayonnaise Aji-Mayo® vào, đánh đều."
+    ],
+    "usage": [
+        "Cho rau mầm ra dĩa, trút tôm xốt gấc ra. Trang trí thêm với húng lủi."
+    ],
+    "tips": [
+        "Chỉ sử dụng phần thịt gấc màu vàng, không nạo sát vỏ sẽ bị đắng",
+        "Cho rượu trắng vào thịt gấc giúp sắc tố trong thịt gấc hòa tan tạo màu đỏ cam tươi đẹp hơn",
+        "Tôm luộc chín, bóc vỏ xong cho vào gấc chỉ cần nấu sôi để thịt tôm không bị khô."
+    ]
+}

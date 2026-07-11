@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Súp Tóc Tiên Bí Đao",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm tươi: 200g",
+        "Tóc tiên: 3g",
+        "Bí đao: 150g",
+        "Trứng gà: 1 quả",
+        "Ngò rí: 1 ít",
+        "Bột năng, tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Tôm bóc vỏ, cắt hạt lựu, ướp với 1/2m hạt nêm Aji-ngon® và 1/3m tiêu, để thấm.",
+        "Tóc tiên ngâm mềm, cắt ngắn rửa qua nước pha gừng, để ráo. Bí đao gọt vỏ, bỏ ruột, cắt hạt lựu. Ngò rí cắt nhỏ. Trứng gà đánh tan. Hòa tan 3M bột năng với 1/2 chén nước."
+    ],
+    "cook": [
+        "Đun sôi 1 lít nước, cho bí đao vào nấu chín, nêm 1M hạt nêm Aji-ngon®, thêm tôm, giảm lửa, cho bột năng vào từ từ đến khi súp sánh lại, đổ trứng vào khi nước đang sôi và tóc tiên vào, khuấy đều, tắt bếp."
+    ],
+    "usage": [
+        "Múc súp ra tô, rắc thêm ngò rí và tiêu, dùng nóng."
+    ],
+    "tips": [
+        "Tóc tiên nên ngâm với nước có ít gừng cho thơm.",
+        "Nên bỏ ruột bí đao để món ăn không bị chua.",
+        "Nấu súp vừa chín tới để bí đao không bị mềm nhũn."
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "recipe_name": "Cơm Gà",
+    "serving": "0 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gà ta : 1/2 con",
+        "Bột nghệ : 1/4M",
+        "Gạo ngon : 300g",
+        "Mỡ gà : 50g",
+        "Rau răm : 30g",
+        "Hành tây : 1 củ",
+        "Cà rốt : 1/4 củ",
+        "Tỏi băm : 1M",
+        "Đầu hành băm : 1/2M",
+        "Hành phi, ớt hiểm",
+        "Muối, đường, dầu ăn, gừng đập dập"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Luộc gà trong nước có gừng đập dập, nêm 1/2m bột ngọt AJI-NO-MOTO®, 1/3m muối. Xé gà thành miếng nhỏ.",
+        "Thắng mỡ gà, cho 1M tỏi băm vào phi thơm, lấy 2M mỡ rang gạo cho thơm, để lại 1M mỡ gà. Lấy ra 2M nước luộc gà. Cho vào nước luộc gà 1/4M bột nghệ, cho gạo vào nấu chín.",
+        "Rau răm nhặt sạch, cắt nhỏ. Hành tây cắt lát mỏng, ngâm qua nước đá cho hết hăng. Cà rốt cắt sợi nhuyễn."
+    ],
+    "cook": [
+        "Trộn đều hành tây và cà rốt với 1M Giấm gạo lên men LISA®, 1/2M đường, rắc rau răm lên trên.",
+        "Pha nước tương: 2M nước tương “Phú Sĩ”, 2M nước dùng gà, 1 ít muối, 1 ít bột ngọt AJI-NO-MOTO®, 1 trái ớt hiểm cắt lát, 1/2M đầu hành băm.",
+        "Trộn cơm với 1m muối, 1m bột ngọt AJI-NO-MOTO®, 1m hạt nêm Aji-ngon®. Cho 1M mỡ gà vào chảo rồi đảo đều cơm cho săn. Tắt bếp."
+    ],
+    "usage": [
+        "Ém cơm ra đĩa, cho thịt gà lên, rắc rau răm và hành phi lên trên, dùng kèm nước tương pha và rau."
+    ],
+    "tips": [
+        "Rang gạo với mỡ gà và tỏi đến khi hạt gạo trong và săn trước khi nấu để món ăn ngon hơn.",
+        "Sử dụng nước luộc gà để pha nước chấm để món ăn ngon hơn."
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Mực Chiên Ngũ Sắc",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mực ống: 2 con",
+        "Bột gạo: 150g",
+        "Mè đen: 1M",
+        "Lá cẩm: 100g",
+        "Lá dứa: 30g",
+        "Bột nghệ, ớt bột",
+        "Tiêu, tương ớt, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Mực làm sạch, cắt khoanh dày 0,5cm, ướp với 1/2m hạt nêm Aji-ngon® và tiêu, để thấm. Mè đen giã nhuyễn. Lá dứa cắt nhỏ, thêm 50g nước vào xay nhuyễn, vắt lấy 4M nước. Lá cẩm cắt nhỏ, xay nhuyễn với 2/3 chén nước, lọc lấy 4M nước lá cẩm.",
+        "Pha bột tẩm màu đen: trộn đều 1M xốt Mayonnaise Aji-Mayo® với 4M nước lọc, 3M bột gạo và 1M mè đen.",
+        "Pha bột tẩm màu vàng: trộn 1M xốt Mayonnaise Aji-Mayo®với 4M nước lọc, 3M bột gạo, 1/3m bột nghệ và 1/2m ớt bột.",
+        "Pha bột tẩm màu xanh: trộn 1M xốt Mayonnaise Aji-Mayo® với 4M nước lá dứa và 3M bột gạo.",
+        "Pha bột tẩm màu tím: trộn 1M xốt Mayonnaise Aji-Mayo® với 4M nước lá cẩm và 3M bột gạo.",
+        "Pha bột tẩm màu trắng: trộn 1M xốt Mayonnaise Aji-Mayo® với 4M nước lọc và 3M bột gạo."
+    ],
+    "cook": [
+        "Lăn mực qua bột gạo, chia thành 5 phần, nhúng mỗi phần qua 1 loại bột tẩm rồi chiên chín vàng, vớt ra để ráo dầu."
+    ],
+    "usage": [
+        "Xếp mực chiên ngũ sắc ra dĩa, khi ăn chấm với xốt Mayonnaise Aji-Mayo® trộn ớt băm hoặc ớt bột paprika."
+    ],
+    "tips": [
+        "Mực lau thật khô trước khi chiên để không bị bắn dầu.",
+        "Trộn bột tẩm với xốt Mayonnaise Aji-Mayo® sau khi chiên sẽ giữ được màu sắc tươi tự nhiên."
+    ]
+}

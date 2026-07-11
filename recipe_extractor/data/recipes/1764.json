@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Salad Bí Đỏ",
+    "serving": "Nan",
+    "times": "Nan",
+    "difficulty": "Nan",
+    "normal_ingredients": [
+        "Đùi gà 300g",
+        "Bí đỏ baby 150g",
+        "Xà lách carol 100g",
+        "Cà chua bi 50g",
+        "Xà lách tím 50g",
+        "Hành tây 1/4 củ",
+        "Nước cốt chanh 3M",
+        "Vỏ chanh mài 1M",
+        "Bơ lạt 20g",
+        "RAU NÊM: lá húng lủi cắt rối",
+        "Gia vị: mật ong, mù tạt vàng, muối, tiêu, dầu ôliu, xốt ớt Tabasco"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Thịt đùi gà lóc bỏ xương, ướp 1m Hạt nêm Aji-ngon® Gà, 1m nước cốt chanh, để thấm 5 đến 10 phút sau đó áp chảo vàng 2 mặt với 1 ít dầu ăn. Để nguội, cắt lát vừa ăn.",
+        "Các loại xà lách cắt khúc vừa ăn. Bí đỏ cắt làm tư, sau đó cắt lát mỏng. Cà chua bi cắt đôi. Hành tây cắt khoanh tròn mỏng. Lá húng lủi cắt rối.",
+        "Pha xốt: trộn đều 3M mật ong, 2M nước cốt chanh, 2M dầu ôliu, 1/4m muối, 1/4m tiêu, 1M vỏ chanh mài, 1/2M xốt ớt Tabasco, trộn đều."
+    ],
+    "cook": [
+        "Nướng áp chảo bí đỏ với bơ và ít muối đến khi xém cạnh cùng với cà chua bi. Để nguội.",
+        "Trộn salad: Cho bí đỏ, hành tây, xà lách carol, xà lách tím, cà chua bi, húng lủi vào tô, rưới xốt đã pha vào rồi trộn đều."
+    ],
+    "usage": [
+        "Trình bày salad ra đĩa cùng với thịt gà nướng, topping Xốt Mayonnaise Aji-mayo® lên trên. Dùng làm món khai vị."
+    ],
+    "tips": [
+        "Ướp nước chanh vào trong thịt gà giúp hương vị món ăn hài hoà hơn.",
+        "Nướng áp chảo cà chua bi và bí đỏ với bơ giúp tăng mùi thơm và giảm vị chua của cà chua."
+    ]
+}

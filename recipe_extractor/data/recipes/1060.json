@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Tôm Bao Mọc Chiên Giòn",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú nhỏ (size 50) 12 con",
+        "Mọc (giò sống) 100g",
+        "Nấm mèo đen 1 tai",
+        "Tiêu xanh 1 nhánh",
+        "Bánh tráng ủ lá chuối 6 cái",
+        "Đầu hành lá băm nhỏ 1M",
+        "ĂN KÈM: xà lách xoong, ớt sừng thái chỉ, dưa leo",
+        "Gia vị: tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Aji-Quick® Bột Chiên Giòn"
+    ],
+    "process": [
+        "Tôm sú lột vỏ, bỏ đầu, chẻ lưng, chừa đuôi. Nấm mèo ngâm nở, băm nhỏ. Tiêu xanh lấy hạt đập dập. Bánh tráng cắt đôi.",
+        "Trộn nhân mọc: cho mọc vào tô cùng nấm mèo và tiêu xanh, thêm vào 1M đầu hành lá băm, 1/2m tiêu, 1/2m bột ngọt AJI-NO-MOTO®, trộn đều."
+    ],
+    "cook": [
+        "Cuộn tôm: làm ẩm bánh tráng bằng nước, gấp 1 góc lại, đặt 1 con tôm lên mép bánh gấp, cho 1m nhân mọc lên tôm, cuộn bánh tráng bao lấy tôm, chừa đuôi tôm ra ngoài. Cuốn lần lượt đến hết tôm.",
+        "Chiên tôm: hòa 1 gói Aji-Quick® Bột Chiên Giòn theo hướng dẫn trên bao bì, nhúng tôm vào bột và chiên ngập dầu với lửa vừa, khi bột chín vàng giòn, vớt ra để ráo dầu."
+    ],
+    "usage": [],
+    "tips": []
+}

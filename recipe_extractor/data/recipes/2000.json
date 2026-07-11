@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Pasta Tình Yêu",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mỳ ý khô 100g",
+        "Thịt bò băm 100g",
+        "Nấm đùi gà 100g",
+        "Bơ lạt 20g",
+        "Pho mai parmesan 10g",
+        "Cà chua bi 100g",
+        "Hành tây 100g",
+        "Tỏi băm, ớt băm",
+        "Tiêu, đường, muối, ớt bột parika, dầu olive",
+        "Tương cà hộp, tương ớt, rượu vang đỏ"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Luộc mì: đun sôi nước, nêm vào 1 ít muối, cho mì Ý vào luộc khoảng 8 phút đến khi chín mềm, vớt ra để ráo.",
+        "Hành tây cắt hạt lựu. Nấm đùi gà cắt đôi theo chiều dọc rồi cắt lát xéo. Cà chua bi cắt đôi.",
+        "Thịt bò ướp 1m hạt nêm Aji-ngon®, 1m dầu olive, để thấm."
+    ],
+    "cook": [
+        "Làm xốt xào mì: cho 3M tương cà hộp, 1M tương ớt, 1m đường, 1m tiêu, 1m ớt bột parika, 1m tỏi, 1m ớt băm, vào tô khuấy cho đều.",
+        "Phi thơm tỏi với bơ lạt, cho mì ý vào xào săn với ít muối và tiêu, trút ra đĩa.",
+        "Phi thơm hành tây với dầu ôliu, cho thịt bò băm vào xào chín, thêm nấm, cà chua vào, thêm 2M rượu vang đỏ, rồi cho tiếp phần xốt vào đảo đều cho hòa quyện với thịt bò."
+    ],
+    "usage": [],
+    "tips": []
+}

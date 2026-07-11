@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Bánh Gà Nhân Phô Mai",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Fillet gà (thịt ức gà): 200g",
+        "Phô mai Mozzarela: 30g",
+        "Bột chiên xù",
+        "Gia vị: Dầu ăn, tương cà, tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Aji-Quick® Bột Chiên Giòn"
+    ],
+    "process": [
+        "Gà cắt lát mỏng, sau đó cắt đôi, ướp 1/2m hạt nêm Aji-ngon, 1 ít tiêu, để thấm.",
+        "Phô mai cắt hạt lựu (10 miếng)",
+        "Trộn đều gà với 50g Aji Quick Bột Chiên Giòn, sau đó thêm 3M nước, trộn đều đến khi gà có độ kết dính, lấy 1M thịt gà bọc với 1 viên phô mai, vo tròn lại.",
+        "Tẩm gà: Tẩm từng viên gà qua hỗn hợp Aji Quick Bột Chiên Giòn pha với nước (theo tỷ lệ 1 bột:1.5 nước), sau đó lăn qua bột xù"
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, chiên gà chín vàng giòn, vớt ra để ráo dầu",
+        "Pha xốt chấm: trộn đều 2M xốt MY với 1M tương cà."
+    ],
+    "usage": [],
+    "tips": [
+        "Trộn thịt gà với Aji-Quick bột chiên giòn để tạo hỗn hợp có độ kết dính tốt, khi chiên Aji-Quick bột chiên giòn sẽ giúp bánh giòn và ngon hơn.",
+        "Chiên lửa vừa, để bánh gà chín đều bên trong, bên ngoài vàng giòn."
+    ]
+}

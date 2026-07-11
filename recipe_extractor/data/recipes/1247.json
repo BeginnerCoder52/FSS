@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Cánh Gà Xốt Kem Thơm",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cánh gà: 4 cái",
+        "Thơm: 1/4 trái",
+        "Ớt sừng: 1 trái",
+        "Nước cốt tỏi",
+        "Nước cốt chanh",
+        "Ngò rí, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Gà làm sạch, chặt miếng vừa ăn, ướp 1m nước cốt chanh, 1m nước cốt tỏi, để thấm, sau đó tẩm 1 gói Aji-quick® Bột Chiên Gà Giòn.",
+        "Thơm, ớt cắt hạt lựu cạnh 0,5cm."
+    ],
+    "cook": [
+        "Đun nóng dầu, cho gà vào chiên chín vàng, vớt ra để ráo dầu.",
+        "Xào ớt với ít dầu, sau đó cho thơm vào đảo nhanh tay, cho cánh gà vào, nêm 4M xốt mayonnaise“Aji-mayo”, tắt bếp rồi đảo đều."
+    ],
+    "usage": [
+        "Cho cánh gà ra dĩa, dùng kèm với cơm trắng và xà lách."
+    ],
+    "tips": [
+        "Cánh gà ướp nước cốt chanh sẽ mềm hơn.",
+        "Xào nhanh cánh gà với thơm để thơm không bị ra nước và mayonnaise “Aji-mayo” không bị tách dầu"
+    ]
+}

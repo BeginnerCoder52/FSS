@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Nấm Chiên Xốt Tôm",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nấm bào ngư (chọn nấm to, nâu) : 400g",
+        "Tôm sú (bỏ vỏ đầu đuôi ) : 100g",
+        "Hành tây : ½ củ",
+        "Hành lá : 15g",
+        "Ớt sừng cắt hạt lựu : 1 trái",
+        "Gừng băm : 1/2M",
+        "Rượu nếp : 1M",
+        "Trứng gà : 2 quả",
+        "Bột năng : 1M",
+        "Mè đen rang : 1M",
+        "Muối, tiêu, dầu mè, dầu ăn Hạt nêm"
+    ],
+    "spices": [
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Nấm cắt sạch gốc, rửa dưới vòi nước lạnh để ráo.",
+        "Hành lá cắt nhỏ. Tôm sú băm nhỏ. Hành tây cắt hạt lựu,",
+        "Trứng gà đánh tan. Bột năng pha loãng."
+    ],
+    "cook": [
+        "Làm xốt: Phi thơm gừng, cho hành tây và ớt vào xào mềm, cho tôm vào xào tơi với lửa lớn, khử rượu. Cho 1 chén nước, 1m hạt nêm Aji-ngon®, 1/2m muối, 1/2m tiêu vào đun sôi, tôm chín, hạ lửa, cho nước bột năng vào làm sệt, thêm hành lá, đảo đều, tắt lửa thêm ít dầu mè đảo đều.",
+        "Chiên nấm: Đun nóng dầu. Rắc ít tiêu vào nấm trộn đều. Tẩm lần lượt nấm qua trứng gà, rắc mè đen, tẩm qua Aji-quick® Bột chiên Gà Giòn. Cho vào chảo dầu chiên chín vàng, vớt ra, để ráo dầu."
+    ],
+    "usage": [
+        "Bày nấm ra đĩa cùng với các loại xà lách, đồ chua. Chén xốt để giữa. Khi ăn, chan xốt vào để nấm giữ được độ giòn."
+    ],
+    "tips": [
+        "Rửa nấm dưới vòi nước lạnh để nấm sạch sau đó thấm ráo nước để khi chiên nấm giòn hơn.",
+        "Xào và nấu nhanh tôm để tôm khôngg bị khô, nước xốt ngọt."
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Bún Riêu Cua Xí Quách",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cua xay: 500g",
+        "Gạch cua: 100g",
+        "Xương ống: 1kg",
+        "Hành tím: 100g",
+        "Cà chua: 4 trái",
+        "Hành lá, ngò gai: 150g",
+        "Mỡ có tóp mỡ: 1/2 chén",
+        "Muối, đường, mắm tôm, dầu điều, nước mắm",
+        "Bún tươi, rau sống, ớt xay, chanh"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Gà",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Xương ống nấu lấy 1 lít nước dùng, phần thịt gỡ để riêng. Cua xay nhuyễn.",
+        "Cà chua: 2 trái băm nhuyễn, 2 trái cắt múi cau. Hành lá, ngò gai cắt nhỏ. Bún trụng sơ."
+    ],
+    "cook": [
+        "Lọc cua xay với nước dùng, lọc tiếp với 1 lít nước. Thêm 0.5 lít nước vào xác cua đun sôi 3 phút, chắt lấy nước, để nguội.Hòa tan nước cua với 2m hạt nêm Aji-ngon® và vài cục đá lạnh, đun với lửa lớn, thỉnh thoảng khuấy nhẹ dưới đáy nồi.",
+        "Trong khi chờ thịt cua đóng thành váng, xào cà chua băm với 1M dầu điều, xào cho cà chua vừa ráo nước thì tắt bếp, cho ra tô.",
+        "Phi thơm hành tím với mỡ, cho gạch cua vào, tắt lửa, đảo đều, cho ra tô.",
+        "Khi thấy thịt cua đóng thành váng, hạ lửa, để sôi riu riu, khi thịt cua nổi hết lên mặt, vớt ra để riêng.",
+        "Cho 1/2 lượng gạch phủ lên bề mặt váng cua, phần còn lại cho vào nồi nước cua.",
+        "Cho cà chua đã xào và xí quách vào nồi nước cua, nêm 1M bột ngọt AJI-NO-MOTO®, 1M muối, 1/2M nước mắm, 1M Giấm gạo lên men Ajinomoto, 1m mắm tôm và 1/2m đường. Cuối cùng cho cà chua cắt múi cau vào."
+    ],
+    "usage": [
+        "Cho bún ra tô, thêm váng cua, thịt xí quách, chan nước dùng, rắc hành lá và ngò gai lên trên. Dùng với rau sống, chanh ớt, mắm tôm hoặc nước."
+    ],
+    "tips": [
+        "Nấu cua từ nước lạnh để nước cua trong hơn.",
+        "Ép bớt nước cua lúc váng cua còn nóng để váng cua được dẽ và chắc hơn."
+    ]
+}

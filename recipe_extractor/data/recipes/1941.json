@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Salad Thịt Bò Chiên",
+    "serving": "4 người",
+    "times": "45 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt thăn bò 200g",
+        "Xà lách xoong 200g",
+        "Củ sen lát 200g",
+        "Khoai môn cau 200g",
+        "Gừng băm 1M",
+        "Mè trắng rang giã 2M",
+        "Rau húng lủi, ớt sừng cắt sợi(1 quả), ớt sừng băm nhỏ( 1 quả).",
+        "Dầu ăn, nước mắm, sữa đặc, tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Thịt bò cắt sợi ướp 1/2m tiêu, 1/2M hạt nêm Aji-ngon® trộn đều để 10 phút cho thấm gia vị.",
+        "Khoai môn cau cắt thanh vuông 7li, dài 7cm. Củ sen cắt lát mỏng 2mm ngâm qua nước có pha ít giấm gạo lên men của Ajinomoto, vớt ra để ráo.",
+        "Pha xốt: trộn đều gừng và ớt băm, 1M nước mắm, 1M sữa đặc, 1M mè trắng rang giã bể, 4M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "cook": [],
+    "usage": [
+        "xếp salad ở dưới, rồi cho củ sen xung quanh, lần lượt xếp khoai môn, thịt bò, ớt cắt sợi, sau đó rưới đều xốt lên trên. Cuối cùng rắc mè rang, rau húng lủi lên trên.",
+        "Khi ăn dùng đũa trộn đều."
+    ],
+    "tips": [
+        "Tẩm đều thịt bò qua Aji-Quick® Bột Tẩm Khô Chiên Giòn để tạo vị đậm đà cho thịt bò.",
+        "Rưới xốt lên sau cùng và trộn đều trước khi ăn để giữ được độ giòn cho các nguyên liệu."
+    ]
+}

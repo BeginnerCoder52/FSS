@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Bánh Tét Lá Cẩm",
+    "serving": "5 người",
+    "times": "300 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gạo nếp ngỗng: 1kg",
+        "Đậu xanh: 250g",
+        "Thịt ba chỉ: 250g",
+        "Dừa nạo: 250g",
+        "Lá cẩm: 500g",
+        "Lá dứa: 500g",
+        "Lá chuối hột: 1kg",
+        "Hành lá, hành tím băm",
+        "Mối, đường, dầu ăn",
+        "Dây lát"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Làm vỏ bánh: Lá cẩm rửa sạch, nấu kĩ rồi lọc lấy 1 chén nước màu tím.",
+        "Gạo nếp ngâm bằng nước lá cẩm 6 giờ, vớt ra để ráo.",
+        "Dừa nạo nhồi kỹ vắt lấy 1 chén nước cốt và 2 chén nước dão.",
+        "Cho 2 chén nước dão dừa và 1 chén nước lá cẩm vào chảo đun sôi, cho gạo nếp vào đảo đều, nêm 2m muối và 2m đường, xào đến khi nếp ráo nước, lấy ra chia làm 5 phần.",
+        "Làm nhân: đậu xanh ngâm nở, cho vào nồi nấu với nước dão dừa, nêm 1m muối, nấu đến khi đậu mềm lấy ra xào với ít hành lá phi thơm rồi đánh nhuyễn.",
+        "Thịt ba chỉ cắt sợi cỡ ngón tay cái, ướp với 1M hành tím băm, 1m hạt nêm Aji-ngon®, để thấm 3-4 giờ.",
+        "Lấy đậu xanh bọc thịt cho kín thành hình trụ."
+    ],
+    "cook": [
+        "Gói bánh: Xé lá chuối theo khổ khoảng 30cm, đặt lá dọc ở ngoài, bề láng ra ngoài, lá ngang đặt trong, trải một lớp mỏng gạo nếp ở giữa lá, đặt nhân theo chiều dọc, gấp 2 mí lá vào, cuộn tròn lại, nén chặt nhân, gấp 2 đầu lá chuối vào tạo hình vuông. Dùng 2 miếng lá chuối đặt vuông góc, túm đầu đòn bánh tét lại. Cột dây lát ở giữa và dọc theo đòn bánh, sau đó chia đòn bánh thành khoảng đều nhau, dùng dây lát cột 5-6 vòng quanh bánh, siết chặt, phần dây thừa quấn lại cột dính với nhau",
+        "Nấu bánh: Lót lá chuối dưới đáy nồi, đổ nước khoảng 2/3 nồi, thêm lá dứa vào, đun sôi rồi thả bánh vào nấu khoảng 4-5 giờ là bánh chín, vớt ra nhúng vào nước rồi treo lên để ráo nước."
+    ],
+    "usage": [],
+    "tips": [
+        "Muốn làm nhân ngọt thì chỉ dùng đậu xanh nấu chín, xay rồi sên đường.",
+        "Muốn làm nhân chuối thì chọn chuối sứ chín mùi, ướp đường, muối cho thấm rồi sên.",
+        "Xào nếp trước để rút ngắn thời gian nấu bánh."
+    ]
+}

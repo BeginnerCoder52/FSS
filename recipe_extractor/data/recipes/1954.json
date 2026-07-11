@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Bánh Khoái",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bột bánh xèo: 2 chén",
+        "Tôm tươi: 300g",
+        "04 Trứng vịt, nấm rơm",
+        "Ớt bột, ớt băm",
+        "Giá, bột nghệ, mè rang",
+        "Thịt heo xay, gan heo",
+        "Tương bần, bột năng",
+        "Hành lá, hành tỏi băm",
+        "Đậu phộng rang"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Pha bột: 2 chén bột bánh xèo pha chung với 3 chén nước ấm, cho thêm 1/2m bột nghệ, 1m hạt nêm, 2M hành lá cắt nhuyễn. Để bột nghỉ khoảng 15 phút."
+    ],
+    "cook": [
+        "Xào tôm: 2M dầu ăn với hành tỏi băm và tôm với 1/2m Hạt nêm Aji-ngon®",
+        "Trộn nạc dăm với gan heo xay nhuyễn, ướp 1/2m ướt bột, 1/2m tiêu, 1/2m bột ngọt AJI-NO-MO-TO®",
+        "Đặt chảo lên bếp, cho vào 2M dầu ăn, phi hành tỏi băm. Cho gan và thịt heo xào, cho 1/3 chén tương bần, 1 chén nước lọc, để lửa nhỏ cho 2m đường chờ thịt chính mềm. Cho từ từ 1M nước bột năng, thêm 1M bột bắp để tương sánh lại. Đổ ra chén, rắc đậu phộng , mè ranh, ớt băm vào.",
+        "Đập trứng vịt ra tô và đánh đều.",
+        "Đổ bánh: Đổ và tráng đều bột bánh. Xếp 2 con tôm, ít nấm rơm, rưới ít trứng, ít giá vào giữa bánh. Rưới đều dầu để giòn hơn, chiên lửa nhỏ lâu. Gập đôi bánh, giữ lâu cố định bánh."
+    ],
+    "usage": [],
+    "tips": []
+}

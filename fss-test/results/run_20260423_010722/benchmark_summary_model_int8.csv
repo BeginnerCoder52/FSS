@@ -1,0 +1,2 @@
+num_threads,images,avg_inference_time_ms,avg_fps,precision,recall,map50,delta_ms_vs_first,delta_pct_vs_first,total_wall_time_s,result_csv,eval_per_class_csv
+2,613,189.04,5.29,0.14978,0.069815,0.068224,0.0,0.0,158.27,results/run_20260423_010722/results_model_int8_t2.csv,results/run_20260423_010722/eval_per_class_model_int8_t2.csv

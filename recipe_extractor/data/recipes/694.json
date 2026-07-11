@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Thỏ Nấu Rượu Vang Đỏ",
+    "serving": "4 người",
+    "times": "60 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "- Thỏ: 1kg",
+        "- Hành tây: 1/2 củ",
+        "- Cà rốt: 1/2 củ",
+        "- Cần tây, boaro, lá thơm",
+        "- Bột mì, cà chua hộp, rượu vang đỏ"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Hành tây, cà rốt, cần tây, hành boaro cắt miếng 3cm.",
+        "Thỏ làm sạch, lấy hết ruột bên trong, cắt miếng to cỡ 10cm, ướp thỏ và hành tây, cần tây, cà rốt, hành boaro với 0,5 lít rượu vang đỏ, 2 lá thơm và 1m tiêu, để 24h trong tủ mát cho thấm.",
+        "Vớt riêng thịt thỏ và rau củ, ướp thịt thỏ với 1/2m muối, 2m hạt nêm Aji-ngon® để 30 phút cho thấm."
+    ],
+    "cook": [
+        "Chiên vàng từng miếng thịt thỏ, lấy ra để riêng.",
+        "Cho các loại rau củ vào xào, thêm 1M bột mì, 1M cà chua hộp và thịt thỏ vào, cho rượu vang vào đun sôi, vớt bọt, nấu cạn khoảng 15 phút còn 1/2 lượng rượu thì thêm 1 tô nước, nêm 2m hạt nêm Aji-ngon®.",
+        "Nấu nhỏ lửa khoảng 30 phút cho thịt chín mềm. Gắp thịt ra riêng, nước xốt lược bỏ xác rau củ."
+    ],
+    "usage": [
+        "Múc thịt ra dĩa sâu lòng, chan xốt lên trên, dùng kèm khoai tây, cà rốt, mướp tây luộc và bánh mì."
+    ],
+    "tips": [
+        "Ướp thịt thỏ với thời gian ít nhất là 24 tiếng để món ăn có mùi vị đặc trưng của rượu vang.",
+        "Đun cạn bớt rượu vang để loại bỏ lượng cồn trong rượu vì cồn sẽ làm cho nước xốt có vị đắng và chua."
+    ]
+}

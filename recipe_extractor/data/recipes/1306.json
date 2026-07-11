@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Salad Tôm Đậu Hũ",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đậu hũ Nhật 100g",
+        "Tôm sú 200g",
+        "Bông cải xanh 100g",
+        "Cà chua bi 30g",
+        "Đậu cô ve Nhật 20g",
+        "Xà lách carol 20g",
+        "Hành tây 1/2 củ",
+        "Nước cốt chanh 2M",
+        "Tỏi băm 1M",
+        "Gừng băm nhỏ 1M",
+        "RAU NÊM: Ngò cắt khúc, húng lủi, mè rang",
+        "Gia vị: Đường, tiêu, muối, dầu ăn"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm bóc vỏ, chẻ lưng, bỏ chỉ đen.",
+        "Đậu hũ non cắt vuông. Bông cải tách miếng vừa ăn. Cà chua bi cắt đôi. Đậu cove cắt khúc. Rau xà lách cắt khúc. Hành tây cắt lát mỏng.",
+        "Đun sôi nước, chần sơ bông cải, đậu cô ve với ít muối, vớt ra ngâm vào nước đá lạnh."
+    ],
+    "cook": [
+        "Pha nước sốt: Trộn đều 2M Nước tương “Phú Sĩ” cùng 1M nước, 1M gừng băm nhỏ, 1M đường, 2M nước cốt chanh khuấy đều.",
+        "Phi thơm tỏi với dầu ăn, áp chảo tôm và cho hết phần sốt đã pha vào rim tôm cho sốt hơi sánh lại. Tắt lửa."
+    ],
+    "usage": [],
+    "tips": [
+        "Rau sau khi trụng ngâm vào nước đá giúp giữ được màu xanh của rau.",
+        "Áp chảo tôm cùng với nước sốt giúp tôm không bị khô và thấm vị.",
+        "Ngắt rối lá húng lủi để tạo mùi thơm cho món ăn."
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Canh Gà Hương Vị Thái",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cánh gà 3 cái",
+        "Lòng gà 1 bộ",
+        "Nấm rơm 50g",
+        "Cà chua bi (trái lớn) 5 trái",
+        "Bông điên điển 70g",
+        "Ớt xiêm xanh 3 trái",
+        "Hành tím bào 15g",
+        "Sả bằm 2M",
+        "RAU NÊM: Rau ngò gai, tỏi phi",
+        "ĂN KÈM: Bún tươi hoặc cơm trắng, nước mắm ớt",
+        "Gia vị: Dầu ăn, nước mắm"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Cánh gà chặt miếng vừa ăn. Lòng gà cắt nhỏ. Ớt xiêm xanh đập dập.",
+        "Nấm rơm, cà chua bi cắt đôi. Bông điên điển rửa sạch, để ráo."
+    ],
+    "cook": [
+        "Ướp gà: Ướp vào thịt gà và lòng gà 1M nước mắm, trộn đều, để 15 phút cho thấm gia vị.",
+        "Nấu canh: Đun nóng dầu, cho hành tím, ớt xiêm, sả băm vào xào thơm, cho gà và lòng gà vào xào săn. Thêm nấm rơm, cà chua bi vào đảo nhanh, cho 1L nước lọc vào nấu sôi, nêm 1/2 gói Gia vị nêm sẵn Aji-Quick® Lẩu Thái vào đảo đều, để lửa vừa cho đến khi gà chín. Cho bông điên điển vào và tắt lửa."
+    ],
+    "usage": [
+        "Múc canh gà hương vị Thái ra tô, rắc thêm ngò gai và tỏi phi. Dùng nóng kèm bún tươi hoặc cơm trắng và nước mắm ớt."
+    ],
+    "tips": [
+        "Xào gà cho thật săn để thịt gà thấm vị giúp món ăn ngon hơn.",
+        "Canh gà hương vị Thái nấu cùng bông điên điển tạo nên sự mới lạ cho món ăn."
+    ]
+}

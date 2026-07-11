@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Bánh Mì Kẹp Xúc Xích",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì Hot dog: 4 ổ",
+        "Xúc xích Hot dog: 4 cây",
+        "Cà chua: 2 quả",
+        "Dưa leo: 1/2 trái",
+        "Xà lách: 4 lá",
+        "Cần tây, ngò rí",
+        "Cà rốt, hành tây, ớt chuông đỏ",
+        "Tương cà, mù tạc vàng"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Xà lách rửa sạch, cắt sợi. Dưa leo, cà chua cắt lát.",
+        "Cà rốt, hành tây, ớt chuông đỏ, cần tây, ngò rí băm nhuyễn."
+    ],
+    "cook": [
+        "Trụng xúc xích qua nước nóng, sau đó vớt ra chiên sơ qua chảo không dầu.",
+        "Pha xốt mayonnaise trộn: trộn đều 4M Xốt Mayonnaise Aji-Mayo® với 1M rau củ băm, 1M xốt tương cà và 1m mù tạc."
+    ],
+    "usage": [
+        "Xẻ dọc ổ bánh Hot dog, phết một lớp hỗn hợp xốt vừa trộn vào hai bên mặt bánh, sau đó xếp cà chua, dưa leo, xà lách và xúc xích vào giữa."
+    ],
+    "tips": [
+        "Chần xúc xích qua nước nóng để khi chiên xúc xích không bị khô.",
+        "Chiên xúc xích với chảo không dầu, lửa vừa để không bị rách da bên ngoài."
+    ]
+}

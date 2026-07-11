@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Trứng Chiên Lạp Xưởng",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Trứng gà: 3 quả",
+        "Lạp xưởng: 1 cây",
+        "Hành tây: 1/2 củ",
+        "Bánh mì: 4 ổ",
+        "Tương ớt, dầu ăn, nước mắm",
+        "Tỏi, hành lá, ớt sừng, tiêu trắng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Lạp xưởng luộc chín, chiên sơ rồi cắt xéo, lát mỏng.",
+        "Hành tây cắt lát mỏng. Hành lá rửa sạch, cắt nhỏ. Tỏi đập dập. Ớt cắt lát.",
+        "Trứng gà đập ra tô, nêm 1/2M hạt nêm Aji-ngon®, 1/2m nước mắm và 1/2m tiêu, dùng đũa đánh đều, rồi cho hành tây vào."
+    ],
+    "cook": [
+        "Phi thơm tỏi, vớt tỏi ra khỏi chảo rồi đổ trứng vào, nghiêng chảo cho trứng tráng đều quanh chảo. khi trứng vừa se mặt thì cho lạp xưởng vào đều trên mặt trứng, rắc thêm hành lá lên, trứng chín thì tắt bếp."
+    ],
+    "usage": [
+        "Xúc trứng chiên ra đĩa, ăn kèm bánh mì và nước tương “Phú Sĩ” với ớt cắt lát."
+    ],
+    "tips": [
+        "Nên luộc lạp xưởng trước khi chiên để lạp xưởng được chín kỹ.",
+        "Có thể thay trứng gà băng trứng vịt, nhưng cho thêm 1M nước."
+    ]
+}

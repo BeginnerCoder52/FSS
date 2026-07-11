@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Hoành Thánh",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Xương heo: 500g",
+        "Thịt heo xay: 100g",
+        "Thịt xá xíu: 100g",
+        "Tôm khô: 5g",
+        "Vỏ hoành thánh: 24 miếng",
+        "Củ cải trắng: 1/2 củ",
+        "Ngò rí, hành lá, ớt",
+        "Xà lách búp, hẹ lá",
+        "Mè trắng, bột năng Muối, tiêu, đường",
+        "Dầu mè, dầu tỏi phi, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Củ cải trắng gọt vỏ, cắt khúc. Thịt xá xíu cắt lát. Mè trắng rang thơm, giã nát.",
+        "Xà lách rửa sạch, để ráo. Ngò rí, hành lá cắt nhỏ. Ớt cắt lát. Hẹ lá cắt khúc 4cm.",
+        "Nấu nước dùng: trụng xương heo qua nước sôi, rửa sạch. Nấu xương heo với 3 lít nước dùng, cho tôm khô, củ cải trắng vào nấu cùng khoảng 1,5h đến khi ra nước ngọt. Lọc lấy nước trong, nêm 1M hạt nêm Aji-ngon®, 1 ít dầu mè.",
+        "Làm nhân hoành thánh: cho thịt băm vào tô, thêm 1/2m mè trắng, 1m hành lá, 1m tỏi phi, 1m hạt nêm Aji-ngon®, 1/2m đường, 1/2m muối, 1/2m tiêu, 2m nước bột năng. Dùng đũa đánh cho thịt tơi và dẻo."
+    ],
+    "cook": [
+        "Gói hoành thánh: để miếng vỏ hoành thánh trên lòng bàn tay, múc 1/3M nhân cho vào chính giữa vỏ hoành thánh, túm lại thành túi.",
+        "Luộc hoành thánh: đun sôi nước, thêm một ít dầu ăn, cho hoành thánh vào luộc đến khi hoành thánh nổi lên trên mặt nước là đã chín, vớt ra cho vào tô."
+    ],
+    "usage": [
+        "Cho hoành thánh vào tô, xếp hẹ, xà lách, thịt xá xíu và vài lát ớt lên trên, chan nước dùng vừa ngập, cho hành ngò, dầu tỏi phi và tiêu lên mặt. Dùng nóng."
+    ],
+    "tips": [
+        "Trụng xương heo qua nước sôi, rửa sạch rồi đem nấu, nước dùng sẽ ngọt và trong.",
+        "Quết nhân hoành thánh bằng đũa để thịt vừa tơi vừa dẻo."
+    ]
+}

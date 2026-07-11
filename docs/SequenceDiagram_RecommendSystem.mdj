@@ -1,0 +1,408 @@
+{
+  "_type": "Project",
+  "name": "Root",
+  "_id": "AAAAAAFFhqA0jfzI0YM=",
+  "ownedElements": [
+    {
+      "_type": "UMLModel",
+      "name": "RecommendSystemModel",
+      "_id": "AAAAAAFFhqA0jfzI0Zs=",
+      "ownedElements": [
+        {
+          "_type": "UMLInteraction",
+          "name": "RecommendSystemSequence",
+          "_id": "AAAAAAFFhqA0jfzI0bQ=",
+          "ownedElements": [
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzI0eo=",
+              "name": ":Người Dùng (User)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzI0LM="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzI0k0=",
+              "name": ":MMM-FSS-Recommend (Frontend JS)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzI0eI="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzI0v8=",
+              "name": ":MMM-Keyboard (Virtual Keyboard)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzI0ko="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzI09o=",
+              "name": ":node_helper.js (Node.js Backend)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzI0vQ="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzI0-o=",
+              "name": ":recommend_dbus_listener.py (Python Bridge)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzI094="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzJBQM=",
+              "name": ":RecommendDaemon (D-Bus Service)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzI0_0="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzJBSA=",
+              "name": ":RecipeAnalyzerEngine (NLP - CRF)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzJBQY="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzJBcw=",
+              "name": ":DBDaemon (D-Bus Service)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzJBS4="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzJDGg=",
+              "name": ":RecommendDbManager (SQLite)",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzJBdg="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzJDQo=",
+              "name": ":FSS-Recommend.db",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzJDIE="
+              }
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "AAAAAAFFhqA0jfzJDk4=",
+              "name": ":FSS_Inventory.db",
+              "represents": {
+                "$ref": "AAAAAAFFhqA0jfzJDQ4="
+              }
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJDzY=",
+              "name": "Gõ tên món ăn",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJEA0="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJELA="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJE-o=",
+              "name": "sendNotification(\"KEYBOARD\", ...)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJFNk="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJGDg="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJGv0=",
+              "name": "Hiển thị bàn phím ảo",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJHU8="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJH6M="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJIQk=",
+              "name": "Nhập tên món + nhấn SEND",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJKGY="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJLiE="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJMyg=",
+              "name": "sendNotification(\"KEYBOARD_INPUT\", ...)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJNL4="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJOG0="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJPmM=",
+              "name": "sendSocketNotification(\"RECIPE_SEARCH\", ...)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJQME="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJQkM="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJQ2c=",
+              "name": "stdin JSON command (pipe)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJRFI="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJRFw="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJRU8=",
+              "name": "D-Bus: GenerateShoppingList(recipe_name, batch_id)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJR5s="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJR6Q="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJSDs=",
+              "name": "generate_fss_request(recipe_name)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJSMo="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJST4="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJSrc=",
+              "name": "return {status, dish, ingredients}",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJS1A="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJS1c="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJTJA=",
+              "name": "D-Bus: GetInventory()",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJTLA="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJTM8="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJUQQ=",
+              "name": "SELECT * FROM current_inventory",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJUU4="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJUVM="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJVfI=",
+              "name": "inventory data",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJV2A="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJV2o="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJV6E=",
+              "name": "return JSON inventory",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJV8Q="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJV8o="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJWIM=",
+              "name": "insert_recommendation(...)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJWJg="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJWJ0="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJWYI=",
+              "name": "INSERT INTO recommendation_log",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJWWc="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJWXs="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJWY4=",
+              "name": "row_id",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJWZQ="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJWZo="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJabU=",
+              "name": "insert_shopping_list(row_id, items)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJabo="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJab4="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJams=",
+              "name": "INSERT INTO shopping_list",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJamw="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJam8="
+              },
+              "messageKind": "complete",
+              "messageSort": "synchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJbUE=",
+              "name": "return JSON result (D-Bus response)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJbUk="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJbUo="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJcXs=",
+              "name": "stdout JSON result (pipe)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJcYA="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJcYI="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJc1M=",
+              "name": "sendSocketNotification(\"RECOMMEND_RESULT\", ...)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJc1o="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJc18="
+              },
+              "messageKind": "complete",
+              "messageSort": "asynchronous"
+            },
+            {
+              "_type": "UMLMessage",
+              "_id": "AAAAAAFFhqA0jfzJdVE=",
+              "name": "Hiển thị kết quả (updateDom)",
+              "sendEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJdVY="
+              },
+              "receiveEvent": {
+                "$ref": "AAAAAAFFhqA0jfzJdVg="
+              },
+              "messageKind": "complete",
+              "messageSort": "reply"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

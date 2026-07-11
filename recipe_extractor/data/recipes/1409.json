@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Thăn Heo Chiên Bơ",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt nạc lưng : 300g",
+        "Bơ lạt (thắng trong) : 300g",
+        "Khoai tây : 100g",
+        "Khoai lang : 100g",
+        "Trứng gà : 2 quả",
+        "Bột xù : 1 chén",
+        "Bột mì : 1/2 chén",
+        "Xà lách, cà chua bi",
+        "Dầu ăn, muối, tiêu, xốt ớt xanh"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Ngọt Dịu"
+    ],
+    "process": [
+        "Thịt heo cắt miếng 2cm, dần mỏng 1cm cắt thanh cỡ ngón tay, ướp với nước hành tỏi, ít tiêu và 1m hạt nêm Aji-ngon®, để thấm.",
+        "Khoai tây, khoai lang cắt sợi nhỏ, ngâm nước đá pha ít muối và Giấm gạo lên men LISA® khoảng 5 phút, vớt để ráo.",
+        "Trứng đánh tan. Tẩm thịt heo qua bột mì, nhúng qua trứng và lăn qua bột xù."
+    ],
+    "cook": [
+        "Cho dầu và bơ thắng trong đun nóng. Cho khoai lang và khoai tây vào chiên vàng, vớt ra để ráo dầu. Dùng tiếp dầu bơ này, chiên thịt chín vàng.",
+        "Pha xốt : Trộn đều 1M xốt ớt xanh với 3M xốt Mayonnaise Aji-Mayo® Ngọt Dịu."
+    ],
+    "usage": [
+        "Xếp xà lách, cà chua bi ra dĩa, xếp khoai tây và khoai lang lên trên, đặt thăn heo chiên bơ vào giữa. Chấm kèm xốt pha."
+    ],
+    "tips": [
+        "Dần thịt trước khi cắt, thịt sẽ mềm hơn khi chiên.",
+        "Chiên dầu với bơ sẽ giúp món ăn thơm và có màu vàng đẹp mắt hơn."
+    ]
+}

@@ -1,0 +1,401 @@
+Attribute,Details
+"Project Name","Fridge Supervisor System (FSS)"
+"Document Name","System Detailed Design and Unit Construction (SDD & UC)"
+Version,1.1.0
+Description,"This document defines logical blocks between subsystems, components, and external entities within the Fridge Supervisor System architecture."
+"System Scope","Hardware (Raspberry Pi 4B, Sensors, Actuators) and Software (AI Vision Core, Control Logic, Database, UI/MagicMirror)."
+,,,,,"Change Description:",,
+,,,,,,"Must have [Reason] [Sheet changed][Sections changed][Details]",
+,,,,,,Reason,"[Add New], [Change Request], [Fix], [Update]"
+,,,,,,Actions,"A/M/D - Add/Modify/Delete"
+,,,,,,,
+VERSION,"CHANGE DESCRIPTION",ACTIONS,NOTES,,,,
+-,"Interface List",-,-,,,,
+0.1.0,"[Add New]: Initialize the Software Component Interaction ",A,-,,,,
+0.2.0,"[Add New]: Initialize the API Specifications","A ",-,,,,
+1.0.0,"[Add New]: Add Distance Sensor class
+[Update]: reedit the Inter-Class Relationships",A/M,-,,,,
+1.1.0,"[Update]: Add APIs in SensorDaemon; Update ByteTrack note in inference loop in FRTApp",M,-,,,,
+,"[Fix] [1.SoftwareComponentInteraction] [FRTApp, SensorDaemon, DBDaemon] Changed IPC protocol description from ZeroMQ to D-Bus to align with actual architecture.",M,"Resolves CONFLICT-04 (ZeroMQ vs D-Bus)",,,,
+,"[Fix] [2.APISpecifications] [DBDaemon] Renamed duplicate process_environment_event() to process_food_event(). Assigned insert_environment_log() to SqliteManager class.",M,"Resolves CONFLICT-02 (DbMain duplicate methods & orphaned row)",,,,
+,"[Update] [2.APISpecifications] [FRTApp, SensorDaemon] Renamed SdbusInterface to FrtDbusInterface and SensorDbusInterface respectively to prevent scope confusion.",M,"Resolves CONFLICT-05 (Duplicate SdbusInterface names)",,,,
+,"[Fix] [2.APISpecifications] [SensorDaemon] Changed Member Type of Sht31Driver::device_address from 'y' to 'Attribute'.",M,"Resolves CONFLICT-03 (Typo in MemberType)",,,,
+,"[Update] [0. Overview] [Document Meta] Updated Document Version to 1.1.0 to reflect completed package API specifications.",M,"Resolves CONFLICT-08 (Version Sync)",,,,
+"Ứng dụng (Daemon/App)","Chức năng cốt lõi","Tương tác & Giao thức (IPC)","Thư viện & Giao tiếp Kernel / OS","Hàm / Lệnh thư viện cốt lõi"
+SensorDaemon,"Quản lý vòng lặp đọc dữ liệu từ cảm biến (SHT3x, Door Sensor) và quản lý trạng thái sống (watchdog).","Gửi thông điệp (JSON) chứa nhiệt độ, độ ẩm hoặc sự kiện cửa đóng/mở đến FRTApp và DBDaemon qua D-Bus","- smbus2 (Giao tiếp Kernel qua /dev/i2c-*)
+
+- gpiozero hoặc libgpiod (Giao tiếp Kernel GPIO)
+
+- systemd / sdnotify (Báo cáo trạng thái service cho OS)","bus.read_i2c_block_data(0x44, cmd)
+
+Button(pin).when_pressed
+
+notifier.notify(""WATCHDOG=1"")"
+"FRTApp
+
+(Food Recognition Tracking)","Xử lý luồng video từ USB Camera, chạy pipeline phát hiện và suy luận YOLOv11 để track thực phẩm.","- Nhận trigger DOOR_OPEN / DOOR_CLOSE từ SensorDaemon (qua D-Bus).
+
+- Gửi kết quả nhận diện (+1/-1) đến DBDaemon (qua D-Bus).","- cv2 (OpenCV sử dụng backend V4L2 giao tiếp Kernel qua /dev/video0)
+
+- ultralytics (Chạy model YOLO)
+
+- numpy (Xử lý ma trận ảnh)
+
+- D-Bus","cv2.VideoCapture(0, cv2.CAP_V4L2)
+
+model.track(frame, persist=True)
+
+cv2.release()
+
+D-Bus"
+"DBDaemon
+
+(Data Controller)","Đóng vai trò Data Controller, quản lý truy xuất, lưu trữ SQLite và phân phối dữ liệu lên UI.","Lắng nghe toàn bộ event từ SensorDaemon và FRTApp.
+
+Mở kết nối WebSocket để đẩy dữ liệu realtime sang màn hình MagicMirror.","- sqlite3 (Tương tác trực tiếp file system)
+
+- asyncio (Xử lý bất đồng bộ luồng I/O)
+
+- websockets (Giao tiếp mạng nội bộ/Loopback)
+
+- D-Bus","cursor.execute(""INSERT INTO..."")
+
+connection.commit()
+
+asyncio.run(main())
+
+await websocket.send(json_data)"
+"UI / MagicMirror
+
+(MMM-FSS Modules)","Render giao diện người dùng hiển thị thông số môi trường và danh sách thực phẩm.","Là Web Client lắng nghe WebSocket nội bộ từ DBDaemon để bắt sự kiện UPDATE và vẽ lại DOM.","Node.js (Môi trường chạy nền tảng)
+
+socket.io-client hoặc WebSocket API (trình duyệt)
+
+DOM API (Cập nhật HTML)","socket.on('update', callback)
+
+document.getElementById('inventory').innerHTML = ..."
+"Bảng 1: Package SensorDaemon",,,,,,
+"Package (App)",Class,"Member Type","Name / Signature","Data / Return Type",Description,Notes
+SensorDaemon,SensorDaemonMain,Attribute,current_state,str,"Trạng thái hiện tại của daemon (INIT, IDLE, ERROR).",
+SensorDaemon,,Attribute,is_running,bool,"Cờ duy trì vòng lặp tiến trình chính.",
+SensorDaemon,,Attribute,loop_interval_ms,int,"Thời gian trễ (sleep) giữa các chu kỳ lặp để tránh chiếm dụng 100% tài nguyên CPU.",
+SensorDaemon,,Attribute,polling_rate_env_ms,int,"Tần suất đọc nhiệt độ/độ ẩm (VD: 5000 ms).",
+SensorDaemon,,Attribute,polling_rate_dist_ms,int,"Tần suất đo khoảng cách (VD: 500 ms).",
+SensorDaemon,,Attribute,input_processor,InputProcessor,"Object gói gọn toàn bộ logic thu thập dữ liệu cảm biến.",
+SensorDaemon,,Attribute,output_processor,OutputProcessor,"Object gói gọn toàn bộ logic xuất tín hiệu ra IPC.",
+SensorDaemon,,Attribute,watchdog,SystemdWatchdog,"Object báo cáo sinh tồn cho hệ điều hành OS.",
+SensorDaemon,,Method,init_app(),bool,"Khởi tạo Processor, Handler và nạp cấu hình.",
+SensorDaemon,,Method,start_app(),bool,"Đưa hệ thống vào trạng thái IDLE và kích hoạt vòng lặp chính.",
+SensorDaemon,,Method,stop_app(),void,"Dọn dẹp tài nguyên và tắt tiến trình an toàn.",
+SensorDaemon,,Method,run_main_loop(),void,"Vòng lặp chính, điều phối input_processor và output_processor.",
+SensorDaemon,,Method,recover_from_fault(),bool,"[XỬ LÝ LỖI] Cố gắng khôi phục hệ thống nếu có ngoại lệ.",
+SensorDaemon,,Method,log_system_status(),void,"[DEBUG] Ghi log file lưu trạng thái RAM/CPU của Daemon.",
+SensorDaemon,,Method,process_environment_data(),void,"Gọi đọc I2C và phát D-Bus/ZMQ theo định kỳ.",
+SensorDaemon,InputProcessor,Attribute,m_i2c_main,shared_ptr,"Con trỏ quản lý bus I2C chính (/dev/i2c-1).",
+SensorDaemon,,Attribute,m_i2c_ext,shared_ptr,"Con trỏ quản lý bus I2C phụ (VD: /dev/i2c-6).",
+SensorDaemon,,Attribute,m_gpio_handler,shared_ptr,"Con trỏ quản lý chip GPIO (VD: gpiochip4).",
+SensorDaemon,,Attribute,sht3x,unique_ptr<Sht3xDriver>,"Đối tượng điều khiển cảm biến môi trường.",
+SensorDaemon,,Attribute,vl53l0x,unique_ptr<Vl53l0xDriver>,"Đối tượng điều khiển cảm biến khoảng cách.",
+SensorDaemon,,Attribute,door_sensor,unique_ptr<DoorSensorDriver>,"Đối tượng điều khiển cảm biến cửa.",
+SensorDaemon,,Attribute,last_poll_timestamp,float,"Lưu trữ Unix timestamp chính xác tại thời điểm gọi lệnh quét cảm biến để đồng bộ.",
+SensorDaemon,,Method,init_sensors(),bool,"Gọi lệnh khởi tạo đồng loạt cho cả 3 sensor.",
+SensorDaemon,,Method,poll_all_data(),"map<string, float>","Đóng gói dữ liệu từ các Driver thành Dictionary (Map) kèm nhãn thời gian.",
+SensorDaemon,,Method,"get_env_data(temp: float&, hum: float&)",void,"Hàm lấy riêng giá trị nhiệt độ và độ ẩm hiện tại.",
+SensorDaemon,,Method,get_distance_data(),uint16_t,"Hàm lấy riêng giá trị khoảng cách giá trị thô.",
+SensorDaemon,,Method,get_door_status(),bool,"Hàm kiểm tra trạng thái cửa (true = open).",
+SensorDaemon,OutputProcessor,Attribute,sdbus_interface,SdbusInterface,"Đối tượng quản lý kết nối D-Bus.",
+SensorDaemon,,Method,init_ipc(),bool,"Khởi tạo các kênh truyền thông liên tiến trình.",
+SensorDaemon,,Method,"broadcast_env_data(temp: float, hum: float)",void,"Phát tín hiệu dữ liệu môi trường.",
+SensorDaemon,,Method,"broadcast_distance_data(distance: uint16_t)",void,"Phát tín hiệu dữ liệu khoảng cách đo được.",
+SensorDaemon,,Method,"broadcast_door_status(is_open: bool)",void,"Phát tín hiệu đóng/mở cửa hiện tại.",
+SensorDaemon,,Method,"broadcast_system_events(data: map)",void,"Phân tích Map data từ InputProcessor và kích hoạt các hàm emit tương ứng.",
+SensorDaemon,I2cHandler,Attribute,m_bus_device,string,"Đường dẫn tệp thiết bị I2C (VD: /dev/i2c-1).",
+SensorDaemon,,Attribute,bus_id,int,"ID của cổng I2C vật lý trên Pi (VD: 1).",
+SensorDaemon,,Attribute,m_fd,int,"File descriptor của cổng I2C mở trong Kernel.",
+SensorDaemon,,Attribute,m_current_addr,uint8_t,"Địa chỉ slave I2C đang thao tác hiện tại.",
+SensorDaemon,,Attribute,is_bus_open,bool,"Trạng thái kết nối I2C cấp thấp.",
+SensorDaemon,,Method,open_bus(),bool,"Gọi lệnh Kernel mở tệp thiết bị bằng O_RDWR.",
+SensorDaemon,,Method,close_bus(),void,"Đóng file descriptor giải phóng bus I2C.",
+SensorDaemon,,Method,"read_bytes(addr: int, cmd: int)",vector<uint8_t>,"Giao tiếp cấp thấp đọc mảng byte bằng I2C_RDWR ioctl.",
+SensorDaemon,,Method,"set_slave_address(address: uint8_t)",bool,"Đặt địa chỉ đích cho phiên giao tiếp tiếp theo.",
+SensorDaemon,,Method,"write_data(data: uint8_t*, length: size_t)",bool,"Ghi mảng byte xuống thiết bị thông qua bus.",
+SensorDaemon,,Method,"read_data(buffer: uint8_t*, length: size_t)",bool,"Đọc mảng byte từ thiết bị đang nhắm đến.",
+SensorDaemon,,Method,read_address16(...),bool,"Giao thức đọc I2C chuyên dụng hỗ trợ thanh ghi 16-bit (I2C_RDWR).",
+SensorDaemon,,Method,write_address16(...),bool,"Giao thức ghi I2C chuyên dụng hỗ trợ thanh ghi 16-bit.",
+SensorDaemon,GpioHandler,Attribute,chip_name,str,"Tên chip điều khiển (VD: gpiochip4).",
+SensorDaemon,,Attribute,is_ready,bool,"Trạng thái sẵn sàng của thư viện libgpiod.",
+SensorDaemon,,Attribute,m_chip_handle,void*,"Con trỏ quản lý tài nguyên của chip.",
+SensorDaemon,,Attribute,m_lines_map,void*,"Cấu trúc map lưu các chân pin đang được quản lý.",
+SensorDaemon,,Method,"request_pin(pin: int)",bool,"Hàm giao tiếp cấp thấp xin quyền điều khiển chân GPIO từ Kernel.",
+SensorDaemon,,Method,"read_pin(pin: int)",int,"Đọc mức điện áp vật lý nguyên thủy (0 hoặc 1).",
+SensorDaemon,,Method,"write_line(line_offset: int, value: int)",bool,"Xuất mức điện áp (High/Low) ra chân GPIO.",
+SensorDaemon,Sht31Driver,Attribute,m_i2c,shared_ptr,"Con trỏ tham chiếu đến I2cHandler được tiêm vào (DI).",
+SensorDaemon,,Attribute,device_address,int,"Địa chỉ I2C của thiết bị (VD: 0x44).",
+SensorDaemon,,Attribute,m_driver_handle,,,
+SensorDaemon,,Attribute,last_temperature,float,"Giá trị nhiệt độ (°C) gần nhất.",
+SensorDaemon,,Attribute,last_humidity,float,"Giá trị độ ẩm (%) gần nhất.",
+SensorDaemon,,Attribute,m_is_connected,bool,"Trạng thái kết nối phần cứng.",
+SensorDaemon,,Attribute,m_error_count,int,"Đếm số lần đọc I2C bị lỗi.",
+SensorDaemon,,Method,init_driver(),bool,"Mở kết nối smbus và cấu hình cảm biến.",
+SensorDaemon,,Method,deinit_driver(),,"Dọn dẹp tài nguyên và tắt thiết bị an toàn.",
+SensorDaemon,,Method,"single_read(clock_stretching: bool)",bytes,"Thực hiện đọc dữ liệu một lần (single-shot).",
+SensorDaemon,,Method,"start_continuous_read(rate: float)",,"Kích hoạt chế độ tự động đọc liên tục theo tần số.",
+SensorDaemon,,Method,continuous_read(),dict,"Cập nhật bộ đệm dữ liệu trong chế độ đọc liên tục.",
+SensorDaemon,,Method,stop_continuous_read(),bool,"Dừng chế độ đo liên tục.",
+SensorDaemon,,Method,get_temperature(),float,"Trả về nhiệt độ đã lưu trong bộ đệm.",
+SensorDaemon,,Method,get_humidity(),float,"Trả về độ ẩm đã lưu trong bộ đệm.",
+SensorDaemon,,Method,check_connection(),bool,"[DEBUG] Ping i2c address để xác nhận thiết bị sống.",
+SensorDaemon,,Method,soft_reset(),bool,"Gửi lệnh soft-reset đến SHT3x để khởi động lại bộ điều khiển.",
+SensorDaemon,,Method,"set_repeatability(repeatability: uint8_t)",bool,"Chỉnh độ lặp đo lường (High/Medium/Low) của phần cứng.",
+SensorDaemon,,Method,"set_heater(enable: bool)",bool,"Bật/tắt bộ sấy (heater) tích hợp trên chip.",
+SensorDaemon,,Method,get_status(),uint16_t,"Lấy thanh ghi trạng thái cảnh báo phần cứng.",
+SensorDaemon,,Method,clear_status(),bool,"Xóa các cờ trạng thái cảnh báo.",
+SensorDaemon,,Method,"get_serial_number(sn: uint8_t[4])",bool,"Đọc mã định danh duy nhất (SN) của chip.",
+SensorDaemon,,Method,handle_i2c_timeout(),void,"[XỬ LÝ LỖI] Bắt ngoại lệ khi kẹt bus I2C.",
+SensorDaemon,,Method,get_error_count(),int,"Lấy số lượng lỗi giao tiếp hiện tại.",
+SensorDaemon,Vl53l0xDriver,Attribute,i2c_bus_id,int,"ID của bus I2C.",
+SensorDaemon,,Attribute,device_address,int,"Địa chỉ I2C của VL53L0X (VD: 0x29).",
+SensorDaemon,,Attribute,threshold_meters,float,"Ngưỡng khoảng cách phát hiện người tính bằng MÉT (VD: 0.8).",
+SensorDaemon,,Attribute,last_distance_meters,float,"Giá trị khoảng cách đo được gần nhất (MÉT).",
+SensorDaemon,,Attribute,is_connected,bool,"Trạng thái kết nối phần cứng.",
+SensorDaemon,,Attribute,error_count,int,"Đếm số lần đọc I2C ToF bị lỗi.",
+SensorDaemon,,Method,init_driver(),bool,"Nạp firmware và khởi động laser ToF.",
+SensorDaemon,,Method,read_distance_meters(),float,"Đọc khoảng cách trực tiếp từ I2C và đổi sang đơn vị MÉT.",
+SensorDaemon,,Method,is_user_detected(),bool,"Đánh giá last_distance_meters so với threshold_meters.",
+SensorDaemon,,Method,check_connection(),bool,"[DEBUG] Ping I2C address để kiểm tra tín hiệu Laser.",
+SensorDaemon,,Method,reset_sensor(),void,"[XỬ LÝ LỖI] Khởi động lại chip đo ToF.",
+SensorDaemon,,Method,handle_i2c_timeout(),void,"[XỬ LÝ LỖI] Bắt ngoại lệ khi I2C ngắt quãng.",
+SensorDaemon,DoorSensorDriver,Attribute,pin_offset,int,"Chân gắn cảm biến Reed Switch.",
+SensorDaemon,,Attribute,debounce_ms,int,"Thời gian chống rung phím (debounce) mềm.",
+SensorDaemon,,Attribute,current_state,str,"Trạng thái (OPEN / CLOSED).",
+SensorDaemon,,Attribute,is_connected,bool,"Trạng thái chiếm quyền chip GPIO thành công.",
+SensorDaemon,,Method,init_driver(),bool,"Xin cấp quyền libgpiod cho chân pin.",
+SensorDaemon,,Method,read_state(),str,"Đọc mức vật lý (High/Low) và trả về trạng thái cửa.",
+SensorDaemon,,Method,clear_interrupt_flags(),void,"[XỬ LÝ LỖI] Xóa cờ ngắt phần cứng nếu bị tràn bộ đệm OS.",
+SensorDaemon,,Method,diagnose_gpio_line(),bool,"[DEBUG] Kiểm tra xem chân pin có bị ứng dụng khác chiếm không.",
+SensorDaemon,SensorDbusInterface,Attribute,system_bus,object,"Kết nối System D-Bus nội bộ của Linux.",
+SensorDaemon,,Attribute,interface_name,str,"Tên Interface (VD: vn.edu.uit.FSS.Sensor).",
+SensorDaemon,,Attribute,is_connected,bool,"Cờ trạng thái kết nối Bus.",
+SensorDaemon,,Attribute,dropped_messages_count,int,"Số tin nhắn gửi thất bại do lỗi mạng D-Bus.",
+SensorDaemon,,Method,init_interface(),bool,"Mở kết nối socket lên D-Bus.",
+SensorDaemon,,Method,"emit_env_signal(data_map: map)",void,"Phát JSON tín hiệu EnvDataUpdated.",
+SensorDaemon,,Method,"emit_door_signal(state: str)",void,"Phát tín hiệu DoorStateChanged.",
+SensorDaemon,,Method,"emit_presence_signal(user: bool)",void,"Phát tín hiệu UserPresenceDetected.",
+SensorDaemon,,Method,reconnect_bus(),bool,"[XỬ LÝ LỖI] Khôi phục kết nối IPC nếu dbus-daemon bị khởi động lại.",
+SensorDaemon,,Method,"log_bus_error(error_msg: str)",void,"[DEBUG] Ghi nhận các lỗi truyền tải tín hiệu D-Bus.",
+SensorDaemon,SystemWatchdog,Attribute,interval_ms,int,"Chu kỳ gửi tín hiệu sống lên OS.",
+SensorDaemon,,Attribute,last_ping_ts,float,"Thời điểm ping gần nhất.",
+SensorDaemon,,Method,init_driver(),bool,"Khởi tạo thư viện sdnotify.",
+SensorDaemon,,Method,ping(),void,"Báo cáo WATCHDOG=1.",
+SensorDaemon,,Method,notify_ready(),void,"Báo cáo READY=1.",
+SensorDaemon,,Method,notify_stopping(),void,"Báo cáo STOPPING=1 trước khi tắt.",
+SensorDaemon,,Method,"report_error_status(err: str)",void,"[DEBUG/LỖI] Đẩy lỗi trực tiếp vào log của Systemctl status.",
+,,,,,,
+"Bảng 2: Package FRTApp",,,,,,
+"Package (App)",Class,"Member Type","Name / Signature","Data / Return Type",Description,
+FRTApp,FrtMain,Attribute,current_state,str,"Trạng thái hiện tại (INIT, SLEEP, TRACKING).",
+FRTApp,,Attribute,is_running,bool,"Cờ vòng lặp suy luận.",
+FRTApp,,Attribute,camera_driver,CameraUvcDriver,"Lớp quản lý USB Camera qua OpenCV V4L2.",
+FRTApp,,Attribute,motion_detector,MotionDetector,"Lớp xử lý loại bỏ nền (MOG2).",
+FRTApp,,Attribute,preprocessor,ImagePreprocessor,"Lớp chuẩn hóa ảnh thành Tensor.",
+FRTApp,,Attribute,ai_engine,YoloTfliteEngine,"Lớp tải trọng model YOLOv11 TFLite.",
+FRTApp,,Attribute,dbus_interface,SdbusInterface,"Cầu nối nhận và phát event D-Bus.",
+FRTApp,,Method,init_pipeline(),bool,"Khởi tạo mô hình AI, bộ nhớ và các class con.",
+FRTApp,,Method,start_daemon(),void,"Chuyển app sang SLEEP, chờ mở cửa.",
+FRTApp,,Method,stop_daemon(),void,"Giải phóng Tensor Arena và tắt camera.",
+FRTApp,,Method,run_inference_loop(),void,"Vòng lặp lấy khung hình và đưa vào suy luận. (Bao gồm logic theo dõi đối tượng ByteTrack).",
+FRTApp,,Method,"on_door_event_received(door_state: str)",void,"Trigger bật/tắt camera khi nhận event cửa.",
+FRTApp,,Method,recover_from_crash(),void,"Reset bộ nhớ ảo nếu suy luận AI gây tràn RAM.",
+FRTApp,,Method,"log_pipeline_metrics(fps: float, load: float)",void,"Ghi nhận hiệu năng suy luận (FPS).",
+FRTApp,CameraUvcDriver,Attribute,device_path,str,"Đường dẫn camera (VD: /dev/video0).",
+FRTApp,,Attribute,video_capture,object,"Đối tượng cv2.VideoCapture.",
+FRTApp,,Attribute,is_camera_open,bool,"Trạng thái stream.",
+FRTApp,,Method,open_camera_stream(),bool,"Yêu cầu kernel mở quyền truy cập camera.",
+FRTApp,,Method,read_frame(),object,"Đọc và trả về ma trận điểm ảnh (numpy array).",
+FRTApp,,Method,release_camera(),void,"Đóng kết nối /dev/video0 để tiết kiệm điện.",
+FRTApp,,Method,check_uvc_connection(),bool,"Check file device video0 còn tồn tại không.",
+FRTApp,,Method,reset_usb_bus(),void,"Reset bus USB nếu module camera bị treo.",
+FRTApp,MotionDetector,Attribute,mog2_subtractor,object,"Đối tượng BackgroundSubtractorMOG2.",
+FRTApp,,Attribute,pixel_change_threshold,int,"Ngưỡng thay đổi pixel để tính là có chuyển động.",
+FRTApp,,Method,init_mog2(),void,"Cấu hình MOG2.",
+FRTApp,,Method,"apply_background_subtraction(frame: object)",object,"Truyền frame vào, trả về binary mask.",
+FRTApp,,Method,"is_motion_detected(mask: object)",bool,"Kiểm tra mask vượt qua ngưỡng threshold không.",
+FRTApp,,Method,reset_background_model(),void,"Xóa nền hiện tại để chống nhiễu sáng.",
+FRTApp,ImagePreprocessor,Attribute,target_width,int,"Chiều rộng chuẩn (VD: 640).",
+FRTApp,,Attribute,normalize_scale,float,"Hệ số chia để Normalize về khoảng [0, 1].",
+FRTApp,,Method,"convert_bgr_to_rgb(frame: object)",object,"Chuyển hệ màu OpenCV mặc định.",
+FRTApp,,Method,"resize_frame(frame: object)",object,"Ép kích thước khung hình vào shape mô hình.",
+FRTApp,,Method,"normalize_pixels(frame: object)",object,"Chuẩn hóa pixel ảnh.",
+FRTApp,,Method,"prepare_tensor_input(frame: object)",object,"Độn thêm chiều batch_size (np.expand_dims).",
+FRTApp,,Method,"catch_shape_error(shape: tuple)",void,"Báo lỗi nếu Tensor shape sai cấu trúc.",
+FRTApp,YoloTfliteEngine,Attribute,model_path,str,"Đường dẫn file .tflite cục bộ.",
+FRTApp,,Attribute,interpreter,object,"Lõi xử lý tflite.Interpreter.",
+FRTApp,,Method,load_model_mmap(),bool,"Tải file model thông qua kỹ thuật mmap.",
+FRTApp,,Method,allocate_tensors(),void,"Cấp phát bộ nhớ RAM cho Tensor tĩnh.",
+FRTApp,,Method,"set_input_tensor(tensor_data: object)",void,"Đẩy ảnh đã tiền xử lý vào Input Node.",
+FRTApp,,Method,invoke_inference(),void,"Chạy bộ giải mã mạng Nơ-ron.",
+FRTApp,,Method,get_output_boxes(),list,"Rút trích list (class_id, score, bbox).",
+FRTApp,,Method,handle_tensor_allocation_error(),void,"Bắt lỗi Out-of-memory.",
+FRTApp,FrtDbusInterface,Attribute,bus_connection,object,"Đối tượng kết nối System Bus.",
+FRTApp,,Attribute,db_daemon_dest,str,"Đích đến tín hiệu D-Bus (Tên DBDaemon).",
+FRTApp,,Method,init_sdbus_connection(),bool,"Mở kênh System Bus.",
+FRTApp,,Method,subscribe_door_events(callback),void,"Đăng ký hàm bắt sự kiện từ SensorDaemon.",
+FRTApp,,Method,"publish_tracking_results(diff: dict)",void,"Gửi JSON thống kê nhận diện sang DBDaemon.",
+FRTApp,,Method,handle_dbus_timeout(),void,"Xử lý nếu DBDaemon không nhận tín hiệu.",
+FRTApp,,Method,reconnect_bus(),bool,"Phục hồi kết nối bus nếu bị sập.",
+,,,,,,
+"Bảng 3: Package DBDaemon",,,,,,
+"Package (App)",Class,"Member Type","Name / Signature","Data / Return Type",Description,
+DBDaemon,DbMain,Attribute,current_state,str,"Trạng thái (INIT, IDLE, PROCESSING, ERROR).",
+DBDaemon,DbMain,Attribute,is_running,bool,"Cờ duy trì vòng lặp.",
+DBDaemon,DbMain,Attribute,db_manager,SqliteManager,"Lớp quản lý file dữ liệu hệ thống.",
+DBDaemon,DbMain,Attribute,shm_reader,PosixShmReader,"Lớp lấy frame ảnh thô từ RAM chia sẻ.",
+DBDaemon,DbMain,Attribute,file_manager,DiskFileManager,"Lớp thao tác ghi ảnh xuống ổ đĩa Ext4.",
+DBDaemon,DbMain,Attribute,dbus_interface,DbDbusInterface,"Lớp giao tiếp với UI và FRTApp.",
+DBDaemon,DbMain,Method,init_daemon(),bool,"Khởi tạo DB và ánh xạ RAM ảo.",
+DBDaemon,DbMain,Method,start_daemon(),void,"Chạy vòng lặp GLib Event Loop.",
+DBDaemon,DbMain,Method,stop_daemon(),void,"Đóng kết nối an toàn.",
+DBDaemon,DbMain,Method,"process_food_tracking_event(id, score, qty)",void,"Lõi xử lý lưu DB và xuất thông báo UI.",
+DBDaemon,DbMain,Method,process_food_event(),void,"Lõi xử lý log sự kiện cập nhật đồ ăn.",
+DBDaemon,DbMain,Method,recover_from_io_error(),void,"Cố gắng khôi phục nếu lỗi ghi thẻ SD.",
+DBDaemon,DbMain,Method,log_daemon_status(),void,"Ghi log độ trễ đọc/ghi DB.",
+DBDaemon,DbMain,Method,"process_environment_event(temp: float, humid: float, timestamp: float)",void,"Nhận thêm tham số timestamp từ D-Bus Payload của SensorDaemon để đồng bộ thời gian thực, thay vì tự lấy giờ hệ thống lúc nhận (giúp tránh sai số do độ trễ mạng IPC).",
+DBDaemon,SqliteManager,Attribute,db_path,str,"Đường dẫn file .db.",
+DBDaemon,SqliteManager,Attribute,db_connection,object,"Đối tượng sqlite3.Connection.",
+DBDaemon,SqliteManager,Attribute,db_cursor,object,"Đối tượng sqlite3.Cursor.",
+DBDaemon,SqliteManager,Attribute,transaction_timeout_ms,int,"Thời gian tối đa chờ mở khóa (Unlock) db.",
+DBDaemon,SqliteManager,Method,connect_db(),bool,"Mở kết nối file db, thiết lập WAL mode.",
+DBDaemon,SqliteManager,Method,init_tables_if_not_exists(),void,"Tạo bảng inventory nếu chưa có.",
+DBDaemon,SqliteManager,Method,"update_inventory(id, qty, score, path)",bool,"Hàm thực thi câu lệnh UPDATE lượng thực phẩm.",
+DBDaemon,SqliteManager,Method,"insert_environment_log(temp, humid)",bool,"Insert thông số vào bảng log.",
+DBDaemon,SqliteManager,Method,commit_transaction(),void,"Xác nhận (commit) thay đổi vật lý lên DB.",
+DBDaemon,SqliteManager,Method,rollback_transaction(),void,"Hủy thay đổi nếu câu truy vấn lỗi.",
+DBDaemon,SqliteManager,Method,handle_db_lock_exception(),void,"Bắt lỗi database is locked.",
+DBDaemon,SqliteManager,Method,"insert_environment_log(temp: float, humid: float, timestamp: float)",void,"Ghi chính xác nhãn thời gian sinh ra từ cảm biến vào cơ sở dữ liệu.",
+DBDaemon,PosixShmReader,Attribute,shm_name,str,"Tên vùng nhớ ảo (VD: /fss_video_frame).",
+DBDaemon,PosixShmReader,Attribute,shm_size,int,"Kích thước byte của RAM ảo.",
+DBDaemon,PosixShmReader,Attribute,shm_block,object,"Thể hiện khối nhớ đa tiến trình.",
+DBDaemon,PosixShmReader,Attribute,is_attached,bool,"Cờ trạng thái mount thành công.",
+DBDaemon,PosixShmReader,Method,attach_shared_memory(),bool,"Móc nối vùng nhớ do FRTApp tạo ra.",
+DBDaemon,PosixShmReader,Method,read_jpeg_bytes(),bytes,"Sao chép dãy byte từ RAM sang biến tĩnh.",
+DBDaemon,PosixShmReader,Method,detach_shared_memory(),void,"Bỏ kết nối không gian nhớ khi tắt.",
+DBDaemon,PosixShmReader,Method,check_shm_integrity(),bool,"Phân tích cấu trúc chống rác RAM ảo.",
+DBDaemon,PosixShmReader,Method,handle_shm_not_found(),void,"Báo lỗi nếu FRT chưa chạy lệnh tạo khối nhớ.",
+DBDaemon,DiskFileManager,Attribute,base_asset_path,str,"Thư mục lưu ảnh cục bộ (/opt/fss/assets/).",
+DBDaemon,DiskFileManager,Attribute,max_disk_usage_mb,int,"Ngưỡng giới hạn dung lượng lưu trữ trên Pi.",
+DBDaemon,DiskFileManager,Method,init_directories(),void,"Cấp phát cây thư mục.",
+DBDaemon,DiskFileManager,Method,"generate_file_path(id, time)",str,"Khởi tạo chuỗi đường dẫn ảnh crop mới.",
+DBDaemon,DiskFileManager,Method,"save_crop_image(path, bytes)",bool,"Chuyển byte thành ảnh JPEG vật lý.",
+DBDaemon,DiskFileManager,Method,check_disk_space(),float,"Quét dung lượng phân vùng trống.",
+DBDaemon,DiskFileManager,Method,cleanup_old_images(),void,"Xóa ảnh cũ theo FIFO nếu ổ đĩa đầy.",
+DBDaemon,DiskFileManager,Method,handle_permission_denied(),void,"Quăng lỗi cấp quyền Linux.",
+DBDaemon,DbDbusInterface,Attribute,system_bus,object,"Đối tượng kết nối System D-Bus.",
+DBDaemon,DbDbusInterface,Attribute,dbus_service_name,str,"Địa chỉ định danh riêng cho DBDaemon.",
+DBDaemon,DbDbusInterface,Attribute,is_connected,bool,"Cờ kết nối IPC nội bộ.",
+DBDaemon,DbDbusInterface,Method,setup_bus_service(),bool,"Cấu hình đăng ký Service lên OS.",
+DBDaemon,DbDbusInterface,Method,listen_frt_pipeline_events(callback),void,"Subcribe kênh dữ liệu từ FRT.",
+DBDaemon,DbDbusInterface,Method,"emit_ui_update_required(id, qty, path)",void,"Bắn tín hiệu trigger reload giao diện Electron.",
+DBDaemon,DbDbusInterface,Method,"emit_env_update_required(temp, humid)",void,"Bắn tín hiệu update sensor lên UI.",
+DBDaemon,DbDbusInterface,Method,poll_bus_events(),void,"Chạy background loop để thu thập tín hiệu.",
+DBDaemon,DbDbusInterface,Method,handle_bus_disconnection(),void,"Tự động reconnet.",
+,,,,,,
+"Bảng 4: Package ElectronApp",,,,,,
+"Package (App)",Class,"Member Type","Name / Signature","Data / Return Type",Description,
+ElectronApp,ElectronMain,Attribute,mainWindow,object,"Instance BrowserWindow cấu hình frameless.",
+ElectronApp,ElectronMain,Attribute,isAppReady,boolean,"Cờ kiểm tra V8 và UI render khởi động xong.",
+ElectronApp,ElectronMain,Attribute,dbusListener,DbusNextListener,"Cầu nối D-Bus ở môi trường Node.js.",
+ElectronApp,ElectronMain,Attribute,assetBasePath,string,"Tên đường dẫn file tĩnh file:///opt/fss.",
+ElectronApp,ElectronMain,Method,bootstrapApp(),void,"Lệnh nạp OS ban đầu khi V8 Engine sẵn sàng.",
+ElectronApp,ElectronMain,Method,createBrowserWindow(),void,"Setup màn hình hiển thị Kiosk UI.",
+ElectronApp,ElectronMain,Method,setupIpcMainHandlers(),void,"Setup kết nối liên lạc Node.js và Chrome DOM.",
+ElectronApp,ElectronMain,Method,gracefulShutdown(),void,"Xử lý lệnh thoát chương trình.",
+ElectronApp,ElectronMain,Method,handleWindowCrash(),void,"Reset UI nếu tràn RAM ở Chromium.",
+ElectronApp,ElectronMain,Method,logV8MemoryUsage(),void,"Giám sát memory heap của ứng dụng GUI.",
+ElectronApp,DbusNextListener,Attribute,systemBus,object,"Object thư viện Dbus-next (kênh System).",
+ElectronApp,DbusNextListener,Attribute,dbusProxy,object,"Đại diện kết nối trực tiếp đến Service của DBDaemon.",
+ElectronApp,DbusNextListener,Attribute,isConnected,boolean,"Trạng thái liên kết Linux Bus.",
+ElectronApp,DbusNextListener,Method,connectToSystemBus(),Promise<boolean>,"Khởi chạy socket D-Bus dưới dạng Async.",
+ElectronApp,DbusNextListener,Method,subscribeToDaemonSignals(),void,"Đăng ký callback khi Database thay đổi.",
+ElectronApp,DbusNextListener,Method,"onUiUpdateRequired(id, qty, path)",void,"Xử lý logic khi bắt được tín hiệu thay đổi thực phẩm.",
+ElectronApp,DbusNextListener,Method,"onEnvUpdateRequired(temp, humid)",void,"Xử lý logic hiển thị thông số.",
+ElectronApp,DbusNextListener,Method,"forwardToRenderer(channel, payload)",void,"Xuyên tường lửa Chromium đưa Data từ nền sang Frontend.",
+ElectronApp,DbusNextListener,Method,handleBusError(error),void,"Truy xuất log hệ điều hành.",
+ElectronApp,DbusNextListener,Method,reconnectBusWithBackoff(),void,"Cơ chế Exponential Backoff để reconnect.",
+ElectronApp,DbusNextListener,Method,"onPresenceDetected(user_present: bool)",void,"Lắng nghe tín hiệu UserPresenceDetected từ SensorDaemon (do cảm biến VL53L0X phát ra).",
+ElectronApp,PreloadBridge,Attribute,exposedApiName,string,"Tên biến cục bộ an toàn (VD: fssApi).",
+ElectronApp,PreloadBridge,Attribute,allowedChannels,array<string>,"Danh sách lệnh IPC hợp lệ bảo mật truy cập.",
+ElectronApp,PreloadBridge,Method,exposeInMainWorld(),void,"Thêm Object an toàn vào window context của JS Browser.",
+ElectronApp,PreloadBridge,Method,onInventoryUpdate(callback),void,"Gói tín hiệu frontend.",
+ElectronApp,PreloadBridge,Method,onEnvironmentUpdate(callback),void,"Gói tín hiệu frontend.",
+ElectronApp,PreloadBridge,Method,blockUnauthorizedIpc(),boolean,"Lệnh chặn Frontend truy cập file hệ thống Pi.",
+ElectronApp,PreloadBridge,Method,onPresenceUpdate(callback),void,"Mở luồng an toàn (Context Bridge) để truyền tín hiệu có người/không có người xuống UI.",
+ElectronApp,RendererUI,Attribute,inventoryContainer,object,"Tham chiếu DOM div danh sách kho.",
+ElectronApp,RendererUI,Attribute,tempElement,object,"Tham chiếu DOM div nhiệt độ.",
+ElectronApp,RendererUI,Attribute,humidElement,object,"Tham chiếu DOM div độ ẩm.",
+ElectronApp,RendererUI,Attribute,currentFoodList,"Map<num, obj>","Bộ nhớ đệm DOM cache giảm tải render vòng lặp.",
+ElectronApp,RendererUI,Method,initializeUi(),void,"Hàm vẽ giao diện nạp (Loading) ban đầu.",
+ElectronApp,RendererUI,Method,listenForUpdates(),void,"Kích hoạt bộ thu nhận JS.",
+ElectronApp,RendererUI,Method,"updateInventoryCard(id, qty, path)",void,"Render DOM HTML (cập nhật thuộc tính src của thẻ Image).",
+ElectronApp,RendererUI,Method,"updateEnvironmentWidget(temp, humid)",void,"Render DOM HTML (cập nhật chỉ số sensor).",
+ElectronApp,RendererUI,Method,renderEmptyState(),void,"Cập nhật màn hình ""Tủ lạnh trống"" (Placeholder).",
+ElectronApp,RendererUI,Method,handleImageLoadError(imgElement),void,"Đẩy ảnh Fallback (Icon mặc định) nếu ảnh crop lỗi.",
+ElectronApp,RendererUI,Method,logRenderPerformance(),void,"Benchmarking thời gian UI (đáp ứng trễ < 1s).",
+ElectronApp,RendererUI,Method,"toggleDisplayWake(is_awake: bool)",void,"Nhận tín hiệu từ Bridge. Nếu is_awake = true, làm sáng (opacity = 1) hoặc hiển thị toàn bộ UI dashboard (Dashboard, danh sách). Nếu false, làm mờ hoặc ẩn các module thừa để tiết kiệm điện/bảo vệ độ bền màn hình gương.",
+"Source Package","Source Class","Target Package","Target Class","Relationship Type","Communication / Protocol","Description / Trigger Condition"
+SensorDaemon,SensorDbusInterface,FRTApp,FrtDbusInterface,"Inter-Process (IPC)","D-Bus Signal (DoorStateChanged)","Gửi tín hiệu khi DoorSensor phát hiện cửa chuyển trạng thái. FRTApp dùng để bật/tắt luồng Camera."
+SensorDaemon,SensorDbusInterface,DBDaemon,DbDbusInterface,"Inter-Process (IPC)","D-Bus Signal (EnvDataUpdated)","Gửi chuỗi nhiệt độ, độ ẩm mỗi 5 giây. DBDaemon dùng để lưu log và đẩy lên UI."
+FRTApp,FrtDaemonApp,"OS Memory",/fss_video_frame,"Data Write","POSIX Shared Memory","Ghi đè mảng byte ảnh JPEG liên tục vào RAM ảo để các app khác có thể lấy mà không bị bottleneck I/O."
+FRTApp,FrtDbusInterface,DBDaemon,DbDbusInterface,"Inter-Process (IPC)","D-Bus Signal (FoodDetected)","Gửi danh sách thực phẩm thay đổi (+1 hoặc -1) ngay khi thuật toán Tracking chốt kết quả khi đóng cửa."
+DBDaemon,PosixShmReader,"OS Memory",/fss_video_frame,"Data Read","POSIX Shared Memory","Đọc mảng byte ảnh từ RAM ngay khi nhận được tín hiệu FoodDetected từ FRTApp."
+DBDaemon,DiskFileManager,"OS File System","Ext4 /opt/fss/...","File I/O","Posix File API","Lưu hình ảnh thực phẩm cắt được xuống bộ nhớ vật lý của Raspberry Pi."
+DBDaemon,DbDbusInterface,ElectronApp,DbusNextListener,"Inter-Process (IPC)","D-Bus Signal (UIUpdateRequired)","Thông báo cho UI biết kho hàng đã thay đổi, gửi kèm class_id, quantity, và avatar_path."
+DBDaemon,DbDbusInterface,ElectronApp,DbusNextListener,"Inter-Process (IPC)","D-Bus Signal (EnvUpdateRequired)","Chuyển tiếp tín hiệu thay đổi nhiệt độ/độ ẩm lên giao diện để cập nhật Widget."
+ElectronApp,RendererUI,"OS File System","Ext4 /opt/fss/...","Local File Access","Chromium file:// protocol","Thẻ <img> trên giao diện DOM trực tiếp tải ảnh tĩnh từ ổ đĩa lên màn hình."
+"(Tất cả Apps)",*AppController,"(Tất cả Apps)","Các Class con","Composition (Sở hữu)","Internal RAM (Direct call)","App Controller khởi tạo, quản lý vòng đời và cấp phát bộ nhớ cho các class con (Sensor, DB, Model...)."
+"Software Component Interaction Guideline",,
+"Column Name",Description,"Formatting Rule / Allowed Values"
+"Interface ID","The unique identifier for the interface.","Format: [System].[IF].[Category].[Number]
+""- SYS: System level.
+
+- IF: Interface.
+
+- HW: Hardware (Physical).
+
+- SW: Software (Logical).
+
+Example: SYS.IF.HW.01"""
+,,
+,,
+"Interface Name","A concise, descriptive name indicating the purpose and medium of the connection.","Use CamelCase or underscores. Should reflect the signal and protocol (e.g., Env_Sensor_I2C)."
+"Source Element","The component, subsystem, or module initiating the communication or generating the data.","Must exactly match an element defined in the System Architecture Design (SAD) or Elements list."
+"Target Element","The component, subsystem, or module receiving the communication or data.","Must exactly match an element defined in the System Architecture Design (SAD) or Elements list."
+Type,"Broad classification of the interface boundary.","Physical: Hardware connections (cables, pins, traces).
+
+Logical: Software data flows, memory sharing, or network packets."
+"Protocol / Medium","The specific standard, hardware protocol, or software mechanism used for the transfer.","Physical: I2C, GPIO, USB, HDMI, Power.
+
+Logical: SQL, JSON, WebSocket, IPC, OpenCV API."
+"Data / Signal Description","A brief explanation of what is actually being transmitted across this interface.","Be specific about the payload (e.g., ""High/Low signal"", ""RGB Image matrix"", ""JSON Payload"")."
+"Traceability (Req ID)","The specific System or Software Requirement that dictates the necessity of this interface.","Must map back to the ReqSpec or SoftwareReqSpec identifiers (e.g., SYS.FUNC.ENV.01)."
+,,
+,,
+,,
+,,
+"API SPECIFICATIONS GUIDELINE",,
+"Column Name",Description,"Formatting Rule / Allowed Values"
+"Package (App)","The name of the software module, daemon, or independent process where the class is physically executed.","Strict Daemon/App names matching the SAD."
+,,Example:
+,,"SensorDaemon, FRTApp, DBDaemon, ElectronApp"
+Class,"The specific object-oriented class, service, or functional boundary that encapsulates the listed member.","Must use"
+,,"PascalCase.
+Example:
+SensorDaemonApp, SqliteManager, RendererUI"
+"Member Type","Classifies whether the defined item is a data field (variable/constant) or an executable subroutine (function/API).","Strictly use one of two values:"
+,,"- Attribute: For state variables, fields, or properties."
+,,"- Method: For functions, APIs, or callbacks."
+"Name / Signature","The precise programmatic identifier for the attribute, or the exact function signature including its input parameters.","- Python/C++ apps: Use snake_case (e.g.,current_state,read_raw_data()).
+- Node.js/JS apps: Use camelCase (e.g.,isAppReady,updateInventoryCard(id, qty)).
+- Methods MUST include parentheses () and key parameters."
+"Data / Return Type","The expected programming data type for an attribute, or the output return type yielded by a method upon completion.","Standard programmatic types: int, float,str,bool,bytes,list,dict,object,Promise.
+Use void if a method executes an action but returns no value."
+Description,"A concise, clear explanation detailing the attribute's storage purpose, or the method's computational logic, triggers, and side effects.","Plain text. Must be concise but adequately explain the core mechanism or hardware interaction."

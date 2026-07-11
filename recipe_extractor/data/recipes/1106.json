@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Cháo Tôm Nếp Cẩm",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nước dùng: 1 lít",
+        "Nui sao: 70g",
+        "Nếp cẩm: 50g",
+        "Nấm rơm: 100g",
+        "Tôm sú: 200g",
+        "Hành lá, ngò rí, hành tím băm",
+        "Tiêu, nước mắm, đường, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Nếp cẩm rang sơ. Nui rang sơ, trút ra dĩa. Nấm rơm cắt lát mỏng. Hành lá, ngò rí cắt nhỏ.",
+        "Tôm bóc vỏ, băm nhỏ ướp với 1m hành tím băm, 1/2m hạt nêm Aji-ngon® và 1 ít tiêu."
+    ],
+    "cook": [
+        "Phi thơm 1m hành tím băm, cho nấm rơm và tôm vào xào chín, trút ra dĩa.",
+        "Bắc nồi áp suất chứa nước dùng lên bếp, cho nếp vào nấu đến khi nếp nở mềm, cho nui vào, nêm 1m hạt nêm Aji-ngon® và 1m nước mắm cho vừa ăn. Thêm hỗn hợp nấm rơm và tôm vào, nấu đến khi cháo chín thì tắt bếp."
+    ],
+    "usage": [
+        "Múc cháo ra tô, rắc hành ngò và tiêu lên trên, dùng nóng."
+    ],
+    "tips": [
+        "Rang sơ nếp và nui giúp chín mềm, không bị nát hoặc vón cục khi nấu.",
+        "Xào tôm với nấm cho chín mới cho vào cháo giúp cháo thơm ngon hơn."
+    ]
+}

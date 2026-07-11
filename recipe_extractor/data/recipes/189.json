@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Salad Khoai Tây Trộn Bê Thui",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bê thui : 200g",
+        "Khoai tây đỏ : 100g",
+        "Khoai tây vàng : 100g",
+        "Nước mắm, dầu mè, tương ớt",
+        "Rau húng lủi, tỏi băm, ớt băm",
+        "Đường, tiêu, mè rang"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Khoai tây cho vào tô, thêm một ít nước và cho vào lò vi sóng hấp khoảng 10 phút cho chín, lấy ra xắt khoanh tròn 7mm.",
+        "Bê thui xắt lát mỏng, ướp 1m tỏi băm, 1/2m tiêu, 1/2m đường, 1/2m dầu mè, 1m hạt nêm Aji-ngon®. Trộn đều."
+    ],
+    "cook": [
+        "Đặt chảo lên bếp, phi tỏi cho thơm, cho bê thui vào đảo nhanh tay cho thơm. Nhấc xuống để nguội.",
+        "Làm xốt trộn đều 1/2m tỏi băm, 1m ớt băm, 1M tương ớt, 1M đường, 1M nước mắm, 3M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "usage": [
+        "Cho khoai tây ra tô lớn, trộn đều với xốt và bê thui. Rắc thêm mè rang và rau húng lủi."
+    ],
+    "tips": [
+        "Hấp khoai bằng lò vi ba vừa nhanh vừa ngon hơn luộc.",
+        "Không xào thịt bê thui quá lâu trên bếp sẽ làm bê ko còn mềm, ngọt và bị mất nước ."
+    ]
+}

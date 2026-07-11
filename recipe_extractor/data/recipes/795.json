@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Burger Cá Ngừ",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì burger: 4 cái",
+        "Cá ngừ: 2 hộp",
+        "Cà chua: 1 trái",
+        "Xà lách lo lo xanh: 4 lá",
+        "Ngò rí: 2 cọng",
+        "Hành tím: 2 củ",
+        "Nước cốt chanh: 1/2m",
+        "Muối, tiêu"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Hành tím cắt nhuyễn. Cà chua cắt lát, 1 ít cắt hạt lựu. Ngò rí cắt nhỏ. Xà lách cắt đôi.",
+        "Cá ngừ chắt bỏ dầu, xắn cá thành miếng nhỏ vừa, sau đó trộn đều với cà chua, hành tím, ngò rí và 2,5M xốt Mayonnaise Aji-mayo®, thêm 1/3m muối, 1/2m tiêu, 1/2m nước cốt chanh."
+    ],
+    "cook": [
+        "Cắt đôi bánh mì, phết xốt Mayonnaise Aji-mayo® lên 2 mặt bánh, lót xà lách, cà chua cắt lát, sau đó cho nhân cá ngừ, cuối cùng đậy miếng burger còn lại lên trên."
+    ],
+    "usage": [
+        "Ta có thể dùng kèm với khoai tây chiên nếu thích hoặc có thể gói lại và mang đi."
+    ],
+    "tips": [
+        "Nước cốt chanh sẽ làm cho cá ngừ tăng thêm hương vị, hấp dẫn hơn, nên vắt chanh trực tiếp vào cá để giữ hương thơm của chanh.",
+        "Trộn cá thật nhẹ tay để cá không bị nát và hỗn hợp không bị ra nước."
+    ]
+}

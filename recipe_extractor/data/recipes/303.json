@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Salad Trái Thơm Mayo",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thơm 1/2 trái",
+        "Thịt bò 150g",
+        "Cà chua bi 50g",
+        "Dưa leo trái nhỏ 50g",
+        "Xà lách lá giòn (ice berg) 50g",
+        "Xà lách Romaine 30g",
+        "Xà lách tím 30g",
+        "Hành tây 30g",
+        "Gia vị: Dầu ăn, tương cà, tương ớt, tiêu, tỏi băm"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Thơm cắt lát mỏng, áp chảo vàng thơm, chừa lại 1 ít thơm để băm nhỏ khoảng 1M.",
+        "Thịt bò cắt lát mỏng, ướp thịt bò với 1m tỏi băm, 1m Nước tương “Phú Sĩ”, tiêu & dầu ăn, để thấm.",
+        "Cà chua cắt đôi. Dưa leo cắt lát mỏng. Hành tây cắt múi cau. Các loại xà lách cắt khúc vừa ăn."
+    ],
+    "cook": [
+        "Làm nóng dầu ăn, xào thơm thịt bò với tỏi và hành tây.",
+        "Pha xốt trộn: Trộn đều 2M Xốt Mayonnaise Aji-mayo®, 1/2M tương ớt, 1/2M tương cà và 1M thơm băm."
+    ],
+    "usage": [
+        "Xếp salad ra dĩa, cho thơm áp chảo và thịt bò lên trên, rưới xốt lên trên cùng."
+    ],
+    "tips": [
+        "Thơm áp chảo nhanh và khi chảo đủ nóng sẽ giúp thơm ngon và có mùi vị đặc trưng.",
+        "Đây là dạng warm (ấm) của salad.",
+        "Ướp thêm dầu ăn để thịt bò bóng bẩy và không bị khô."
+    ]
+}

@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Salad Hạt Chia",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Hạt chia 2m",
+        "Xà lách giòn 100g",
+        "Nho khô 1M",
+        "Chuối già 1 quả",
+        "Xoài chín giòn 1/2 trái",
+        "Sả cây 2 cây",
+        "Dâu tây 6-8 trái",
+        "Gia vị: dầu ô liu, mật ong, nước chanh"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Sả cây đập dập. Xà lách giòn cắt khúc. Chuối già cắt khoanh. Xoài cắt vuông cờ. Dâu tây cắt lát.",
+        "Đun sôi 2/3 chén nước cùng 2 cây sả đập dập, để nguội, sau đó lấy 1/2 chén nước sả cho vào 2m hạt chia ngâm nở trong 10′.",
+        "Nho khô ngâm nước ấm cho nở."
+    ],
+    "cook": [
+        "Pha xốt trộn: cho 3M dầu ô liu, 2M mật ong, 2M nước cốt chanh và hạt chia ngâm nở vào khuấy đều.",
+        "Trộn salad: cho xà lách, nho khô, xoài cùng dâu tây và chuối vào tô trộn salad, cho hết lượng xốt vào trộn đều."
+    ],
+    "usage": [],
+    "tips": [
+        "Vắt 1 chút chanh vào chuối để chuối không bị thâm.",
+        "Nho khô phải ngâm nước ấm cho nở trước khi trộn salad."
+    ]
+}

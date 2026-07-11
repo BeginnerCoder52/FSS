@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Cơm Chiên Trái Thơm",
+    "serving": "3 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm trắng: 2 chén",
+        "Thơm còn nguyên phần đầu: 1 trái",
+        "Tôm tươi: 100g",
+        "Tôm khô, hành tây, hành lá, ớt",
+        "Xà lách, cà chua, dưa leo",
+        "Đường, muối, tiêu, dầu ăn",
+        "Hành tím băm, tỏi băm, bột năng",
+        "Nước tương LISA"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thơm rửa sạch, để ráo, bổ dọc trái, giữ nguyên phần đầu để trang trí, bỏ cùi, lấy ruột cắt hạt lựu khoảng 3M thơm, ướp với 1/2m hạt nêm Aji-ngon®.",
+        "Hành tây cắt hạt lựu. Hành lá rửa sạch, cắt nhỏ.",
+        "Tôm tươi bóc vỏ cắt hạt lựu, ướp 1/2m hạt nêm Aji-ngon® và tiêu, sau đó trộn đều với 1/2m bột năng. Phi thơm hành tỏi, xào tôm cho săn lại, thêm 1 ít nước dùng cho tôm chín.",
+        "Tôm khô ngâm nước ấm, xào sơ với hành, tỏi băm và tiêu."
+    ],
+    "cook": [
+        "Phi thơm hành tỏi, cho cơm vào xào săn, nêm gia vị gồm 1/2m đường, 1m hạt nêm Aji-ngon®, và 1/2m muối, tiếp tục cho tôm khô, tôm tươi, thơm và hành tây vào đảo nhanh tay. Cuối cùng, tắt lửa và cho hành lá vào trộn đều."
+    ],
+    "usage": [
+        "Múc cơm vào trái thơm, trang trí ngò rí và ớt tỉa hoa lên trên. Ăn kèm xà lách, dưa leo, nước tương LISA và ớt cắt lát."
+    ],
+    "tips": [
+        "Cách chọn tôm khô: màu đỏ tự nhiên, thịt trong, đều con, vị nhạt muối, ngọt thịt.",
+        "Rửa tôm khô bằng nước ấm, để ráo, rang sơ với hành tím băm để khử mùi khai trong tôm khô.",
+        "Khi nấu cơm để chiên, cho 1 ít dầu hoặc nấu cơm bằng nước dùng thì cơm chiên sẽ bóng, rời hạt và thơm béo."
+    ]
+}

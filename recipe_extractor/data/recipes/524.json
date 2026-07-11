@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cơm Chiên Thịt Bò Và Phô Mai",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm trắng nấu khô 3 chén",
+        "Thịt thăn bò 100g",
+        "Phô mai bào sợi 50g",
+        "Bắp hạt mỹ luộc chín 50g",
+        "Đậu Hà Lan luộc chín 50g",
+        "Cà rốt cắt hạt lựu luộc chín 50g",
+        "Tỏi phi 1M",
+        "Hành lá 2 cây",
+        "Trứng vịt 1 trứng",
+        "Nước tỏi 1M",
+        "Tiêu, dầu ăn, rượu trắng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Thịt thăn bò cắt hạt lựu 1cm, ướp với 1M nước tỏi, 1/2m tiêu, 1m nước tương “Phú Sĩ”, 1/2m bột ngọt AJI-NO-MOTO®, 1/2m hạt nêm Aji-ngon® trộn đều, để 15 phút cho gia vị thấm vào.",
+        "Cà rốt, bắp, đậu Hà Lan luộc chín để ráo. Hành lá cắt nhỏ.",
+        "Trứng vịt đánh tan, cho vài giọt rượu trắng vào."
+    ],
+    "cook": [
+        "Chiên cơm: Làm nóng dầu cho bò vào xào nhanh tay trút ra dĩa, cho tiếp cà rốt, bắp hạt, đậu Hà Lan, cho trứng vịt vào đảo nhanh, cho cơm và trộn đều, nêm 1m tiêu, 1m bột ngọt AJI-NO-MOTO®, 1m hạt nêm Aji-ngon® đảo đều, cho bò, hành lá, tỏi phi vào xóc nhanh tay, tắt lửa, cho 1/2 phô mai sợi vào đảo đều."
+    ],
+    "usage": [
+        "Cho cơm ra dĩa, rắc phần phô mai còn lại lên trên, dùng chung với nước tương “Phú Sĩ” khi cơm còn nóng."
+    ],
+    "tips": [
+        "Thêm rượu trắng vào trong trứng để khử mùi tanh của trứng vịt.",
+        "Xào bò trước khi cho vào cơm thịt bò săn và không bị dai Khi ăn."
+    ]
+}

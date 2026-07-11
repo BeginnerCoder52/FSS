@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Canh Chua Tôm Rau Muống",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm thẻ: 250g",
+        "Cà chua: 150g",
+        "Rau muống: 100g",
+        "Rau om, ngò gai",
+        "Hành tỏi băm",
+        "Gia vị: dầu ăn, đường, nước mắm, tỏi phi"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Tôm thẻ: sau đó bóc vỏ, đập dập, băm nhỏ.",
+        "Cà chua: cắt múi cau.",
+        "Rau muống: lặt rồi rửa sạch, cắt khúc vừa ăn.",
+        "Rau om, ngò gai: cắt nhỏ"
+    ],
+    "cook": [
+        "Phi thơm hành tỏi băm, cho cà chua và tôm vào xào sơ.",
+        "Thêm 1.5 lít nước đun sôi, nêm 4M Gia vị nêm sẵn Aji-Quick® Lẩu Thái, 1.5M đường, nếm vị chua nhẹ vừa ăn.",
+        "Cho rau muống vào nấu chín, thêm 1.5M nước mắm, rau om, ngò gai rồi tắt lửa.",
+        "Múc canh ra tô, rắc tỏi phi lên trên."
+    ],
+    "usage": [],
+    "tips": []
+}

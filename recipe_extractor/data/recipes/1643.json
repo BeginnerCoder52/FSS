@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Bánh Xèo Cuốn Áp Chảo",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt băm: 100g",
+        "Tôm sú lột vỏ: 100g",
+        "Bột bánh xèo: 1 gói",
+        "Giá sống: 50g",
+        "Măng luộc; 50g",
+        "Cà rốt: 20g",
+        "Hành lá, ngò rí",
+        "Hành tỏi băm",
+        "Ăn kèm: rau thơm, rau mầm, đồ chua, nước mắm chua ngọt",
+        "Tiêu, đường, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Pha bột bánh xèo: trộn 900ml nước với 400g bột bánh xèo, nêm 1m hạt nêm Aji-ngon®, 1/3m bột ngọt AJI-NO-MOTO®, 1M hành lá cắt nhỏ.",
+        "Tôm sú cắt hạt lựu. Măng cắt sợi, vắt ráo. Cà rốt cắt sợi. Hành lá, ngò rí cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm hành tỏi, xào tôm, thịt, nêm 1m hạt nêm Aji-ngon®, 1m đường, 1m tiêu, cho măng, cà rốt và giá vào xào lửa lớn, thêm hành ngò, tắt lửa, thêm 1M xốt Mayonnaise Aji-Mayo®.",
+        "Chiên 8 cái bánh xèo không cần nhân, đường kính 18cm. Lần lượt cho nhân vào từng cái bánh xèo, cuốn lại như cuốn chả giò nhưng dẹp. Bề ngang 3cm, dài 6-7cm.",
+        "Trước khi ăn, áp chảo cuốn bánh xèo cho nóng giòn."
+    ],
+    "usage": [
+        "Dùng nóng, ăn kèm với rau mầm, rau thơm, chấm nước mắm chua ngọt và đồ chua."
+    ],
+    "tips": [
+        "Pha trước bột bánh xèo và để nơi không khí ẩm giúp bánh nở xốp.",
+        "Xào nhân với lửa lớn để không bị ra nước, khi cuốn bánh sẽ giữa độ giòn lâu hơn."
+    ]
+}

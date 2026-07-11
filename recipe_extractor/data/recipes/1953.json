@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Hoành Thánh Cá Hồi",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Lá hoành thánh: 20 lá",
+        "Cá hồi phi lê: 100g",
+        "Nấm đông cô tươi: 3 tai",
+        "Hành lá: 1 cây",
+        "Tiêu, dầu ăn, tương chua ngọt"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Nấm đông cô cắt lát mỏng. Hành lá cắt nhuyễn.",
+        "Cá hồi cắt hạt lựu, trộn chung với nấm đông cô, nêm 1/2m hạt nêm Aji-ngon®, hành lá cắt nhuyễn, 1 ít tiêu, 1M xốt Mayonnaise Aji-Mayo®.",
+        "Pha xốt: trộn 1M xốt Mayonnaise Aji-Mayo® và 2M tương chua ngọt."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, lần lượt dùng lá hoành thánh bọc phần cá lại, sau đó đem chiên chín vàng, vớt ra để ráo dầu."
+    ],
+    "usage": [
+        "Dùng nóng, chấm kèm xốt pha."
+    ],
+    "tips": [
+        "Chiên lửa vừa để hoành thánh chín vàng và giòn đều.",
+        "Cá hồi cắt hạt lựu để dễ dàng cảm nhận vị cá khi ăn."
+    ]
+}

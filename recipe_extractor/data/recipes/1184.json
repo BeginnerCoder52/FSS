@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Gỏi Cải Thảo",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "- 150g cải thảo",
+        "- 2 lát thịt nguội",
+        "- ½ củ hành tây",
+        "- ½ củ cà rốt",
+        "- 1 nhánh cần tây",
+        "- 2M mè trắng rang",
+        "- Dầu mè, đường",
+        "- Gia vị: muối, tiêu"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Cải thảo tách lấy lá, rửa sạch, cắt sợi dày khoảng 0,5cm, ngâm vào nước đá lạnh 3 phút, vớt ra để ráo.",
+        "Cà rốt, cọng cần tây rửa sạch, cắt sợi. Lá cần tây cắt nhuyễn.",
+        "Hành tây cắt lát mỏng, ướp với 1m đường để thấm 10 phút.",
+        "Thịt nguội cắt sợi vừa ăn."
+    ],
+    "cook": [
+        "Pha nước trộn: trộn đều 2M giấm gạo LISA với 2M đường, 1/2m muối, 1/2m tiêu và 1m dầu mè.",
+        "Trộn gỏi: cho cải thảo, hành tây, cà rốt, cần tây và thịt nguội vào tô, trộn đều với nước trộn gỏi."
+    ],
+    "usage": [
+        "Cho gỏi cải thảo ra dĩa, rắc mè lên trên."
+    ],
+    "tips": [
+        "Cải thảo sau khi cắt sợi ngâm vào nước đá trong 3 phút sẽ đỡ mùi hăng và giòn hơn."
+    ]
+}

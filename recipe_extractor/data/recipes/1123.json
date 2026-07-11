@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Sườn BBQ",
+    "serving": "4 người",
+    "times": "60 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Sườn non 4 cây",
+        "Hành tây xay 1/4 củ",
+        "Táo xay 1/2 quả",
+        "Tỏi xay 1M",
+        "Sữa đặc 4M",
+        "Bắp vàng ( Mỹ ) 1 trái",
+        "Muối, tiêu đen giã bể, tương cà, tương ớt, bơ lạt."
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\"",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Sườn non rửa sạch chặt thanh dài 15cm, tỉa gọn.",
+        "Ướp sườn với hành tây, táo xay, 1m giấm gạo lên men của Ajinomoto, 1m hạt nêm Aji-ngon®, 1m tiêu đen trong 45 phút.",
+        "Bắp vàng cắt khoanh 2cm xốc với 1/2m muối."
+    ],
+    "cook": [
+        "Làm xốt BBQ: xay nhuyễn hỗn hợp gồm 1 chén tương cà, 1/2 chén tương ớt, 1M tỏi xay, 4M sữa đặc, 1M nước tương “Phú Sĩ”, 1m  hạt nêm Aji-ngon®, sau đó đem xay hỗn hợp.",
+        "Vừa nướng vừa phết xốt BBQ lên sườn trên lửa than hoặc lò điện 180oC trong 25 phút đến khi chín. Cho bắp vào nướng chung với sườn, phết bơ lên trên khi hoàn tất."
+    ],
+    "usage": [],
+    "tips": [
+        "Ướp sườn với hành, táo xay để sườn thấm vị và không bị khô sau khi nướng.",
+        "Ướp sườn với giấm để sườn thơm, mềm."
+    ]
+}

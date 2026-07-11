@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Lẩu Bò",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nạm bò 500g",
+        "Khoai môn 250g",
+        "Củ sen 200g",
+        "Mồng tơi 300g",
+        "Cải xanh 300g",
+        "Hành tỏi băm 1M",
+        "Gừng 50g",
+        "Sả 2",
+        "cây Hành tím 2 củ",
+        "Mì trứng 500g",
+        "Rau tía tô",
+        "Nước mắm, dầu điều",
+        "Tương ớt, tương đen, sa tế"
+    ],
+    "spices": [],
+    "process": [
+        "Gừng, hành củ nướng thơm, rửa sạch, đập dập. Sả đập dập, cắt khúc. Khoai môn chiên sơ, củ sen cắt miếng vừa ăn. Mồng tơi, cải xanh cắt khúc. Tía tô cắt nhỏ.",
+        "Mì trứng ngâm mềm, để ráo, xếp ra dĩa."
+    ],
+    "cook": [
+        "Nạm bò rửa sạch, ráo nước. Cho nạm bò vào nồi áp suất cùng với gừng nướng, hành củ nướng và sả cây đập giập, sau đó cho 1.8L nước vào nấu sôi 20 phút, xả hơi, mở nắp lấy nạm bò ra, thoa 1M nước mắm, để 5 phút cho thấm rồi cắt miếng mỏng. Lọc lấy 1.5L nước dùng.",
+        "Đun nóng 1M dầu điều, cho hành tím vào phi thơm, cho nước dùng cùng với khoai môn, củ sen vào nấu chín mềm, nêm gói Aji-Quick® Gia vị nêm sẵn Lẩu Đuôi Bò vào khuấy đều, thêm tía tô cắt nhỏ. Thái nạm bò, cho ra dĩa.",
+        "Khi ăn cho rau vào nấu chín, dùng chung với thịt nạm bò và mì trứng. Nước chấm: tương ớt, tương đen, sa tế pha chế tùy khẩu vị."
+    ],
+    "usage": [
+        "Khi ăn cho rau vào nấu chín, dùng chung với thịt nạm bò và mì trứng.",
+        "tương ớt, tương đen, sa tế pha chế tùy khẩu vị."
+    ],
+    "tips": [
+        "Chiên sơ khoai môn để khi nấu khoai không bị nát.",
+        "Sử dụng gói Aji-Quick® Gia vị nêm sẵn Lẩu Đuôi Bò không cần nêm thêm gia vị khác."
+    ]
+}

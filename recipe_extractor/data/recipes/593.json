@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Bánh Cá Khoai Tây",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá chẻm fillet 200g",
+        "Khoai tây 400g (2 củ)",
+        "Boaro (phần lá) 2 lá",
+        "Cà rốt 1/2 củ",
+        "Trứng gà 3 quả",
+        "Bột mì 1/2 chén",
+        "Bột xù 2 chén",
+        "Bơ lạt 100g",
+        "Sữa 100ml",
+        "Chanh 1 quả",
+        "Ăn kèm: salad dầu giấm",
+        "Gia vị: dầu ăn, muối, tiêu"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Khoai tây luộc nguyên vỏ, sau đó bóc vỏ, nghiền mịn. Cá cắt thành miếng vừa ăn",
+        "Lá boaro cắt lát. Cà rốt cắt nhỏ. Chanh mài vỏ, sau đó vắt lấy nước. Trứng gà đánh tan 2 quả.",
+        "Xào cà rốt, hành boaro với bơ cho thơm, cho sữa và cá vào nấu chín, đến khi nước cạn. Dùng nĩa tán cá ra thành từng miếng to, cho khoai tây nghiền vào nêm 1/2m muối, 1/3m tiêu, để nguội, định hình tuỳ thích."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, lần lượt tẩm bánh cá qua bột mì, nhúng trứng, sau đó lăn qua bột xù. Chiên bánh cá chín vàng. Vớt ra để ráo dầu.",
+        "Đánh nổi bung 1 lòng đỏ trứng cùng 1m cốt chanh, 1/4 muối tiêu, 1m vỏ chanh mài. Cho thau trứng lên nồi nước nóng làm chín trứng. Nhấc ra khỏi nồi, để nguội, tiếp tục vừa đánh vừa cho 4M Xốt Mayonnaise Aji-mayo® vào đảo đều."
+    ],
+    "usage": [],
+    "tips": [
+        "Giữ lạnh hỗn hợp để tạo hình dễ hơn.",
+        "Đánh lòng đỏ trứng, cốt chanh và gia vị khi đánh xốt để xốt không bị tanh.",
+        "Dùng nĩa tán cá va khoai sẽ dễ tơi hơn."
+    ]
+}

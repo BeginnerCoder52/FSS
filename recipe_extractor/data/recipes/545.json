@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Salad Tự Chọn",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò phi lê: 200g",
+        "Phô mai cứng: 50g",
+        "Jambon: 50g",
+        "Trứng gà: 2 quả",
+        "Cà chua: 3 trái",
+        "Dưa chuột ngâm chua: 8 trái",
+        "Dưa leo: 1 trái",
+        "Xà lách: 1 cây",
+        "Hành tím băm: 1M",
+        "Dầu đậu nành",
+        "Muối, tiêu, đường, mù tạc vàng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Thịt bò cắt lát dày 1cm, dùng dụng cụ đập thịt đập cho mềm, ướp với 1m hạt nêm Aji-ngon®, 1/2m tiêu và 2M dầu ăn, để thấm 10 phút. Chiên áp chảo đến khi thịt bò vừa chín tới, để nguội, cắt sợi bản 0,5cm.",
+        "Dưa leo, cà chua bỏ ruột, cắt sợi. Dưa chuột ngâm chua, jambon và phô mai cắt sợi dày 4 li dài 6cm. Xà lách rửa sạch, cắt sợi lớn dày 0,5cm. Trứng gà luộc chín, bóc vỏ, cắt múi."
+    ],
+    "cook": [
+        "Cho vào tô 1M hành tím băm, 1M mù tạc vàng,  1M đường, 1/2m hạt nêm Aji-ngon®, 1/2m tiêu, 1/4m muối, 3M Giấm gạo lên men LISA®, dùng cây đánh trứng đánh tan, cho từ từ 1/3 chén dầu đậu nành vào. Nếm xốt có vị chua, mặn đậm, ngọt dịu, đặc vừa."
+    ],
+    "usage": [
+        "Cho xà lách vào ly hoặc chén thủy tinh. Sau đó trang trí với trứng, thì là, xà lách và cà chua bi. Món này ăn lạnh kèm với bánh mì nướng."
+    ],
+    "tips": [
+        "Nên chọn dưa chuột ngâm chua có màu vàng tự nhiên.",
+        "Cho dầu vào từ từ đánh đều để tạo độ béo và mịn cho xốt."
+    ]
+}

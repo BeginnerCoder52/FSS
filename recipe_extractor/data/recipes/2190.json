@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Salad Gà Giòn",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gà má đùi 400g",
+        "Xà lách mỡ 2 cây",
+        "Tương ớt Hàn Quốc 3M",
+        "Hành tây 1 củ",
+        "Bắp mỹ 1/2 quả",
+        "Củ cải đỏ (củ ra-đi) 2 củ",
+        "Gừng băm, tỏi băm",
+        "Mè trắng rang",
+        "Muối, tiêu, ớt bột Hàn Quốc, mật ong"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Gà má đùi lóc xương, cắt miếng vừa ăn, ướp với 1m ớt bột Hàn Quốc.",
+        "Hành tây cắt múi mỏng, xào sơ cho vừa chín tới. Bắp mỹ luộc chín, tách hạt, trộn với ít muối, ít tiêu.  Củ cải ra-đi cắt lát mỏng."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, tẩm gà qua Aji-quick® Bột Tẩm Khô Chiên Giòn, cho vào chiên chín vàng, vớt ra để ráo dầu.",
+        "Pha nước xốt:  Hòa tan 1M nước tương “Phú Sĩ” với 1M đường, sau đó cho 1M mật ong, 3M tương ớt Hàn Quốc, 1M mè rang, gừng tỏi băm vào trộn đều."
+    ],
+    "usage": [],
+    "tips": []
+}

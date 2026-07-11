@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Thịt Nướng BBQ",
+    "serving": "0 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nạm bò Úc : 300g",
+        "Ba rọi : 200g",
+        "Lê : 100g",
+        "Cà chua chín mọng : 2 trái",
+        "Hành tây : 1 củ",
+        "Ớt hiểm : 2 trái",
+        "Gừng : 1M",
+        "Tỏi : 1M",
+        "Mè rang : 2M",
+        "Lá mè, tỏi tép, đầu hành lá",
+        "Mù tạt vàng, cà hộp, dầu mè, muối, đường, tiêu, bột ớt",
+        "Ăn kèm : Xà lách, dưa leo, cà rốt"
+    ],
+    "spices": [
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\"",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt ba rọi, thịt bò Úc cắt lát mỏng. Cà chua chẻ đầu, chần qua nước sôi, bỏ vỏ và hạt, xay nhuyễn với 1/2 củ hành tây.",
+        "Xay nhuyễn hỗn hợp xốt ướp gồm: 100g lê, 1/2 củ hành tây, 1M gừng, 1M tỏi, 2 trái ớt, 2m bột ớt, 1M dầu mè, 2M nước tương “Phú Sĩ”, 1M hạt nêm Aji-ngon®, 1m bột ngọt AJI-NO-MOTO®, 1m tiêu."
+    ],
+    "cook": [
+        "Trộn đều hỗn hợp xốt với thịt bò, thịt ba rọi và 2M mè rang, để thấm để trong ngăn mát tủ lạnh khoảng 30 phút.",
+        "Làm xốt: Phi thơm 1M tỏi băm, cho cà và hành tây xay nhuyễn vào, cùng với 1.5M cà hộp, 1/2m bột ớt, 1M đường, 1M Giấm gạo lên men LISA®, 1/2M mù tạt vàng, 1/3m muối, 1/3m bột ngọt AJI-NO-MOTO®, 1/2m tiêu, nếm vị vừa ăn, tắt lửa."
+    ],
+    "usage": [
+        "Cho vỉ nướng lên bếp (hoặc chảo chống dính) quét một lớp dầu ăn, chảo nóng gắp thịt trải đều lên vỉ, nướng mỗi mặt 2-3 phút cho chín tới. Ăn kèm rau xà lách, cà rốt, dưa leo, lá mè, đầu hành, tỏi tép, chấm với xốt."
+    ],
+    "tips": [
+        "Dùng quả lê để ướp thịt để làm mềm thịt và tạo hương vị đặc trưng cho món ăn."
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Sushi Đậu Hũ",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm gạo Nhật (hoặc gạo dẻo) 2 chén",
+        "Đậu hũ chiên 1 miếng",
+        "Bắp non luộc 2 cây",
+        "Dưa leo 1 quả",
+        "Dưa chua (cà rốt củ cải trắng ngâm chua) 40g",
+        "Ớt chuông đỏ 1/4 quả",
+        "Mè trắng rang 1/2 chén",
+        "Lá rong biển 2 lá",
+        "RAU NÊM: Gừng chua kiểu nhật",
+        "Dầu ăn, đường"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Bắp non đã luộc cắt làm 2 theo chiều dọc. Dưa leo chẻ làm 4 theo chiều dọc, bỏ ruột, cắt thành từng sợi nhỏ theo chiều dài. Ớt chuông đỏ cắt sợi theo chiều dọc.",
+        "Giữ cho phần cơm được nóng, vừa ráo để làm sushi. Hòa 2M giấm gạo lên men của Ajinomoto với 1M đường, đun sôi, để nguội, cho vào cơm trộn đều, giữ ấm, rồi chia 2 và nén nhẹ tay.",
+        "Đậu hũ cắt lát mỏng 8 ly, ướp với 1m hạt nêm Aji-ngon® từ nấm hương và hạt sen, 1/4m tiêu, sau đó chiên áp chảo rồi cắt thanh."
+    ],
+    "cook": [],
+    "usage": [],
+    "tips": [
+        "Trộn cơm lúc còn nóng cơm sẽ thấm gia vị hơn.",
+        "Vừa trộn cơm nhẹ tay vừa cho từng ít hỗn hợp giấm đường vào để cơm không bị nát hay đổ nhựa và đều vị."
+    ]
+}

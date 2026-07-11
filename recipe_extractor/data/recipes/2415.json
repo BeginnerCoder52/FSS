@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Bún Gạo Xào Chao Đỏ",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bún gạo khô: 300g",
+        "Chả lụa chay: 100g",
+        "Cà rốt: 100g",
+        "Cần tàu: 50g",
+        "Giá: 50g",
+        "Boaro: 1 khúc",
+        "Đậu hũ chiên: 1 miếng",
+        "Nấm mèo: 3 tai",
+        "Đậu phộng rang, ngò rí, ớt Chao đỏ, đường, dầu ăn, nước tương"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Bún gạo ngâm nước cho mềm, vớt ra để ráo, cắt đôi.",
+        "Chả lụa chay cắt sợi. Đậu hũ chiên cắt lát dày 0,5cm. Cà rốt gọt vỏ, cắt sợi dày 3mm, dài 6cm.",
+        "Nấm mèo ngâm nở, cắt sợi nhuyễn. Cần tàu cắt khúc 6cm. Boaro cắt lát xéo."
+    ],
+    "cook": [
+        "Pha chao đỏ: cho 1M chao đỏ vào tô, thêm 1/2M đường, 1/2M nước tương Phú Sĩ, 1/2 chén nước và 1m bột ngọt AJI-NO-MOTO®, trộn đều.",
+        "Phi thơm boaro, cho bún vào xào, nêm 1m nước tương Phú Sĩ, xào đến khi bún gạo săn lại thí trút ra dĩa. Tiếp tục phi thơm boaro, cho nước chao vào, thêm cà rốt, nấm mèo, đậu hũ, chả lụa chay vào xào đến khi cà rốt chín thì cho bún gạo và cần tây vào, xào đến khi khô nước thì tắt bếp."
+    ],
+    "usage": [
+        "Cho bún gạo xào ra dĩa, rắc ngò và đậu phộng lên trên, dọn kèm nước tương Phú Sĩ và ớt cắt lát."
+    ],
+    "tips": [
+        "Nên xào nhẹ tay để không làm nát đậu hũ, chả và bún.",
+        "Bún ngâm mềm rồi xào thì sẽ không bị nát."
+    ]
+}

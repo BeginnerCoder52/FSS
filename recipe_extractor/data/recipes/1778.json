@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Cá Kho Tàu",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá saba: 1 con nhỏ khoảng 450g",
+        "Thịt ba chỉ: 100g",
+        "Nước dừa tươi: 1 chén",
+        "Trứng cút bóc vỏ: 10 quả",
+        "Đầu hành lá: 4 cái",
+        "Ớt hiểm: 4 trái",
+        "Hành tím băm, nước mắm, tiêu, ớt bột, dầu ăn",
+        "Trang trí: ngò rí"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Đầu hành lá cắt khúc 4cm. Ớt hiểm đập dập.",
+        "Thịt ba chỉ cắt lát mỏng.",
+        "Cá làm sạch, cắt khúc 2cm, chiên áp chảo với dầu cho rám vàng 2 mặt rồi cho ra tô.",
+        "Ướp cá, thịt với 1.5M nước mắm, 1M hạt nêm Aji-ngon®, 1M bột ngọt AJI-NO-MOTO®, 1M hành tím băm, 1/2M tiêu, 1M ớt bột, 4 trái ớt hiểm đập dập."
+    ],
+    "cook": [
+        "Cho cá, thịt ba chỉ, trứng lên bếp, cho nước dừa vào nấu với lửa vừa, nếm vị vừa ăn, cho đầu hành lá cắt khúc vào và tắt bếp."
+    ],
+    "usage": [
+        "Dùng nóng với cơm trắng."
+    ],
+    "tips": [
+        "Áp chảo cá trước để cá khử bớt mùi tanh, thịt cá chắc hơn và không bị nát khi kho.",
+        "Kho lửa liu riu cho cá, thịt và trứng thấm gia vị."
+    ]
+}

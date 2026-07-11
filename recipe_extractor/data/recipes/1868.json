@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cơm Trộn Cá Ngừ Rong Biển",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm trắng: 2 chén cơm",
+        "Cá ngừ ngâm dầu: 1 hộp",
+        "Trứng gà: 2 quả",
+        "Hành tây: 1/2 củ",
+        "Dưa leo: 100g",
+        "Cà rốt: 100g",
+        "Rong biển ăn liền: 3 lá",
+        "Mè trắng: 1 ít",
+        "Tương ớt Hàn Quốc: 3M",
+        "Nước tương Phú Sĩ: 2M",
+        "Đường: 2m",
+        "Dầu mè: 1M",
+        "Tiêu xay"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Cơm trắng xếp vào thố.",
+        "Cá ngừ chắt dầu, trộn với ít tiêu. xếp vào 1 góc.",
+        "Lá rong biển cắt nhỏ, xếp 1 góc.",
+        "Hành tây cắt hạt lựu, xào thơm với dầu ăn và 1m nươc tương Phú Sĩ.",
+        "Dưa leo, cà rốt cắt sợi nhuyễn xếp 1 góc."
+    ],
+    "cook": [
+        "Chiên trứng lòng đào để lên trên cùng.",
+        "Làm Xốt trộn cơm: 3M tương ớt HQ, 2m đường, 2m nước tương, 1M dầu mè."
+    ],
+    "usage": [
+        "Cho thố cơm lên bếp cho nóng, khi ăn thêm mè rang và rưới xốt trộn lên trên, trộn đều"
+    ],
+    "tips": []
+}

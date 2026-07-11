@@ -1,0 +1,28 @@
+{
+    "recipe_name": "Cá Hồi Chiên Sốt Chanh",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá hồi phi lê còn da 250g",
+        "Chanh vàng 2 quả (chọn chanh núm của Mỹ, trái dài vỏ dầy)",
+        "Gia vị: đường, mật ong, bơ lạt, bột năng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn"
+    ],
+    "process": [
+        "Khứa trên da cá các đường song song. Tẩm 1/2 gói Aji-Quick® Bột tẩm khô chiên Giòn xung quanh miếng cá.",
+        "Chanh cắt lấy 3 lát, mài phần còn lại lấy 1m vỏ chanh. Vắt lấy 3M nước cốt chanh."
+    ],
+    "cook": [
+        "Chiên cá: Đun nóng 3M dầu trong chảo, áp chảo phần da cá trước cho chín sém rồi lật lại áp chảo phần thịt cá vừa chín, chắt hết phần dầu trong chảo ra rồi thêm 1M bơ lạt cho cá thơm. Cá chín tới, gắp ra dĩa. Cho 3 miếng chanh vào áp chảo hơi sém vàng, thơm.",
+        "Làm xốt: Pha 3M nước cốt chanh với 3M nước, 1M mật ong, 1m đường, 2m nước bột năng, 1m hạt nêm Aji-ngon, bắc lên bếp khuấy cho sánh, thêm 1M bơ lạt, tắt lửa cho thêm 1m vỏ chanh mài vào."
+    ],
+    "usage": [],
+    "tips": [
+        "Khứa trên da cá các đường song song để cá dễ thấm bột, khi chiên ngon hơn.",
+        "Thêm bơ sau khi chiên cá giúp cá giữ được mùi thơm của bơ."
+    ]
+}

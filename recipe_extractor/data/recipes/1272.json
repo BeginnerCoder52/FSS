@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Phở Chay",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Trung bình",
+    "normal_ingredients": [
+        "Bò lát chay 200g",
+        "Tép mỡ chay 100g",
+        "Ham chay 200g",
+        "Boa-ro băm 1 cây",
+        "Cà rốt 50g",
+        "Nấm đông cô tươi 10 tai",
+        "Cải thảo 100g",
+        "Bánh phở 800g",
+        "Bơ tươi 1M",
+        "Súp phở chay 2 viên",
+        "Gia vị: Muối, đường phèn, gia vị phở chay, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Nấm",
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Nấu nước dùng với boa-rô, củ cải trắng, bắp, cà rốt, nấm hương, đun sôi, giảm lửa, vớt bọt, nấu khoảng 1 giờ. Lọc lấy 2 lít nước dùng.",
+        "Bò lát ngâm nở, lạng mỏng. Tép mỡ ngâm nở, chiên vàng. Ham chay lát mỏng, chiên sơ.",
+        "Cà rốt tỉa hoa, cắt lát. Nấm đông cô, bỏ gốc, cắt lát. Cải thảo cắt khúc 3cm. Ngò rí, cọng ngò gai cắt nhỏ."
+    ],
+    "cook": [
+        "Rang thơm quế, hồi, thảo quả. Gừng nướng thơm, bóc vỏ, đập giập. Cho toàn bộ vào túi đựng.",
+        "Phi thơm 1M hành boa- rô với 1M bơ tươi rồi cho bò lát vào xào sơ, nêm 1m hạt nêm Aji-ngon® Nấm, 1m nước tương “Phú Sĩ”.",
+        "Đun sôi 2 lít nước dùng cho túi gia vị, cải thảo cà rốt, nấm đông cô vào, nêm 2 viên súp phở chay, 1M nước tương “Phú Sĩ”, 1m bột ngọt AJI-NO-MOTO®, 1/2M đường phèn, 1/2M hạt nêm Aji-ngon® Nấm, nếm vị vừa ăn, tắt lửa."
+    ],
+    "usage": [],
+    "tips": []
+}

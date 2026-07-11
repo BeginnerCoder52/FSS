@@ -1,0 +1,27 @@
+{
+    "recipe_name": "Túi Ngọc Xốt Mè",
+    "serving": "0 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh tráng bò bía tươi 2 lá",
+        "Nấm đùi gà 100g",
+        "Dưa leo 40g",
+        "Bắp hạt 60g",
+        "RAU NÊM: Ngò rí",
+        "Gia vị: Dầu ăn, Aji-Quick® Bột Chiên Giòn"
+    ],
+    "spices": [
+        "Xốt mè rang \"Aji-Xốt\""
+    ],
+    "process": [
+        "Bánh bía cắt làm tư. Đun nóng dầu ăn, cho bánh bía vào, dùng chày/cối ấn xuống để tạo hình túi.",
+        "Dưa leo cắt hạt lựu. Bắp hạt chần sơ. Nấm đùi gà cắt sợi ngắn, rắc 1M Aji-Quick® Bột Chiên Giòn, trộn đều, chiên chín vàng, vớt ra để ráo."
+    ],
+    "cook": [
+        "Trộn đều dưa leo, bắp hạt, nấm chiên với 2M Xốt mè rang “Aji-Xốt”.",
+        "Cho hỗn hợp lên túi bánh bía chiên giòn."
+    ],
+    "usage": [],
+    "tips": []
+}

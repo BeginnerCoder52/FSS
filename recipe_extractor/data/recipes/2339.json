@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Bò Xào Lăn",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bò phi lê : 250gr",
+        "Nấm mèo : 2 tai",
+        "Bún tàu : 1 lọn",
+        "Hành tây : 1/2 củ",
+        "Cần tàu : 2 cây",
+        "Sả băm : 2 cây",
+        "Ớt sừng : 1 trái",
+        "Hành tím băm : 1M",
+        "Tỏi băm : 1M",
+        "Bột cà ri, đường, dầu ăn, tiêu, nước mắm"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt bò cắt lát mỏng, ướp với 1M xốt Mayonnaise Aji-Mayo®, 1M bột cà ri, 1M hành tím băm, 1M tỏi băm, 1M sả băm, 1/2M bột ngọt AJI-NO-MOTO®, 1M hạt nêm Aji-ngon®.",
+        "Nấm mèo ngâm nở, cắt sợi. Hành tây cắt múi cau. Bún tàu ngâm nở, cắt ngắn. Cần tàu cắt khúc 3cm. Ớt sừng cắt sợi."
+    ],
+    "cook": [
+        "Phi thơm hành tím, tỏi và sả băm, cho thịt bò vào xào săn, cho hành tây, nấm mèo vào xào sơ, cho bún tàu, ớt sợi và cần tàu vào, 1,5M đường, 1,5M xốt Mayonnaise Aji-Mayo® và 1M nước mắm, khi rau củ vừa chín thì tắt bếp."
+    ],
+    "usage": [
+        "Cho bò xào ra dĩa, rắc thêm tiêu, dùng nóng."
+    ],
+    "tips": [
+        "Thịt bò nên xào nhanh tay để thịt bò mềm và không bị dai.",
+        "Chọn bún tàu đậu xanh để có độ dai, giòn và đẹp mắt."
+    ]
+}

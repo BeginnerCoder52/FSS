@@ -1,0 +1,45 @@
+/**
+ * @file MMM-FSS-Monitor.css
+ * @brief Styling for the monitor and screen control module.
+ * Provides a fixed, full-screen black overlay with a high z-index.
+ * When active, it blocks out the UI, enabling the two-way mirror effect.
+ */
+
+#fss-blackout-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#fss-blackout-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.fss-door-indicator {
+    padding: 0.25em 0.8em;
+    border-radius: 0.8em;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.fss-door-indicator.door-open {
+    background: #e74c3c;
+    color: white;
+}
+.fss-door-indicator.door-closed {
+    background: #2ecc71;
+    color: white;
+}
+.fss-door-indicator.door-unknown {
+    background: #95a5a6;
+    color: white;
+}

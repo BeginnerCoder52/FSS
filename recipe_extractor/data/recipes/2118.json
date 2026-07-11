@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bún Gạo Xào Rau Củ",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bún gạo ngâm nở 100g",
+        "Nấm rơm 200g",
+        "Đậu hũ chiên 1 miếng",
+        "Gà chay 100g",
+        "Cải ngọt 5 nhánh",
+        "Giá 200g",
+        "Cà rốt ½ củ",
+        "Đậu phộng rang 30g",
+        "Cần tàu, ớt băm, boaro băm",
+        "Nước cốt chanh",
+        "Đường, dầu ăn, muối"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Ngâm bún gạo cho mềm, vớt ra để ráo, trộn với 1M nước tương “Phú Sĩ”.",
+        "Đậu hũ cắt sợi. Cải ngọt, cần tàu cắt khúc. Cà rốt cắt sợi. Nấm rơm chẻ đôi, ướp với 1/4m hạt nêm Aji-ngon® và 1/4m đường. Gà chay xé sợi."
+    ],
+    "cook": [
+        "Phi thơm hành boa-rô, cho nấm rơm vào xào chín, thêm 1 chút nước, rồi cho cà rốt, cải ngọt, giá sống vào xào, rưới thêm một chút nước. Cho bún gạo vào trộn đều, sau đó cho tiếp đậu hũ và gà xé sợi vào, nêm với 1/3m muối, 1/2m đường, 1/3m bột ngọt AJI-NO-MOTO®, 1M nước tương “Phú Sĩ”, nếm vị vừa ăn.",
+        "Làm nước tương: 2M đường, 3M nước tương “Phú Sĩ”, 2M nước đun sôi để nguội, 1M nước cốt chanh, 1m ớt băm. Đun nóng dầu ăn, cho đậu hũ, gà chay vào chiên giòn, vớt ra, để nguội."
+    ],
+    "usage": [],
+    "tips": [
+        "Bún gạo ngâm mềm, vớt ra cho ráo, không luộc để tránh bị nát.\nChiên trước đậu hũ và gà miếng để tạo độ săn, giòn nhẹ cho nguyên liệu"
+    ]
+}

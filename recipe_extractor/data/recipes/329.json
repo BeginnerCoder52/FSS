@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Pizza Mì Sợi",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì khoai tây 2 gói",
+        "Tôm đất 100g",
+        "Thịt nguội 50g",
+        "Trứng gà 2 quả",
+        "Ớt chuông xanh 1/4 quả",
+        "Ớt chuông đỏ 1/4 quả",
+        "Hành tây 1/4 củ",
+        "Phô mai sợi 140g",
+        "Hành lá",
+        "Bột mì, ketchup, tương ớt, dầu ăn"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Mì gói trụng qua nước sôi 1 phút, vớt ra để ráo.",
+        "Tôm bóc vỏ cắt hạt lựu. Thịt nguội cắt miếng vuông 2cm. Ớt chuông xanh, đỏ, hành tây cắt lát mỏng. Hành lá cắt nhỏ."
+    ],
+    "cook": [
+        "Cho trứng ra tô, cho 1M bột mì vào, đánh tan, sau đó cho mì đã trụng và hành lá vào trộn đều.",
+        "Xào rau củ: đun nóng dầu ăn, cho tôm vào xào săn, cho ớt chuông vào xào sơ rồi cho thịt nguội và hành tây, nêm 1 ít hạt nêm Aji-ngon®, xào rau củ vừa chín, tắt lửa.",
+        "Tạo hình pizza: Đun nóng dầu ăn, cho mì vào, dùng đũa tạo thành hình tròn và có độ dày khoảng 1cm, để lửa vừa, chiên cho đế mì vàng giòn, lật mì lại, cho ketchup, xốt Mayonnaise Aji-Mayo® lên mì, tiếp đến cho rau củ đã xào và rắc phô mai sợi lên, rưới thêm ít dầu ăn xung quanh viền mì, đậy nắp, nấu đến khi phô mai tan chảy là được."
+    ],
+    "usage": [],
+    "tips": [
+        "Các loại rau củ xào trước để các nguyên liệu chín đều với nhau.",
+        "Cho xốt Mayonnaise Aji-Mayo® lên mì, giúp tạo độ kết dính cho nhân và mặt pizza."
+    ]
+}

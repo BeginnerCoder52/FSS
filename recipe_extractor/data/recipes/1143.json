@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Súp Tomyum Hải Sản",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 8 con",
+        "Mực: 150g",
+        "Thanh cua: 6 thanh",
+        "Nấm linh chi: 50g",
+        "Nấm kim châm: 50g",
+        "Trứng gà: 2 quả",
+        "Nước dùng gà: 1,5 lít",
+        "Bột năng: 100g",
+        "RAU NÊM: gừng 1 nhánh, lá chanh 4 lá, ngò",
+        "Gia vị: rượu, muối"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Thái"
+    ],
+    "process": [
+        "Tôm sú bóc vỏ, cắt nhỏ, giữ đầu tôm làm nước dùng. Mực cắt hạt lựu. Thanh cua cắt khoanh.",
+        "Nấm linh chi, nấm kim châm cắt khúc. Hòa tan 100g bột năng cùng với 100g nước. Trứng gà đánh tan."
+    ],
+    "cook": [
+        "Nấu nước dùng: cho gừng và lá chanh vào 1,5L nước dùng cùng với đầu tôm đun nhỏ lửa khoảng 10 phút, lọc lại lấy 1,3 lít nước",
+        "Nấu súp: đun sôi 1,3 lít nước dùng, nêm vào 1 gói Gia vị nêm sẵn Aji-Quick® Lẩu Thái, khuấy đều đợi nước sôi vớt bọt, sau đó cho hết phần hải sản, thanh cua và nấm vào. Cho nước bột năng vào từ từ để tạo độ sánh và tiếp tục đổ trứng gà vào khuấy đều tay."
+    ],
+    "usage": [
+        "Múc xúp ra tô, thêm ngò rí lên trên, dùng nóng."
+    ],
+    "tips": [
+        "Cho đầu tôm, gừng, lá chanh vào nước dùng giúp tăng độ ngọt cũng như thêm hương vị đặc trưng cho món ăn."
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Hamburger Kiểu Mehico",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì burger: 4 cái",
+        "Thịt xay: 200g",
+        "Giò sống: 50g",
+        "Lòng đỏ trứng gà: 1 cái",
+        "Hành tây: 50g",
+        "Bắp mỹ nguyên hạt: 50g",
+        "Hành lá: 2 cây",
+        "Dưa leo: 1 trái",
+        "Cà chua: 1 quả",
+        "Xà lách xanh: 4 lá",
+        "Ngò rí: 4 cây",
+        "Hành tím băm, tiêu",
+        "Dầu ăn, tương ớt, tương cà, bột ớt paprika"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Ngọt Dịu"
+    ],
+    "process": [
+        "Hành lá cắt nhuyễn. Thịt xay trộn với giò sống, lòng đỏ trứng, hành lá và bắp Mỹ, ướp với 1/4m tiêu, 1m hành tím băm, 1m hạt nêm Aji-ngon®, trộn đều.",
+        "Hành tây cắt khoanh. Dưa leo, cà chua cắt lát mỏng. Xà lách, ngò rí rửa sạch, để ráo.",
+        "Tạo hình: chia hỗn hợp thịt thành 4 phần, quệt cho thịt kết dính rồi sau đó nắn tròn lại và ấn dẹt xuống thành miếng mỏng khoảng 0.5cm."
+    ],
+    "cook": [
+        "Chiên áp chảo phần nhân thịt đến khi chín đều.",
+        "Pha xốt: trộn đều 2M xốt Mayonnaise Aji-Mayo® Ngọt Dịu với 1/2m bột ớt paprika, 1M tương ớt và 1M tương cà."
+    ],
+    "usage": [
+        "Xẻ bánh buger ra làm đôi, phết xốt lên 2 mặt bánh, xếp hành tây, xà lách, dưa leo, cà chua, bánh thịt chiên và ngò rí lên mặt bánh, thêm một khoanh hành tây và ngò rí lên trên mặt, dùng miếng còn lại úp lên trên."
+    ],
+    "tips": [
+        "Sau khi tạo hình xong viên thịt, dùng 2 tay quật nhiều lần để tăng độ kết dính cho miếng thịt.",
+        "Tạo hình bánh thịt chiên có đường kính bằng với bánh burger để khi ăn thịt phủ đều hết burger."
+    ]
+}

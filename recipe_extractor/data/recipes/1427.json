@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cua Xốt Me",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cua: 2 con",
+        "Me vắt: 100g",
+        "Nước me: 200ml",
+        "Hành tây: 1/2 củ",
+        "Thơm: 1/2 trái",
+        "Hành lá, hành tây, ớt sừng, ngò rí",
+        "Tương cà, rượu trắng",
+        "Bột năng, tiêu, muối, đường, dầu ăn",
+        "Hành tím băm, tỏi băm"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Chặt cua ngay yếm, tách mai cua, cắt bớt vỏ thừa và vành trong chặt làm đôi, mình cua chặt đôi, bỏ phần chân cuối, đập giập càng.",
+        "Ướp cua với 1/2m tiêu, muối, hạt nêm Aji-ngon®, áo 1 lớp mỏng bột năng rồi trộn đều.",
+        "Me dằm lấy 1/2 chén nước, thơm băm vắt lấy nước cốt.",
+        "Hành tây cắt múi cau. Hành lá cắt khúc 5cm. Ớt sừng cắt miếng cạnh 3cm.",
+        "Pha nước xốt: gồm nước me vắt, nước thơm, tương cà, 1M đường, 1/2m muối, 1m hạt nêm Aji-ngon® hòa tan đều."
+    ],
+    "cook": [
+        "Đun sôi dầu, chiên chín cua khoảng 4-5 phút, vớt ra để ráo.",
+        "Phi thơm hành tỏi bằm, cho nước xốt me vào đun sôi sau đó cho cua vào, vừa xào vừa xốc đều, thêm hành tây, hành lá và ớt sừng vào."
+    ],
+    "usage": [
+        "Bày cua ra dĩa, trang trí ngò rí lên trên.",
+        "Dọn kèm muối tiêu chanh."
+    ],
+    "tips": [
+        "Cách chọn cua chắc: bấm 2 bên yếm cua, nếu cứng là cua chắc.",
+        "Muốn có nhiều gạch chọn cua cái yếm to, còn nhiều thịt thì chọn cua đực yếm nhọn."
+    ]
+}

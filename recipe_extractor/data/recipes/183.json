@@ -1,0 +1,30 @@
+{
+    "recipe_name": "Canh Bóng Nấu Thả",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Trung bình",
+    "normal_ingredients": [
+        "Bóng bì lợn 40g",
+        "Giò sống 200g",
+        "Cà rốt 100g",
+        "Bông cải trắng 80g",
+        "Bông cải xanh 80g",
+        "Nấm hương rừng Sapa (loại có xiên) 10g",
+        "Gia vị: Muối, đường, nước mắm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Bóng bì ngâm mềm, rửa sạch với rượu và gừng.",
+        "Cà rốt tỉa hoa, cắt lát. Băm nhỏ 1m cà rốt. Bông cải trắng, xanh cắt miếng vừa ăn. Nấm hương cắt đôi (nếu to). Hành lá chần khoảng 6 cọng, cọng ngò rí băm nhỏ, phần còn lại cắt khúc.",
+        "Giò sống trộn đều với 1M tiêu xanh đập dập, 1m ngò rí băm và 1m cà rốt băm."
+    ],
+    "cook": [
+        "Trải miếng bóng bì ra, phết hỗn hợp giò sống lên trên, cuộn chặt tay, sau đó dùng hành lá buộc lại. Nấu trong nước dùng khoảng 5 phút, vớt ra để nguội, cắt lát vừa ăn.",
+        "Nấu sôi nước dùng gà, cho các loại rau củ và nấu chín, nêm 1m hạt nêm, 1m muối, 1m bột ngọt AJI-NO-MOTO®, 1m đường, cho phàn bóng bì vào nấu sôi lại, nêm 1/2M nước mắm, hành ngò, tiêu, tắt lửa."
+    ],
+    "usage": [],
+    "tips": []
+}

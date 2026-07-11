@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Lẩu Ốc Tía Tô",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ốc bươu: 150g",
+        "Cơm mẻ: 1 chén",
+        "Thịt ba chỉ: 200g",
+        "Đậu hũ chiên: 150g",
+        "Chuối xanh: 3 quả",
+        "Rau tía tô: 50g",
+        "Nước dùng: 1.5 lít",
+        "Nước nghệ tươi, dầu ăn",
+        "Hành tím băm, ớt hiểm Muối, đường, nước mắm",
+        "Rau ăn kèm: hoa chuối, rau muống bào"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Thịt ốc rửa qua Giấm gạo lên men LISA® và muối nhiều lần cho sạch, cho 1 ít nước ấm vào rửa cho hết nhớt.",
+        "Thịt cắt mỏng ướp 2M nước nghệ, 1M bột ngọt AJI-NO-MOTO®, 1m hạt nêm Aji-ngon®, 1M muối, 1M đường, 1M hành tím băm.",
+        "Chuối xanh bào sơ vỏ, ngâm vào nước có pha một ít nước cốt chanh, cắt khúc khoảng 3cm. Đậu hủ cắt miếng vuông. Ớt hiểm dập dập. Cơm mẻ lọc lấy nước. Tía tô cắt sợi 1cm. Rau sống các loại rửa sạch, xếp ra dĩa."
+    ],
+    "cook": [
+        "Phi thơm 1M hành tím băm, cho thịt và ốc vào xào nhanh, trút ra để riêng.",
+        "Nấu sôi 1.5 lít nước dùng, nêm 2m muối, 1m bột ngọt AJI-NO-MOTO®, 1.5M đường, 1 chén nước mẻ. Cho chuối vào nấu cho chuối chín, cho đậu hũ vuông vào nấu, thêm 1M nước mắm. Tắt lửa."
+    ],
+    "usage": [
+        "Khi ăn, nấu sôi lại phần nước lẩu, cho ốc và thịt vào nấu, ăn kèm bún, rau sống và lá tía tô."
+    ],
+    "tips": [
+        "Rửa ốc với nước muối và giấm nhiều lần giúp ốc sạch và hết nhớt.",
+        "Xào ốc và thịt trước để thấm gia vị hơn và tạo mùi thơm."
+    ]
+}

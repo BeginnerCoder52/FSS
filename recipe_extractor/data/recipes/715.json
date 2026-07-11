@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Tam Hữu",
+    "serving": "4 người",
+    "times": "25 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm đất: 100g",
+        "Ớt sừng băm: 2 trái",
+        "Thịt ba chỉ : 100g",
+        "Gan heo: 80g",
+        "Hành lá: 100g",
+        "Chuối chát: 1quả",
+        "Khế xanh: 1quả",
+        "Đậu phộng rang giã nhỏ: 50g",
+        "Rau húng cay, rau quế, tía tô, dấp cá: 150g",
+        "Hành tỏi băm",
+        "Muối, tiêu, đường, bột năng, dầu ăn, nước mắm",
+        "Tương hạt xay, dầu màu điều, chanh"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Tôm để vỏ, cắt râu, cắt đuôi, rửa sạch.",
+        "Thịt heo rửa sạch với ít muối, cắt miếng vừa ăn dày khoảng 2mm. Ướp thịt với 1/2M đường, 1/2m bột ngọt AJI-NO-MOTO®, 1/2M hành tỏi băm, 1/2m nước mắm, 1/2m tiêu, để thấm.",
+        "Hành lá chần nhanh qua nước sôi, vớt ra cho vào tô nước đá lạnh.",
+        "Chuối chát, khế cắt khoanh mỏng khoảng 1 đến 1.5 mm ngâm vào chén nước pha nước cốt chanh để không bị đen."
+    ],
+    "cook": [
+        "Đun nóng 2M dầu ăn, phi thơm 1/2M hành tỏi băm, cho thịt vào xào nhanh đến khi vừa săn lại, cho tôm vào xào chung đến khi tôm thịt chín, trút ra để nguội.",
+        "Cách gói: đặt lên 1 lát chuối, 1 lát khế, rau các loại cho gọn, đặt lên trên miếng thịt rồi đến tôm trên cùng. Dùng cọng hành lá gói chặt lại, giấu đuôi hành vào giữa tôm và thịt.",
+        "Nấu nước chấm: cho 2M dầu vào chảo phi thơm hành tỏi băm, cho gan và 2M tương xay vào xào. Nêm 1/2m bột ngọt AJI-NO-MOTO®, 1/2M đường, 1M dầu điều và ít bột năng pha nước tạo độ sánh, nếu tương hơi đặc thì thêm 1 ít nước. Khi ăn cho đậu phộng rang giã nhỏ và ớt sừng băm."
+    ],
+    "usage": [
+        "Trình bày món ăn ra dĩa, dùng với nước chấm đã pha."
+    ],
+    "tips": [
+        "Chọn hành lá cọng nhỏ sẽ dễ cột và cột đẹp hơn. Ngâm hành vào nước đá lạnh sau khi chần giúp hành có màu đẹp.",
+        "Chỉ ướp thịt mà không ướp tôm với nước mắm vì tôm sẽ bị có mùi hăng khi ướp nước mắm."
+    ]
+}

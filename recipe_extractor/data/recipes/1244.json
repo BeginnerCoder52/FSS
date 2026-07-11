@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Canh Hến Nấu Bầu",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt hến: 150g",
+        "Bầu: 300g",
+        "Cà rốt: 50g",
+        "Hành lá: 2 cây",
+        "Thì là: 2 cây",
+        "Hành tím băm: 1M",
+        "Muối, tiêu, nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Thịt hến ướp với 1/2m muối, 1/2m tiêu và 1/2m bột ngọt AJI-NO-MOTO®, để thấm. Phi thơm hành tím băm, cho hến vào xào sơ.",
+        "Bầu gọt vỏ, băm sợi. Cà rốt bào mỏng, cắt sợi. Hành lá, thì là rửa sạch, cắt nhỏ."
+    ],
+    "cook": [
+        "Nước luộc hến lấy phần nước trong, đun sôi , cho cà rốt vào, đợi sôi lại cho bầu vào, bầu chín cho hến vào, nêm 1m muối và 1m bột ngọt AJI-NO-MOTO®, thêm hành lá, thì là và tiêu, tắt bếp."
+    ],
+    "usage": [
+        "Múc canh bầu nấu hến ra tô, dùng nóng với cơm."
+    ],
+    "tips": [
+        "Chọn bầu sao có da màu xanh đậm lẫn những đốm trắng, chọn trái thon sẽ ít ruột hơn. Không nấu hến quá lâu để hến không bị dai và giữ được vị ngọt."
+    ]
+}

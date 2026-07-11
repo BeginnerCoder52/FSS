@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Salad Kiểu Ý",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt heo xông khói : 2",
+        "Trứng gà : 2 quả",
+        "Bánh mì sandwich : 1 lát",
+        "Cà chua : 1 trái",
+        "Phô mai bột",
+        "Xà lách, tỏi băm",
+        "Dầu ăn, tiêu, nước mắm"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Thịt xông khói cắt miếng 3cm, chiên với ít dầu cho vàng giòn. Trứng luộc chín cắt làm 4. Bánh mì cắt miếng vuông 1cm. Cà chua  cắt khoanh. Rau xà lách cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm 1M tỏi băm, vớt tỏi ra để riêng, sử dụng dầu phi tỏi để chiên bánh mì vàng giòn.",
+        "Pha sauce: trộn đều 3M xốt Mayonnaise Aji-Mayo® với 1m nước mắm và 1/2m tỏi băm.",
+        "Xếp rau xà lách ra dĩa, trên mặt bày cà chua, thịt xông khói, trứng luộc, tỏi phi, bánh mì chiên, rắc tiêu và phô mai bột lên trên."
+    ],
+    "usage": [
+        "Chan nước xốt đã pha sẵn lên mặt dĩa salad, trộn đều hỗn hợp và dùng ngay."
+    ],
+    "tips": [
+        "Dùng món salad ngay khi trộn đều món ăn vì bánh mì và thịt xông khói vàng giòn sẽ ngon hơn.",
+        "Chọn phô mai còn mới để món ăn không bị gắt dầu."
+    ]
+}

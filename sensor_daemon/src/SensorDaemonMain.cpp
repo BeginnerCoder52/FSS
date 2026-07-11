@@ -108,6 +108,9 @@ void SensorDaemonMain::run_main_loop() {
     auto last_status_log = std::chrono::system_clock::now();
     int status_log_interval_ms = 60000; // Log status every 60 seconds
 
+    bool last_door_state = input_processor->get_door_status();
+    int door_debounce = 0;
+
     while (is_running) {
         try {
             auto current_time = std::chrono::system_clock::now();
@@ -139,6 +142,19 @@ void SensorDaemonMain::run_main_loop() {
             if (duration_since_status_log.count() >= status_log_interval_ms) {
                 log_system_status();
                 last_status_log = current_time;
+            }
+
+            // Fast door polling (debounce)
+            bool current_door = input_processor->get_door_status();
+            if (current_door != last_door_state) {
+                door_debounce++;
+                if (door_debounce >= 2) { // 200ms debounce
+                    last_door_state = current_door;
+                    output_processor->broadcast_door_status(current_door);
+                    door_debounce = 0;
+                }
+            } else {
+                door_debounce = 0;
             }
 
             // Sleep to prevent CPU spinning

@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Bánh Mì Trứng Thịt Nguội",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh mì sandwich: 8 miếng",
+        "Trứng gà: 4 quả",
+        "Thịt nguội: 2 lát",
+        "Hành tây: 1/4 củ",
+        "Xà lách: 1 cây",
+        "Ngò rí: 2 cây",
+        "Cà chua: 1 trái",
+        "Muối, tiêu, dầu ăn, ớt cắt lát"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Xà lách, ngò rí rửa sạch, để ráo. Hành tây, cà chua, thịt nguội cắt miếng vuông nhỏ khoảng 1cm.",
+        "Sandwich nướng vàng. Trứng đánh tan, khuấy đều với ít nước lọc (4 quả trứng khoảng 1M nước)."
+    ],
+    "cook": [
+        "Xào nhanh hành tây, cà chua và thịt nguội với 1M dầu ăn, cho trứng vào vừa chiên vừa khuấy đến khi trứng vừa ráo là được."
+    ],
+    "usage": [
+        "Phết xốt Mayonnaise Aji-mayo® lên 1 mặt bánh sandwich, xếp xà lách, ngò rí, ớt và trứng chiên lên, rắc thêm ít muối, tiêu tùy khẩu vị."
+    ],
+    "tips": [
+        "Pha thêm 1 ít nước vào trứng để khi chiên trứng không bị khô, có thể thay nước bằng sữa tươi nếu thích ăn béo."
+    ]
+}

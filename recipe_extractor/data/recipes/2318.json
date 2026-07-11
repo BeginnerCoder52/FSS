@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Pad Thái Chay",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bánh phở khô: 150g (ngâm mềm)",
+        "Ớt chuông đỏ: 1/4 quả",
+        "Bí ngòi: 1/2 quả",
+        "Đậu hũ trắng: 2 miếng",
+        "Hem chay: 80g",
+        "Giá sống: 100g",
+        "Cần tây: 1 cọng",
+        "Boaro băm: 1M",
+        "Nước cốt me",
+        "Đậu phộng rang giã sơ",
+        "Hắc xì dầu",
+        "RAU NÊM: Húng quế, ớt hiểm băm",
+        "Gia vị: Đường, dầu hào chay, dầu ăn, tương ớt, xốt cà chua, tiêu"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Hem chay và đậu hũ cắt sợi vừa ăn.",
+        "Chiên giòn đậu hũ.",
+        "Ớt chuông cắt sợi. Bí ngòi bỏ ruột, cắt làm 3 khúc, cắt sợi mỏng.",
+        "Cần tây cắt xéo mỏng.",
+        "Phở khô ngâm mềm"
+    ],
+    "cook": [
+        "Pha xốt xào: Hòa tan 5M nước tương “Phú Sĩ”, 1M đường, 1m hạt nêm Aji-ngon® Nấm, 1M dầu hào chay, 1M tương ớt, 1M xốt cà hộp với 3M nước cốt me, rồi cho 1m ớt hiểm băm vào.",
+        "Phi thơm hành boaro với 2M dầu ăn, cho lần lượt ớt chuông, bí ngòi, cần tây và hem vào xào chín, thêm giá sống, đậu hũ với 1/2 lượng xốt xào, nêm thêm ít tiêu, trộn đều, trút ra dĩa.",
+        "Trộn phở với 1m hắc xì dầu, rồi áp chảo sợi phở, sau đó cho 1/2 lượng xốt xào và hỗn hợp rau củ vào đảo đều, tắt lửa."
+    ],
+    "usage": [],
+    "tips": []
+}

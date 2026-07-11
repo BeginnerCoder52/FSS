@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Canh Kim Chi Thịt Bò",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bắp bò: 300g",
+        "Kim chi nguyên cây: 300g",
+        "Nấm đông cô khô, ngâm nở",
+        "Boa rô: 2 cọng",
+        "Ớt sừng Tỏi: 5 tép"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Bắp bò cắt khối vuông 3cm, ướp với 1M hạt nêm Aji-ngon®, 1/2m tiêu và 1M đường. Tỏi đập dập.",
+        "Kim chi cắt khúc 5cm, giữ lại nước kim chi.",
+        "Nấm đông cô ngâm nở, cắt bỏ chân, trộn với 1/2m hạt nêm Aji-ngon®.",
+        "Hành boa rô cắt xéo, ớt sừng đập dập, cắt đôi."
+    ],
+    "cook": [
+        "Cho 1 lít nước vào nồi áp suất, cho bắp bò, tỏi, nước kim chi và nấm đông cô vào nấu khoảng 20 phút cho thịt bò mềm. Thêm kim chi, hành boa rô và ớt sừng vào nồi, nấu thêm 5 phút, tắt bếp"
+    ],
+    "usage": [
+        "Múc canh ra tô, dùng nóng với cơm, mì hoặc bún."
+    ],
+    "tips": [
+        "Cho tỏi đập dập vào làm tăng hương vị độc đáo của món ăn",
+        "Dùng Aji-ngon để ướp thịt bò và nêm canh giúp bổ sung và tăng hương vị đậm đà của món ăn."
+    ]
+}

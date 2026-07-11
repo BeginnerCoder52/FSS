@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Đậu Hũ Croquette",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đậu hũ trắng: 300g",
+        "Thịt heo xay: 100g",
+        "Cà rốt: 50g",
+        "Trứng gà: 2 quả",
+        "Bột xù: 200g",
+        "Bột mì: 100g",
+        "Hành tây: 50g",
+        "Ngò gai: 5 lá",
+        "ĂN KÈM: Cơm, Cải mầm, cà chua bi",
+        "Gia vị: Tiêu, tương cà, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Đậu hũ trắng chần sơ, vắt ráo nước, bóp nhuyễn.",
+        "Hành tây, cà rốt cắt hạt lựu nhỏ. Ngò gai cắt nhuyễn. 1 quả trứng gà đánh tan kỹ."
+    ],
+    "cook": [
+        "Xào thịt: đun nóng 2M dầu ăn, cho thịt xay vào xào săn, cho hành tây và cà rốt vào xào chín, nêm 1/2m Hạt nêm Aji-ngon® (Heo), trút ra tô để nguội.”",
+        "Làm Croquette: cho đậu hũ vào tô thịt xào cùng với 1 quả trứng, ngò gai, 4M bột xù, 1m Hạt nêm Aji-ngon® (Heo), 1/2m tiêu, trộn đều lên. Chia thành 16 phần rồi tạo hình trụ hơi dài hơn, thân tròn. Tẩm viên đậu hũ croquette qua bột mì, nhúng qua trứng rồi tẩm bột xù.",
+        "Chiên: đun nóng dầu, cho viên đậu hũ vào chiên chín vàng, vớt ra để ráo dầu.",
+        "Pha xốt chấm: 3M Xốt Mayonnaise Aji-mayo®, 2M tương cà."
+    ],
+    "usage": [
+        "xếp đậu hũ croquette ra dĩa cùng với rau mầm và cà bi, topping với tương cà và Xốt Mayonnaise Aji-mayo®. Khi ăn chấm cùng Xốt Mayonnaise Aji-mayo® trộn."
+    ],
+    "tips": [
+        "Chần đậu hũ để đậu có độ cứng, sau đó ép bớt nước cho ráo để tạo độ kết dính cho nhân.",
+        "Thêm bột xù vào nhân để tạo độ chắc và xốp cho nhân.",
+        "Topping với Xốt Mayonnaise Aji-mayo® giúp món ăn đẹp mắt và ngon hơn."
+    ]
+}

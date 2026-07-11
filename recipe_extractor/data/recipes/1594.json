@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Bún Mắm",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá lóc phi lê: 300g",
+        "Thịt heo quay: 150g",
+        "Mắm linh: 100g",
+        "Mắm cá sặc : 100g (mua mắm còn đỏ tươi mới)",
+        "Tôm sú size 30 : 6 con",
+        "Dừa: 2 trái",
+        "Cà tím: 1 trái",
+        "Sả cây: 3 cây",
+        "Sả băm: 4M",
+        "Nước thơm: nửa chén",
+        "ĂN KÈM: Rau muống, bắp chuối bào, lá tía tô, lá hẹ, kèo nèo, bông súng",
+        "Gia vị: Dầu điều, tỏi, sả băm, ớt băm, tiêu, muối, đường"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Cà tím cắt khối lớn, cho vào tô nước muối, ngâm 15 phút, sau đó vớt ra.",
+        "Sả cây đập dập, cắt khúc.",
+        "Cá phi lê cắt lát, ướp 1/2m tiêu, 1/2m đường, 1m hạt nêm Aji-ngon® Heo, 1M sả băm, 1M hành tím năm, 1m tỏi băm. Trộn đều để thấm 15 phút.",
+        "Tôm rút chỉ lưng, rồi luộc chín, sau đó bóc vỏ chừa đuôi."
+    ],
+    "cook": [
+        "Nấu cốt mắm: cho mắm linh, mắm cá sặc, 2 chén nước, 1/2 chén nước thơm vào nồi, bật lửa, vừa nấu sôi vừa đánh đều cho tan. Lược qua lấy nước cốt.",
+        "Nấu nước dùng bún mắm: Bắt nồi (nồi 3lit) cho 2M dầu ăn, 1M dầu điều vào đun nóng. Sau đó thêm 3M sả băm, sả cây, 1m ớt băm, 1M tỏi băm phi thơm, sau đó cho cà tím vào xào sơ, thêm 2 trái nước dừa + nước = 2 lít nước. (nếu 2 trái dừa đã đủ 2l thì ko cần thêm nước).",
+        "Sau đó thêm nước cốt mắm vào nồi nấu sôi. Nêm thêm 1m hạt nêm Aji-ngon® Heo, 1m bột ngọt, 2M đường, nấu sôi rồi tắt lửa.",
+        "Xào cá lóc: bắt chảo, thêm ít dầu ăn vào đun nóng, cho cá lóc đã ướp vào xào săn, thơm, rồi trút cá vào nồi nước dùng bún mắm, mở lửa nấu sôi lại để chín cá."
+    ],
+    "usage": [],
+    "tips": [
+        "Nấu mắm với nước thơm giúp mắm nhanh nhừ và làm mùi mắm dịu hơn.",
+        "Nấu bún mắm với nước dừa tươi tạo vị ngọt thanh tự nhiên, sẽ ngon hơn.",
+        "Chọn mắm còn sáng màu, có mùi thơm là mắm mới, ngon hơn."
+    ]
+}

@@ -1,0 +1,31 @@
+{
+    "recipe_name": "Tôm Sú San Hô",
+    "serving": "4 người",
+    "times": "15 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Nấm kim châm : 200g",
+        "Tôm sú : 150g",
+        "Húng lủi, dầu ăn, tương ớt"
+    ],
+    "spices": [
+        "Aji-Quick® Bột Chiên Giòn",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm sú bóc vỏ, chừa đuôi, chẻ lưng, rút chỉ.",
+        "Các loại nấm rửa sạch, để ráo. Húng lủi băm nhỏ."
+    ],
+    "cook": [
+        "Pha gói Aji-Quick® Bột Chiên Giòn Hải Sản với lượng nước như trên bao bì.",
+        "Đun nóng dầu ăn trong chảo, nhúng tôm và các loại nấm vào bột cho vào chảo chiên đến khi vàng giòn, vớt ra, để ráo.",
+        "Pha xốt: 1M tương ớt và 2M xốt Mayonnaise Aji-Mayo®, một ít húng lủi băm và một ít tiêu."
+    ],
+    "usage": [
+        "Cho nấm và tôm chiên giòn ra dĩa, chấm kèm với xốt."
+    ],
+    "tips": [
+        "Khi cho nấm vào chảo dầu nên vẩy nhẹ để nấm xòe ra, được tạo hình đẹp.",
+        "Chiên tôm trước khi chiên nấm để dầu ít có vụn bột."
+    ]
+}

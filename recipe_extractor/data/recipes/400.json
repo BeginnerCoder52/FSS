@@ -1,0 +1,34 @@
+{
+    "recipe_name": "Tôm Chiên Mè",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 12 con",
+        "Mè đen: 50gr",
+        "Mè trắng: 50gr",
+        "Bột mì: 100gr",
+        "Trứng gà: 2 quả",
+        "Muối, tiêu",
+        "Tương ớt, chanh tươi",
+        "Xốt Mayonnaise LISA"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Chanh vắt lấy nước cốt. Trứng gà đánh tan. Trộn mè trắng và mè đen vào nhau.",
+        "Tôm làm sạch, bỏ đầu và vỏ, chừa lại đuôi tôm, khứa chữ thập và 2 đường chéo dưới bụng tôm rồi nắn tôm. Dùng dao gạt bỏ nước ở phần đuôi tôm. Ướp tôm với hạt nêm Aji-ngon®, 1/2m ít tiêu, 1/2m muối, 1/2m nước cốt chanh trong 15 phút."
+    ],
+    "cook": [
+        "Lăn tôm qua bột mì, trứng gà và hỗn hợp mè trắng mè đen. Khi tôm vàng giòn, vớt ra.",
+        "Pha xốt: trộn 2M xốt Mayonnaise LISA với 1M tương ớt."
+    ],
+    "usage": [
+        "Xếp tôm ra dĩa, ăn kèm xốt pha và rau trộn dầu giấm."
+    ],
+    "tips": [
+        "Để tôm thẳng, cắt chéo nhẹ ở phần bụng tôm, rồi dùng tay kéo và nắn tôm",
+        "Để chiên tôm không bị văng dầu ta cạo bỏ nước trong đuôi tôm, khi chiên hướng phần đuôi tôm ra ngoài."
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "recipe_name": "Mì Nưa Trộn Sườn Chay",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Mì nưa 200g",
+        "Sườn cốt lết chay 2 miếng",
+        "Cà rốt 50g",
+        "Bắp cải 50g",
+        "Cải thìa 50g",
+        "Hành boaro băm 3M",
+        "Cần tây 50g",
+        "Mè rang 1m",
+        "Dầu phi hành boaro 1M",
+        "Tương ớt, dầu hào chay, dầu mè, đường, ngò rí, nước dừa tươi"
+    ],
+    "spices": [
+        "Nước tương \"Phú Sĩ\"",
+        "Hạt nêm Aji-ngon® Nấm"
+    ],
+    "process": [
+        "Cà rốt, bắp cải, cải thìa cắt sợi, cần tây cắt sợi.",
+        "Sườn chay ngâm nước sôi cho mềm, vớt ra, vắt ráo nước rồi cắt sợi.",
+        "Pha xốt trộn: 4M nước tương Phú Sĩ, 2M tương ớt, 2M đường, 2m hạt nêm Aji-ngon® nấm hương và hạt sen, 1m dầu hào chay, 1m dầu mè."
+    ],
+    "cook": [
+        "Đun sôi nước, cho mì nưa vào trụng 3’, vớt ra trộn với 1M dầu phi hành boa ro.",
+        "Rim sườn: phi thơm hành boaro, cho 2M nước dừa tươi, 2M nước tương, 1M đường, 1m hạt nêm hạt nêm Aji-ngon® từ nấm hương và hạt sen, sau đó cho sườn vào rim khoảng 3’.",
+        "Phi thơm hành boaro, cho cà rốt, cải thìa, bắp cải, cần tây vào xào, nêm 4M xốt trộn vào, xào cho rau củ vừa chín thì tắt lửa."
+    ],
+    "usage": [],
+    "tips": [
+        "Trộn mì nưa với dầu boaro để mì bóng và không bị khô.",
+        "Rim sườn chay với sốt trộn để sườn thấm gia vị và thơm ngon hơn."
+    ]
+}

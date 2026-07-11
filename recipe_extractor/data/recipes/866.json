@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Súp Gà Chua Cay",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ức gà: 100g",
+        "Măng tươi: 100g",
+        "Đậu hũ non: 1miếng",
+        "Nước dùng gà: 1,5 lít",
+        "Nấm đông cô tươi: 5 tai",
+        "Ớt sa tế: 1M",
+        "Ngò rí, ớt sừng",
+        "Tiêu, bột năng"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Gà",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Thịt ức gà luộc chín, xé sợi. Đậu hũ non cắt hạt lựu. Măng cắt sợi. Ngò rí cắt nhỏ. Ớt sừng cắt lát.",
+        "Nấm đông cô cắt sợi. Nấm đông cô ướp với 1/2m Hạt nêm Aji-ngon®. Hòa tan 4M bột năng với 1 tô nước."
+    ],
+    "cook": [
+        "Đun sôi nước dùng, cho gà vào, nêm 2M Hạt nêm Aji-ngon®, măng và nấm vào, 3M Giấm gạo lên men Ajinomoto và 1M sa tế vào.",
+        "Lần lượt cho nấm và măng, đậu hũ non vào, thêm nước bột năng vào từ từ, khuấy đều cho nước sánh lại, rồi tắt bếp."
+    ],
+    "usage": [
+        "Múc súp ra tô, rắc ngò rí và tiêu lên trên, ăn nóng kèm Nước tương “Phú Sĩ” và ớt cắt lát tùy thích"
+    ],
+    "tips": [
+        "Nếu sử dụng nấm đông cô khô thì ngâm xong nên ướp với 1 ít hạt nêm Aji-ngon® để khử mùi hăng.",
+        "Cho đậu hũ non vào sau cùng để đậu không bị nát."
+    ]
+}

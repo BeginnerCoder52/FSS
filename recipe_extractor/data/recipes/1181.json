@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Trà Sữa Royal Cookies",
+    "serving": "4 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Trà sữa Royal \"Blendy\" 2 gói",
+        "Bánh cookie 3 cái",
+        "Whipping cream 100ml",
+        "Đá bào 180g",
+        "Bánh quế 2 cây"
+    ],
+    "spices": [
+        "Blendy® Trà Sữa Royal"
+    ],
+    "process": [
+        "Pha cốt trà sữa: Pha 2 gói trà sữa với 40ml nước ấm.",
+        "Tách riêng phần kem của bánh cookies, chỉ dùng phần bánh.",
+        "Làm lạnh ly trong tủ lạnh."
+    ],
+    "cook": [
+        "Xay mịn hỗn hợp gồm cốt trà sữa, bánh cookies, 50ml whipping cream và 180g đá bào.",
+        "Đánh bông một ít whipping cream."
+    ],
+    "usage": [
+        "Rót trà sữa Royal cookies ra ly, trang trí thêm bánh quế và whipping đánh bông."
+    ],
+    "tips": [
+        "Giữ ly lạnh khi rót trà sữa vào sẽ giữ nhiệt lâu hơn.",
+        "Giảm lượng nước pha trà sữa để có thể pha thêm với các nguyên liệu khác.",
+        "Sử dụng bánh cookie có vị bạc hà để nước uống có vị the mát mới lạ."
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Salad Xanh",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Bacon: 120g",
+        "Trứng gà ta: 4 quả",
+        "Bông cải xanh: 100g",
+        "Đậu nành Nhật: 50g",
+        "Măng tây: 50g",
+        "Hành tây: 1/2 củ",
+        "Sữa tươi: 2M",
+        "Bơ lạt: 10g",
+        "Húng lủi: 50g",
+        "ĂN KÈM: Sandwich, hạt chia",
+        "Gia vị: đường, muối, tiêu, nước cốt chanh"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Bacon cắt miếng 2cm, cho vào chảo rang vàng. Hành tây 1/2 lượng cắt sợi, ngâm đá, 1/2 lượng còn lại cắt nhỏ.",
+        "Bông cải xanh tách miếng vừa ăn. Măng tây bào xơ, cắt miếng xéo dài 3cm. Đậu nành Nhật rửa sạch. Húng lủi rửa sạch, cắt nhỏ."
+    ],
+    "cook": [
+        "Làm Crouton sandwich: cắt nhỏ vuông rồi cho vào chảo rang vàng giòn.",
+        "Luộc rau: đun sôi nước, nêm ít muối, cho lần lượt bông cải xanh, măng tây và đậu nành Nhật vào luộc vừa chín, vớt ra ngâm nước lạnh rồi để ráo.",
+        "Xay xốt xanh: 2M sữa tươi, 1M bơ lạt, hành tây cắt nhỏ, 2M rau húng lủi, 1M bacon rang vàng, 5M Xốt Mayonnaise Aji-mayo®, 1/2m đường, 1/2m muối, 1/2m tiêu, 1M nước cốt chanh, cho vào máy xay nhuyễn."
+    ],
+    "usage": [
+        "Xếp bông cải, đậu nành, măng tây, hành tây cắt mỏng, húng lủi và bacon chiên giòn ra dĩa, thêm xốt lên trên, rắc hạt chia và crouton lên, khi ăn trộn đều."
+    ],
+    "tips": [
+        "Rau củ sau khi luộc xong ngâm nước đá lạnh để rau giữ màu xanh và có độ giòn sẽ ngon cho món salad.",
+        "Sandwich cắt vuông nhỏ rồi mới rang giúp giữ độ giòn cho sandwich.",
+        "Xốt Mayonnaise Aji-mayo® tạo độ cân bằng vị, độ mượt và bóng cho món ăn, kết nối các nguyên liệu cho món ăn."
+    ]
+}

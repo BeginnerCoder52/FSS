@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bê Chao",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt bê (loại mềm) : 300g",
+        "Sả : 4 cây",
+        "Gừng : 1 củ nhỏ",
+        "Lá chanh : 5 lá",
+        "Nước bột năng : 1M",
+        "Tỏi băm, ớt hiểm băm",
+        "Tương bần, dầu ăn, nước mắm, đường, tiêu",
+        "Ăn kèm : rau om, dưa leo"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "\"AJINOMOTO\" Giấm gạo lên men",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Sả: 2 cây băm nhuyễn, 2 cây cắt lát mỏng. Gừng: 1/2 băm nhuyễn, 1/2 cắt sợi. Lá chanh cắt sợi.",
+        "Thịt bê cắt cọng con chì, ướp với 1m hạt nêm Aji-ngon®  và 1/2m bột ngọt AJI-NO-MOTO®, 1m nước mắm, 1M sả băm, 1M gừng băm, để thấm."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, cho gừng sợi và sả cắt lát vào chiên vàng giòn, vớt ra để ráo dầu. Cho thịt bê vào chiên đến khi thịt chín vàng, vớt ra để ráo dầu, trộn đều với 1/3 lượng lá chanh.",
+        "Làm xốt chấm: Phi thơm 1m tỏi băm, 1m sả băm, 1m ớt băm, cho thêm 1/3 chén nước, 1m Giấm gạo lên men LISA®, 1M tương bần, 1m đường đun sôi, giảm lửa, cho 1M nước bột năng vào cho xốt hơi sánh lại, tắt bếp."
+    ],
+    "usage": [
+        "Cho thịt bê ra dĩa, rắc lá chanh và gừng, sả chiên giòn lên trên, trang trí dĩa với dưa leo và rau om. Dùng kèm xốt tương bần."
+    ],
+    "tips": [
+        "Khi chiên thịt phải để dầu đủ nóng và chiên nhanh để thịt không bị dai và không bị hút dầu.",
+        "Trộn lá chanh vào thịt bê khi còn nóng để thịt thơm hơn."
+    ]
+}

@@ -1,0 +1,48 @@
+.fss-env-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    width: 100%;
+}
+
+.fss-env-box {
+    padding: 1.5vh 1.5vw;
+}
+
+.fss-env-title {
+    font-size: 1.8vw;
+    font-weight: 500;
+    margin-bottom: 1.2vh;
+    text-transform: none;
+}
+
+.fss-env-data-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.fss-env-data-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8vw;
+    font-size: 1.8vw;
+    font-weight: 500;
+}
+
+.fss-env-icon-temp,
+.fss-env-icon-humid {
+    font-size: 2.4vw;
+}
+
+.fss-env-icon-temp {
+    color: var(--color-text);
+}
+
+.fss-env-icon-humid {
+    color: var(--color-text);
+}
+
+.stale {
+    opacity: 0.6;
+}

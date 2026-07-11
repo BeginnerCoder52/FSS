@@ -1,0 +1,23 @@
+{
+    "recipe_name": "Bánh Mì Sandwich Nướng Phô Mai",
+    "serving": "2 người",
+    "times": "5 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Phô mai lát 1 lát",
+        "Cà chua bi 4 quả",
+        "Trứng gà 2 quả",
+        "ĂN KÈM: Tương ớt"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [],
+    "cook": [
+        "Sandwich cắt bỏ rìa các cạnh, cắt xéo tạo thành hình tam giác rồi gấp hai mép lại cố định bằng tăm tre.",
+        "Quét 1 lớp trứng gà, đặt lát phô mai nhỏ và lát cà chua lên mặt trong bánh mì.",
+        "Làm nóng nồi chiên không dầu ở nhiệt độ 190℃ trong vòng 2 phút, sau đó cho sandwich vào nướng thêm 4 phút."
+    ],
+    "usage": [],
+    "tips": []
+}

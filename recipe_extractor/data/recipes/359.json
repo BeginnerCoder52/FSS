@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Lẩu Kim Chi",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt ba chỉ 250g",
+        "Thịt bò phi lê mềm 150g",
+        "Đậu hũ trắng 1 miếng",
+        "Cải thảo 350g",
+        "Nấm kim châm 350g",
+        "Nấm linh chi nâu 150g",
+        "Rau tần ô 200g",
+        "Gia vị: hành tím băm, tỏi băm, dầu ăn",
+        "Ăn kèm: Mì trứng trụng sẵn"
+    ],
+    "spices": [
+        "Gia vị nêm sẵn Aji-Quick® Lẩu Kim Chi"
+    ],
+    "process": [
+        "Thịt ba chỉ cắt dày 1cm. Thịt bò cắt lát mỏng 2 ly. Đậu hũ trắng cắt vuông 2cm. Xếp ra dĩa.",
+        "Cải thảo, tần ô cắt khúc 3cm. Nấm kim châm, nấm linh chi rửa sạch, tách nhỏ. Xếp ra dĩa."
+    ],
+    "cook": [
+        "Phi thơm 4M dầu ăn với 2M hành tỏi băm, cho thịt ba chỉ vào xào chín. Thêm 1.5L nước vào nấu sôi, cho 1 gói Aji-Quick® gia vị nêm sẵn Lẩu kim chi vào, khuấy đều, cho đậu hũ vào, tắt lửa."
+    ],
+    "usage": [
+        "Khi ăn nhúng thịt bò và cho các loại rau vào nấu chín, ăn kèm mì trứng."
+    ],
+    "tips": [
+        "Không cần nêm thêm gia vị, chỉ sử dụng gói Aji-Quick® Gia vị nêm sẵn Lẩu kim chi."
+    ]
+}

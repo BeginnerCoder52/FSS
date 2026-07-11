@@ -1,0 +1,36 @@
+{
+    "recipe_name": "Bánh Bèo",
+    "serving": "4 người",
+    "times": "40 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú sống: 200g",
+        "Bóng bì: 10g",
+        "Hành lá: 200g",
+        "Bột gạo lọc: 1 chén",
+        "Bột năng: 1M",
+        "Nước ấm: 2 chén",
+        "Ớt xanh: 3 trái",
+        "Muối, đường, nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Hòa 1 chén bột gạo và 1M bột năng với 2 chén nước ấm, rây lại, nêm 1/4m muối và 1/2m bột ngọt AJI-NO-MOTO®, để 30 phút cho bột nở.",
+        "Tôm bỏ đầu, luộc chín, bóc vỏ, giã nhuyễn, chấy trên chảo làm chà bông, nêm 1/4m muối. Phần nước luộc tôm giữ lại để pha nước chấm.",
+        "Bóng bì chiên vàng, cắt hạt lựu. Ớt xanh băm nhỏ.",
+        "Làm dầu hành: hành lá cắt nhỏ, cho vào chén với 1/5m muối, 1/5m bột ngọt AJI-NO-MOTO®, đun nóng 2M dầu đổ vào chén hành, thêm 1m dầu nguội, đảo đều."
+    ],
+    "cook": [
+        "Đun nhiều nước trong nồi hấp cho thật sôi, đặt khuôn bánh vào cho thật nóng, quết dầu lên chén. Khuấy đều bột, múc đổ vào 2/3 khuôn, đậy vung, hấp 5 phút là bánh chín.",
+        "Pha nước chấm: trộn đều 5m nước luộc tôm với 1M đường, 1M nước mắm và ớt xanh băm nhỏ."
+    ],
+    "usage": [
+        "Xếp bánh bèo ra dĩa có lót lá chuối, rắc tôm chà bông, dầu hành và da heo chiên phông lên trên, ăn kèm nước mắm pha."
+    ],
+    "tips": [
+        "Làm dầu hành: Cho thêm dầu nguội vào để giữ màu xanh và độ giòn của hành lá.",
+        "Chọn miếng bóng bì mỏng, có màu vàng sáng và không bị gắt dầu."
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Chả Giò Cá",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Phi lê cá lóc : 200g",
+        "Giò sống : 100g",
+        "Cà rốt : 1/2 củ",
+        "Bún tàu : 1 lọn",
+        "Nấm mèo : 1 tai",
+        "Hành lá : 3 nhánh",
+        "Trứng gà : 2 quả",
+        "Bột chiên xù : 100g",
+        "Bánh tráng bía",
+        "Tiêu"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Ngọt Dịu"
+    ],
+    "process": [
+        "Cá lóc cắt thanh dài khoảng 6cm, phần nhỏ cắt hạt lựu. Ướp thanh cá với 1/3m tiêu và 1/2m hạt nêm Aji-ngon®.",
+        "Cà rốt cắt sợi. Hành lá cắt nhỏ. Nấm mèo, bún tàu ngâm nở, băm nhỏ.",
+        "Trứng gà đánh tan."
+    ],
+    "cook": [
+        "Trộn đều hỗn hợp gồm cá cắt hạt lựu, giò sống, nấm mèo, cà rốt, hành lá và 1/3m tiêu.",
+        "Trải miếng bánh tráng bía ra, đặt thanh cá lên, cho nhân vào, cuộn tròn.",
+        "Nhúng thanh cá qua trứng gà rồi nhúng bột chiên xù, đem chiên lửa vừa cho cuốn chả giò vàng giòn, vớt ra."
+    ],
+    "usage": [
+        "Cho chả giò ra dĩa, dùng nóng, chấm với xốt Mayonnaise Aji-Mayo® Ngọt Dịu."
+    ],
+    "tips": [
+        "Dùng cá lóc để cá chín có độ dai và ngọt thịt, món ăn không ra nước.",
+        "Dùng giò sống giúp tăng độ kết dính cho nhân."
+    ]
+}

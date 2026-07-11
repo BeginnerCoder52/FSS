@@ -1,0 +1,40 @@
+{
+    "recipe_name": "Cháo Hạt Sen Nấu Bò Viên",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Gạo tẻ 100g",
+        "Gạo nếp 30g",
+        "Nước dùng gà 2 lít",
+        "Thịt bò xay 100g",
+        "Nấm đông cô khô 10g",
+        "Hạt sen tươi 100g",
+        "Cà rốt 100g",
+        "Hành tây 30g",
+        "Nấm đông cô tươi 50g",
+        "Giò sống 100g",
+        "RAU NÊM: Gừng cắt sợi, hành lá, ngò rí, tiêu, hành phi",
+        "ĂN KÈM: nước mắm, ớt cắt lát, chanh",
+        "Gia vị: Tiêu xanh, gừng băm, tỏi, nước mắm, đường, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Bột ngọt AJI-NO-MOTO®"
+    ],
+    "process": [
+        "Gạo vo sạch, rang thơm, nấu cháo với nước dùng đến khi cháo gần nhừ cho hạt sen, cà rốt, nấm đông cô vào nấu, đến khi cháo nhừ.",
+        "Nấm đông cô ngâm nở, cắt nhỏ. Cà rốt, hành tây và nấm đông cô tươi cắt hạt lựu. Tiêu xanh đập dập."
+    ],
+    "cook": [
+        "Bò viên: Xào mềm hành tây, trộn bò xay, giò sống, nấm đông cô khô, hành tây, 1m tỏi băm, 1m tiêu xanh đập dập, 1m gừng băm, 1/2m Hạt nêm Aji-ngon® Heo và 1m Bột ngọt AJI-NO-MOTO®, để thấm, vo viên tròn.",
+        "Cho viên bò vào cháo, nêm 1/2m đường, 1m Hạt nêm Aji-ngon® Heo, 1m Bột ngọt AJI-NO-MOTO®, 1m muối. Tắt lửa."
+    ],
+    "usage": [
+        "Múc cháo ra cho ngò rí, hành lá, tiêu, gừng sợi và hành phi. Ăn kèm nước mắm, ớt cắt lát và chanh."
+    ],
+    "tips": [
+        "Xào thơm hành tây giúp viên bò thơm ngon hơn.",
+        "Rang gạo nếp và gạo tẻ đến khi gạo chuyển màu vàng ngà và thơm để khi nấu cháo hạt gạo sẽ bung và thơm ngon."
+    ]
+}

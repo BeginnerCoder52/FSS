@@ -1,0 +1,222 @@
+/* Cập nhật CSS cho MMM-FSS-Recommend theo thiết kế mockup (nền sáng, viền đen) */
+
+.fss-recommend-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+    width: 100%;
+    color: var(--color-text);
+    pointer-events: auto;
+}
+
+.fss-panel-title {
+    font-size: 1.8em;
+    font-weight: 500;
+    margin-bottom: 1.2em;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.fss-panel-title-center {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 1.2em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.fss-list-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 0.15vw solid var(--color-border);
+    border-radius: 0.5em;
+    padding: 0.6em 1em;
+    margin-bottom: 0.6em;
+    font-size: 1.1em;
+    background-color: transparent;
+}
+
+.fss-list-left {
+    display: flex;
+    align-items: center;
+}
+
+.fss-list-qty {
+    font-weight: 500;
+}
+
+.fss-list-row-full {
+    display: flex;
+    align-items: center;
+    border: 0.15vw solid var(--color-border);
+    border-radius: 0.5em;
+    padding: 0.6em 1em;
+    margin-bottom: 0.6em;
+    font-size: 1.1em;
+    background-color: transparent;
+}
+
+.fss-input-row {
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.fss-input-text {
+    color: var(--color-text-dimmed);
+}
+
+.fss-trash-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-right: 1em;
+    color: var(--color-text-dimmed);
+    background: transparent;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fss-trash-btn:hover {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.fss-trash-btn:active {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.2);
+    transform: scale(0.9);
+}
+
+.fss-panel {
+    /* Do NOT use overflow:hidden here — it clips children and prevents scroll */
+    display: flex;
+    flex-direction: column;
+}
+
+.fss-shopping-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 22em;
+    /* touch-action: pan-y allows vertical swipe-to-scroll on touchscreen */
+    touch-action: pan-y;
+    pointer-events: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text-dimmed) transparent;
+}
+
+.fss-shopping-scroll::-webkit-scrollbar {
+    width: 4px;
+    /* Override the global MM rule that hides all scrollbars */
+    display: block;
+}
+
+.fss-shopping-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-text-dimmed);
+    border-radius: 2px;
+}
+
+.fss-menu-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 18em;
+    touch-action: pan-y;
+    pointer-events: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-text-dimmed) transparent;
+}
+
+.fss-menu-scroll::-webkit-scrollbar {
+    width: 4px;
+    display: block;
+}
+
+.fss-menu-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-text-dimmed);
+    border-radius: 2px;
+}
+
+.fss-pipeline-time {
+    font-size: 0.75em;
+    color: var(--color-text-dimmed);
+    text-align: right;
+    margin-top: 0.4em;
+    padding: 0.2em 0.5em;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+
+.fss-chip-container {
+    padding: 0 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+}
+
+.fss-chip-title {
+    font-size: 0.85em;
+    color: var(--color-text-dimmed);
+    margin-bottom: 0.8em;
+}
+
+.fss-chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+}
+
+.fss-chip {
+    padding: 0.6em 1.2em;
+    background-color: var(--color-panel-bg);
+    border: 0.15vw solid var(--color-border);
+    border-radius: 2em;
+    font-size: 0.9em;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px; /* Touch friendly target */
+}
+
+.fss-chip:hover, .fss-chip:active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-text-dimmed);
+}
+
+.fss-chip-more {
+    color: var(--color-text-dimmed);
+    font-style: italic;
+    background-color: transparent;
+    border-style: dashed;
+}
+
+.fss-chip-more:hover, .fss-chip-more:active {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.fss-scroll-btn {
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin: 5px auto;
+  width: 80%;
+  color: var(--color-primary);
+  pointer-events: auto;
+}
+.fss-scroll-btn:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}

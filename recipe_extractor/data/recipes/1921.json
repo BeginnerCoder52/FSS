@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Cơm Chiên Cá Mặn",
+    "serving": "0 người",
+    "times": "0 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cơm trắng: 3 chén",
+        "Khô cá sửu: 50g",
+        "Xà lách: 1 búp",
+        "Trứng vịt: 2 cái",
+        "Hành lá cắt nhỏ: 2M (giữ lại đầu hành lá)",
+        "Tỏi băm, gừng cắt lát: 2M",
+        "Bột mì: 2M",
+        "Dầu ăn, đường, bột mì",
+        "Ăn kèm: ớt cắt lát, dưa leo, cà chua."
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\""
+    ],
+    "process": [
+        "Khô cá sửu ngâm với nước muối pha loãng qua đêm, xả qua nước lạnh để ráo.",
+        "Xà lách búp cắt sợi nhuyễn, trứng vịt đánh tan.",
+        "Trộn 1M bột mì vào 1/2 chén cơm, rây bỏ phần bột mì dư."
+    ],
+    "cook": [
+        "Làm nóng dầu, cho cá mặn vào chiên áp chảo vàng đều hai mặt, để nguội, dùng nĩa tách miếng nhỏ. Ướp khô với 1m bột ngọt AJI-NO-MOTO®, 1M đường. Tiếp tục rang khô với đầu hành lá và 5 lát gừng. Trộn tiếp với 1M bột mì, rây bỏ phần bột mì dư.",
+        "Cho dầu vô chảo, chiên ngập dầu phần cơm đã trộn bột mì đến khi vàng giòn. Sau đó chiên tiếp khô cá rồi dùng dao băm nhỏ lại.",
+        "Làm nóng dầu, cho tỏi vào phi thơm, cho tiếp trứng vịt vào đảo đều, cho cơm vào, nêm vào 1m hạt nêm Aji-ngon®, cho tiếp cá mặn vào chiên đến khi thấy hạt cơm khô săn lại nếm vị vừa ăn. Thêm hành lá, cơm chiên giòn vào xóc đều."
+    ],
+    "usage": [
+        "Dùng nóng với dưa leo cà chua, xà lách cắt sợi và chén nước tương ớt lát."
+    ],
+    "tips": [
+        "Rắc bột mì chiên cơm để cơm giòn xốp không bị chai cứng.",
+        "Áp chảo và chiên trước cá mặn để cá được giòn và thơm hơn."
+    ]
+}

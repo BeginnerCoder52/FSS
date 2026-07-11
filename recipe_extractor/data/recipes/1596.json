@@ -1,0 +1,32 @@
+{
+    "recipe_name": "Canh Cải Chua Nấu Cá Cơm",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá cơm : 100g",
+        "Cải chua : 200g",
+        "Cà chua : 1 trái",
+        "Rau om, ngò gai",
+        "Ớt bột, hành tím",
+        "Dầu ăn, muối, nước mắm, ớt hiểm"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Hạt nêm Aji-ngon® Heo"
+    ],
+    "process": [
+        "Cà chua cắt múi cau. Cải chua cắt khúc 1cm. Rau om, ngò gai cắt nhỏ. Ớt hiểm đập dập."
+    ],
+    "cook": [
+        "Cho 2M dầu và 1M ớt bột vào chảo, phi thơm hành tím, cho cà chua vào xào sơ,  thêm cải chua vào xào, sau đó thêm 1 lít nước.",
+        "Nấu sôi canh, cho cá cơm vào nêm 1/2M hạt nêm Aji-ngon®, 1M nước mắm, 1,5M bột ngọt AJI-NO-MOTO®, 1M muối, cho ớt hiểm vào. Đun cho canh sôi lại thêm rau om, ngò gai rồi tắt lửa."
+    ],
+    "usage": [
+        "Múc canh ra tô, dùng nóng với cơm."
+    ],
+    "tips": [
+        "Cá cơm rất nhanh chín, vì vậy khi cho cá vào nấu sôi thì tắt lửa ngay để cá giữ được vị ngọt đặc trưng.",
+        "Chọn cải chua có vị chua vừa để vị canh thơm ngon hơn."
+    ]
+}

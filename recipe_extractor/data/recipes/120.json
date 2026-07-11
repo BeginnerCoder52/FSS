@@ -1,0 +1,41 @@
+{
+    "recipe_name": "Gỏi Bốn Mùa",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá cơm 200g",
+        "Bắp chuối 70g",
+        "Xoài xanh 150g",
+        "Dưa leo 70g",
+        "Cà rốt 50g",
+        "Húng lủi 20g",
+        "Đậu phộng rang 20g",
+        "Ớt sừng 2 trái",
+        "Tỏi băm 1M",
+        "Hành boaro phi có dầu 2M",
+        "Rau răm 10g",
+        "Gia vị: Đường, nước mắm, dầu ăn"
+    ],
+    "spices": [
+        "Bột ngọt AJI-NO-MOTO®",
+        "Aji-Quick® Bột Tẩm Khô Chiên Giòn",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Cá cơm là sạch, để ráo.",
+        "Bắp chuối bào sợi. Xoài xanh cắt sợi. Dưa leo bỏ ruột, cắt sợi. Cà rốt cắt sợi. Ớt sừng 1 trái cắt sợi, 1 trái băm nhuyễn."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn, tẩm cá cơm với ½ Gói Gia vị nêm sẵn Aji-Quick® Bột Tẩm Khô Chiên Giòn, chiên chín vàng giòn để ráo dầu.",
+        "Pha nước mắm trộn gỏi: Đun tan 2M đường, 2M nước mắm, 1M Giấm gạo lên men LISA® của công ty AJINOMOTO®, 1m Bột ngọt AJI-NO-MOTO® để nguội, cho tỏi ớt băm vào."
+    ],
+    "usage": [
+        "Cho 4 loại rau ra đĩa theo từng cụm riêng biệt. Cá cơm để chính giữa. Húng lủi để xung quanh. Rải đậu phộng, rưới dầu và hành boaro lên trên. Chan nước trộn gỏi vào trộn đều trước khi ăn."
+    ],
+    "tips": [
+        "Thấm cá khô rồi tẩm qua Gia vị nêm sẵn Aji-Quick® Bột Tẩm Khô Chiên Giòn để cá thấm vị vừa ăn.",
+        "Chiên cá với dầu xâm xấp mặt để cá bám bột và giòn hơn.",
+        "Nước mắm trộn gỏi nên làm trước ít nhất 1 giờ để tỏi ớt không còn mùi hăng."
+    ]
+}

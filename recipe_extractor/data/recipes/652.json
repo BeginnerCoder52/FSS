@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Nem Hải Sản",
+    "serving": "4 người",
+    "times": "30 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Tôm sú: 150g",
+        "Mực nang: 1/2 con",
+        "Thịt cua: 100g",
+        "Cà rốt: 1/4 củ",
+        "Hành tây: 1 củ",
+        "Hành lá: 3 cây",
+        "Trứng gà: 3 quả",
+        "Bánh tráng bò bía: 1 gói",
+        "Bột chiên xù: 1 gói",
+        "Tiêu, bột năng, tương ớt, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Tôm luộc chín, bóc vỏ, bỏ đầu, cắt hạt lựu. Mực luộc chín, cắt hạt lựu.",
+        "Cà rốt, hành tây cắt hạt lựu. Hành lá cắt nhỏ. Trứng đánh tan.",
+        "Khuấy 1M bột năng với 1/2 chén nước nóng thành hỗn hợp như hồ dán."
+    ],
+    "cook": [
+        "Làm nhân: đun nóng 2M dầu ăn, xào thơm hành tây rồi cho cà rốt vào xào chín, thêm tôm, mực, cua vào, nêm 1m hạt nêm Aji-ngon® và 1m tiêu, thêm hành lá, đảo đều, tắt bếp, trút ra dĩa, để nguội, cho 4M xốt Mayonnaise Aji-Mayo® vào trộn đều.",
+        "Trải bánh bía ra, cho 1M nhân vào rồi cuốn lại, dùng hồ dán mí bánh cho dính. Nhúng nem qua trứng, tẩm bột xù rồi cho vào chiên chín vàng, vớt ra để ráo dầu.",
+        "Trộn xốt: trộn đều 2M xốt Mayonnaise Aji-Mayo® với 1M tương ớt."
+    ],
+    "usage": [
+        "Xếp nem hải sản ra dĩa, khi ăn chấm với xốt Mayonnaise Aji-Mayo® trộn tương ớt."
+    ],
+    "tips": [
+        "Dùng vỏ bánh bía nem sẽ giòn lâu hơn, màu đẹp hơn.",
+        "Nên chiên lửa cao để xốt Mayonnaise không bị chảy ra ngoài."
+    ]
+}

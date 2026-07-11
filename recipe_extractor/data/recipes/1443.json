@@ -1,0 +1,39 @@
+{
+    "recipe_name": "Mì Trộn Xốt Mayonnaise",
+    "serving": "4 người",
+    "times": "35 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Thịt nạc đầu vai: 200g",
+        "Cọng Cải ngồng: 150g",
+        "Mì trứng: 4 vắt",
+        "Cà rốt: 1/4 củ",
+        "Hành tây: 1/2 củ",
+        "Hành lá, ngò rí",
+        "Hành tỏi băm: 2M",
+        "Hành bắc phi: 1M",
+        "Ớt sừng: 1 trái",
+        "Bông hẹ: 50g",
+        "Gia vị: Tương ớt, tiêu, dầu ăn"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Nước tương \"Phú Sĩ\"",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Thịt cắt lát mỏng, ướp 2/3m hạt nêm Aji-ngon® heo, 1M xốt Mayonnaise Aji-mayo® vị nguyên bản, 1/2M hành tỏi băm, 1/2m tiêu, để thấm.",
+        "Cà rốt cắt sợi. Hành tây cắt múi cau. Cọng cải ngồng cắt khúc 5cm, bông hẹ cắt khúc 5cm. Hành lá, ngò rí cắt khúc ngắn.",
+        "Ớt cắt sợi, một ít băm nhỏ. Mì trứng trụng sẵn, xả lạnh, để ráo."
+    ],
+    "cook": [
+        "Phi thơm 1/2M hành tỏi băm, cho thịt vào xào săn, trút ra dĩa. Tiếp tục phi 1M hành tỏi băm, xào cà rốt, cọng cải ngồng, bông hẹ, nêm 1/2m hạt nêm Aji-ngon®, 1/2M nước tương phú sĩ, cho lá cải ngồng, hành tây, mì và thịt vào đảo đều, xào chín, tắt bếp, thêm hành ngò.",
+        "Thêm 2M xốt Mayonnaise Aji-mayo® vị nguyên bản, topping hành phi lên trên."
+    ],
+    "usage": [],
+    "tips": [
+        "Thịt đầu vai khi xào thịt sẽ ngon hơn, không bị khô và có độ giòn.",
+        "Sau khi tắt lửa, thêm xốt Mayonnaise Aji-mayo® vào trộn đều sẽ giúp món mì xào thơm ngon và bóng hơn.",
+        "Trụng mì trứng và xả qua nước lạnh để giảm mùi hăng của nước tro có trong mì trứng."
+    ]
+}
