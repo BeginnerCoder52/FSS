@@ -122,7 +122,7 @@ class FrtMain:
     # ========================================================================
     DEFAULT_LOOP_INTERVAL_MS = 33      # ~30 FPS target frame rate
     MAX_RECOVERY_ATTEMPTS = 3          # Maximum crash recovery attempts
-    CAMERA_IDLE_TIMEOUT = 5.0          # Auto shut down camera after 5s idle (safety fallback)
+    CAMERA_IDLE_TIMEOUT = 30.0          # Auto shut down camera after 5s idle (safety fallback)
     MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
