@@ -80,8 +80,8 @@ class CameraUvcDriver:
         logger.info("Opening camera stream from {}".format(self.device_path))
         
         try:
-            # Open camera with V4L2 backend
-            self.video_capture = cv2.VideoCapture(self.device_path, cv2.CAP_V4L2)
+            # Open camera with default backend (CAP_ANY)
+            self.video_capture = cv2.VideoCapture(self.device_path)
             
             if not self.video_capture.isOpened():
                 logger.error("Failed to open camera")

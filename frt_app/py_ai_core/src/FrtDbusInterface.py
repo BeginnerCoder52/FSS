@@ -177,7 +177,7 @@ class FrtDbusInterface:
             # Request bus name
             await sdbus.request_default_bus_name_async(
                 self.SERVICE_NAME,
-                sdbus.sd_bus_internals.NameReplaceExistingFlag
+                replace_existing=True
             )
             
             # Create and export D-Bus object
@@ -189,7 +189,8 @@ class FrtDbusInterface:
             logger.info("D-Bus connection initialized (service={})".format(self.SERVICE_NAME))
             return True
         except Exception as e:
-            logger.error(f"Async setup error: {e}")
+            import traceback
+            logger.error(f"Async setup error: {e}\n{traceback.format_exc()}")
             return False
 
     def _run_event_loop(self) -> None:
@@ -271,7 +272,7 @@ class FrtDbusInterface:
             self.dropped_messages_count += 1
 
     async def _async_emit_food_detected(self, json_data: str):
-        self.bus_connection.FoodDetected(json_data)
+        self.bus_connection.FoodDetected.emit(json_data)
 
     def emit_camera_state(self, state: str) -> None:
         """
@@ -294,7 +295,7 @@ class FrtDbusInterface:
             logger.exception("Failed to emit camera state: {}".format(e))
 
     async def _async_emit_camera_state(self, state: str):
-        self.bus_connection.CameraStateChanged(state)
+        self.bus_connection.CameraStateChanged.emit(state)
 
     def subscribe_distance_events(self, callback: Callable) -> None:
         """

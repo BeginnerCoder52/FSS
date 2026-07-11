@@ -35,7 +35,7 @@ Align directory tree in README.md with actual merged code:
 - List all Electron modules (7 FSS modules after upgrade):
   - Existing: `MMM-FSS-Env`, `MMM-FSS-Monitor`, `MMM-FSS-Inventory`
   - New: `MMM-FSS-LivePreview`, `MMM-FSS-VirtualKeyboard`, `MMM-FSS-Recommend`, `MMM-FSS-Notification`
-- Remove `recommend_system/recommend_daemon/` stub from tree
+- Remove `recipe_extractor/recommend_daemon/` stub from tree
 
 ### 0.2 Update AGENTS.md
 - Architecture table: mark RecommendDaemon as **Implemented** (was "planned")
@@ -43,7 +43,7 @@ Align directory tree in README.md with actual merged code:
 - Add 6 new sections (detailed in [AGENTS.md Update Plan](#agentsmd-update-plan))
 
 ### 0.3 Remove leftover stubs
-- Delete `recommend_system/recommend_daemon/` (only `__init__.py` files)
+- Delete `recipe_extractor/recommend_daemon/` (only `__init__.py` files)
 - Verify `recommend_daemon/` at top level is the real one (it is)
 
 ---
@@ -1337,9 +1337,9 @@ pip install --upgrade setuptools pip
 pip install -r requirements.txt
 ```
 
-**Cross-component imports** (e.g., RecommendDaemon imports recommend_system):
-- Add `sys.path.append(os.path.join(os.path.dirname(__file__), '../../recommend_system/src'))`
-- Or install as editable: `pip install -e ../../recommend_system/`
+**Cross-component imports** (e.g., RecommendDaemon imports recipe_extractor):
+- Add `sys.path.append(os.path.join(os.path.dirname(__file__), '../../recipe_extractor/src'))`
+- Or install as editable: `pip install -e ../../recipe_extractor/`
 
 **Common issues:**
 - `ModuleNotFoundError`: Check `sys.path`, venv activation, pip install
@@ -1655,14 +1655,14 @@ MagicMirror runs on Electron which includes Chromium's Web Audio API. No sound f
 - [ ] Full integration test: SensorDaemon → DBDaemon → FRTApp → RecommendDaemon → UI
 - [ ] README.md directory tree updated
 - [ ] AGENTS.md 6 new sections added
-- [ ] Stub `recommend_system/recommend_daemon/` deleted
+- [ ] Stub `recipe_extractor/recommend_daemon/` deleted
 
 ---
 # FSS FINAL UPGRADE — 30/05/2026
 Updated Implementation Plan (Aligned with FINAL_UPGRADE_3005)
-1. recommend_system Output Format — Already Satisfied
+1. recipe_extractor Output Format — Already Satisfied
 The friend's concern is already addressed by the current codebase:
-- RecipeAnalyzerEngine.generate_fss_request() (recommend_system/src/RecipeAnalyzerAPI.py:392) returns a Dict — specifically {"status": "SUCCESS", "dish": str, "ingredients": [{...}], "processing_time_ms": float}. No .db writes at the NLP library level.
+- RecipeAnalyzerEngine.generate_fss_request() (recipe_extractor/src/RecipeAnalyzerAPI.py:392) returns a Dict — specifically {"status": "SUCCESS", "dish": str, "ingredients": [{...}], "processing_time_ms": float}. No .db writes at the NLP library level.
 - RecommendEngine.generate_shopping_list() (recommend_daemon/src/RecommendEngine.py:29) also returns a Dict[str, Any] — the Bù Trừ result with available/needed/missing lists.
 - The D-Bus method GenerateShoppingList (DbusInterface.py:194) serializes this dict to JSON string and returns it to the caller.
 - The .db persistence is an optional side effect inside generate_shopping_list() (lines 120-132) — only runs if self.db_manager is set, and does NOT replace the dict return value.
@@ -1670,12 +1670,12 @@ No code changes needed. The plan already had this right. The FINAL_UPGRADE_3005.
 2. Alignment with FINAL_UPGRADE_3005.md
 All existing sections of FINAL_UPGRADE_3005.md describe the current implemented state (Phases 0-2 from HANDOVER_CHAT.md). Our additions are:
 FINAL_UPGRADE_3005 Section	Our Change	Alignment
-Architecture Overview (Recommend System + RecommendDaemon)	Add standalone recommend_system D-Bus service vn.edu.uit.FSS.RecommendSystem	Extension — new service, existing architecture unchanged
+Architecture Overview (Recommend System + RecommendDaemon)	Add standalone recipe_extractor D-Bus service vn.edu.uit.FSS.RecipeExtractor	Extension — new service, existing architecture unchanged
 Sound Design (Appendix, recommend_done: 550Hz→770Hz × 2)	MMM-FSS-Recommend self-contained sound will reuse the exact same frequency pattern	Direct reuse — matches spec exactly
 Execution Checklist (Phase 2.6: MMM-FSS-VirtualKeyboard, 2.7: MMM-FSS-Recommend, 2.8: MMM-FSS-Notification)	Replace VirtualKeyboard with MMM-Keyboard from GitHub; MMM-FSS-Recommend gets own sound (decoupled from Notification module)	Deviation — VirtualKeyboard replaced, Recommend gets self-contained notification
 DbDaemon D-Bus Methods (existing InsertRequest etc.)	Add new GetRequestList(recipe_name) method	Extension — new method, existing D-Bus interface unchanged
 AGENTS.md (already has 6 new sections from FINAL_UPGRADE_3005)	Add new sections documenting Recommend System D-Bus, MMM-Keyboard, notification changes	Preservation — keep existing, append new
-D-Bus Config (dbus_config/vn.edu.uit.FSS.conf)	Add policy for vn.edu.uit.FSS.RecommendSystem	Extension — new service policy, existing policies unchanged
+D-Bus Config (dbus_config/vn.edu.uit.FSS.conf)	Add policy for vn.edu.uit.FSS.RecipeExtractor	Extension — new service policy, existing policies unchanged
 3. Implementation Tasks (In Order)
 Task A: format_result_for_ui() in RecommendEngine
 - File: recommend_daemon/src/RecommendEngine.py
@@ -1689,8 +1689,8 @@ Task B: Wire RECOMMEND_LOADING in node_helper.js
 - Before writing SEARCH to Python bridge stdin, emit this.sendSocketNotification("RECOMMEND_LOADING", {})
 - Frontend (MMM-FSS-Recommend.js:68) already handles this — just needs the backend send
 Task C: Standalone Recommend System D-Bus Service
-- New files in recommend_system/src/:
-- dbus_service.py — Service vn.edu.uit.FSS.RecommendSystem, object path /vn/edu/uit/FSS/RecommendSystem
+- New files in recipe_extractor/src/:
+- dbus_service.py — Service vn.edu.uit.FSS.RecipeExtractor, object path /vn/edu/uit/FSS/RecipeExtractor
 - Method ExtractAndPersistRecipe(recipe_name: str) -> str:
 1. Calls RecipeAnalyzerEngine.generate_fss_request(recipe_name) (NLP)
 2. Calls DbDaemon.InsertRequest(recipe_name, ingredients_json, batch_id) via D-Bus proxy
@@ -1766,15 +1766,15 @@ showToast(message, type) {
 - File: MMM-FSS-Recommend.css — Add .fss-recommend-toast styles (similar to MMM-FSS-Notification card styles but in this module's namespace)
 Task H: Update D-Bus Config
 - File: dbus_config/vn.edu.uit.FSS.conf
-- Add policy block for vn.edu.uit.FSS.RecommendSystem:
+- Add policy block for vn.edu.uit.FSS.RecipeExtractor:
 <policy context="default">
-    <allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
-    <allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
 </policy>
 <policy user="fss">
-    <allow own="vn.edu.uit.FSS.RecommendSystem"/>
-    <allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
-    <allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+    <allow own="vn.edu.uit.FSS.RecipeExtractor"/>
+    <allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
 </policy>
 Task I: Update AGENTS.md
 Add new sections (keep all existing content):
@@ -1796,7 +1796,7 @@ Append to FINAL_UPGRADE_3005.md (preserving all existing content):
     v  (calls D-Bus)
 [RecommendDaemon.GenerateShoppingList()]
     |
-    ├── [RecommendEngine._ensure_nlp_engine()] → load recommend_system NLP
+    ├── [RecommendEngine._ensure_nlp_engine()] → load recipe_extractor NLP
     ├── [RecommendEngine.generate_shopping_list()]
     │       ├── NLP extraction (dict return)
     │       ├── Inventory query via DbDaemon.GetInventory() D-Bus
@@ -1816,7 +1816,7 @@ Alternative path (standalone Recommend System D-Bus):
 [Any D-Bus client]
     |
     v
-[RecommendSystem.ExtractAndPersistRecipe()] (new service)
+[RecipeExtractor.ExtractAndPersistRecipe()] (new service)
     ├── NLP extraction (RecipeAnalyzerEngine)
     ├── calls DbDaemon.InsertRequest() via D-Bus proxy
     └── returns dict as JSON
@@ -1824,14 +1824,14 @@ Alternative path (standalone Recommend System D-Bus):
 File	Action  Task
 recommend_daemon/src/RecommendEngine.py	Edit: add format_result_for_ui()  A  
 electron_app/.../MMM-FSS-Recommend/node_helper.js	Edit: emit RECOMMEND_LOADING    B
-recommend_system/src/dbus_service.py	New C
-recommend_system/src/main.py	New C
+recipe_extractor/src/dbus_service.py	New C
+recipe_extractor/src/main.py	New C
 db_daemon/src/DbDbusInterface.py	Edit: add GetRequestList method + callback  D
 db_daemon/src/DbDaemonMain.py	Edit: add handler for GetRequestList    D
 electron_app/magicmirror/config/config.js	Edit: replace VirtualKeyboard with MMM-Keyboard E
 electron_app/.../MMM-FSS-Recommend/MMM-FSS-Recommend.js	Edit: add KEYBOARD_INPUT handler, mergeResults, sound, toast    F,G
 electron_app/.../MMM-FSS-Recommend/MMM-FSS-Recommend.css	Edit: add toast styles  G
-dbus_config/vn.edu.uit.FSS.conf	Edit: add RecommendSystem policy  H
+dbus_config/vn.edu.uit.FSS.conf	Edit: add RecipeExtractor policy  H
 AGENTS.md	Edit: append new sections   I
 FINAL_UPGRADE_3005.md	Edit: append Phase 9 section    J
 (new module) electron_app/magicmirror/modules/MMM-Keyboard/	New (git clone https://github.com/lavolp3/MMM-Keyboard.git) E 
@@ -1839,7 +1839,7 @@ FINAL_UPGRADE_3005.md	Edit: append Phase 9 section    J
 - format_result_for_ui() is additive — the existing return format from generate_shopping_list() is unchanged; format_result_for_ui() is called as a post-processing step
 - Existing Python bridge recommend_dbus_listener.py needs no changes — it already handles individual SEARCH calls
 - MMM-FSS-Recommend still handles RECIPE_SEARCH notification (for backward compat with any other module that might send it)
-- The new D-Bus service vn.edu.uit.FSS.RecommendSystem is additive — doesn't conflict with existing services
+- The new D-Bus service vn.edu.uit.FSS.RecipeExtractor is additive — doesn't conflict with existing services
 - MMM-FSS-VirtualKeyboard can be left in place (not deleted) — just removed from config.js
 
 ---
@@ -1852,12 +1852,12 @@ All Tasks A-J from the Updated Implementation Plan have been implemented:
 |------|--------|-------------|
 | **A** | ✅ Done | `format_result_for_ui()` in RecommendEngine.py — transforms Bù Trừ dict into UI-friendly format with `ingredients[]` array + `summary` field |
 | **B** | ✅ Done | `RECOMMEND_LOADING` emitted from node_helper.js before each SEARCH write to Python bridge stdin |
-| **C** | ✅ Done | New `recommend_system/src/dbus_service.py` + `main.py` — standalone D-Bus service `vn.edu.uit.FSS.RecommendSystem` with `ExtractAndPersistRecipe` method |
+| **C** | ✅ Done | New `recipe_extractor/src/dbus_service.py` + `main.py` — standalone D-Bus service `vn.edu.uit.FSS.RecipeExtractor` with `ExtractAndPersistRecipe` method |
 | **D** | ✅ Done | `GetRequestList(recipe_name)` D-Bus method added to DbDaemon — queries via SqliteManager.get_requests_by_recipe() |
 | **E** | ✅ Done | `config.js`: replaced MMM-FSS-VirtualKeyboard with [MMM-Keyboard](https://github.com/lavolp3/MMM-Keyboard) at `fullscreen_above` position |
 | **F** | ✅ Done | MMM-FSS-Recommend.js: "Tìm kiếm" button → `sendNotification("KEYBOARD", ...)` → `KEYBOARD_INPUT` handler → comma-split multi-recipe → `mergeResults()` |
 | **G** | ✅ Done | Self-contained Web Audio sound (`recommend_done`: 550Hz→770Hz × 2) in MMM-FSS-Recommend.js |
-| **H** | ✅ Done | D-Bus config updated with `vn.edu.uit.FSS.RecommendSystem` policies for richardmelvin52, root, and default contexts |
+| **H** | ✅ Done | D-Bus config updated with `vn.edu.uit.FSS.RecipeExtractor` policies for richardmelvin52, root, and default contexts |
 | **I** | ✅ Done | AGENTS.md: 3 new sections — Recommend System D-Bus, MMM-Keyboard Integration, MMM-FSS-Recommend Notification |
 | **J** | ✅ Done | This section appended to FINAL_UPGRADE_3005.md |
 
@@ -1867,11 +1867,11 @@ All Tasks A-J from the Updated Implementation Plan have been implemented:
 | `recommend_daemon/src/RecommendEngine.py` | Edit: add `format_result_for_ui()` | A |
 | `recommend_daemon/src/main.py` | Edit: call `format_result_for_ui()` before returning | A |
 | `electron_app/.../MMM-FSS-Recommend/node_helper.js` | Edit: emit `RECOMMEND_LOADING` | B |
-| `recommend_system/src/dbus_service.py` | **New** | C |
-| `recommend_system/src/main.py` | **New** | C |
+| `recipe_extractor/src/dbus_service.py` | **New** | C |
+| `recipe_extractor/src/main.py` | **New** | C |
 | `db_daemon/src/DbDbusInterface.py` | Edit: add `GetRequestList` + callback | D |
 | `db_daemon/src/DbDaemonMain.py` | Edit: add `_handle_get_requests_by_recipe()` | D |
-| `dbus_config/vn.edu.uit.FSS.conf` | Edit: add `RecommendSystem` policy | H |
+| `dbus_config/vn.edu.uit.FSS.conf` | Edit: add `RecipeExtractor` policy | H |
 | `electron_app/magicmirror/config/config.js` | Edit: replace VirtualKeyboard with MMM-Keyboard | E |
 | `electron_app/.../MMM-FSS-Recommend/MMM-FSS-Recommend.js` | Edit: KEYBOARD_INPUT, mergeResults, sounds | F,G |
 | `electron_app/.../MMM-FSS-Recommend/MMM-FSS-Recommend.css` | Edit: search button styles | F,G |
@@ -1886,7 +1886,7 @@ All Tasks A-J from the Updated Implementation Plan have been implemented:
 - [x] Task E: Replace VirtualKeyboard with MMM-Keyboard in config.js
 - [x] Task F: Wire MMM-Keyboard → MMM-FSS-Recommend input flow
 - [x] Task G: Self-contained notification + sound in MMM-FSS-Recommend
-- [x] Task H: Update D-Bus config for RecommendSystem
+- [x] Task H: Update D-Bus config for RecipeExtractor
 - [x] Task I: Update AGENTS.md with new sections
 - [x] Task J: Documentation addition to FINAL_UPGRADE_3005.md
 

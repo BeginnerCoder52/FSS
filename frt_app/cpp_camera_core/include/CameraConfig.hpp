@@ -19,7 +19,7 @@ namespace CameraConfig {
 constexpr const char* DEVICE_PATH = "/dev/video0";
 constexpr int DEFAULT_WIDTH = 640;
 constexpr int DEFAULT_HEIGHT = 480;
-constexpr int DEFAULT_FPS = 30;
+constexpr int DEFAULT_FPS = 10;
 
 // Pixel Format
 constexpr int PIXEL_FORMAT = 0;  // 0 = BGR, 1 = RGB, 2 = YUYV/MJPEG

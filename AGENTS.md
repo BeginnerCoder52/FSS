@@ -39,9 +39,15 @@
 ## 🔨 Build & Development
 
 ### Full System Setup
+The installation is driven by a single unified installer and a centralized configuration profile.
+
 ```bash
-# Automatic build + Python venv setup for all components
+# 1. Review or modify fss_profile.conf if needed (defaults are fine for RPi4)
+# 2. Run the unified installer
 bash setup.sh
+
+# 3. Verify installation
+bash tools/verify_install.sh
 ```
 
 ### Component-Specific Build
@@ -95,7 +101,7 @@ npm run start:x11  # Or use systemd service
 python tests/run_phase1_tests.py
 
 # Recommend system NLP validation
-pytest recommend_system/tests/test_recipe_analyzer.py -v
+pytest tests/recipe_extractor/test_recipe_analyzer.py -v
 ```
 
 ### Integration Tests
@@ -295,9 +301,9 @@ component_name/
 **Performance**: F1-Score 95.03%, latency ~3.2ms (Pi 4B)
 
 **Key Files**:
-- [recommend_system/src/RecipeAnalyzerAPI.py](recommend_system/src/RecipeAnalyzerAPI.py)
-- [recommend_system/src/RecipeProcessor.py](recommend_system/src/RecipeProcessor.py)
-- Full inventory: [/memories/repo/recommend_system_inventory.md](/memories/repo/recommend_system_inventory.md)
+- [recipe_extractor/src/RecipeAnalyzerAPI.py](recipe_extractor/src/RecipeAnalyzerAPI.py)
+- [recipe_extractor/src/RecipeProcessor.py](recipe_extractor/src/RecipeProcessor.py)
+- Full inventory: [/memories/repo/recipe_extractor_inventory.md](/memories/repo/recipe_extractor_inventory.md)
 
 ### RecommendDaemon (Python)
 
@@ -307,7 +313,7 @@ component_name/
 
 **Data Flow**:
 1. User enters recipe in UI → D-Bus call to `RecommendDaemon.GenerateShoppingList(recipe)`
-2. Calls `RecipeAnalyzerEngine` from `recommend_system/` to extract ingredients (NLP)
+2. Calls `RecipeAnalyzerEngine` from `recipe_extractor/` to extract ingredients (NLP)
 3. Queries DBDaemon `GetInventory()` via D-Bus for current stock
 4. Runs Bù Trừ comparison: each ingredient → available/in-stock/missing
 5. Persists result to `FSS-Recommend.db` (own database)
@@ -387,7 +393,7 @@ python -c "import sdbus; print(sdbus.__file__)"
 - **System Architecture**: [docs/FSS_SoftwareDetailedDesign_v1.1.0.txt](docs/FSS_SoftwareDetailedDesign_v1.1.0.txt)
 - **Test Reports**: [tests/PHASE1_TEST_REPORT.md](tests/PHASE1_TEST_REPORT.md)
 - **Sensor Pinouts**: [drivers/sensor/README_PINOUT.md](drivers/sensor/README_PINOUT.md)
-- **Recommend System Details**: [/memories/repo/recommend_system_inventory.md](/memories/repo/recommend_system_inventory.md)
+- **Recipe Extractor Details**: [/memories/repo/recipe_extractor_inventory.md](/memories/repo/recipe_extractor_inventory.md)
 - **Handover Notes**: [HANDOVER_CHAT.md](HANDOVER_CHAT.md)
 
 ---
@@ -398,7 +404,7 @@ python -c "import sdbus; print(sdbus.__file__)"
 1. Implement driver in `sensor_daemon/src/` (e.g., `NewSensorDriver.cpp`)
 2. Register in `InputProcessor::poll_sensors()` with polling interval
 3. Emit D-Bus signal in `OutputProcessor::emit_sensor_data()`
-4. Update test in `sensor_daemon/tests/`
+4. Update test in `tests/sensor_daemon/`
 
 **Add UI logic to MagicMirror**:
 1. Create module in `electron_app/magicmirror/modules/MMM-FSS-<NewModule>/`
@@ -416,122 +422,50 @@ python -c "import sdbus; print(sdbus.__file__)"
 1. Implement Bù Trừ algorithm in `recommend_daemon/src/RecommendEngine.py`
 2. Register D-Bus methods in `recommend_daemon/src/DbusInterface.py` (`GenerateShoppingList`, `GetAvailableRecipes`, etc.)
 3. Add `FSS-Recommend.db` schema in `recommend_daemon/src/RecommendDbManager.py`
-4. Wire in `recommend_daemon/src/main.py` with lazy NLP engine loading from `recommend_system/`
+4. Wire in `recommend_daemon/src/main.py` with lazy NLP engine loading from `recipe_extractor/`
 5. Test: `pytest recommend_daemon/tests/test_recommend_engine.py -v`
 
 ---
 
 ## 🚀 Full Setup Guide (Corrected & Complete)
 
-Execute these in order:
+The entire installation has been consolidated into a single configuration-driven unified installer.
 
-### Step 1: System Dependencies
+### Step 1: Review Configuration
+All installation paths, device targets, and user permissions are defined in `fss_profile.conf`.
+Open this file and adjust if necessary. The defaults target a Raspberry Pi 4B (`rpi4b`) and Development mode (`dev`).
+
+### Step 2: Run the Unified Installer
+Run `setup.sh`. You can override profile settings via environment variables.
+
+**For Development (Manual Startup):**
 ```bash
-sudo apt-get update
-sudo apt-get install -y build-essential cmake pkg-config \
-    libi2c-dev i2c-tools libv4l-dev v4l-utils \
-    libsystemd-dev libsdbus-c++-dev libdbus-1-dev \
-    libzmq3-dev libsqlite3-dev libopencv-dev \
-    libtensorflow-lite-dev \
-    python3-venv python3-dev python3-sdbus python3-systemd \
-    nodejs npm
+bash setup.sh
 ```
 
-### Step 2: Create Runtime Directory
+**For Production (systemd Daemons):**
 ```bash
-sudo mkdir -p /opt/fss/{images,logs,data,models}
-sudo chown -R "$USER:$USER" /opt/fss
-
-# Create FRTApp log file with user ownership
-sudo touch /var/log/frt_app.log
-sudo chown "$USER:$USER" /var/log/frt_app.log
+FSS_MODE=production bash setup.sh
 ```
 
-### Step 3: Install D-Bus Configuration
+What `setup.sh` does automatically:
+1. Installs APT dependencies (`libv4l-dev`, `sdbus-c++`, `tflite`, etc.)
+2. Sets up hardware groups (i2c, video, gpio)
+3. Creates standardized directories under `/opt/fss`
+4. Builds C++ components (SensorDaemon, FRT Camera, C TFLite Reader)
+5. Creates isolated Python virtual environments
+6. Installs MagicMirror UI and its dependencies
+7. Deploys D-Bus security policy
+8. Fetches YOLO AI models
+9. Generates systemd services (if `FSS_MODE=production`)
+
+### Step 3: Verify the Installation
+Run the post-install verification script to ensure all components and configurations are correct:
 ```bash
-# Copy D-Bus policy to system (allows FSS services on system bus)
-sudo mkdir -p /etc/dbus-1/system.d
-sudo cp dbus_config/vn.edu.uit.FSS.conf /etc/dbus-1/system.d/
+bash tools/verify_install.sh
 ```
 
-### Step 4: Build C++ Components
-```bash
-# SensorDaemon
-mkdir -p sensor_daemon/build && cd sensor_daemon/build
-cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
-cd ../..
-
-# FRTApp (camera core + C TFLite reader)
-mkdir -p frt_app/build && cd frt_app/build
-cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
-cd ../..
-
-# Install libtflite_reader.so to system library path
-sudo cp frt_app/build/c_tflite_reader/libtflite_reader.so /usr/local/lib/
-sudo ldconfig
-```
-
-### Step 5: Create Python Virtual Environments
-```bash
-# Helper function
-setup_venv() {
-    local dir="$1"
-    local flags="${2:-}"
-    python3 -m venv $flags "$dir/venv"
-    "$dir/venv/bin/pip" install --upgrade pip setuptools
-    if [ -f "$dir/requirements.txt" ]; then
-        "$dir/venv/bin/pip" install -r "$dir/requirements.txt"
-    fi
-}
-
-# Core daemon venvs
-setup_venv "db_daemon"
-setup_venv "recommend_daemon"
-
-# FRTApp AI core (needs --system-site-packages for sdbus)
-setup_venv "frt_app/py_ai_core" "--system-site-packages"
-
-# Electron bridge venv
-setup_venv "electron_app/py_bridge"
-
-# MagicMirror module bridges
-for module in MMM-FSS-Env MMM-FSS-Inventory MMM-FSS-Monitor MMM-FSS-LivePreview MMM-FSS-Recommend; do
-    if [ -d "electron_app/magicmirror/modules/$module/py_bridge" ]; then
-        setup_venv "electron_app/magicmirror/modules/$module/py_bridge"
-    fi
-done
-
-# Recommend System (library for NLP)
-setup_venv "recommend_system"
-```
-
-### Step 6: Install Node.js / MagicMirror
-```bash
-cd electron_app/magicmirror
-npm install
-cd ../..
-```
-
-### Step 7: Verify the Installation
-```bash
-# Check C++ binaries
-ls -la sensor_daemon/build/sensor_daemon_exec
-ls -la frt_app/build/c_tflite_reader/libtflite_reader.so
-ls -la frt_app/build/cpp_camera_core/camera_core_exec
-
-# Check Python venvs
-for dir in db_daemon recommend_daemon recommend_system frt_app/py_ai_core electron_app/py_bridge; do
-    [ -f "$dir/venv/bin/python" ] && echo "✓ $dir" || echo "✗ $dir"
-done
-
-# Check npm
-[ -d electron_app/magicmirror/node_modules ] && echo "✓ magicmirror" || echo "✗ magicmirror"
-
-# Validate D-Bus config
-bash tools/verify_dbus_config.sh
-```
-
-### Step 8: Start the System
+### Step 4: Start the System
 Choose method:
 
 A) **Manual testing** (individual terminals):
@@ -556,29 +490,29 @@ source recommend_daemon/venv/bin/activate && python recommend_daemon/src/main.py
 cd electron_app/magicmirror && npm start
 ```
 
-B) **Startup script** (manages all daemons):
+B) **Startup script** (manages all daemons for dev mode):
 ```bash
 bash startup_fss_system.sh
 ```
 
-C) **Systemd services** (for RPi production):
+C) **Systemd services** (for production mode):
 ```bash
-bash fss_env_setup.sh
+# Daemons will automatically start on boot. To control them manually:
 sudo systemctl start fss-sensor fss-camera fss-ai fss-db fss-recommend
 ```
 
-### Step 9: Run Tests
+### Step 5: Run Tests
 ```bash
 # Phase 1 schema validation
 python tests/run_phase1_tests.py
 
-# Recommend system NLP (use its own venv)
-source recommend_system/venv/bin/activate
-pytest recommend_system/tests/test_recipe_analyzer.py -v
+# Recipe extractor NLP (use its own venv)
+source recipe_extractor/venv/bin/activate
+pytest tests/recipe_extractor/test_recipe_analyzer.py -v
 
 # Recommend daemon
 source recommend_daemon/venv/bin/activate
-pytest recommend_daemon/tests/test_recommend_engine.py -v
+pytest tests/recommend_daemon/test_recommend_engine.py -v
 ```
 
 ---
@@ -595,14 +529,14 @@ pip install -r requirements.txt
 ```
 
 ### Cross-Component Imports
-When one component needs to import another (e.g., RecommendDaemon imports recommend_system):
+When one component needs to import another (e.g., RecommendDaemon imports recipe_extractor):
 ```python
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../recommend_system/src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../recipe_extractor/src'))
 ```
 Or install as editable:
 ```bash
-pip install -e ../../recommend_system/
+pip install -e ../../recipe_extractor/
 ```
 
 ### Common Issues
@@ -922,15 +856,15 @@ Use this AGENTS.md when:
 
 ---
 
-## 🔌 Recommend System D-Bus Service
+## 🔌 RecipeExtractor D-Bus Service
 
-**Service Name**: `vn.edu.uit.FSS.RecommendSystem`
-**Object Path**: `/vn/edu/uit/FSS/RecommendSystem`
-**Interface**: `vn.edu.uit.FSS.RecommendSystem`
+**Service Name**: `vn.edu.uit.FSS.RecipeExtractor`
+**Object Path**: `/vn/edu/uit/FSS/RecipeExtractor`
+**Interface**: `vn.edu.uit.FSS.RecipeExtractor`
 
 ### Files
-- `recommend_system/src/dbus_service.py` — D-Bus service implementation
-- `recommend_system/src/main.py` — Entry point with lazy NLP engine loading
+- `recipe_extractor/src/recipe_extractor_service.py` — D-Bus service implementation
+- `recipe_extractor/src/recipe_extractor_main.py` — Entry point with lazy NLP engine loading
 
 ### Method
 | Method | Signature | Returns | Description |
@@ -948,9 +882,9 @@ Use this AGENTS.md when:
 ### D-Bus Config
 Policy added to `dbus_config/vn.edu.uit.FSS.conf`:
 ```xml
-<allow own="vn.edu.uit.FSS.RecommendSystem"/>
-<allow send_destination="vn.edu.uit.FSS.RecommendSystem"/>
-<allow receive_sender="vn.edu.uit.FSS.RecommendSystem"/>
+<allow own="vn.edu.uit.FSS.RecipeExtractor"/>
+<allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
+<allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
 ```
 
 ---

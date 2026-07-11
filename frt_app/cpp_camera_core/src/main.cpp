@@ -27,6 +27,7 @@
 #include <sstream>
 #include "VideoCapture.hpp"
 #include "ShmWriter.hpp"
+#include "CameraConfig.hpp"
 
 // Global state for signal handling
 volatile bool g_running = true;
@@ -45,9 +46,10 @@ void signal_handler(int sig) {
 void print_usage(const char* program_name) {
     std::cout << "Usage: " << program_name << " [options]\n"
               << "Options:\n"
-              << "  --device PATH    Video device path (default: /dev/video0)\n"
-              << "  --width N        Capture width (default: 640)\n"
-              << "  --height N       Capture height (default: 480)\n"
+              << "  --device PATH    Video device path (default: " << CameraConfig::DEVICE_PATH << ")\n"
+              << "  --width N        Capture width (default: " << CameraConfig::DEFAULT_WIDTH << ")\n"
+              << "  --height N       Capture height (default: " << CameraConfig::DEFAULT_HEIGHT << ")\n"
+              << "  --fps N          Capture FPS (default: " << CameraConfig::DEFAULT_FPS << ")\n"
               << "  --help           Show this help message\n";
 }
 
@@ -56,9 +58,10 @@ void print_usage(const char* program_name) {
  */
 int main(int argc, char* argv[]) {
     // Default configuration
-    std::string device_path = "/dev/video0";
-    int width = 640;
-    int height = 480;
+    std::string device_path = CameraConfig::DEVICE_PATH;
+    int width = CameraConfig::DEFAULT_WIDTH;
+    int height = CameraConfig::DEFAULT_HEIGHT;
+    int fps = CameraConfig::DEFAULT_FPS;
     
     // Parse command line arguments
     for (int i = 1; i < argc; ++i) {
@@ -68,6 +71,8 @@ int main(int argc, char* argv[]) {
             width = std::atoi(argv[++i]);
         } else if (strcmp(argv[i], "--height") == 0 && i + 1 < argc) {
             height = std::atoi(argv[++i]);
+        } else if (strcmp(argv[i], "--fps") == 0 && i + 1 < argc) {
+            fps = std::atoi(argv[++i]);
         } else if (strcmp(argv[i], "--help") == 0) {
             print_usage(argv[0]);
             return 0;
@@ -79,7 +84,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Version: 1.0 (SDD v1.1.0)\n";
     std::cout << "========================================\n";
     std::cout << "Device: " << device_path << "\n";
-    std::cout << "Resolution: " << width << "x" << height << "\n";
+    std::cout << "Resolution: " << width << "x" << height << " @ " << fps << " FPS\n";
     std::cout << "========================================\n";
     
     // Setup signal handlers
@@ -87,7 +92,7 @@ int main(int argc, char* argv[]) {
     signal(SIGTERM, signal_handler);
     
     // Initialize camera
-    VideoCapture camera(device_path, width, height, 30);
+    VideoCapture camera(device_path, width, height, fps);
     if (!camera.open()) {
         std::cerr << "Failed to open camera device\n";
         return 1;
@@ -124,7 +129,7 @@ int main(int argc, char* argv[]) {
         
         frame_count++;
         
-        // Log progress every 30 frames (~1 second at 30 FPS)
+        // Log progress every `fps` frames (~1 second)
         uint64_t current_time = shm_writer.get_timestamp_us() / 1000000;
         if (current_time - last_log_time >= 1) {
             std::cout << "Frames captured: " << frame_count 

@@ -43,8 +43,8 @@ class SqliteManager:
     INVENTORY_DB_NAME = "FSS_Inventory.db"
     REQUEST_DB_NAME = "FSS_Request.db"
     
-    # Flag for recommend_system folder usage (future stage)
-    # This flag indicates if the databases should be located in the recommend_system directory
+    # Flag for recipe_extractor folder usage (future stage)
+    # This flag indicates if the databases should be located in the recipe_extractor directory
     USE_RECOMMEND_SYSTEM_FOLDER = False
     
     # Table names for sensors database

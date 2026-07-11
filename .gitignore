@@ -82,3 +82,6 @@ local_fss_data/
 *.swo
 .DS_Store
 Thumbs.db
+
+video/
+frt_app/py_ai_core/demo/live

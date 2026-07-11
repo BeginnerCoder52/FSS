@@ -344,7 +344,7 @@ class TestPhase1Integration(unittest.TestCase):
         print(f"  ✓ Complete workflow successful")
     
     def test_02_recipe_workflow(self):
-        """Test recipe workflow: NLP → batch insert → compare."""
+        """Test recipe workflow: Analyzer → batch insert → compare."""
         recipe_name = "Cơm Chiên"
         batch_id = str(uuid.uuid4())
         
@@ -352,7 +352,7 @@ class TestPhase1Integration(unittest.TestCase):
         self.db_manager.update_inventory("rice", 2, 0.90)
         self.db_manager.update_inventory("egg", 3, 0.88)
         
-        # NLP generates ingredients
+        # Analyzer generates ingredients
         ingredients = [
             {"food_id": "rice", "quantity": 3, "unit": "cups"},
             {"food_id": "egg", "quantity": 2, "unit": "pieces"},

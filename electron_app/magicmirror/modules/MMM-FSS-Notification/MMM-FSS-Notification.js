@@ -1,48 +1,88 @@
 Module.register("MMM-FSS-Notification", {
     defaults: {
         displayDuration: 5000,
-        maxVisible: 5,
-        animationDuration: 300
+        maxVisible: 15,
+        animationDuration: 300,
+        showMockNotifications: false
+    },
+    getStyles() {
+        return ["MMM-FSS-Notification.css"];
     },
     start() {
         this.notifications = [];
         this.audioCtx = null;
         this.audioReady = false;
+
+        // Initialize backend node_helper
+        this.sendSocketNotification("MMM_FSS_NOTIFICATION_START", this.config);
     },
     getScripts() {
         return [];
     },
     getDom() {
         const wrapper = document.createElement("div");
-        wrapper.id = "fss-notification-overlay";
+        wrapper.className = "fss-panel fss-notification-panel";
+
+        const titleBox = document.createElement("div");
+        titleBox.className = "fss-notif-title-horizontal";
+        titleBox.innerHTML = "THÔNG BÁO";
+        titleBox.style.fontWeight = "bold";
+        titleBox.style.textAlign = "center";
+        titleBox.style.fontSize = "1.5em";
+        titleBox.style.marginRight = "1.2em";
+
+        const listWrapper = document.createElement("div");
+        listWrapper.className = "fss-notif-list-wrapper";
 
         this.notifications.forEach((n) => {
-            const card = document.createElement("div");
-            card.className = `fss-notification-card fss-notif-${n.type}`;
+            const row = document.createElement("div");
+            row.className = "fss-list-row-full";
 
-            const msg = document.createElement("div");
-            msg.className = "fss-notif-message";
+            const circle = document.createElement("div");
+            circle.className = "fss-circle-check";
+            row.appendChild(circle);
+
+            const msg = document.createElement("span");
             msg.textContent = n.message;
-            card.appendChild(msg);
+            row.appendChild(msg);
 
-            const timer = document.createElement("div");
-            timer.className = "fss-notif-timer";
-            card.appendChild(timer);
-
-            wrapper.appendChild(card);
+            listWrapper.appendChild(row);
         });
+
+        // The mockup has the text "THÔNG BÁO" written vertically on the left side, 
+        // and the list of notifications on the right.
+        const flexContainer = document.createElement("div");
+        flexContainer.style.display = "flex";
+        flexContainer.style.flexDirection = "row";
+
+        flexContainer.appendChild(titleBox);
+        flexContainer.appendChild(listWrapper);
+
+        wrapper.appendChild(flexContainer);
 
         return wrapper;
     },
-    socketNotificationReceived(notification, payload) {
+    notificationReceived(notification, payload, sender) {
         if (notification === "FSS_NOTIFICATION") {
-            this.playNotificationSound(payload.type);
-            this.addNotification(payload);
+            if (payload.type === "food_added" || payload.type === "food_removed" || payload.type === "recommend_done") {
+                this.playNotificationSound(payload.type);
+                const msg = { ...payload };
+                this.addNotification(msg);
+            }
         }
     },
-    addNotification(data) {
+    socketNotificationReceived(notification, payload) {
+        if (notification === "FSS_NOTIFICATION") {
+            if (payload.type === "food_added" || payload.type === "food_removed" || payload.type === "recommend_done") {
+                this.playNotificationSound(payload.type);
+                const msg = { ...payload };
+                this.addNotification(msg);
+            }
+        }
+    },
+    addNotification(data, preventTimeout = false) {
         this.notifications.unshift({
-            id: Date.now(),
+            id: Date.now() + Math.random(),
             type: data.type,
             message: data.message,
             timestamp: Date.now()
@@ -53,11 +93,6 @@ Module.register("MMM-FSS-Notification", {
         }
 
         this.updateDom();
-
-        setTimeout(() => {
-            this.notifications = this.notifications.filter(n => n.id !== data.id);
-            this.updateDom();
-        }, this.config.displayDuration);
     },
     initAudio() {
         if (this.audioReady) return;
@@ -68,11 +103,11 @@ Module.register("MMM-FSS-Notification", {
             if (this.audioCtx.state === "suspended") {
                 this.audioCtx.resume().then(() => {
                     this.audioReady = true;
-                }).catch(() => {});
+                }).catch(() => { });
             } else {
                 this.audioReady = true;
             }
-        } catch(e) {}
+        } catch (e) { }
     },
 
     playNotificationSound(type) {
@@ -83,11 +118,11 @@ Module.register("MMM-FSS-Notification", {
         try {
             const ctx = this.audioCtx;
             const soundMap = {
-                "user_detected":  { freq: 440, dur: 200, count: 3, gap: 80 },
-                "door_open":      { freq: 660, dur: 150, count: 2, gap: 100 },
-                "door_closed":    { freq: 330, dur: 150, count: 1, gap: 0 },
-                "food_added":     { freq: 880, dur: 100, count: 1, gap: 0 },
-                "food_removed":   { freq: 330, dur: 200, count: 2, gap: 150 },
+                "user_detected": { freq: 440, dur: 200, count: 3, gap: 80 },
+                "door_open": { freq: 660, dur: 150, count: 2, gap: 100 },
+                "door_closed": { freq: 330, dur: 150, count: 1, gap: 0 },
+                "food_added": { freq: 880, dur: 100, count: 1, gap: 0 },
+                "food_removed": { freq: 330, dur: 200, count: 2, gap: 150 },
                 "recommend_done": { freq: 550, dur: 150, count: 2, gap: 100, freq2: 770 }
             };
 
@@ -110,7 +145,7 @@ Module.register("MMM-FSS-Notification", {
                 osc.stop(startTime + s.dur / 1000);
                 startTime += (s.dur + s.gap) / 1000;
             }
-        } catch(e) {
+        } catch (e) {
             // Audio not available
         }
     }

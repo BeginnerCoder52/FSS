@@ -66,7 +66,13 @@ float Vl53l0xDriver::read_distance_meters() {
             m_error_count = 0;
         } else {
             m_error_count++;
-            if (m_error_count > 5) m_is_connected = false;
+            std::cerr << "[VL53L0x] Single shot read failed (err=" << err
+                      << ", error_count=" << m_error_count << ")" << std::endl;
+            if (m_error_count > 5) {
+                m_is_connected = false;
+                std::cerr << "[VL53L0x] Sensor disconnected after " << m_error_count
+                          << " consecutive errors" << std::endl;
+            }
         }
     }
     return last_distance_meters;

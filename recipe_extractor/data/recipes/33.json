@@ -1,0 +1,35 @@
+{
+    "recipe_name": "Salad Đậu Cay",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Đậu hũ chiên 1 miếng",
+        "Bắp bò hoa 200g",
+        "Xà lách carol 100g",
+        "Giá sống 100g",
+        "Cà rốt 100g",
+        "Poa rô cắt khúc 3cm",
+        "Rau quế",
+        "Tỏi băm, ớt băm",
+        "Mè rang",
+        "Tiêu, đường, tương ớt Hàn Quốc"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Bò cắt miếng mỏng, ướp với 1/2m hạt nêm Aji-ngon®, 1/3m tiêu, 1/3m đường, 1m tỏi băm, 1M tương ớt Hàn Quốc, để thấm.",
+        "Đậu hũ cắt miếng vuông mỏng kích thước 3x3cm, chiên vàng, để ráo dầu. Xà lách carol cắt khúc dài 5cm. Cà rốt cắt sợi. Rau quế cắt nhỏ."
+    ],
+    "cook": [
+        "Phi thơm tỏi băm, cho thịt bò vào xào đến khi chín tới, tắt bếp, trút ra để riêng.",
+        "Trộn đều đậu hũ chiên, giá sống, cà rốt, rau carol, bò với 1/2m ớt băm, 1M tương ớt Hàn Quốc, 2M xốt Mayonnaise Aji-Mayo®."
+    ],
+    "usage": [],
+    "tips": [
+        "Chọn bắp bò hoa để có độ giòn mềm, không ngán.",
+        "Ướp thêm tương ớt Hàn Quốc vào bò giúp màu đẹp hơn và tạo vị đặc trưng."
+    ]
+}

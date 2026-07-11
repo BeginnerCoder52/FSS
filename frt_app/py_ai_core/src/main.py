@@ -93,24 +93,50 @@ def main():
     
     parser.add_argument("--debug", action="store_true",
                        help="Enable debug logging")
+    parser.add_argument("--debug-dir", type=str, default="/opt/fss/debug_frames",
+                       help="Directory to save debug frames")
     parser.add_argument("--camera", default="/dev/video0",
                        help="Camera device path (default: /dev/video0)")
-    parser.add_argument("--model", default="/opt/fss/models/yolov11n.tflite",
-                       help="YOLO model path (default: /opt/fss/models/yolov11n.tflite)")
+    parser.add_argument("--model", default="/opt/fss/models/0607_best_int8.tflite",
+                       help="YOLO model path (default: 0607_best_int8.tflite)")
     parser.add_argument("--log-level", default="INFO",
                        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                        help="Logging level (default: INFO)")
     parser.add_argument("--use-c-backend", action="store_true",
                        help="Use C TFLite reader for inference (faster on Pi 4B)")
-    parser.add_argument("--c-model-path", default="/opt/fss/models/yolov11n.tflite",
-                       help="Model path for C reader (default: /opt/fss/models/yolov11n.tflite)")
+    parser.add_argument("--c-model-path", default="/opt/fss/models/0607_best_int8.tflite",
+                       help="Model path for C reader (default: 0607_best_int8.tflite)")
     parser.add_argument("--model-precision", choices=["fp32", "fp16", "int8"], default="int8",
                        help="Model quantization precision (default: int8)")
     parser.add_argument("--debug-no-distance", action="store_true",
                        help="Disable distance sensor dependency - camera activates on door open alone")
     parser.add_argument("--distance-threshold", type=float, default=60.0,
                        help="Distance threshold in cm (default: 60.0)")
-    
+    parser.add_argument("--bypass-door-sensor", action="store_true",
+                       help="Bypass MC-38 door sensor (auto-enter TRACKING on start)")
+    parser.add_argument("--no-bypass-door-sensor", action="store_true",
+                       help="Disable bypass (wait for MC-38 door open signal)")
+    parser.add_argument("--confidence", type=float, default=0.6,
+                       help="Detection confidence threshold (0.0-1.0, default: 0.6)")
+    parser.add_argument("--boundary-y", type=float, default=0.66,
+                       help="Virtual boundary as fraction of frame height (default: 0.66)")
+    parser.add_argument("--shm-only", action="store_true",
+                       help="Read frames only from /dev/shm/fss_video_frame; do not fallback to /dev/video0")
+
+    # Tuning Parameters (AI & Tracking)
+    parser.add_argument("--low-confidence", type=float, default=0.1,
+                       help="Detection low confidence threshold (0.0-1.0, default: 0.1)")
+    parser.add_argument("--iou-threshold", type=float, default=0.5,
+                       help="NMS IoU threshold for YOLO (default: 0.5)")
+    parser.add_argument("--bytetrack-max-age", type=int, default=30,
+                       help="Max age in frames before dropping a lost track (default: 30)")
+    parser.add_argument("--bytetrack-match-thresh", type=float, default=0.6,
+                       help="Match threshold for IoU matching in ByteTrack (default: 0.6)")
+    parser.add_argument("--mog2-variance", type=float, default=32.0,
+                       help="Variance threshold for MOG2 motion detection (default: 32.0)")
+    parser.add_argument("--mog2-area-threshold", type=float, default=3.0,
+                       help="Minimum area %% changed to trigger motion (default: 3.0)")
+
     args = parser.parse_args()
     
     # ========================================================================
@@ -155,9 +181,15 @@ def main():
     logger.info("Model path: {}".format(args.model))
     logger.info("Log level: {}".format(log_level))
     logger.info("Debug mode: {}".format("ON" if args.debug else "OFF"))
+    logger.info("Debug dir: {}".format(args.debug_dir))
     logger.info("C backend: {}".format("ON" if args.use_c_backend else "OFF"))
     logger.info("Distance sensor: {}".format("OFF (debug)" if args.debug_no_distance else "ON"))
     logger.info("Distance threshold: {} cm".format(args.distance_threshold))
+    bypass = args.bypass_door_sensor and not args.no_bypass_door_sensor
+    logger.info("Door sensor bypass: {}".format("ON (auto-TRACKING)" if bypass else "OFF (wait for MC-38)"))
+    logger.info("Confidence threshold: {}".format(args.confidence))
+    logger.info("Boundary Y ratio: {}".format(args.boundary_y))
+    logger.info("SHM only: {}".format("ON" if args.shm_only else "OFF"))
     
     # ========================================================================
     # SIGNAL HANDLERS
@@ -175,7 +207,15 @@ def main():
     
     try:
         logger.info("Creating FrtMain instance...")
-        app_instance = FrtMain()
+        app_instance = FrtMain(bypass_door_sensor=bypass,
+                               confidence_threshold=args.confidence,
+                               low_confidence_threshold=args.low_confidence,
+                               boundary_ratio=args.boundary_y,
+                               iou_threshold=args.iou_threshold,
+                               bytetrack_max_age=args.bytetrack_max_age,
+                               bytetrack_match_thresh=args.bytetrack_match_thresh,
+                               mog2_variance=args.mog2_variance,
+                               mog2_area_threshold=args.mog2_area_threshold)
         
         # Override camera device if provided
         app_instance.CAMERA_DEVICE = args.camera
@@ -185,6 +225,8 @@ def main():
         app_instance.model_precision = args.model_precision
         app_instance.distance_sensor_enabled = not args.debug_no_distance
         app_instance.distance_threshold_cm = args.distance_threshold
+        app_instance.shm_only = args.shm_only
+        app_instance.debug_dir = args.debug_dir
         
         # Initialize pipeline
         logger.info("Initializing pipeline...")
@@ -220,6 +262,41 @@ def main():
         logger.info("Shutting down FRTApp daemon...")
         app_instance.stop_daemon()
         logger.info("FRTApp daemon stopped successfully")
+        
+        # Display summary and check-in image
+        try:
+            summary_path = os.path.join(args.debug_dir, "summary.txt")
+            if os.path.exists(summary_path):
+                print("\n" + "="*60)
+                with open(summary_path, "r") as f:
+                    print(f.read())
+                print("="*60 + "\n")
+            
+            checkin_img = os.path.join(args.debug_dir, "last_checkin.jpg")
+            checkin_txt = os.path.join(args.debug_dir, "last_checkin.jpg.txt")
+            if os.path.exists(checkin_img):
+                frame_info = ""
+                if os.path.exists(checkin_txt):
+                    with open(checkin_txt, "r") as f:
+                        frame_info = f" (tại Frame {f.read().strip()})"
+                print(f">> Hiển thị khoảnh khắc CHECK_IN cuối cùng{frame_info}:\n")
+                os.system(f"timg -g 60x40 {checkin_img}")
+            else:
+                print(">> Không tìm thấy khoảnh khắc CHECK_IN nào.\n")
+
+            checkout_img = os.path.join(args.debug_dir, "last_checkout.jpg")
+            checkout_txt = os.path.join(args.debug_dir, "last_checkout.jpg.txt")
+            if os.path.exists(checkout_img):
+                frame_info = ""
+                if os.path.exists(checkout_txt):
+                    with open(checkout_txt, "r") as f:
+                        frame_info = f" (tại Frame {f.read().strip()})"
+                print(f">> Hiển thị khoảnh khắc CHECK_OUT cuối cùng{frame_info}:\n")
+                os.system(f"timg -g 60x40 {checkout_img}")
+            else:
+                print(">> Không tìm thấy khoảnh khắc CHECK_OUT nào.\n")
+        except Exception as e:
+            logger.error(f"Failed to display summary/image: {e}")
         
         logger.info("=" * 80)
         logger.info("FRTApp exited normally")

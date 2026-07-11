@@ -257,7 +257,14 @@ class DbDaemonMain:
             total_qty = item['quantity'] if item else 0
             
             # Notify UI of update
-            self.dbus_interface.emit_ui_update_signal(food_id, total_qty, image_path or "")
+            self.dbus_interface.emit_ui_update_signal(food_id, total_qty, image_path or "", quantity_delta)
+            
+            # Emit FoodNotification
+            if quantity_delta != 0:
+                action = "thêm vào" if quantity_delta > 0 else "mang ra"
+                notif_type = "food_added" if quantity_delta > 0 else "food_removed"
+                msg_text = f"{abs(quantity_delta)} {food_id} đã {action} tủ lạnh"
+                self.dbus_interface.emit_food_notification(notif_type, msg_text)
             
             self._processed_events_count += 1
             self.logger.info(f"Processed food event: {food_id} (delta={quantity_delta}, "

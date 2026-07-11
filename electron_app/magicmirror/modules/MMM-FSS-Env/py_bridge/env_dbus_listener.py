@@ -18,10 +18,34 @@ import logging
 import signal
 import sqlite3
 import time
+import os
 from typing import Optional, Tuple
 
+def get_dbus_config():
+    config_path = os.environ.get("FSS_CONFIG_PATH", "")
+    if not config_path:
+        candidates = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../config.json")),
+            "/opt/fss/config.json",
+            "/etc/fss/config.json",
+        ]
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                config_path = candidate
+                break
+    if config_path:
+        try:
+            with open(config_path, "r") as f:
+                return json.load(f).get("dbus", {})
+        except Exception as e:
+            logging.warning(f"Failed to load config from {config_path}: {e}")
+    return {}
+
+dbus_config = get_dbus_config()
+
 try:
-    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async
+    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
+    set_default_bus(sd_bus_open_system())
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -36,16 +60,16 @@ DB_QUERY_TIMEOUT_S = 15  # Fall back to raw sensors after 15s without DB updates
 DB_POLL_INTERVAL_S = 2   # Poll database every 2 seconds
 
 
-class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.Sensor"):
+class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("sensor_interface", "vn.edu.uit.FSS.Sensor")):
     """D-Bus interface proxy for raw sensor signals from sensor_daemon."""
 
     @dbus_signal_async("dd")
-    def EnvironmentReadingUpdated(self) -> None:
+    def EnvironmentDataChanged(self) -> None:
         """Signal: Sensor 1 and 2 readings."""
         pass
 
 
-class DbDaemonEnvProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
+class DbDaemonEnvProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("dbdaemon_interface", "vn.edu.uit.FSS.DBDaemon")):
     """D-Bus interface proxy for environment signals from DBDaemon."""
 
     @dbus_signal_async("dd")
@@ -63,11 +87,11 @@ class EnvironmentListener:
     """Main listener for environment sensor data with two-tier fetching strategy."""
 
     # D-Bus configuration
-    DBUS_SERVICE = "vn.edu.uit.FSS.DBDaemon"
-    DBUS_PATH = "/vn/edu/uit/FSS/DBDaemon"
+    DBUS_SERVICE = dbus_config.get("dbdaemon_service", "vn.edu.uit.FSS.DBDaemon")
+    DBUS_PATH = dbus_config.get("dbdaemon_path", "/vn/edu/uit/FSS/DBDaemon")
     
-    SENSOR_DBUS_SERVICE = "vn.edu.uit.FSS.Sensor"
-    SENSOR_DBUS_PATH = "/vn/edu/uit/FSS/Sensor"
+    SENSOR_DBUS_SERVICE = dbus_config.get("sensor_service", "vn.edu.uit.FSS.Sensor")
+    SENSOR_DBUS_PATH = dbus_config.get("sensor_path", "/vn/edu/uit/FSS/Sensor")
 
     def __init__(self):
         """Initialize the listener."""
@@ -83,7 +107,7 @@ class EnvironmentListener:
     def query_latest_environment_from_db(self) -> Tuple[Optional[float], Optional[float], Optional[float], Optional[float]]:
         """Query SQLite database for latest environment readings."""
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=5.0)
+            conn = sqlite3.connect(f"file:{DB_PATH}?immutable=1", uri=True, timeout=5.0)
             cursor = conn.cursor()
             
             # Query latest environment reading (both sensors)
@@ -259,7 +283,7 @@ class EnvironmentListener:
             return
             
         try:
-            async for temp1, humid1 in self.sensor_proxy.EnvironmentReadingUpdated:
+            async for temp1, humid1 in self.sensor_proxy.EnvironmentDataChanged:
                 try:
                     self.last_db_update_time = time.time()
                     # Send Sensor 1 data from raw sensor signal
