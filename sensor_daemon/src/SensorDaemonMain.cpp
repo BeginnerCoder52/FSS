@@ -54,6 +54,10 @@ bool SensorDaemonMain::init_app() {
         std::cerr << "init_app exception: " << e.what() << std::endl;
         current_state = "ERROR";
         return false;
+    } catch (...) {
+        std::cerr << "init_app unknown exception" << std::endl;
+        current_state = "ERROR";
+        return false;
     }
 }
 
@@ -78,6 +82,10 @@ bool SensorDaemonMain::start_app() {
         std::cerr << "start_app exception: " << e.what() << std::endl;
         current_state = "ERROR";
         return false;
+    } catch (...) {
+        std::cerr << "start_app unknown exception" << std::endl;
+        current_state = "ERROR";
+        return false;
     }
 }
 
@@ -88,6 +96,8 @@ void SensorDaemonMain::stop_app() {
         watchdog->notify_stopping();
     } catch (const std::exception& e) {
         std::cerr << "stop_app exception: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "stop_app unknown exception" << std::endl;
     }
 }
 
@@ -97,6 +107,9 @@ void SensorDaemonMain::run_main_loop() {
     auto last_watchdog_ping = std::chrono::system_clock::now();
     auto last_status_log = std::chrono::system_clock::now();
     int status_log_interval_ms = 60000; // Log status every 60 seconds
+
+    bool last_door_state = input_processor->get_door_status();
+    int door_debounce = 0;
 
     while (is_running) {
         try {
@@ -131,10 +144,30 @@ void SensorDaemonMain::run_main_loop() {
                 last_status_log = current_time;
             }
 
+            // Fast door polling (debounce)
+            bool current_door = input_processor->get_door_status();
+            if (current_door != last_door_state) {
+                door_debounce++;
+                if (door_debounce >= 10) { // 1000ms debounce to prevent high sensitivity
+                    last_door_state = current_door;
+                    output_processor->broadcast_door_status(current_door);
+                    door_debounce = 0;
+                }
+            } else {
+                door_debounce = 0;
+            }
+
             // Sleep to prevent CPU spinning
             std::this_thread::sleep_for(std::chrono::milliseconds(loop_interval_ms));
         } catch (const std::exception& e) {
             std::cerr << "Exception in main loop: " << e.what() << std::endl;
+            current_state = "ERROR";
+            if (!recover_from_fault()) {
+                std::cerr << "Recovery failed, stopping daemon" << std::endl;
+                is_running = false;
+            }
+        } catch (...) {
+            std::cerr << "Unknown exception in main loop" << std::endl;
             current_state = "ERROR";
             if (!recover_from_fault()) {
                 std::cerr << "Recovery failed, stopping daemon" << std::endl;
@@ -152,6 +185,9 @@ void SensorDaemonMain::process_environment_data() {
         output_processor->broadcast_system_events(data);
     } catch (const std::exception& e) {
         std::cerr << "process_environment_data exception: " << e.what() << std::endl;
+        watchdog->report_error_status("Failed to process environment data");
+    } catch (...) {
+        std::cerr << "process_environment_data unknown exception" << std::endl;
         watchdog->report_error_status("Failed to process environment data");
     }
 }
@@ -200,6 +236,9 @@ bool SensorDaemonMain::recover_from_fault() {
         return true;
     } catch (const std::exception& e) {
         std::cerr << "recover_from_fault exception: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "recover_from_fault unknown exception" << std::endl;
         return false;
     }
 }
@@ -251,5 +290,7 @@ void SensorDaemonMain::log_system_status() {
         }
     } catch (const std::exception& e) {
         std::cerr << "log_system_status exception: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "log_system_status unknown exception" << std::endl;
     }
 }

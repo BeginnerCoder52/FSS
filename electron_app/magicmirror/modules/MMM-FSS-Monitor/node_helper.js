@@ -13,7 +13,8 @@ const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const SessionLog = require("../../../js/session_logger");
+const SessionLog = require("../../js/session_logger");
+const { resolvePythonExecutable } = require("../fss_paths");
 
 module.exports = NodeHelper.create({
 	/**
@@ -61,21 +62,35 @@ module.exports = NodeHelper.create({
 		console.log(`${this.name}: Starting Python D-Bus listener from ${pythonScriptPath}`);
 
 		try {
-			const pythonExecutable = "/home/richardmelvin52/FSS/.venv/bin/python3";
+			const pythonExecutable = resolvePythonExecutable(__dirname);
 			this.pythonProcess = spawn(pythonExecutable, [pythonScriptPath], {
 				stdio: ["pipe", "pipe", "pipe"],
 				detached: false,
 			});
 
 			this.pythonProcess.stdout.on("data", (data) => {
-				const message = data.toString().trim();
-				console.log(`${this.name} [PY]: ${message}`);
-				this.handlePythonOutput(message);
+				const messages = data.toString().split("\n");
+				for (let msg of messages) {
+					const message = msg.trim();
+					if (message) {
+						this.handlePythonOutput(message);
+					}
+				}
 			});
 
 			this.pythonProcess.stderr.on("data", (data) => {
 				const error = data.toString().trim();
 				console.error(`${this.name} [PY ERROR]: ${error}`);
+			});
+
+			this.pythonProcess.on("error", (err) => {
+				console.error(`${this.name}: Process error - ${err.message}`);
+				this.sendSocketNotification("MONITOR_ERROR", {
+					error: `Process error: ${err.message}`,
+				});
+				this.pythonProcess = null;
+				this.isListening = false;
+				this.attemptReconnect();
 			});
 
 			this.pythonProcess.on("close", (code) => {
@@ -105,17 +120,23 @@ module.exports = NodeHelper.create({
 		try {
 			const data = JSON.parse(message);
 
-			if (data.type === "DISTANCE_ALERT") {
+        if (data.type === "USER_PRESENCE") {
+          console.log(`${this.name}: Relaying user presence - ${data.presence}`);
+          this.sendSocketNotification("USER_PRESENCE", {
+            presence: data.presence,
+            timestamp: data.timestamp || Date.now(),
+          });
+        } else if (data.type === "DISTANCE_ALERT") {
 				console.log(
-					`${this.name}: Relaying distance alert - ${data.distance.toFixed(2)}m, within threshold: ${data.withinThreshold}`
+					`${this.name}: Relaying distance alert - ${data.distance.toFixed(2)}cm, within threshold: ${data.withinThreshold}`
 				);
 				this.sendSocketNotification("DISTANCE_ALERT", {
 					distance: data.distance,
 					withinThreshold: data.withinThreshold,
 					timestamp: data.timestamp || Date.now(),
 				});
-			} else if (data.type === "DOOR_STATE_UPDATE") {
-				const doorState = data.state || data.doorState || "UNKNOWN";
+		} else if (data.type === "DOOR_STATE_UPDATE") {
+				const doorState = data.doorState || data.state || "UNKNOWN";
 				console.log(`${this.name}: Relaying door state - ${doorState}`);
 				this.sendSocketNotification("DOOR_STATE_UPDATE", {
 					state: doorState,
@@ -124,7 +145,7 @@ module.exports = NodeHelper.create({
 				// Relay to MMM-FSS-Notification
 				this.sendSocketNotification("FSS_NOTIFICATION", {
 					type: "monitor",
-					message: `🚪 DOOR ${data.state} - Opening/Turning off USB Camera…`
+					message: `🚪 DOOR ${doorState}`
 				});
 			} else if (data.type === "STATUS") {
 				console.log(`${this.name}: Status - ${data.message}`);
@@ -167,8 +188,13 @@ module.exports = NodeHelper.create({
 		SessionLog.info(`[${this.name}] Node helper stopped`);
 		console.log(`${this.name}: Stopping node helper`);
 		if (this.pythonProcess) {
-			this.pythonProcess.kill();
-			this.pythonProcess = null;
+			this.pythonProcess.kill("SIGTERM");
+			setTimeout(() => {
+				if (this.pythonProcess && !this.pythonProcess.killed) {
+					this.pythonProcess.kill("SIGKILL");
+				}
+			}, 3000);
 		}
+		this.pythonProcess = null;
 	},
 });

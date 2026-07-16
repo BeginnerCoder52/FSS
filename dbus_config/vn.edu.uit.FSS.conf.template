@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE busconfig PUBLIC
+ "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+
+  <!-- ============================================================
+       FSS (Fridge Supervisor System) D-Bus Security Policy
+
+       Generated from template by setup.sh.
+       Runtime user placeholder: @@FSS_RUNTIME_USER@@
+
+       Covers all daemons:
+         - vn.edu.uit.FSS.Sensor          (C++: hardware I/O)
+         - vn.edu.uit.FSS.FRTApp          (C++/Python: food recognition)
+         - vn.edu.uit.FSS.DBDaemon        (Python: data controller)
+         - vn.edu.uit.FSS.RecommendDaemon (Python: business logic)
+       ============================================================ -->
+
+  <!-- Default policy: deny ownership (whitelist approach) -->
+  <policy context="default">
+    <!-- Allow all users to talk to FSS services (UI bridges need this) -->
+    <allow send_destination="vn.edu.uit.FSS.Sensor"/>
+    <allow send_destination="vn.edu.uit.FSS.FRTApp"/>
+    <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
+    <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
+    <allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
+
+    <!-- Allow all users to receive signals from FSS services -->
+    <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
+    <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
+    <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecommendDaemon"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
+  </policy>
+
+  <!-- Root can do everything (for debugging with sudo) -->
+  <policy user="root">
+    <allow own="vn.edu.uit.FSS.Sensor"/>
+    <allow own="vn.edu.uit.FSS.FRTApp"/>
+    <allow own="vn.edu.uit.FSS.DBDaemon"/>
+    <allow own="vn.edu.uit.FSS.RecommendDaemon"/>
+    <allow own="vn.edu.uit.FSS.RecipeExtractor"/>
+    <allow send_destination="*"/>
+    <allow receive_sender="*"/>
+  </policy>
+
+  <!-- FSS runtime user policy -->
+  <policy user="@@FSS_RUNTIME_USER@@">
+    <!-- Allow owning service names -->
+    <allow own="vn.edu.uit.FSS.Sensor"/>
+    <allow own="vn.edu.uit.FSS.FRTApp"/>
+    <allow own="vn.edu.uit.FSS.DBDaemon"/>
+    <allow own="vn.edu.uit.FSS.RecommendDaemon"/>
+    <allow own="vn.edu.uit.FSS.RecipeExtractor"/>
+
+    <!-- Allow talking to D-Bus daemon -->
+    <allow send_destination="org.freedesktop.DBus"/>
+
+    <!-- Allow sending to all FSS services -->
+    <allow send_destination="vn.edu.uit.FSS.Sensor"/>
+    <allow send_destination="vn.edu.uit.FSS.FRTApp"/>
+    <allow send_destination="vn.edu.uit.FSS.DBDaemon"/>
+    <allow send_destination="vn.edu.uit.FSS.RecommendDaemon"/>
+    <allow send_destination="vn.edu.uit.FSS.RecipeExtractor"/>
+
+    <!-- Allow receiving from all FSS services -->
+    <allow receive_sender="vn.edu.uit.FSS.Sensor"/>
+    <allow receive_sender="vn.edu.uit.FSS.FRTApp"/>
+    <allow receive_sender="vn.edu.uit.FSS.DBDaemon"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecommendDaemon"/>
+    <allow receive_sender="vn.edu.uit.FSS.RecipeExtractor"/>
+  </policy>
+
+</busconfig>

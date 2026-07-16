@@ -114,17 +114,17 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 **Phase 0 — Main branch folder structure & docs cleanup (Completed)**:
 - **0.1 Updated README.md**: Completely rewrote directory tree to reflect actual project structure:
   - Added `recommend_daemon/` with full sub-tree (src/, systemd/, tests/)
-  - Added `recommend_system/` with sub-tree (data/recipes, models/, src/)
+  - Added `recipe_extractor/` with sub-tree (data/recipes, models/, src/)
   - Updated `frt_app/` to show `c_tflite_reader/` (C TF Lite reader sub-tree)
   - Updated `electron_app/magicmirror/` path (was `magicmirror/`)
   - Listed all 7 Electron modules: MMM-FSS-Env, Monitor, Inventory, LivePreview, VirtualKeyboard, Recommend, Notification
   - Added `fss-test/`, `tests/`, `tools/` directories to tree
   - Updated launch instructions with 6th terminal for RecommendDaemon
 - **0.2 Verified AGENTS.md**: Already up-to-date — RecommendDaemon marked as "Fully implemented", all 6 new sections (Python venv, Node.js debugging, SQLite migration, MagicMirror development, C TFLite reader, Frame transport) already present
-- **0.3 Removed leftover stub**: Deleted `recommend_system/recommend_daemon/` stub (empty `__init__.py` only); verified real `recommend_daemon/` at top level has full implementation
+- **0.3 Removed leftover stub**: Deleted `recipe_extractor/recommend_daemon/` stub (empty `__init__.py` only); verified real `recommend_daemon/` at top level has full implementation
 
 ### Verification
-- ✅ Stub directory deleted: `recommend_system/recommend_daemon/` removed
+- ✅ Stub directory deleted: `recipe_extractor/recommend_daemon/` removed
 - ✅ Real `recommend_daemon/` intact: src/, systemd/, tests/ all present
 - ✅ README.md tree accurate — reflects actual project layout
 - ✅ AGENTS.md up-to-date — no changes needed
@@ -359,8 +359,8 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 - Verified: All Python imports work (`sdbus`, `cv2`, `numpy`, `Pillow`, `loguru`, `psutil`)
 
 **8.7 Recommend System — Missing Venv**:
-- `recommend_system/` was missing its component venv (not in the original setup guide)
-- Created `recommend_system/venv/` and installed deps from `requirements.txt` (`sklearn-crfsuite`, `pyvi`, `joblib`)
+- `recipe_extractor/` was missing its component venv (not in the original setup guide)
+- Created `recipe_extractor/venv/` and installed deps from `requirements.txt` (`sklearn-crfsuite`, `pyvi`, `joblib`)
 - Updated setup guide to include it
 
 **8.8 FrtDbusInterface — Duplicate `SensorInterface` Class**:
@@ -386,7 +386,7 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 - Added D-Bus config installation step (`cp dbus_config/vn.edu.uit.FSS.conf /etc/dbus-1/system.d/`)
 - Added `libtflite_reader.so` installation to `/usr/local/lib` + `ldconfig`
 - Added `--system-site-packages` flag for FRTApp AI venv
-- Added `recommend_system` to venv creation list
+- Added `recipe_extractor` to venv creation list
 - Updated start methods to include FRTApp camera + AI
 - Updated verification to check all 5 venvs + D-Bus config
 
@@ -435,14 +435,14 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 - `MMM-FSS-Recommend/node_helper.js`: Emits `RECOMMEND_LOADING` notification before each SEARCH write
   to give visual feedback while D-Bus call is in-flight
 
-**C. Standalone Recommend System D-Bus Service** (new files):
-- `recommend_system/src/dbus_service.py` (255 lines): Implements D-Bus service
-  `vn.edu.uit.FSS.RecommendSystem` with method `ExtractAndPersistRecipe(recipe_name) → JSON`.
+**C. Standalone RecipeExtractor D-Bus Service** (new files):
+- `recipe_extractor/src/recipe_extractor_service.py` (255 lines): Implements D-Bus service
+  `vn.edu.uit.FSS.RecipeExtractor` with method `ExtractAndPersistRecipe(recipe_name) → JSON`.
   Runs NLP extraction via `RecipeAnalyzerEngine.generate_fss_request()`, then persists
   via DBDaemon `InsertRequest()` D-Bus proxy. Async event loop with threading.
   sdbus import guard with dummy fallback.
-- `recommend_system/src/main.py`: Entry point with lazy NLP engine loading,
-  D-Bus lifecycle (init/start/stop), rotating file logging to `/var/log/fss/recommend_system_dbus.log`,
+- `recipe_extractor/src/recipe_extractor_main.py`: Entry point with lazy NLP engine loading,
+  D-Bus lifecycle (init/start/stop), rotating file logging to `/var/log/fss/recipe_extractor.log`,
   graceful SIGTERM/SIGINT handling
 
 **D. `GetRequestList` D-Bus Method**:
@@ -468,11 +468,11 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
   available/needed/missing counts, returns unified result
 
 **H. D-Bus Config Update**:
-- `dbus_config/vn.edu.uit.FSS.conf`: Added `vn.edu.uit.FSS.RecommendSystem` to all 3 policy blocks
-  (`richardmelvin52`, `root`, `default`) with `<allow own>`, `send_destination`, `receive_sender`
+- `dbus_config/vn.edu.uit.FSS.conf`: Added `vn.edu.uit.FSS.RecipeExtractor` to all 3 policy blocks
+  with `<allow own>`, `send_destination`, `receive_sender`
 
 **I. AGENTS.md Update**:
-- Added 3 new sections: "Recommend System D-Bus Service", "MMM-Keyboard Integration",
+- Added 3 new sections: "RecipeExtractor D-Bus Service", "MMM-Keyboard Integration",
   "MMM-FSS-Recommend Self-Contained Notification"
 - Updated node_helper.js pattern to include `SessionLog` import
 
@@ -494,7 +494,7 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
   All signals implemented with proper async emission. `subscribe_recommend_daemon_events()`
   with full async listening infrastructure. Proper cleanup via `stop()` method.
   sdbus import guard with fallback dummy class
-- `SqliteManager.py`: Added `USE_RECOMMEND_SYSTEM_FOLDER = False` flag for future refactoring
+- `SqliteManager.py`: Added `USE_RECIPE_EXTRACTOR_FOLDER = False` flag for future refactoring
 
 **RecommendDaemon — Enhancements**:
 - `main.py`: Signal handlers (SIGTERM/SIGINT), `_ensure_nlp_engine()` lazy loading,
@@ -507,17 +507,17 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 - `electron_app/magicmirror/js/app.js`: Imports `SessionLog`, logs session start/stop
 
 **Minor**:
-- `recommend_system/requirements.txt`: Added `pytest`
+- `recipe_extractor/requirements.txt`: Added `pytest`
 
 ### Verification
 
 - ✅ All Tasks A-J implemented and marked Done in `FINAL_UPGRADE_3005.md`
-- ✅ `recommend_system/src/main.py` and `dbus_service.py` created — D-Bus service registered
+- ✅ `recipe_extractor/src/main.py` and `dbus_service.py` created — D-Bus service registered
 - ✅ `config.js` uses MMM-Keyboard (not deprecated VirtualKeyboard)
 - ✅ `GetRequestList` method added to DBDaemon D-Bus interface
 - ✅ `format_result_for_ui()` available in RecommendEngine
 - ✅ `session_logger.js` integrated into MagicMirror `app.js`
-- ✅ D-Bus config covers all 5 services (incl. RecommendSystem)
+- ✅ D-Bus config covers all 5 services (incl. RecipeExtractor)
 - ✅ AGENTS.md updated with 3 new sections
 - ⚠️ `tools/verify_dbus_config.sh` header still lists only 4 services — needs update
 
@@ -525,10 +525,10 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 
 | File | Status | Description |
 |------|--------|-------------|
-| `recommend_system/src/dbus_service.py` | **New** | D-Bus service `vn.edu.uit.FSS.RecommendSystem`, `ExtractAndPersistRecipe` method |
-| `recommend_system/src/main.py` | **New** | Standalone D-Bus service entry point for Recommend System NLP |
-| `recommend_system/requirements.txt` | **Modified** | Added `pytest` |
-| `recommend_system/tests/mock_terminal_test.py` | **New** | Mock terminal test (count-based recipe ingredients) |
+| `recipe_extractor/src/recipe_extractor_service.py` | **New** | D-Bus service `vn.edu.uit.FSS.RecipeExtractor`, `ExtractAndPersistRecipe` method |
+| `recipe_extractor/src/main.py` | **New** | Standalone D-Bus service entry point for Recommend System NLP |
+| `recipe_extractor/requirements.txt` | **Modified** | Added `pytest` |
+| `recipe_extractor/tests/mock_terminal_test.py` | **New** | Mock terminal test (count-based recipe ingredients) |
 | `recommend_daemon/src/main.py` | **Modified** | Signal handlers, lazy NLP, inventory fetch, file logging |
 | `recommend_daemon/src/RecommendEngine.py` | **Modified** | `format_result_for_ui()`, improved `_parse_quantity()` |
 | `db_daemon/src/DbDaemonMain.py` | **Modified** | Major refactor: state machine, threading, recovery methods |
@@ -540,7 +540,7 @@ with its own D-Bus service `vn.edu.uit.FSS.RecommendDaemon`.
 | `electron_app/magicmirror/modules/MMM-FSS-Recommend/node_helper.js` | **Modified** | SessionLog, RECOMMEND_LOADING emission |
 | `electron_app/magicmirror/js/session_logger.js` | **New** | Session logging utility |
 | `electron_app/magicmirror/js/app.js` | **Modified** | SessionLog import and logging |
-| `dbus_config/vn.edu.uit.FSS.conf` | **Modified** | Added RecommendSystem service policies |
+| `dbus_config/vn.edu.uit.FSS.conf` | **Modified** | Added RecipeExtractor service policies |
 | `FINAL_UPGRADE_3005.md` | **New** | 1894-line upgrade plan + status tracking |
 | `AGENTS.md` | **Modified** | 3 new sections: Recommend System D-Bus, MMM-Keyboard, Notification |
 | `HANDOVER_CHAT.md` | **Modified** | Added Phase 9 section |
@@ -575,7 +575,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 | Phase 0 | Folder Structure & Docs Cleanup | `main` | ✅ Complete |
 | Phase 1 | FRTApp — C TFLite Reader + D-Bus + Distance Sensor | `FRTApp-dev` | ✅ Complete |
 | Phase 2 | DBDaemon DB schema | `DBDaemon-dev` | ✅ Complete |
-| Phase 3 | Recommend System (NLP) | `recommend_system` | ✅ Complete |
+| Phase 3 | Recommend System (NLP) | `recipe_extractor` | ✅ Complete |
 | Phase 4 | DBDaemon cleanup | `DBDaemon-dev` | ✅ Complete |
 | Phase 5 | Recommend Daemon | `recommend_daemon` | ✅ Complete |
 | Phase 6 | FSS-Recommend DB + Bù Trừ | `recommend_daemon` | ✅ Complete |
@@ -598,8 +598,8 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 ### 🟢 Nice to Have
 
 - [ ] **`verify_dbus_fix.sh`**: Could be merged with `tools/verify_dbus_config.sh` into a single `tools/verify_all.sh` that validates everything at once.
-- [ ] **Phase 1 test runner**: Update `tests/run_phase1_tests.py` to include `recommend_daemon` and `recommend_system` module validation.
-- [ ] **`tools/verify_dbus_config.sh` header**: Update to list 5 services (missing `RecommendSystem`).
+- [ ] **Phase 1 test runner**: Update `tests/run_phase1_tests.py` to include `recommend_daemon` and `recipe_extractor` module validation.
+- [x] **`tools/verify_dbus_config.sh` header**: Updated to list 5 services (incl. `RecipeExtractor`).
 - [ ] **Run debug collection**: `sudo bash scripts/collect_debug_logs.sh` to capture full system state for diagnostics.
 
 ---
@@ -619,7 +619,7 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 |--------|-------|-----------|
 | `main` | — | Integration/stable (all phases merged) |
 | `DBDaemon-dev` | 1, 3 | Database + IPC broker |
-| `recommend_system` | 2 | NLP library (CRF model + recipes) |
+| `recipe_extractor` | 2 | NLP library (CRF model + recipes) |
 | `FRTApp-dev` | — | Food recognition (C++ + Python) |
 | `SensorDaemon-dev` | — | Hardware I/O |
 | `ElectronApp-dev` | — | MagicMirror UI |
@@ -627,11 +627,11 @@ The old scripts hardcoded `/home/richardmelvin52/FSS`. Updated scripts now use
 
 ---
 
-## 12. recommend_system — Mock Terminal Test (2026-06-02)
+## 12. recipe_extractor — Mock Terminal Test (2026-06-02)
 
 ### What was done
 
-**Created `recommend_system/tests/mock_terminal_test.py`** — Standalone mock test that simulates
+**Created `recipe_extractor/tests/mock_terminal_test.py`** — Standalone mock test that simulates
 real user input of up to 2 recipe names from the terminal. The output is a structured ingredient
 list quantified by **count-based units only** (trái, quả, cái, con, hộp, gói, củ, muỗng…),
 explicitly dropping mass (g, kg) and volume (lít, ml) ingredients.
@@ -672,7 +672,7 @@ explicitly dropping mass (g, kg) and volume (lít, ml) ingredients.
 
 | File | Status | Description |
 |------|--------|-------------|
-| `recommend_system/tests/mock_terminal_test.py` | **New** | Mock terminal test: up to 2 recipes, count-based only output |
+| `recipe_extractor/tests/mock_terminal_test.py` | **New** | Mock terminal test: up to 2 recipes, count-based only output |
 
 ---
 
@@ -686,25 +686,9 @@ explicitly dropping mass (g, kg) and volume (lít, ml) ingredients.
 | FRTApp | `vn.edu.uit.FSS.FRTApp` | — | `FoodDetected`/`FRTDetectionResult`, `CameraStateChanged` |
 | DBDaemon | `vn.edu.uit.FSS.DBDaemon` | `GetInventory`, `GetRequests`, `GetRequestList`, `InsertRequest`, `ClearRequest`, `RegisterCustomFood`, `GetCustomFoods` | `UIUpdateRequired`, `EnvironmentUpdateRequired`, `SecondaryEnvironmentUpdateRequired`, `DoorStateUpdate`, `DistanceAlert`, `UserPresenceUpdate`, `CustomFoodRequest` |
 | RecommendDaemon | `vn.edu.uit.FSS.RecommendDaemon` | `GenerateShoppingList`, `GetAvailableRecipes`, `GetShoppingList`, `MarkItemPurchased` | `RecommendationUpdated` |
-| RecommendSystem | `vn.edu.uit.FSS.RecommendSystem` | `ExtractAndPersistRecipe` | — |
+| RecipeExtractor | `vn.edu.uit.FSS.RecipeExtractor` | `ExtractAndPersistRecipe` | — |
 
-### Data Flow (Post-Phase 9)
-
-```
-User types recipe(s) in MMM-Keyboard
-    → KEYBOARD_INPUT → MMM-FSS-Recommend.js
-    → node_helper.js → recommend_dbus_listener.py
-    → D-Bus: RecommendDaemon.GenerateShoppingList(recipe_name)
-    → RecommendDaemon.RecommendEngine calls RecipeAnalyzerEngine (from recommend_system/)
-    → RecommendDaemon calls DBDaemon.GetInventory() via D-Bus
-    → RecommendDaemon runs Bù Trừ comparison
-    → RecommendDaemon stores result in FSS-Recommend.db
-    → RecommendDaemon emits RecommendationUpdated signal
-    → UI receives signal, displays shopping list
-    → playNotificationSound("recommend_done")
-
-Alternative: Recommend System D-Bus Service
-    → D-Bus: RecommendSystem.ExtractAndPersistRecipe(recipe_name)
+    → D-Bus: RecipeExtractor.ExtractAndPersistRecipe(recipe_name)
     → NLP extraction via RecipeAnalyzerEngine
     → D-Bus: DBDaemon.InsertRequest() to persist
     → Returns JSON with dish, ingredients, batch_id
@@ -874,7 +858,7 @@ sudo bash scripts/collect_debug_logs.sh
 |------|--------|-------------|
 | `frt_app/py_ai_core/src/YoloTfliteEngine.py` | **Modified** | `DEFAULT_MODEL_PATH` → `/opt/fss/models/yolov11n.tflite`; dynamic `num_detections` in `_get_output_boxes_c()` |
 | `frt_app/py_ai_core/src/test_comprehensive_frt.py` | **Modified** | `use_c_backend=False` → `True` |
-| `recommend_system/tests/mock_terminal_test.py` | **Modified** | Rewrote to use real `RecipeAnalyzerEngine` + real CRF model + 2470 real recipes |
+| `recipe_extractor/tests/mock_terminal_test.py` | **Modified** | Rewrote to use real `RecipeAnalyzerEngine` + real CRF model + 2470 real recipes |
 | `frt_app/py_ai_core/src/test_phase1.py` | **Modified** | Camera tests fail on missing hw (was warn); real frame data validation |
 | `frt_app/py_ai_core/src/test_user_scenario_frtapp.py` | **Modified** | `--synthetic` flag, real hardware default, `_fail()` on missing hw |
 | `HANDOVER_CHAT.md` | **Modified** | Added Phase 11 section, updated roadmap, remaining work, repo info |

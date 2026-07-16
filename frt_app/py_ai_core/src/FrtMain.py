@@ -32,10 +32,12 @@ License: Proprietary
 
 import os
 import time
+import json
 import threading
 from enum import Enum
 from typing import Optional, Callable
 from loguru import logger
+import cv2
 
 # Import all required modules
 from ShmReader import ShmReader
@@ -44,6 +46,37 @@ from ImagePreprocessor import ImagePreprocessor
 from YoloTfliteEngine import YoloTfliteEngine
 from FrtDbusInterface import FrtDbusInterface
 from CameraUvcDriver import CameraUvcDriver
+
+# ============================================================================
+# FOOD CLASS NAME RESOLUTION
+# ============================================================================
+
+# Default food class names (COCO-compatible subset + FSS custom classes)
+DEFAULT_FOOD_NAMES = {
+    0: "apple", 1: "carrot", 2: "egg", 3: "lemon", 4: "tomato",
+    5: "banana", 6: "orange", 7: "bottle", 8: "cup", 9: "bowl",
+    10: "cake", 11: "donut", 12: "sandwich", 13: "broccoli",
+    14: "pizza", 15: "hot dog", 16: "milk", 17: "juice",
+    18: "yogurt", 19: "cheese", 20: "meat", 21: "fish",
+    22: "bread", 23: "rice", 24: "noodles", 25: "cookie",
+}
+
+CLASS_YAML_PATH = "/opt/fss/models/class.yaml"
+
+def _load_class_labels() -> dict:
+    """Load food class names from class.yaml, fallback to DEFAULT_FOOD_NAMES."""
+    try:
+        import yaml
+        if os.path.exists(CLASS_YAML_PATH):
+            with open(CLASS_YAML_PATH) as f:
+                data = yaml.safe_load(f)
+            names = data.get("names", {})
+            if names:
+                return {int(k): v for k, v in names.items()}
+    except Exception:
+        pass
+    return dict(DEFAULT_FOOD_NAMES)
+
 
 # ============================================================================
 # APPLICATION STATE ENUMERATION (ASPICE-compliant state machine)
@@ -55,6 +88,7 @@ class AppState(Enum):
     """
     INIT = "INIT"              # Initialization phase
     IDLE = "IDLE"              # Ready but dormant (door closed)
+    AUTO_CALIBRATION = "AUTO_CALIBRATION" # Detecting virtual line before AI
     TRACKING = "TRACKING"      # Active inference (door open)
     ERROR = "ERROR"            # Error state
     STOPPED = "STOPPED"        # Shutdown
@@ -88,16 +122,40 @@ class FrtMain:
     # ========================================================================
     DEFAULT_LOOP_INTERVAL_MS = 33      # ~30 FPS target frame rate
     MAX_RECOVERY_ATTEMPTS = 3          # Maximum crash recovery attempts
-    MODEL_PATH = "/opt/fss/models/yolov11n.tflite"  # Model location
+    CAMERA_IDLE_TIMEOUT = 30.0          # Auto shut down camera after 5s idle (safety fallback)
+    MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"  # Model location
     CAMERA_DEVICE = "/dev/video0"      # USB camera device path
 
-    def __init__(self):
+    def __init__(self, bypass_door_sensor: bool = True,
+                 confidence_threshold: float = 0.85,
+                 low_confidence_threshold: float = 0.1,
+                 boundary_ratio: float = 0.66,
+                 debug_mode: bool = True,
+                 iou_threshold: float = 0.5,
+                 bytetrack_max_age: int = 30,
+                 bytetrack_match_thresh: float = 0.6,
+                 mog2_variance: float = 32.0,
+                 mog2_area_threshold: float = 3.0):
         """
         Initialize FrtMain application controller.
+
+        Args:
+            bypass_door_sensor: If True, auto-enter TRACKING on start (no MC-38 needed).
+            confidence_threshold: Min confidence for YOLO + ByteTrack high/low split.
+            boundary_ratio: Virtual boundary line position as fraction of frame height.
+            iou_threshold: NMS IoU threshold for YOLO.
+            bytetrack_max_age: Max age in frames before dropping a lost track.
+            bytetrack_match_thresh: Match threshold for IoU matching in ByteTrack.
+            mog2_variance: Variance threshold for MOG2 motion detection.
+            mog2_area_threshold: Minimum area % changed to trigger motion.
         """
         self.current_state: str = AppState.INIT.value
         self.is_running: bool = False
         self.loop_interval_ms: int = self.DEFAULT_LOOP_INTERVAL_MS
+
+        # Door sensor bypass flag (True = auto-TRACKING, no MC-38; False = wait for door signal)
+        self.bypass_door_sensor: bool = bypass_door_sensor
+        self.shm_only: bool = False
 
         # Component instances (updated for Phase 2 - now using ShmReader instead of CameraUvcDriver)
         self.shm_reader = None  # POSIX SHM reader (from C++ camera core)
@@ -107,10 +165,13 @@ class FrtMain:
         self.ai_engine = None
         self.dbus_interface = None
         self.tracker = None
+        self.virtual_line_detector = None
+        self.virtual_line_ready = False
+        self.frames_without_line = 0
 
         # C backend configuration (Phase 1 upgrade)
         self.use_c_backend: bool = True
-        self.c_model_path: str = "/opt/fss/models/yolov11n.tflite"
+        self.c_model_path: str = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
         self.model_precision: str = "int8"
 
         # Distance sensor configuration (Phase 1 upgrade)
@@ -118,12 +179,46 @@ class FrtMain:
         self.distance_threshold_cm: float = 60.0
         self.last_distance_cm: Optional[float] = None
 
+        # Confidence and boundary config
+        self.confidence_threshold: float = confidence_threshold
+        self.low_confidence_threshold: float = low_confidence_threshold
+        self.boundary_ratio: float = boundary_ratio
+        self._boundary_event_callback: Optional[Callable] = None
+
+        # Fixed virtual line configurations (for video demo)
+        self.fixed_virtual_line_enabled: bool = True
+        self.fixed_virtual_line_type: str = "horizontal"
+        self.fixed_virtual_line_pos_ratio: float = 0.66
+
+        # Tuning Parameters
+        self.iou_threshold: float = iou_threshold
+        self.bytetrack_max_age: int = bytetrack_max_age
+        self.bytetrack_match_thresh: float = bytetrack_match_thresh
+        self.mog2_variance: float = mog2_variance
+        self.mog2_area_threshold: float = mog2_area_threshold
+
+        # Food class name lookup (from class.yaml or built-in defaults)
+        self.class_names: dict = _load_class_labels()
+
+        # Debug mode — detailed per-frame metrics logging
+        self.debug_mode: bool = debug_mode
+
         # State management
         self.recovery_count: int = 0
         self.frame_count: int = 0
         self._inference_thread: Optional[threading.Thread] = None
+        self._last_active_time: float = 0.0
+        self._pending_quantity_changes = {}
+        self._debug_frames_data = []
 
-        logger.info("FrtMain initialized (state={})".format(self.current_state))
+        logger.info("FrtMain initialized (state={}, bypass={}, confidence={})".format(
+            self.current_state, self.bypass_door_sensor, self.confidence_threshold))
+        logger.info("  Food classes loaded: {} names (from {})".format(
+            len(self.class_names), CLASS_YAML_PATH if os.path.exists(CLASS_YAML_PATH) else "built-in defaults"))
+
+    def _get_food_name(self, class_id: int) -> str:
+        """Resolve a numeric class_id to a human-readable food name."""
+        return self.class_names.get(class_id, "food_class_{}".format(class_id))
 
     def init_pipeline(self) -> bool:
         """Initialize AI pipeline and all component modules."""
@@ -194,7 +289,22 @@ class FrtMain:
             daemon=False
         )
         self._inference_thread.start()
-        logger.info("FRTApp daemon started (waiting for door event)")
+
+        if self.bypass_door_sensor:
+            self.current_state = AppState.TRACKING.value
+            self._last_active_time = time.time()
+            logger.info("BYPASS DOOR SENSOR: Auto-entered TRACKING state")
+            logger.info(">>> notify start tracking: ByteTrack activated (virtual boundary line at y={:.2f})".format(
+                self.boundary_ratio))
+            logger.info(">>> Wave hand or food item in front of camera to test check-in/check-out!")
+            if self.dbus_interface:
+                self.dbus_interface.emit_camera_state("ON")
+            if (not self.shm_only and
+                    (not self.shm_reader or not self.shm_reader.is_ready()) and
+                    self.camera_driver):
+                self.camera_driver.open_camera_stream()
+        else:
+            logger.info("FRTApp daemon started (waiting for door event)")
 
     def stop_daemon(self) -> None:
         """Stop FRTApp daemon and cleanup resources."""
@@ -204,6 +314,60 @@ class FrtMain:
         self.current_state = AppState.STOPPED.value
 
         try:
+            if hasattr(self, 'tracker') and self.tracker and hasattr(self.tracker, 'line_detector'):
+                line_det = self.tracker.line_detector
+                # Extract metrics for file output without logging to console
+                summary_events = line_det.get_summary_events() if hasattr(line_det, 'get_summary_events') else []
+                changes = {}
+                track_ids = {}
+                total_entries = 0
+                total_exits = 0
+                
+                for tid, cid, action in summary_events:
+                    if cid not in changes:
+                        changes[cid] = 0
+                        track_ids[cid] = {'in': [], 'out': []}
+                    if action == 'IN':
+                        changes[cid] += 1
+                        total_entries += 1
+                        track_ids[cid]['in'].append(tid)
+                    elif action == 'OUT':
+                        changes[cid] -= 1
+                        total_exits += 1
+                        track_ids[cid]['out'].append(tid)
+                        
+                changes = {k: v for k, v in changes.items() if v != 0}
+
+                # Write summary to file
+                debug_dir = getattr(self, 'debug_dir', '/opt/fss/debug_frames')
+                if not os.path.exists(debug_dir):
+                    os.makedirs(debug_dir, exist_ok=True)
+                summary_file = os.path.join(debug_dir, 'summary.txt')
+                try:
+                    with open(summary_file, 'w') as f:
+                        f.write("BOUNDARY CROSSING SUMMARY\n")
+                        f.write(f"Boundary line: {line_det.boundary_line.get('type', '?')} at pos {int(line_det.boundary_line.get('pos', 0))}\n\n")
+                        if changes:
+                            f.write("Net quantity changes:\n")
+                            for cid, delta in changes.items():
+                                info_str = []
+                                t_in = track_ids.get(cid, {}).get('in', [])
+                                t_out = track_ids.get(cid, {}).get('out', [])
+                                if t_in:
+                                    info_str.append(f"in: {','.join(map(str, t_in))}")
+                                if t_out:
+                                    info_str.append(f"out: {','.join(map(str, t_out))}")
+                                track_info = f" (Track IDs: {'; '.join(info_str)})" if info_str else ""
+                                f.write(f"  {self._get_food_name(cid)}: {delta:+.0f}{track_info}\n")
+                        f.write(f"\nTotal entries (CHECK_IN): {total_entries}\n")
+                        f.write(f"Total exits  (CHECK_OUT): {total_exits}\n")
+                except Exception as e:
+                    logger.error(f"Failed to write summary: {e}")
+                    
+                # Export debug frames
+                if getattr(self, 'debug_mode', False) and hasattr(self, '_debug_frames_data') and self._debug_frames_data:
+                    self._export_debug_frames(debug_dir)
+
             if self.camera_driver:
                 self.camera_driver.release_camera()
 
@@ -218,81 +382,371 @@ class FrtMain:
         """Main inference loop: process frames and perform food detection."""
         logger.info("Starting inference loop")
 
-        from YoloPipeline import ByteTrack
-        self.tracker = ByteTrack(max_age=30)
+        from ByteTracker import ByteTracker
+        self.tracker = ByteTracker(
+            max_age=self.bytetrack_max_age,
+            high_thresh=self.confidence_threshold,
+            match_thresh=self.bytetrack_match_thresh
+        )
+        
+        if self.fixed_virtual_line_enabled:
+            self.virtual_line_detector = None
+            logger.info(
+                "Fixed virtual line enabled (type={}, pos={:.3f})".format(
+                    self.fixed_virtual_line_type,
+                    self.fixed_virtual_line_pos_ratio,
+                )
+            )
+        else:
+            from VirtualLineDetector import VirtualLineDetector
+            self.virtual_line_detector = VirtualLineDetector()
+
+        # If bypass enabled and no door signal triggers AUTO_CALIBRATION,
+        # set a default boundary line so crossing detection works immediately.
+        if self.bypass_door_sensor:
+            line_info = {
+                'type': self.fixed_virtual_line_type,
+                'pos': self.fixed_virtual_line_pos_ratio * 480, # Assuming 480 height, will be updated if needed
+                'start': 0.0,
+                'end': 1.0,
+            }
+            self.tracker.line_detector.set_virtual_line(line_info)
+            logger.info("Default boundary line set: {} at {:.3f} (approx {} px)".format(
+                self.fixed_virtual_line_type, self.fixed_virtual_line_pos_ratio, line_info['pos']))
 
         frame_count = 0
+        fps_frame_count = 0
         fps_start_time = time.time()
+        active_time_accumulator = 0.0
+        self._metrics_buf = []
+
 
         while self.is_running:
             try:
                 loop_start = time.time()
 
-                if self.current_state != AppState.TRACKING.value:
+                if self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
                     time.sleep(0.1)
                     continue
 
-                # Capture frame
+                if self.current_state == AppState.TRACKING.value:
+                    idle_time = time.time() - self._last_active_time
+                    if idle_time > self.CAMERA_IDLE_TIMEOUT:
+                        logger.info("State: TRACKING → IDLE (idle timeout {:.1f}s > {}s)".format(
+                            idle_time, self.CAMERA_IDLE_TIMEOUT))
+                        self._shutdown_camera_and_tracking()
+                        continue
+
+                # ====================================================================
+                # CAPTURE FRAME
+                # ====================================================================
+                capture_start = time.time()
                 frame = None
-                if self.shm_reader and self.shm_reader.is_ready():
+                if self.shm_reader:
                     frame = self.shm_reader.read_frame()
                 
-                # Fallback to direct USB camera if SHM is not available
+                if frame is None and self.shm_only:
+                    time.sleep(0.033)
+                    continue
+
                 if frame is None and self.camera_driver and self.camera_driver.is_camera_open:
                     frame = self.camera_driver.read_frame()
                 elif frame is None and self.camera_driver and not self.camera_driver.is_camera_open:
                     self.camera_driver.open_camera_stream()
                     frame = self.camera_driver.read_frame()
                     
+                capture_time = (time.time() - capture_start) * 1000
+
                 if frame is None:
+                    if self.debug_mode and frame_count % 30 == 0:
+                        logger.debug("Frame #{} capture returned None — waiting for camera".format(frame_count))
                     time.sleep(0.033)
                     continue
 
-                # Motion detection
+                frame_count += 1
+                fps_frame_count += 1
+
+                # ====================================================================
+                # AUTO-CALIBRATION PHASE
+                # ====================================================================
+                if self.current_state == AppState.AUTO_CALIBRATION.value:
+                    if self.fixed_virtual_line_enabled:
+                        pos_pixel = self.fixed_virtual_line_pos_ratio * frame.shape[0] if self.fixed_virtual_line_type == 'horizontal' else self.fixed_virtual_line_pos_ratio * frame.shape[1]
+                        line_info = {
+                            'type': self.fixed_virtual_line_type,
+                            'pos': pos_pixel,
+                            'start': 0.0,
+                            'end': 1.0,
+                        }
+                        self.tracker.line_detector.set_virtual_line(line_info)
+                        self.virtual_line_ready = True
+                        self.current_state = AppState.TRACKING.value
+                        self._last_active_time = time.time()
+                        axis = "y" if self.fixed_virtual_line_type == "horizontal" else "x"
+                        logger.info(
+                            "State: AUTO_CALIBRATION → TRACKING (fixed {} virtual line at {}={:.3f} -> {}px)".format(
+                                self.fixed_virtual_line_type,
+                                axis,
+                                self.fixed_virtual_line_pos_ratio,
+                                int(pos_pixel)
+                            )
+                        )
+                        continue
+
+                    if self.virtual_line_detector is not None:
+                        line_info = self.virtual_line_detector.detect_virtual_line(frame)
+                        if line_info:
+                            self.tracker.line_detector.set_virtual_line(line_info)
+                            self.virtual_line_ready = True
+                            self.current_state = AppState.TRACKING.value
+                            self._last_active_time = time.time()
+                            logger.info("State: AUTO_CALIBRATION → TRACKING (line found at pos={})".format(
+                                line_info.get('pos', '?')))
+                            continue
+                        else:
+                            self.frames_without_line += 1
+                            if self.frames_without_line > 5:
+                                logger.warning("State: AUTO_CALIBRATION → TRACKING (timeout after {} frames, using default)".format(self.frames_without_line))
+                                self.virtual_line_ready = True
+                                self.current_state = AppState.TRACKING.value
+                                self._last_active_time = time.time()
+                                continue
+                            else:
+                                if self.debug_mode:
+                                    logger.debug("Calib frame #{} — no line detected ({}/5)".format(frame_count, self.frames_without_line))
+                                time.sleep(0.01)
+                                continue
+                    else:
+                        self.current_state = AppState.TRACKING.value
+                        self._last_active_time = time.time()
+                        logger.info("State: AUTO_CALIBRATION → TRACKING (no detector)")
+                        continue
+
+                # ====================================================================
+                # AI VISION CORE (MOG2 → YOLO → ByteTrack → Boundary)
+                # ====================================================================
+
+                # --- Motion Detection ---
+                motion_start = time.time()
                 motion_mask = self.motion_detector.apply_background_subtraction(frame)
-                if not self.motion_detector.is_motion_detected(motion_mask):
+                motion_pixels = int(cv2.countNonZero(motion_mask)) if motion_mask is not None else 0
+                motion_time = (time.time() - motion_start) * 1000
+                motion_detected = self.motion_detector.is_motion_detected(motion_mask)
+
+                if self.debug_mode:
+                    logger.debug("Frame #{} | MOTION | mask_px={:>6d} | motion={} | {}ms".format(
+                        frame_count, motion_pixels, motion_detected, "{:.2f}".format(motion_time)))
+
+                if not motion_detected:
                     continue
 
-                # Preprocess
+                self._last_active_time = time.time()
+
+                # --- Preprocessing ---
+                pre_start = time.time()
                 tensor_input = self.preprocessor.prepare_tensor_input(frame)
+                pre_time = (time.time() - pre_start) * 1000
+
                 if tensor_input is None:
+                    if self.debug_mode:
+                        logger.debug("Frame #{} preprocessor returned None — skipping".format(frame_count))
                     continue
 
-                # Inference
+                # --- Inference ---
+                infer_start = time.time()
                 self.ai_engine.set_input_tensor(tensor_input)
                 self.ai_engine.invoke_inference()
                 detections = self.ai_engine.get_output_boxes()
+                infer_time = (time.time() - infer_start) * 1000
 
-                # Tracking
+                # Scale detections from normalized [0,1] to pixel coordinates
+                frame_h, frame_w = frame.shape[:2]
+                for det in detections:
+                    if 'bbox' in det:
+                        x1, y1, x2, y2 = det['bbox']
+                        det['bbox'] = [
+                            x1 * frame_w,
+                            y1 * frame_h,
+                            x2 * frame_w,
+                            y2 * frame_h
+                        ]
+
+                # Detection breakdown by class
+                class_counts = {}
+                for d in detections:
+                    cid = d["class_id"]
+                    class_counts[cid] = class_counts.get(cid, 0) + 1
+                class_breakdown = ", ".join(
+                    "{}:{}".format(self._get_food_name(cid), cnt)
+                    for cid, cnt in sorted(class_counts.items())
+                ) if class_counts else "none"
+
+                # --- Tracking (ByteTrack) ---
+                track_start = time.time()
                 tracked = self.tracker.update(detections)
+                track_time = (time.time() - track_start) * 1000
 
-                # Publish
-                if self.dbus_interface and tracked:
-                    self.dbus_interface.publish_tracking_results({
-                        "food_items": tracked,
-                        "timestamp": time.time(),
-                        "frame_id": frame_count
-                    })
+                # --- Boundary Crossing Events ---
+                changes = self.tracker.get_quantity_change()
+                for cid, delta in changes.items():
+                    self._pending_quantity_changes[cid] = (
+                        self._pending_quantity_changes.get(cid, 0) + delta
+                    )
+                    event_type = "CHECK_IN" if delta > 0 else "CHECK_OUT"
+                    food_name = self._get_food_name(cid)
+                    abs_delta = abs(delta)
+                    logger.info(">>> {}: {} x {} (class_id={})".format(
+                        event_type, abs_delta, food_name, cid))
+                    if self._boundary_event_callback:
+                        self._boundary_event_callback({"event_type": event_type, "class_id": cid, "delta": delta})
+                        
+                    if (event_type in ["CHECK_IN", "CHECK_OUT"]) and getattr(self, 'debug_mode', False):
+                        try:
+                            debug_dir = getattr(self, 'debug_dir', '/opt/fss/debug_frames')
+                            file_name = "last_checkin.jpg" if event_type == "CHECK_IN" else "last_checkout.jpg"
+                            img_path = os.path.join(debug_dir, file_name)
+                            os.makedirs(debug_dir, exist_ok=True)
+                            
+                            debug_frame = frame.copy()
+                            if hasattr(self.tracker, 'line_detector') and self.tracker.line_detector.boundary_line:
+                                line_info = self.tracker.line_detector.boundary_line
+                                line_pos = int(line_info.get('pos', 0))
+                                line_type = line_info.get('type', 'horizontal')
+                                if line_type == 'horizontal':
+                                    cv2.line(debug_frame, (0, line_pos), (debug_frame.shape[1], line_pos), (0, 0, 255), 2)
+                                else:
+                                    cv2.line(debug_frame, (line_pos, 0), (line_pos, debug_frame.shape[0]), (0, 0, 255), 2)
+                            
+                            for t in self.tracker.tracks:
+                                if t.state == "ACTIVE":
+                                    x1, y1, w, h = [int(v) for v in t.get_bbox()]
+                                    x2, y2 = x1 + w, y1 + h
+                                    color = (0, 255, 0) if t.class_id == cid else (200, 200, 200)
+                                    cv2.rectangle(debug_frame, (x1, y1), (x2, y2), color, 2)
+                                    label = f"ID:{t.track_id} {self._get_food_name(t.class_id)}"
+                                    cv2.putText(debug_frame, label, (x1, max(0, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                            
+                            # Draw frame number on the top left
+                            cv2.putText(debug_frame, f"Frame: {frame_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+                            
+                            cv2.imwrite(img_path, debug_frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+                            
+                            # Save frame number to text file for main.py to read
+                            txt_path = os.path.join(debug_dir, f"{file_name}.txt")
+                            with open(txt_path, "w") as f:
+                                f.write(str(frame_count))
+                        except Exception as e:
+                            logger.error(f"Failed to save {event_type} moment: {e}")
 
-                # Write preview frame for LivePreview UI (every 3rd frame)
+                # --- Per-frame timing totals ---
+                total_time = (time.time() - loop_start) * 1000
+                loop_fps = 1000.0 / total_time if total_time > 0 else 0
+
+                # --- Debug log line (compact real-time metrics) ---
+                if self.debug_mode:
+                    state_str = self.current_state[:7]
+                    det_count = len(detections)
+                    trk_count = len(tracked) if isinstance(tracked, list) else (len(tracked.get("tracks", [])) if isinstance(tracked, dict) else 0)
+                    log_str = "Frame #{:<6d} | {:<7s} | {:>7.1f} | {:>7.1f} | {:>8.1f} | {:>7.1f} | {:>3d} | {:>6.1f} | {:>7.1f} | {:>7.2f} | {:>3d}|{:>3d}| {}".format(
+                        frame_count, state_str, capture_time, motion_time, pre_time, infer_time,
+                        len(detections), track_time, total_time, loop_fps,
+                        det_count, trk_count, class_breakdown)
+                    self._metrics_buf.append(log_str)
+                    
+                    # Add centroid vs virtual line debug info for active tracks
+                    if hasattr(self.tracker, 'line_detector') and self.tracker.line_detector.boundary_line:
+                        line_info = self.tracker.line_detector.boundary_line
+                        line_type = line_info.get('type')
+                        line_pos = line_info.get('pos', 0)
+                        
+                        for t in self.tracker.tracks:
+                            if t.state == "ACTIVE":
+                                if line_type == 'horizontal' and len(t.centroid_y_history) > 0:
+                                    c_pos = t.centroid_y_history[-1]
+                                    dist = c_pos - line_pos
+                                    self._metrics_buf.append("   └─ Track {:>2} (cls {}): Y={:>5.1f} (dist to line: {:>+6.1f}px)".format(
+                                        t.track_id, t.class_id, c_pos, dist))
+                                elif line_type == 'vertical' and len(t.centroid_x_history) > 0:
+                                    c_pos = t.centroid_x_history[-1]
+                                    dist = c_pos - line_pos
+                                    self._metrics_buf.append("   └─ Track {:>2} (cls {}): X={:>5.1f} (dist to line: {:>+6.1f}px)".format(
+                                        t.track_id, t.class_id, c_pos, dist))
+
+                # --- Debug Drawing (Save to memory list) ---
+                if self.debug_mode:
+                    try:
+                        if not hasattr(self, '_debug_frames_data'):
+                            self._debug_frames_data = []
+                        
+                        frame_data = {
+                            "frame_count": frame_count,
+                            "frame": frame.copy(),
+                            "line_info": dict(self.tracker.line_detector.boundary_line),
+                            "tracks": []
+                        }
+                        for t in self.tracker.tracks:
+                            if t.state == "ACTIVE":
+                                frame_data["tracks"].append({
+                                    "track_id": t.track_id,
+                                    "class_id": t.class_id,
+                                    "bbox": [int(v) for v in t.get_bbox()],
+                                    "centroid_x_history": list(t.centroid_x_history),
+                                    "centroid_y_history": list(t.centroid_y_history)
+                                })
+                        self._debug_frames_data.append(frame_data)
+                    except Exception as e:
+                        logger.error("Failed to store debug frame data: {}".format(e))
+
+                # --- Write preview frame for LivePreview UI (every 3rd frame) ---
                 if frame_count % 3 == 0:
                     try:
-                        import cv2
                         preview_path = "/opt/fss/latest_preview.jpg"
                         cv2.imwrite(preview_path, frame,
                                     [cv2.IMWRITE_JPEG_QUALITY, 70])
                     except Exception:
                         pass
 
-                frame_count += 1
+                # --- Write metadata JSON alongside preview frame ---
+                if frame_count % 3 == 0:
+                    try:
+                        events_list = []
+                        for cid, delta in changes.items():
+                            food_name = self._get_food_name(cid)
+                            events_list.append({
+                                "food_name": food_name,
+                                "class_id": cid,
+                                "delta": abs(delta),
+                                "event": "added" if delta > 0 else "removed"
+                            })
+                        meta = {
+                            "foods": class_breakdown,
+                            "events": events_list,
+                            "pipeline_time_ms": round(total_time, 2),
+                            "capture_time_ms": round(capture_time, 2),
+                            "motion_time_ms": round(motion_time, 2),
+                            "preprocess_time_ms": round(pre_time, 2),
+                            "inference_time_ms": round(infer_time, 2),
+                            "tracking_time_ms": round(track_time, 2)
+                        }
+                        meta_path = "/opt/fss/latest_preview_meta.json"
+                        with open(meta_path, "w") as f:
+                            json.dump(meta, f)
+                    except Exception:
+                        pass
+
+                # --- Loop rate control ---
+                loop_time = (time.time() - loop_start) * 1000
+                active_time_accumulator += loop_time / 1000.0
+                sleep_time = max(0, self.loop_interval_ms - loop_time) / 1000.0
+
+                # --- FPS metrics every second ---
                 elapsed = time.time() - fps_start_time
                 if elapsed >= 1.0:
-                    self.log_pipeline_metrics(frame_count / elapsed, 0.0)
-                    frame_count = 0
+                    load_percent = (active_time_accumulator / elapsed) * 100.0
+                    self.log_pipeline_metrics(fps_frame_count / elapsed, load_percent)
+                    fps_frame_count = 0
+                    active_time_accumulator = 0.0
                     fps_start_time = time.time()
-
-                loop_time = (time.time() - loop_start) * 1000
-                sleep_time = max(0, self.loop_interval_ms - loop_time) / 1000.0
                 if sleep_time > 0:
                     time.sleep(sleep_time)
 
@@ -301,6 +755,18 @@ class FrtMain:
                 if not self.recover_from_crash():
                     self.is_running = False
                     self.current_state = AppState.ERROR.value
+
+    def _shutdown_camera_and_tracking(self) -> None:
+        if self.current_state != AppState.TRACKING.value:
+            return
+        logger.info("Camera idle timeout — releasing camera and resetting tracker")
+        self.current_state = AppState.IDLE.value
+        if self.motion_detector:
+            self.motion_detector.reset_background_model()
+        if self.camera_driver:
+            self.camera_driver.release_camera()
+        if self.dbus_interface:
+            self.dbus_interface.emit_camera_state("OFF")
 
     def on_distance_event_received(self, distance_cm: float) -> None:
         """
@@ -311,47 +777,93 @@ class FrtMain:
 
     def on_door_event_received(self, door_state: str) -> None:
         """Handle door open/close events from SensorDaemon."""
-        logger.info("Door event received: {}".format(door_state))
+        # If bypass is active, ignore physical door events so MC-38 can be attached later
+        if self.bypass_door_sensor:
+            logger.debug("Door sensor bypassed — ignoring D-Bus door event")
+            return
 
-        if door_state.upper() == "OPEN":
+        logger.info("Door event received: {}".format(door_state))
+        normalized_state = door_state.upper()
+        if normalized_state == "DOOR_OPEN":
+            normalized_state = "OPEN"
+        elif normalized_state == "DOOR_CLOSE":
+            normalized_state = "CLOSED"
+
+        if normalized_state == "OPEN":
+            prev_state = self.current_state
             can_track = False
             if not self.distance_sensor_enabled:
                 can_track = True
             elif self.last_distance_cm is not None and self.last_distance_cm < self.distance_threshold_cm:
                 can_track = True
 
-            if can_track and self.current_state != AppState.TRACKING.value:
-                logger.info("Transitioning to TRACKING state")
-                self.current_state = AppState.TRACKING.value
+            if can_track and self.current_state not in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
+                logger.info("State: {} → AUTO_CALIBRATION (door OPEN)".format(prev_state))
+                self.current_state = AppState.AUTO_CALIBRATION.value
+                self._last_active_time = time.time()
+                if self.tracker:
+                    self.tracker.reset()
+                self._pending_quantity_changes.clear()
+                self.virtual_line_ready = False
+                self.frames_without_line = 0
+                if self.debug_mode:
+                    logger.debug("Door OPEN → camera ON, distance={}cm, threshold={}cm".format(
+                        self.last_distance_cm if self.last_distance_cm is not None else "N/A",
+                        self.distance_threshold_cm))
+                
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("ON")
-                if (not self.shm_reader or not self.shm_reader.is_ready()) and self.camera_driver and not self.camera_driver.is_camera_open:
+                if (not self.shm_only and
+                        (not self.shm_reader or not self.shm_reader.is_ready()) and
+                        self.camera_driver and
+                        not self.camera_driver.is_camera_open):
                     self.camera_driver.open_camera_stream()
 
-        elif door_state.upper() == "CLOSED":
-            if self.current_state == AppState.TRACKING.value:
-                logger.info("Transitioning to IDLE state")
+        elif normalized_state == "CLOSED":
+            prev_state = self.current_state
+            if self.current_state in (AppState.TRACKING.value, AppState.AUTO_CALIBRATION.value):
+                logger.info("State: {} → IDLE (door CLOSED)".format(prev_state))
                 self.current_state = AppState.IDLE.value
                 if self.dbus_interface:
                     self.dbus_interface.emit_camera_state("OFF")
 
                 if self.tracker and self.dbus_interface:
-                    changes = self.tracker.get_quantity_change()
+                    changes = dict(self._pending_quantity_changes)
+                    if not changes:
+                        changes = self.tracker.get_quantity_change()
+                    changes = {k: v for k, v in changes.items() if v != 0}
                     if changes:
+                        logger.info("Publishing {} boundary events to DBDaemon".format(len(changes)))
                         self.dbus_interface.publish_tracking_results({
-                            "food_items": [{"id": k, "qty": v} for k, v in changes.items()],
+                            "food_items": [
+                                {
+                                    "id": self._get_food_name(k),
+                                    "class_id": k,
+                                    "score": 1.0,
+                                    "qty": v
+                                }
+                                for k, v in changes.items()
+                            ],
                             "timestamp": time.time(),
                             "event": "door_closed"
                         })
+                        self._pending_quantity_changes.clear()
+                    else:
+                        logger.info("No boundary events to publish — no items crossed the line")
 
                 if self.motion_detector:
                     self.motion_detector.reset_background_model()
 
                 if self.camera_driver:
                     self.camera_driver.release_camera()
+                    logger.debug("Camera released")
 
         else:
             logger.warning("Unknown door state: {}".format(door_state))
+
+    def set_boundary_event_callback(self, callback: Callable) -> None:
+        """Register callback fired on each new boundary crossing event."""
+        self._boundary_event_callback = callback
 
     def recover_from_crash(self) -> bool:
         """Attempt to recover from inference crash or memory overflow."""
@@ -385,6 +897,52 @@ class FrtMain:
         load = max(0.0, min(100.0, load))
         logger.info("Pipeline Metrics | FPS: {:.2f} | Load: {:.1f}% | State: {}".format(
             fps, load, self.current_state))
+            
+    def _export_debug_frames(self, debug_dir: str) -> None:
+        """Export stored debug frames sequentially at the end of execution."""
+        if hasattr(self, '_metrics_buf') and self._metrics_buf:
+            logger.info("=" * 120)
+            logger.info("        FRAME | STATE |   CAPTURE |  MOTION |  PREPROC |  INFER | NMS | TRACK |  TOTAL | LOOP FPS | DET|TRK| CLS_BREAKDOWN")
+            logger.info("-" * 120)
+            for m in self._metrics_buf:
+                logger.info(m)
+            logger.info("=" * 120)
+            
+        logger.info(f"Exporting {len(self._debug_frames_data)} debug frames to {debug_dir}...")
+        try:
+            for idx, item in enumerate(self._debug_frames_data):
+                debug_frame = item["frame"]
+                line_info = item["line_info"]
+                
+                # Draw boundary line
+                line_pos = int(line_info.get('pos', 0))
+                line_type = line_info.get('type', 'horizontal')
+                if line_type == 'horizontal':
+                    cv2.line(debug_frame, (0, line_pos), (debug_frame.shape[1], line_pos), (0, 0, 255), 2)
+                else:
+                    cv2.line(debug_frame, (line_pos, 0), (line_pos, debug_frame.shape[0]), (0, 0, 255), 2)
+                    
+                # Draw tracks and boxes
+                for t in item["tracks"]:
+                    x1, y1, w, h = t["bbox"]
+                    x2, y2 = x1 + w, y1 + h
+                    color = (0, 255, 0)
+                    cv2.rectangle(debug_frame, (x1, y1), (x2, y2), color, 2)
+                    label = "ID:{} {}".format(t["track_id"], self._get_food_name(t["class_id"]))
+                    cv2.putText(debug_frame, label, (x1, max(0, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    
+                    # Draw trajectory
+                    pts = list(zip(t["centroid_x_history"], t["centroid_y_history"]))
+                    pts = [(int(cx), int(cy)) for cx, cy in pts]
+                    for i in range(1, len(pts)):
+                        cv2.line(debug_frame, pts[i-1], pts[i], (255, 0, 0), 2)
+                        
+                debug_path = os.path.join(debug_dir, "frame_{:04d}.jpg".format(idx))
+                cv2.imwrite(debug_path, debug_frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+                
+            logger.info("Successfully exported all debug frames.")
+        except Exception as e:
+            logger.error(f"Error during debug frame export: {e}")
 
     # ========================================================================
     # INTERNAL HELPER METHODS
@@ -407,10 +965,14 @@ class FrtMain:
             c_precision = precision_map.get(self.model_precision, 2)
             from YoloTfliteEngine import YoloTfliteEngine
             self.ai_engine = YoloTfliteEngine(
-                self.MODEL_PATH,
+                model_path=self.MODEL_PATH,
                 use_c_backend=self.use_c_backend,
-                c_precision=c_precision
-            )
+                c_model_path=self.c_model_path,
+                c_precision=c_precision,
+                confidence_threshold=self.low_confidence_threshold,
+                iou_threshold=self.iou_threshold
+            )# Let YOLO use its internal threshold to pass low-confidence boxes to ByteTrack.
+            # self.ai_engine.CONFIDENCE_THRESHOLD = self.confidence_threshold
             return self.ai_engine.load_model_mmap()
         except Exception as e:
             logger.exception("AI engine initialization failed: {}".format(e))
@@ -447,7 +1009,10 @@ class FrtMain:
         """Initialize motion detector with MOG2."""
         try:
             from MotionDetector import MotionDetector
-            self.motion_detector = MotionDetector(threshold_percent=1.0)
+            self.motion_detector = MotionDetector(
+                threshold_percent=self.mog2_area_threshold,
+                mog2_variance=self.mog2_variance
+            )
             self.motion_detector.init_mog2()
             return True
         except Exception as e:
@@ -459,6 +1024,11 @@ class FrtMain:
         try:
             from ImagePreprocessor import ImagePreprocessor
             self.preprocessor = ImagePreprocessor(640, 640)
+            
+            if self.ai_engine:
+                dtype, scale, zp = self.ai_engine.get_input_quant_params()
+                self.preprocessor.set_quantization_params(dtype, scale, zp)
+                
             return True
         except Exception as e:
             logger.exception("Preprocessor initialization failed: {}".format(e))

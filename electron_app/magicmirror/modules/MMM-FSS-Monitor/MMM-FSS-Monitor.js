@@ -18,10 +18,12 @@ Module.register("MMM-FSS-Monitor", {
 	 * Default module configuration.
 	 */
 	defaults: {
-		distanceThreshold: 0.6,      // meters (60cm)
+		distanceThreshold: 60,      // centimeters
 		staleDataTimeout: 10000,     // ms before sensor data is considered stale
-		blackScreenTimeout: 5000,    // ms to keep black screen visible after detection ends
 		showDebugInfo: false,        // show distance/door state debug in corner
+		ignoreDistanceSensor: false, // ignore distance sensor errors
+		ignoreDoorSensor: false,     // ignore door sensor
+		disableBlackout: false,      // disable blackout for debugging
 	},
 
 	/**
@@ -39,7 +41,7 @@ Module.register("MMM-FSS-Monitor", {
 
 		// Initialize state
 		this.state = {
-			isBlackScreenActive: false,
+			isUserPresenceDetected: false,
 			distanceValue: null,
 			distanceStale: false,
 			doorState: null,
@@ -49,7 +51,6 @@ Module.register("MMM-FSS-Monitor", {
 		};
 
 		// Timers
-		this.blackScreenTimer = null;
 		this.staleDistanceTimer = null;
 		this.staleDoorTimer = null;
 
@@ -66,29 +67,40 @@ Module.register("MMM-FSS-Monitor", {
 		const wrapper = document.createElement("div");
 		wrapper.classList.add("mmm-fss-monitor-container");
 
-		// Black screen overlay (initially hidden)
-		const overlay = document.createElement("div");
-		overlay.id = "mmm-fss-monitor-overlay";
-		overlay.classList.add("mmm-fss-monitor-overlay");
-		if (this.state.isBlackScreenActive) {
-			overlay.classList.add("active");
+		// Blackout overlay
+		let overlay = document.getElementById("fss-blackout-overlay");
+		if (!overlay) {
+			overlay = document.createElement("div");
+			overlay.id = "fss-blackout-overlay";
+			document.body.appendChild(overlay);
 		}
-		wrapper.appendChild(overlay);
+		
+		if (this.state.isUserPresenceDetected && !this.config.disableBlackout) {
+			overlay.classList.add("active");
+		} else {
+			overlay.classList.remove("active");
+		}
 
-		// Door state indicator (always visible)
+		// Door state + distance indicator (always visible)
 		const doorIndicator = document.createElement("div");
 		doorIndicator.id = "fss-door-indicator";
 		doorIndicator.classList.add("fss-door-indicator");
 
+		let doorText = "🚪 --";
 		if (this.state.doorState) {
-			const isOpen = this.state.doorState === "OPEN";
-			doorIndicator.textContent = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
+			const isOpen = this.state.doorState === "DOOR_OPEN";
+			doorText = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
 			doorIndicator.classList.toggle("door-open", isOpen);
 			doorIndicator.classList.toggle("door-closed", !isOpen);
 		} else {
-			doorIndicator.textContent = "🚪 --";
 			doorIndicator.classList.add("door-unknown");
 		}
+
+		let distText = "";
+		if (this.state.distanceValue !== null) {
+			distText = " 📏 " + this.state.distanceValue.toFixed(0) + "cm";
+		}
+		doorIndicator.textContent = doorText + distText;
 		wrapper.appendChild(doorIndicator);
 
 		// Debug info (optional)
@@ -97,12 +109,16 @@ Module.register("MMM-FSS-Monitor", {
 			debugInfo.classList.add("mmm-fss-monitor-debug");
 
 			const distanceText = document.createElement("div");
-			distanceText.textContent = `Distance: ${this.state.distanceValue !== null ? this.state.distanceValue.toFixed(2) : "N/A"} m`;
+			distanceText.textContent = `Distance: ${this.state.distanceValue !== null ? this.state.distanceValue.toFixed(0) : "N/A"} cm`;
 			debugInfo.appendChild(distanceText);
 
 			const doorText = document.createElement("div");
 			doorText.textContent = `Door: ${this.state.doorState || "N/A"}`;
 			debugInfo.appendChild(doorText);
+
+			const presenceText = document.createElement("div");
+			presenceText.textContent = `Presence: ${this.state.isUserPresenceDetected ? "Yes" : "No"}`;
+			debugInfo.appendChild(presenceText);
 
 			wrapper.appendChild(debugInfo);
 		}
@@ -119,13 +135,49 @@ Module.register("MMM-FSS-Monitor", {
 	socketNotificationReceived(notification, payload) {
 		Log.debug(`MMM-FSS-Monitor received: ${notification}`, payload);
 
-		if (notification === "DISTANCE_ALERT") {
-			// Distance data: distance in meters, withinThreshold boolean
+		if (notification === "FSS_NOTIFICATION") {
+			// Forward to all modules via MagicMirror internal notification
+			this.sendNotification("FSS_NOTIFICATION", payload);
+			return;
+		}
+
+        if (notification === "USER_PRESENCE") {
+			// User presence detection
+			this.state.isUserPresenceDetected = payload.presence;
+			Log.info(`MMM-FSS-Monitor: User presence detected - ${payload.presence}`);
+			this.updateDom();
+			return;
+		} else if (notification === "DISTANCE_ALERT") {
+			if (this.config.ignoreDistanceSensor) {
+				Log.debug("MMM-FSS-Monitor: Distance sensor ignored by config");
+				return;
+			}
+			// Distance data: distance in cm, withinThreshold boolean
 			this.state.distanceValue = payload.distance;
 			this.state.lastDistanceUpdate = payload.timestamp || Date.now();
 			this.state.distanceStale = false;
+			
+			// Debounce presence state to prevent flickering from sensor noise (819.10cm spikes)
+			if (payload.withinThreshold) {
+				this.state.isUserPresenceDetected = true;
+				if (this.presenceTimeout) {
+					clearTimeout(this.presenceTimeout);
+					this.presenceTimeout = null;
+				}
+			} else {
+				// Only set to false if it stays false for 1.5 seconds
+				if (!this.presenceTimeout && this.state.isUserPresenceDetected) {
+					this.presenceTimeout = setTimeout(() => {
+						this.state.isUserPresenceDetected = false;
+						this.presenceTimeout = null;
+						this.updateDom();
+					}, 1500);
+				} else if (!this.state.isUserPresenceDetected) {
+					this.state.isUserPresenceDetected = false;
+				}
+			}
 
-			Log.info(`MMM-FSS-Monitor: Distance alert - ${payload.distance.toFixed(2)}m (threshold: ${payload.withinThreshold})`);
+			Log.info(`MMM-FSS-Monitor: Distance alert - ${payload.distance.toFixed(2)}cm (threshold: ${payload.withinThreshold})`);
 
 			// Clear stale timer
 			if (this.staleDistanceTimer) {
@@ -136,32 +188,17 @@ Module.register("MMM-FSS-Monitor", {
 				Log.warn("MMM-FSS-Monitor: Distance data is stale");
 			}, this.config.staleDataTimeout);
 
-			// Handle distance threshold crossing
-			if (payload.withinThreshold && payload.distance < this.config.distanceThreshold) {
-				// User detected - activate black screen
-				this.activateBlackScreen();
-			} else {
-				// No user detected - deactivate black screen
-				this.scheduleBlackScreenDeactivation();
-			}
-
 			this.updateDom();
 		} else if (notification === "DOOR_STATE_UPDATE") {
+			if (this.config.ignoreDoorSensor) {
+				Log.debug("MMM-FSS-Monitor: Door sensor ignored by config");
+				return;
+			}
 			// Door state: state ("OPEN" or "CLOSED"), timestamp
 			this.state.doorState = payload.state;
 			this.state.lastDoorUpdate = payload.timestamp || Date.now();
 
 			Log.info(`MMM-FSS-Monitor: Door state - ${payload.state}`);
-
-			// Update door indicator element
-			const doorIndicator = document.getElementById("fss-door-indicator");
-			if (doorIndicator) {
-				const isOpen = payload.state === "OPEN";
-				doorIndicator.textContent = isOpen ? "🚪 MỞ" : "🚪 ĐÓNG";
-				doorIndicator.classList.remove("door-open", "door-closed", "door-unknown");
-				doorIndicator.classList.toggle("door-open", isOpen);
-				doorIndicator.classList.toggle("door-closed", !isOpen);
-			}
 
 			// Clear stale timer
 			if (this.staleDoorTimer) {
@@ -171,59 +208,10 @@ Module.register("MMM-FSS-Monitor", {
 				Log.warn("MMM-FSS-Monitor: Door state data is stale");
 			}, this.config.staleDataTimeout);
 
-			// Handle door open event - trigger camera signal (external system will handle)
-			if (payload.state === "OPEN") {
-				Log.info("MMM-FSS-Monitor: Door opened - camera system should be notified");
-				this.sendSocketNotification("DOOR_OPENED_EVENT", { timestamp: payload.timestamp });
-			}
-
 			this.updateDom();
 		} else if (notification === "MONITOR_ERROR") {
 			Log.error(`MMM-FSS-Monitor: Error from node_helper - ${payload.error}`);
 		}
-	},
-
-	/**
-	 * Activate the black screen overlay.
-	 * This is triggered when distance < threshold (user detected).
-	 */
-	activateBlackScreen() {
-		if (this.state.isBlackScreenActive) {
-			return; // Already active
-		}
-
-		Log.info("MMM-FSS-Monitor: Activating black screen");
-		this.state.isBlackScreenActive = true;
-
-		// Clear any pending deactivation
-		if (this.blackScreenTimer) {
-			clearTimeout(this.blackScreenTimer);
-			this.blackScreenTimer = null;
-		}
-
-		this.updateDom();
-	},
-
-	/**
-	 * Schedule deactivation of black screen.
-	 * Waits for blackScreenTimeout before deactivating.
-	 */
-	scheduleBlackScreenDeactivation() {
-		if (!this.state.isBlackScreenActive) {
-			return; // Already inactive
-		}
-
-		// Clear any previous timer
-		if (this.blackScreenTimer) {
-			clearTimeout(this.blackScreenTimer);
-		}
-
-		Log.debug("MMM-FSS-Monitor: Scheduling black screen deactivation");
-		this.blackScreenTimer = setTimeout(() => {
-			Log.info("MMM-FSS-Monitor: Deactivating black screen");
-			this.state.isBlackScreenActive = false;
-			this.updateDom();
-		}, this.config.blackScreenTimeout);
 	},
 
 	/**
@@ -232,14 +220,14 @@ Module.register("MMM-FSS-Monitor", {
 	stop() {
 		Log.info(`Stopping module: ${this.name}`);
 
-		if (this.blackScreenTimer) {
-			clearTimeout(this.blackScreenTimer);
-		}
 		if (this.staleDistanceTimer) {
 			clearTimeout(this.staleDistanceTimer);
 		}
 		if (this.staleDoorTimer) {
 			clearTimeout(this.staleDoorTimer);
+		}
+		if (this.presenceTimeout) {
+			clearTimeout(this.presenceTimeout);
 		}
 	},
 });

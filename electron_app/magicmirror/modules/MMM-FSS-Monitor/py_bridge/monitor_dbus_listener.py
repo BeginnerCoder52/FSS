@@ -22,10 +22,33 @@ import logging
 import signal
 import sqlite3
 import time
+import os
 from typing import Optional, Tuple
 
+def get_dbus_config():
+    config_path = os.environ.get("FSS_CONFIG_PATH", "")
+    if not config_path:
+        candidates = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../config.json")),
+            "/opt/fss/config.json",
+            "/etc/fss/config.json",
+        ]
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                config_path = candidate
+                break
+    if config_path:
+        try:
+            with open(config_path, "r") as f:
+                return json.load(f).get("dbus", {})
+        except Exception as e:
+            logging.warning(f"Failed to load config from {config_path}: {e}")
+    return {}
+
+dbus_config = get_dbus_config()
+
 try:
-    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async
+    from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -38,24 +61,29 @@ logger = logging.getLogger(__name__)
 DB_PATH = "/opt/fss/data/fss_data.db"
 DB_QUERY_TIMEOUT_S = 15
 DB_POLL_INTERVAL_S = 2
-DISTANCE_THRESHOLD_M = 0.6  # 60cm
+DISTANCE_THRESHOLD_CM = 60.0  # 60cm
 
 
-class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.Sensor"):
+class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("sensor_interface", "vn.edu.uit.FSS.Sensor")):
     """D-Bus interface proxy for raw sensor signals from sensor_daemon."""
 
-    @dbus_signal_async("db")
-    def DistanceUpdated(self) -> None:
-        """Signal: Distance reading and threshold."""
+    @dbus_signal_async("d")
+    def DistanceDataChanged(self) -> None:
+        """Signal: Distance reading."""
         pass
 
-    @dbus_signal_async("sd")
-    def DoorStateUpdated(self) -> None:
-        """Signal: Door state and timestamp."""
+    @dbus_signal_async("s")
+    def DoorStateChanged(self) -> None:
+        """Signal: Door state."""
+        pass
+
+    @dbus_signal_async("b")
+    def UserPresenceDetected(self) -> None:
+        """Signal: User presence detection."""
         pass
 
 
-class DbDaemonMonitorProxy(DbusInterfaceCommonAsync, interface_name="vn.edu.uit.FSS.DBDaemon"):
+class DbDaemonMonitorProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("dbdaemon_interface", "vn.edu.uit.FSS.DBDaemon")):
     """D-Bus interface proxy for distance and door signals from DBDaemon."""
 
     @dbus_signal_async("db")
@@ -73,11 +101,11 @@ class MonitorListener:
     """Main listener for monitor sensors with two-tier fetching strategy."""
 
     # D-Bus configuration
-    DBUS_SERVICE = "vn.edu.uit.FSS.DBDaemon"
-    DBUS_PATH = "/vn/edu/uit/FSS/DBDaemon"
+    DBUS_SERVICE = dbus_config.get("dbdaemon_service", "vn.edu.uit.FSS.DBDaemon")
+    DBUS_PATH = dbus_config.get("dbdaemon_path", "/vn/edu/uit/FSS/DBDaemon")
     
-    SENSOR_DBUS_SERVICE = "vn.edu.uit.FSS.Sensor"
-    SENSOR_DBUS_PATH = "/vn/edu/uit/FSS/Sensor"
+    SENSOR_DBUS_SERVICE = dbus_config.get("sensor_service", "vn.edu.uit.FSS.Sensor")
+    SENSOR_DBUS_PATH = dbus_config.get("sensor_path", "/vn/edu/uit/FSS/Sensor")
 
     def __init__(self):
         """Initialize the listener."""
@@ -93,7 +121,7 @@ class MonitorListener:
     def query_latest_sensors_from_db(self) -> Tuple[Optional[float], Optional[bool], Optional[str]]:
         """Query SQLite database for latest distance and door readings."""
         try:
-            conn = sqlite3.connect(DB_PATH, timeout=5.0)
+            conn = sqlite3.connect(f"file:{DB_PATH}?immutable=1", uri=True, timeout=5.0)
             cursor = conn.cursor()
             
             # Query latest distance reading
@@ -118,9 +146,9 @@ class MonitorListener:
             
             if distance_row:
                 distance, ts = distance_row
-                is_user_detected = distance < DISTANCE_THRESHOLD_M
+                is_user_detected = distance < DISTANCE_THRESHOLD_CM
                 self.last_db_update_time = time.time()
-                logger.debug(f"DB Query: distance={distance:.2f}m, user_detected={is_user_detected}")
+                logger.debug(f"DB Query: distance={distance:.2f}cm, user_detected={is_user_detected}")
             
             if door_row:
                 door_state, ts = door_row
@@ -207,10 +235,11 @@ class MonitorListener:
             return
             
         try:
+            logger.info("Entering async for loop for DistanceAlert")
             async for distance, within_threshold in self.dbus_proxy.DistanceAlert:
                 try:
                     self.last_db_update_time = time.time()
-                    is_user_detected = distance < DISTANCE_THRESHOLD_M
+                    is_user_detected = distance < DISTANCE_THRESHOLD_CM
                     data = {
                         "type": "DISTANCE_ALERT",
                         "distance": float(distance),
@@ -220,7 +249,7 @@ class MonitorListener:
                         "timestamp": int(time.time() * 1000),
                     }
                     print(json.dumps(data), flush=True)
-                    logger.debug(f"Distance from DBDaemon: {distance:.2f}m, user_detected={is_user_detected}")
+                    logger.debug(f"Distance from DBDaemon: {distance:.2f}cm, user_detected={is_user_detected}")
                 except Exception as e:
                     logger.error(f"Error processing distance data: {e}")
         except asyncio.CancelledError:
@@ -265,7 +294,9 @@ class MonitorListener:
             tasks = [
                 asyncio.create_task(self._listen_sensor_distance()),
                 asyncio.create_task(self._listen_sensor_door()),
+                asyncio.create_task(self._listen_user_presence()),
             ]
+
             self.signal_tasks.extend(tasks)
 
             await asyncio.gather(*tasks)
@@ -281,20 +312,22 @@ class MonitorListener:
             return
             
         try:
-            async for distance, within_threshold in self.sensor_proxy.DistanceUpdated:
+            async for distance in self.sensor_proxy.DistanceDataChanged:
                 try:
+                    # distance from raw sensor is in millimeters!
+                    distance_cm = float(distance) / 10.0
                     self.last_db_update_time = time.time()
-                    is_user_detected = distance < DISTANCE_THRESHOLD_M
+                    is_user_detected = distance_cm < DISTANCE_THRESHOLD_CM
                     data = {
                         "type": "DISTANCE_ALERT",
-                        "distance": float(distance),
-                        "withinThreshold": within_threshold,
+                        "distance": distance_cm,
+                        "withinThreshold": is_user_detected,
                         "isUserDetected": is_user_detected,
                         "source": "raw_sensor",
                         "timestamp": int(time.time() * 1000),
                     }
                     print(json.dumps(data), flush=True)
-                    logger.debug(f"Raw distance: {distance:.2f}m, user_detected={is_user_detected}")
+                    logger.debug(f"Raw distance: {distance_cm:.2f}cm, user_detected={is_user_detected}")
                 except Exception as e:
                     logger.error(f"Error processing raw distance: {e}")
         except asyncio.CancelledError:
@@ -303,12 +336,12 @@ class MonitorListener:
             logger.error(f"Error in raw distance listener: {e}")
 
     async def _listen_sensor_door(self):
-        """Listen for raw door state readings from sensor_daemon."""
+        """Listen for raw door state changes from sensor_daemon."""
         if not self.sensor_proxy:
             return
             
         try:
-            async for door_state, timestamp in self.sensor_proxy.DoorStateUpdated:
+            async for door_state in self.sensor_proxy.DoorStateChanged:
                 try:
                     self.last_db_update_time = time.time()
                     data = {
@@ -325,6 +358,31 @@ class MonitorListener:
             logger.debug("Raw door listener task cancelled")
         except Exception as e:
             logger.error(f"Error in raw door listener: {e}")
+
+    async def _listen_user_presence(self):
+        """Listen for user presence detection (boolean) from sensor daemon."""
+        if not self.sensor_proxy:
+            return
+        
+        try:
+            async for presence in self.sensor_proxy.UserPresenceDetected:
+                try:
+                    self.last_db_update_time = time.time()
+                    data = {
+                        "type": "USER_PRESENCE",
+                        "presence": bool(presence),
+                        "source": "raw_sensor",
+                        "timestamp": int(time.time() * 1000),
+                    }
+                    print(json.dumps(data), flush=True)
+                    logger.debug(f"User presence (raw): {presence}")
+                except Exception as e:
+                    logger.error(f"Error processing raw user presence: {e}")
+        except asyncio.CancelledError:
+            logger.debug("User presence listener task cancelled")
+        except Exception as e:
+            logger.error(f"Error in raw user presence listener: {e}")
+
 
     async def attempt_reconnect(self):
         """Attempt to reconnect with exponential backoff."""
@@ -400,6 +458,7 @@ class MonitorListener:
 
 async def main():
     """Main entry point."""
+    set_default_bus(sd_bus_open_system())
     listener = MonitorListener()
 
     def handle_signal(signum, frame):

@@ -42,16 +42,21 @@ class DbDaemonMain:
 
     # Configuration constants
     MAIN_LOOP_INTERVAL_MS = 1000  # 1 second main loop interval
-    DISTANCE_THRESHOLD_CM = 30.0  # Threshold for distance alert
+    DISTANCE_THRESHOLD_CM = 60.0  # Threshold for distance alert
     
     def __init__(self):
         """Initialize DbDaemonMain instance."""
         # State management
         self.current_state: DaemonState = DaemonState.INIT
         self.is_running: bool = False
+        self._stop_event = threading.Event()
+        self._main_loop_thread: Optional[threading.Thread] = None
+        
+        # Configuration
+        self.DISTANCE_THRESHOLD_CM = 60.0
+        self.TEMP_MAX_THRESHOLD = 8.0
         
         # Component instances
-        self.db_manager: Optional[SqliteManager] = None
         self.shm_reader: Optional[PosixShmReader] = None
         self.file_manager: Optional[DiskFileManager] = None
         self.dbus_interface: Optional[DbDbusInterface] = None
@@ -257,7 +262,14 @@ class DbDaemonMain:
             total_qty = item['quantity'] if item else 0
             
             # Notify UI of update
-            self.dbus_interface.emit_ui_update_signal(food_id, total_qty, image_path or "")
+            self.dbus_interface.emit_ui_update_signal(food_id, total_qty, image_path or "", quantity_delta)
+            
+            # Emit FoodNotification
+            if quantity_delta != 0:
+                action = "thêm vào" if quantity_delta > 0 else "mang ra"
+                notif_type = "food_added" if quantity_delta > 0 else "food_removed"
+                msg_text = f"{abs(quantity_delta)} {food_id} đã {action} tủ lạnh"
+                self.dbus_interface.emit_food_notification(notif_type, msg_text)
             
             self._processed_events_count += 1
             self.logger.info(f"Processed food event: {food_id} (delta={quantity_delta}, "
@@ -318,14 +330,14 @@ class DbDaemonMain:
         finally:
             self.current_state = DaemonState.IDLE
     
-    def process_distance_sensor_event(self, distance: float, timestamp: float) -> None:
+    def process_distance_sensor_event(self, distance_mm: float, timestamp: float) -> None:
         """
         Process distance sensor reading from SensorDaemon.
         
         Logs distance measurements for tracking refrigerator contents proximity.
         
         Args:
-            distance: Distance reading in centimeters
+            distance_mm: Distance reading in millimeters
             timestamp: Unix timestamp when measurement was taken
         """
         try:
@@ -336,17 +348,20 @@ class DbDaemonMain:
                 self._error_count += 1
                 return
             
+            # Convert mm to cm
+            distance_cm = distance_mm / 10.0
+
             # Log distance reading to database
-            if not self.db_manager.insert_distance_sensor_log(distance, timestamp):
+            if not self.db_manager.insert_distance_sensor_log(distance_cm, timestamp):
                 self.logger.error("Failed to insert distance log")
                 self._error_count += 1
                 return
             
             # Emit distance alert signal to UI
-            within_threshold = distance < self.DISTANCE_THRESHOLD_CM
-            self.dbus_interface.emit_distance_alert(distance, within_threshold)
+            within_threshold = distance_cm < self.DISTANCE_THRESHOLD_CM
+            self.dbus_interface.emit_distance_alert(distance_cm, within_threshold)
             
-            self.logger.debug(f"Distance sensor event: {distance}cm (alert={within_threshold})")
+            self.logger.debug(f"Distance sensor event: {distance_cm}cm (alert={within_threshold})")
             self._processed_events_count += 1
             
         except Exception as e:

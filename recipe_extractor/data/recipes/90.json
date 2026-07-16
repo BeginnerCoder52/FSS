@@ -1,0 +1,38 @@
+{
+    "recipe_name": "Canh Riêu Chem Chép",
+    "serving": "4 người",
+    "times": "20 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Chem chép: 1kg",
+        "Cà chua chín: 2 trái",
+        "Khế chua xanh: 1 trái",
+        "Ớt sừng: 1 trái",
+        "Ớt hiểm: 2 trái",
+        "Hành lá: 2 cọng",
+        "Thì là: 5 cây",
+        "Hành tỏi băm: 2M",
+        "Tỏi phi có dầu",
+        "Muối, đường, nước mắm"
+    ],
+    "spices": [
+        "Hạt nêm Aji-ngon® Heo",
+        "\"AJINOMOTO\" Giấm gạo lên men"
+    ],
+    "process": [
+        "Chem chép mua về ngâm nước vo gạo, rửa sạch. Luộc qua nước sôi, xả nước lạnh, gỡ lấy thịt. Phần nước luộc gạn lấy nước trong để nấu canh.",
+        "Ướp chem chép với 1M Giấm gạo lên men LISA®, 1M hạt nêm Aji-ngon®, 1m hành tỏi băm, để thấm.",
+        "Cà chua 1 trái băm nhỏ, 1 trái cắt múi cau. Khế cắt dày 2mm. Hành lá, thì là cắt khúc 2cm. Ớt sừng cắt lát, ớt hiểm đập dập."
+    ],
+    "cook": [
+        "Đun nóng dầu ăn,  phi thơm hành tỏi băm, cho chem chép và ớt hiểm vào xào nhanh, trút ra để riêng. Tiếp tục phi thơm hành tỏi băm, cho cà chua băm vào xào chín, nêm 1/4m muối, 1/2m đường.",
+        "Đun sôi 1.2 lít nước luộc chem chép, nêm 1M hạt nêm Aji-ngon®, 2M Giấm gạo lên men LISA® và 1m muối, cho khế, cà chua vào nấu chín, trút chem chép vào, tắt lửa, nêm thêm 1M nước mắm."
+    ],
+    "usage": [
+        "Múc canh ra tô, rắc hành lá, thì là và tỏi phi có dầu lên trên. Dọn kèm cơm hoặc bún, chấm nước mắm và ớt cắt lát."
+    ],
+    "tips": [
+        "Chọn cà chua thật chín sẽ giúp canh có màu sắc đẹp và hấp dẫn hơn.",
+        "Xào chem chép với ớt hiểm để khử mùi tanh của chem chép."
+    ]
+}

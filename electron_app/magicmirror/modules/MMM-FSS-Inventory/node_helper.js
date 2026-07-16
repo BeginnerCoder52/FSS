@@ -14,7 +14,8 @@ const NodeHelper = require("node_helper");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const SessionLog = require("../../../js/session_logger");
+const SessionLog = require("../../js/session_logger");
+const { resolvePythonExecutable } = require("../fss_paths");
 
 module.exports = NodeHelper.create({
 	/**
@@ -29,6 +30,13 @@ module.exports = NodeHelper.create({
 		this.maxReconnectAttempts = 10;
 		this.reconnectDelay = 1000; // ms
 		this.frtAppEnabled = false;
+
+		// Serve /opt/fss using Express if available
+		if (this.expressApp) {
+			const express = require("express");
+			this.expressApp.use("/opt/fss", express.static("/opt/fss"));
+			console.log(`${this.name}: Serving /opt/fss directory via HTTP`);
+		}
 	},
 
 	/**
@@ -37,6 +45,7 @@ module.exports = NodeHelper.create({
 	socketNotificationReceived(notification, payload) {
 		if (notification === "MMM_FSS_INVENTORY_START") {
 			console.log(`${this.name}: Received start notification`);
+			this.config = payload;
 			this.startDBusListener();
 		}
 	},
@@ -63,7 +72,7 @@ module.exports = NodeHelper.create({
 		console.log(`${this.name}: Starting Python D-Bus listener from ${pythonScriptPath}`);
 
 		try {
-			const pythonExecutable = "/home/richardmelvin52/FSS/.venv/bin/python3";
+			const pythonExecutable = resolvePythonExecutable(__dirname);
 			// Read FRT_APP_ENABLED flag from config or use default
 			const frtAppEnabled = this.config?.frtAppEnabled ?? false;
 			const args = [pythonScriptPath, frtAppEnabled.toString()];
@@ -84,6 +93,16 @@ module.exports = NodeHelper.create({
 			this.pythonProcess.stderr.on("data", (data) => {
 				const error = data.toString().trim();
 				console.error(`${this.name} [PY ERROR]: ${error}`);
+			});
+
+			this.pythonProcess.on("error", (err) => {
+				console.error(`${this.name}: Process error - ${err.message}`);
+				this.sendSocketNotification("INVENTORY_ERROR", {
+					error: `Process error: ${err.message}`,
+				});
+				this.pythonProcess = null;
+				this.isListening = false;
+				this.attemptReconnect();
 			});
 
 			this.pythonProcess.on("close", (code) => {
@@ -110,40 +129,40 @@ module.exports = NodeHelper.create({
 	 * @param {string} message - Raw message from Python process
 	 */
 	handlePythonOutput(message) {
-		try {
-			const data = JSON.parse(message);
+		const lines = message.split("\n");
+		for (const line of lines) {
+			if (!line.trim()) continue;
+			try {
+				const data = JSON.parse(line.trim());
 
-			if (data.type === "FRT_UPDATE") {
-				// FRT detection result
-				console.log(`${this.name}: Relaying FRT update - ${data.quantity} ${data.className} (${data.action})`);
-				this.sendSocketNotification("FRT_UPDATE", {
-					foodId: data.foodId || `food_${Date.now()}`,
-					className: data.className,
-					quantity: data.quantity,
-					imagePath: data.imagePath,
-					action: data.action || "detected",
-					timestamp: data.timestamp || Date.now(),
-				});
-				// Relay to MMM-FSS-Notification
-				const actionLabel = data.action === "added" ? "to" : "from";
-				this.sendSocketNotification("FSS_NOTIFICATION", {
-					type: "food",
-					message: `📦 ${data.action} ${data.quantity} ${data.className} ${actionLabel} the fridge`
-				});
-			} else if (data.type === "FRT_APP_ENABLED") {
-				// FRT app enabled/disabled flag
-				this.frtAppEnabled = data.enabled;
-				console.log(`${this.name}: FRT App enabled = ${data.enabled}`);
-				this.sendSocketNotification("FRT_APP_ENABLED_STATUS", {
-					enabled: data.enabled,
-				});
-			} else if (data.type === "STATUS") {
-				console.log(`${this.name}: Status - ${data.message}`);
-			} else {
-				console.warn(`${this.name}: Unknown message type - ${data.type}`);
+				if (data.type === "FRT_UPDATE") {
+					// FRT detection result
+					console.log(`${this.name}: Relaying FRT update - ${data.quantity} ${data.className} (${data.action})`);
+					this.sendSocketNotification("FRT_UPDATE", {
+						foodId: data.foodId || `food_${Date.now()}`,
+						className: data.className,
+						quantity: data.quantity,
+						delta: data.delta || data.quantity,
+						imagePath: data.imagePath,
+						action: data.action || "detected",
+						source: data.source || "dbus_signal",
+						timestamp: data.timestamp || Date.now(),
+					});
+				} else if (data.type === "FRT_APP_ENABLED") {
+					// FRT app enabled/disabled flag
+					this.frtAppEnabled = data.enabled;
+					console.log(`${this.name}: FRT App enabled = ${data.enabled}`);
+					this.sendSocketNotification("FRT_APP_ENABLED_STATUS", {
+						enabled: data.enabled,
+					});
+				} else if (data.type === "STATUS") {
+					console.log(`${this.name}: Status - ${data.message}`);
+				} else {
+					console.warn(`${this.name}: Unknown message type - ${data.type}`);
+				}
+			} catch (error) {
+				console.debug(`${this.name}: Plain text message - ${line}`);
 			}
-		} catch (error) {
-			console.debug(`${this.name}: Plain text message - ${message}`);
 		}
 	},
 
@@ -175,10 +194,16 @@ module.exports = NodeHelper.create({
 	 * Stop the module.
 	 */
 	stop() {
+		SessionLog.info(`[${this.name}] Node helper stopped`);
 		console.log(`${this.name}: Stopping node helper`);
 		if (this.pythonProcess) {
-			this.pythonProcess.kill();
-			this.pythonProcess = null;
+			this.pythonProcess.kill("SIGTERM");
+			setTimeout(() => {
+				if (this.pythonProcess && !this.pythonProcess.killed) {
+					this.pythonProcess.kill("SIGKILL");
+				}
+			}, 3000);
 		}
+		this.pythonProcess = null;
 	},
 });

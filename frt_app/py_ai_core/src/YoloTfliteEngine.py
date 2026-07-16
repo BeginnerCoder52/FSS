@@ -31,18 +31,25 @@ class YoloTfliteEngine:
     YOLOv11 TFLite Inference Engine
     """
     
-    DEFAULT_MODEL_PATH = "/opt/fss/models/yolov11n_fp32.tflite"
+    DEFAULT_MODEL_PATH = "/opt/fss/models/YOLOv11n_260518_best_int8.tflite"
     
-    # Inference parameters
-    CONFIDENCE_THRESHOLD = 0.60      # Minimum confidence for detection
-    IOU_THRESHOLD = 0.45             # NMS IoU threshold
+    # Default inference parameters (overridable via constructor)
+    CONFIDENCE_THRESHOLD = 0.8      # Minimum confidence for detection
+    IOU_THRESHOLD = 0.5            # Per-class NMS IoU threshold
     
     def __init__(self, model_path: str = DEFAULT_MODEL_PATH, use_c_backend: bool = True,
-                 c_precision: int = 2):
+                 c_precision: int = 2, confidence_threshold: float = None,
+                 iou_threshold: float = None, c_model_path: str = None):
         """
         Initialize YOLO TFLite engine.
+        
+        Args:
+            confidence_threshold: Override default confidence threshold (default: 0.35)
+            iou_threshold: Override default NMS IoU threshold
+            c_model_path: Explicit path to the model used for C backend
         """
         self.model_path = model_path
+        self.c_model_path = c_model_path if c_model_path else model_path
         self.interpreter = None
         self.input_details = None
         self.output_details = None
@@ -52,6 +59,12 @@ class YoloTfliteEngine:
         self._c_reader = None
         self._c_input_size = 0
         self._input_tensor = None
+        
+        # Override thresholds if provided
+        if confidence_threshold is not None:
+            self.CONFIDENCE_THRESHOLD = confidence_threshold
+        if iou_threshold is not None:
+            self.IOU_THRESHOLD = iou_threshold
         
         # Class names (example for food items)
         self.classes = ["food_item"] # To be updated with actual model classes
@@ -95,6 +108,12 @@ class YoloTfliteEngine:
             self._c_lib.tflite_reader_destroy.argtypes = [ctypes.c_void_p]
             self._c_lib.tflite_reader_destroy.restype = None
 
+            self._c_lib.tflite_reader_is_xnnpack_available.argtypes = []
+            self._c_lib.tflite_reader_is_xnnpack_available.restype = ctypes.c_int
+            xnnpack_avail = self._c_lib.tflite_reader_is_xnnpack_available()
+            if xnnpack_avail:
+                logger.info("XNNPACK delegate enabled in C backend (4 threads)")
+
             logger.info("C TFLite backend library loaded successfully")
         except Exception as e:
             logger.warning("C backend unavailable ({}), falling back to Python".format(e))
@@ -107,37 +126,31 @@ class YoloTfliteEngine:
         """
         logger.info("Loading YOLOv11 model: {}".format(self.model_path))
         
-        if self.use_c_backend and self._c_lib:
-            return self._load_model_c()
-        
         try:
             # Check file exists
             if not os.path.exists(self.model_path):
                 logger.error("Model file not found: {}".format(self.model_path))
                 return False
             
-            # Try to import TFLite runtime
+            # Always load Python interpreter to get metadata (quantization params)
             try:
                 import tflite_runtime.interpreter as tflite
             except ImportError:
                 try:
-                    import tensorflow.lite as tflite
+                    import ai_edge_litert.interpreter as tflite
                 except ImportError:
-                    logger.error("TFLite runtime not installed.")
-                    return False
+                    import tensorflow.lite as tflite
             
-            # Load model
-            self.interpreter = tflite.Interpreter(model_path=self.model_path)
-            
-            # Allocate tensors
-            self.allocate_tensors()
-            
-            # Get tensor details
+            self.interpreter = tflite.Interpreter(model_path=self.model_path, num_threads=4)
+            self.interpreter.allocate_tensors()
             self.input_details = self.interpreter.get_input_details()
             self.output_details = self.interpreter.get_output_details()
             
+            if self.use_c_backend and self._c_lib:
+                return self._load_model_c()
+                
             self.is_initialized = True
-            logger.info("Model loaded successfully")
+            logger.info("Model loaded successfully via Python")
             return True
             
         except Exception as e:
@@ -150,7 +163,7 @@ class YoloTfliteEngine:
         """
         try:
             precision_enum = 2
-            model_path_bytes = self.model_path.encode('utf-8')
+            model_path_bytes = self.c_model_path.encode('utf-8')
             self._c_reader = self._c_lib.tflite_reader_create(model_path_bytes, precision_enum)
             if not self._c_reader:
                 logger.error("C reader returned NULL, falling back to Python")
@@ -238,7 +251,46 @@ class YoloTfliteEngine:
         except Exception as e:
             logger.exception("Error during inference: {}".format(e))
             self.handle_tensor_allocation_error()
+            
+    def get_input_quant_params(self) -> Tuple[type, float, int]:
+        """
+        Get input quantization parameters (dtype, scale, zero_point).
+        """
+        if not self.input_details:
+            return np.float32, 0.0, 0
+            
+        dtype = self.input_details[0].get('dtype', np.float32)
+        quantization = self.input_details[0].get('quantization', (0.0, 0))
+        scale = quantization[0] if quantization[0] > 0 else 0.0
+        zero_point = quantization[1]
+        
+        return dtype, scale, zero_point
     
+    @staticmethod
+    def _run_per_class_nms(results: List[Dict], conf_threshold: float, iou_threshold: float) -> List[Dict]:
+        if not results:
+            return []
+        by_class = {}
+        for i, det in enumerate(results):
+            cid = det["class_id"]
+            by_class.setdefault(cid, []).append(i)
+        survivors = []
+        for cid, indices in by_class.items():
+            class_boxes = []
+            class_scores = []
+            for idx in indices:
+                bx1, by1, bx2, by2 = results[idx]["bbox"]
+                class_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
+                class_scores.append(results[idx]["confidence"])
+            if not class_boxes:
+                continue
+            nms_idx = cv2.dnn.NMSBoxes(class_boxes, class_scores, conf_threshold, iou_threshold)
+            if len(nms_idx) > 0:
+                for i in nms_idx.flatten():
+                    survivors.append(indices[i])
+        survivors.sort()
+        return [results[i] for i in survivors]
+
     def _get_output_boxes_c(self) -> List[Dict]:
         """
         Extract detection boxes from C backend output.
@@ -292,34 +344,36 @@ class YoloTfliteEngine:
             results = []
             for i in range(len(boxes)):
                 xc, yc, w, h = boxes[i]
-                x1 = (xc - w/2) * inv_size
-                y1 = (yc - h/2) * inv_size
-                x2 = (xc + w/2) * inv_size
-                y2 = (yc + h/2) * inv_size
+                x1 = float((xc - w/2) * inv_size)
+                y1 = float((yc - h/2) * inv_size)
+                x2 = float((xc + w/2) * inv_size)
+                y2 = float((yc + h/2) * inv_size)
+                
+                # Clip coordinates to standard image ratio [0.0, 1.0]
+                x1 = max(0.0, min(1.0, x1))
+                y1 = max(0.0, min(1.0, y1))
+                x2 = max(0.0, min(1.0, x2))
+                y2 = max(0.0, min(1.0, y2))
+                
+                # Skip collapsed bounding boxes
+                if x2 <= x1 or y2 <= y1:
+                    continue
 
                 results.append({
                     "class_id": int(class_ids[i]),
                     "confidence": float(max_scores[i]),
-                    "bbox": [float(x1), float(y1), float(x2), float(y2)],
+                    "bbox": [x1, y1, x2, y2],
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
 
-            nms_boxes = []
-            for r in results:
-                bx1, by1, bx2, by2 = r["bbox"]
-                nms_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
-
-            indices = cv2.dnn.NMSBoxes(
-                nms_boxes,
-                [r["confidence"] for r in results],
-                self.CONFIDENCE_THRESHOLD,
-                self.IOU_THRESHOLD
+            final_results = self._run_per_class_nms(
+                results, self.CONFIDENCE_THRESHOLD, self.IOU_THRESHOLD
             )
 
-            final_results = []
-            if len(indices) > 0:
-                for i in indices.flatten():
-                    final_results.append(results[i])
+            nms_log = "NMS: before={} after={} iou={} conf={}".format(
+                len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
+            )
+            logger.info(nms_log)
 
             return final_results
 
@@ -339,6 +393,15 @@ class YoloTfliteEngine:
                 return self._get_output_boxes_c()
 
             output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
+            
+            # Dequantize if the model output is quantized (Full Integer Quantization)
+            dtype = self.output_details[0].get('dtype', np.float32)
+            if dtype != np.float32:
+                quantization = self.output_details[0].get('quantization', (0.0, 0))
+                scale = quantization[0]
+                zp = quantization[1]
+                if scale > 0:
+                    output_data = (output_data.astype(np.float32) - zp) * scale
             
             if output_data.shape[1] < output_data.shape[2]:
                 output_data = output_data.transpose(0, 2, 1)
@@ -373,37 +436,39 @@ class YoloTfliteEngine:
             results = []
             for i in range(len(boxes)):
                 xc, yc, w, h = boxes[i]
-                x1 = (xc - w/2) * inv_size
-                y1 = (yc - h/2) * inv_size
-                x2 = (xc + w/2) * inv_size
-                y2 = (yc + h/2) * inv_size
+                x1 = float((xc - w/2) * inv_size)
+                y1 = float((yc - h/2) * inv_size)
+                x2 = float((xc + w/2) * inv_size)
+                y2 = float((yc + h/2) * inv_size)
+                
+                # Clip coordinates to standard image ratio [0.0, 1.0]
+                x1 = max(0.0, min(1.0, x1))
+                y1 = max(0.0, min(1.0, y1))
+                x2 = max(0.0, min(1.0, x2))
+                y2 = max(0.0, min(1.0, y2))
+                
+                # Skip collapsed bounding boxes
+                if x2 <= x1 or y2 <= y1:
+                    continue
                 
                 results.append({
                     "class_id": int(class_ids[i]),
                     "confidence": float(max_scores[i]),
-                    "bbox": [float(x1), float(y1), float(x2), float(y2)],
+                    "bbox": [x1, y1, x2, y2],
                     "category": self.classes[class_ids[i]] if class_ids[i] < len(self.classes) else "unknown"
                 })
             
-            nms_boxes = []
-            for r in results:
-                bx1, by1, bx2, by2 = r["bbox"]
-                nms_boxes.append([bx1, by1, bx2 - bx1, by2 - by1])
-            
-            indices = cv2.dnn.NMSBoxes(
-                nms_boxes,
-                [r["confidence"] for r in results],
-                self.CONFIDENCE_THRESHOLD,
-                self.IOU_THRESHOLD
+            final_results = self._run_per_class_nms(
+                results, self.CONFIDENCE_THRESHOLD, self.IOU_THRESHOLD
             )
-            
-            final_results = []
-            if len(indices) > 0:
-                for i in indices.flatten():
-                    final_results.append(results[i])
-            
+
+            nms_log = "NMS: before={} after={} iou={} conf={}".format(
+                len(results), len(final_results), self.IOU_THRESHOLD, self.CONFIDENCE_THRESHOLD
+            )
+            logger.info(nms_log)
+
             return final_results
-            
+
         except Exception as e:
             logger.exception("Error extracting output boxes: {}".format(e))
             return []

@@ -144,7 +144,7 @@ class DbDbusInterface:
             # Request bus name
             await sdbus.request_default_bus_name_async(
                 self.SERVICE_NAME,
-                sdbus.sd_bus_internals.NameReplaceExistingFlag
+                replace_existing=True
             )
             
             # Create and export D-Bus object
@@ -246,19 +246,18 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit custom food request: {e}")
 
     async def _async_emit_custom_food_request(self, temp_image_path: str, frame_crop_b64: str):
-        self.dbus_object.CustomFoodRequest(temp_image_path, frame_crop_b64)
+        self.dbus_object.CustomFoodRequest.emit((temp_image_path, frame_crop_b64))
 
     def emit_ui_update_signal(self, food_id: str, quantity: int, 
-                               image_path: str) -> None:
+                               image_path: str, delta: int) -> None:
         """Emit signal to update UI with inventory changes."""
         try:
             if not self.is_connected or not self.dbus_object:
                 self.logger.warning("Cannot emit signal: D-Bus not connected")
                 return
             
-            # Signals in sdbus are just calling the method on the exported object
             asyncio.run_coroutine_threadsafe(
-                self._async_emit_ui_update(food_id, quantity, image_path),
+                self._async_emit_ui_update(food_id, quantity, image_path, delta),
                 self._loop
             )
             self.logger.debug(f"Queued UI update signal: {food_id}")
@@ -266,8 +265,27 @@ class DbDbusInterface:
         except Exception as e:
             self.logger.error(f"Failed to emit UI update signal: {e}")
 
-    async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str):
-        self.dbus_object.UIUpdateRequired(food_id, quantity, image_path)
+    async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str, delta: int):
+        self.dbus_object.UIUpdateRequired.emit((food_id, quantity, image_path, delta))
+
+    def emit_food_notification(self, notification_type: str, message: str) -> None:
+        """Emit signal to broadcast a food notification."""
+        try:
+            if not self.is_connected or not self.dbus_object:
+                self.logger.warning("Cannot emit signal: D-Bus not connected")
+                return
+            
+            asyncio.run_coroutine_threadsafe(
+                self._async_emit_food_notification(notification_type, message),
+                self._loop
+            )
+            self.logger.debug(f"Queued food notification signal: {message}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to emit food notification signal: {e}")
+
+    async def _async_emit_food_notification(self, notification_type: str, message: str):
+        self.dbus_object.FoodNotification.emit((notification_type, message))
 
     def emit_environment_update_signal(self, temperature: float, humidity: float) -> None:
         """Emit signal to update UI with environmental data (Sensor 1)."""
@@ -286,7 +304,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit environment update signal: {e}")
 
     async def _async_emit_env_update(self, temperature: float, humidity: float):
-        self.dbus_object.EnvironmentUpdateRequired(temperature, humidity)
+        self.dbus_object.EnvironmentUpdateRequired.emit((temperature, humidity))
 
     def emit_secondary_environment_update_signal(self, temperature: float, humidity: float) -> None:
         """Emit signal to update UI with environmental data (Sensor 2)."""
@@ -305,7 +323,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit secondary environment update signal: {e}")
 
     async def _async_emit_secondary_env_update(self, temperature: float, humidity: float):
-        self.dbus_object.SecondaryEnvironmentUpdateRequired(temperature, humidity)
+        self.dbus_object.SecondaryEnvironmentUpdateRequired.emit((temperature, humidity))
 
     def emit_door_state_update(self, door_state: str, timestamp: float) -> None:
         """Emit signal to update UI with door state changes."""
@@ -324,7 +342,10 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit door state update signal: {e}")
 
     async def _async_emit_door_state_update(self, door_state: str, timestamp: float):
-        self.dbus_object.DoorStateUpdate(door_state, timestamp)
+        try:
+            self.dbus_object.DoorStateUpdate.emit((door_state, timestamp))
+        except Exception as e:
+            self.logger.error(f"FATAL EMIT DoorStateUpdate ERROR: {e}")
 
     def emit_distance_alert(self, distance: float, within_threshold: bool) -> None:
         """Emit signal to update UI with distance alert."""
@@ -343,7 +364,10 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit distance alert signal: {e}")
 
     async def _async_emit_distance_alert(self, distance: float, within_threshold: bool):
-        self.dbus_object.DistanceAlert(distance, within_threshold)
+        try:
+            self.dbus_object.DistanceAlert.emit((distance, within_threshold))
+        except Exception as e:
+            self.logger.error(f"FATAL EMIT DistanceAlert ERROR: {e}")
 
     def emit_user_presence_update(self, detected: bool) -> None:
         """Emit signal to update UI with user presence detection."""
@@ -362,7 +386,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit user presence update signal: {e}")
 
     async def _async_emit_user_presence_update(self, detected: bool):
-        self.dbus_object.UserPresenceUpdate(detected)
+        self.dbus_object.UserPresenceUpdate.emit(detected)
 
     def subscribe_recommend_daemon_events(self, callback: Callable) -> None:
         """Subscribe to RecommendationUpdated from RecommendDaemon."""
@@ -514,11 +538,23 @@ class DbDbusInterface:
     def _handle_food_detected(self, json_data: str) -> None:
         try:
             data = json.loads(json_data)
-            food_id = data.get("id")
-            score = data.get("score")
-            qty = data.get("qty")
-            
-            if food_id is not None:
+            events = []
+
+            if isinstance(data.get("food_items"), list):
+                for item in data["food_items"]:
+                    food_id = item.get("id")
+                    qty = item.get("qty", item.get("delta", 0))
+                    score = item.get("score", data.get("score", 1.0))
+                    if food_id is not None:
+                        events.append((food_id, score, qty))
+            else:
+                food_id = data.get("id")
+                score = data.get("score")
+                qty = data.get("qty")
+                if food_id is not None:
+                    events.append((food_id, score, qty))
+
+            for food_id, score, qty in events:
                 for callback in self._frt_event_callbacks:
                     try:
                         callback("food_detected", str(food_id), score, qty)
@@ -681,9 +717,14 @@ if SDBUS_AVAILABLE:
                     return json.dumps({"status": "error", "message": str(e)})
             return json.dumps({"status": "error", "message": "Requests by recipe callback not set"})
 
-        @dbus_signal_async('sis')
-        def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str) -> None:
+        @dbus_signal_async('sisi')
+        def UIUpdateRequired(self, food_id: str, quantity: int, image_path: str, delta: int) -> None:
             """Signal: UI requires update with new inventory data."""
+            pass
+        
+        @dbus_signal_async('ss')
+        def FoodNotification(self, notification_type: str, message: str) -> None:
+            """Signal: Broadcast a food notification."""
             pass
         
         @dbus_signal_async('dd')
@@ -742,6 +783,7 @@ else:
     class DbDaemonDbusObject(ABC):
         """Placeholder D-Bus object implementation."""
         def UIUpdateRequired(self, *args, **kwargs): pass
+        def FoodNotification(self, *args, **kwargs): pass
         def EnvironmentUpdateRequired(self, *args, **kwargs): pass
         def SecondaryEnvironmentUpdateRequired(self, *args, **kwargs): pass
         def DoorStateUpdate(self, *args, **kwargs): pass

@@ -1,0 +1,33 @@
+{
+    "recipe_name": "Sandwich Cá Ngừ",
+    "serving": "4 người",
+    "times": "10 Phút",
+    "difficulty": "Dễ",
+    "normal_ingredients": [
+        "Cá ngừ ngâm dầu: 1 hộp",
+        "Bánh mì sandwich: 10 lát",
+        "Bắp hạt: 1 chén nhỏ",
+        "Dưa leo: 1 trái",
+        "Xà lách: 1 cây",
+        "Cà chua: 2 trái",
+        "Hành tây: 1/2 củ",
+        "Tiêu xay"
+    ],
+    "spices": [
+        "Xốt Mayonnaise Aji-mayo® Vị Nguyên Bản"
+    ],
+    "process": [
+        "Rau xà lách rửa sạch, để ráo. Dưa leo, cà chua rửa sạch, cắt lát mỏng. Hành tây băm nhỏ."
+    ],
+    "cook": [
+        "Gạn hết dầu ngâm cá, lấy cá ra tô tán sơ. Trộn đều cá với bắp hạt, tiêu, hành tây băm nhuyễn và xốt Mayonnaise LISA.",
+        "Xếp các nguyên liệu theo thứ tự lớp: sandwich, xà lách, 4 lát dưa leo, cá ngừ, 4 lát cà chua, sandwich."
+    ],
+    "usage": [
+        "Dùng tăm định vị 04 góc. Cắt bỏ phần rìa bánh mì sandwich, sau đó cắt theo hình tam giác hoặc hình vuông.",
+        "Bày ra đĩa với các cách cắt dạng hình vuông, tam giác."
+    ],
+    "tips": [
+        "Chỉ tán sơ cá để cá còn nguyên sớ sẽ ngon hơn"
+    ]
+}
