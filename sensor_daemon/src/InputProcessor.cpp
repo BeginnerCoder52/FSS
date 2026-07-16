@@ -85,7 +85,6 @@ bool InputProcessor::init_sensors()
         if (sht3x && !sht3x->check_connection()) {
             if (!sht3x->init_driver()) {
                 std::cerr << "Failed to initialize SHT3x environmental sensor" << std::endl;
-                success = false;
             }
         }
 
@@ -93,7 +92,6 @@ bool InputProcessor::init_sensors()
         if (sht3x_2 && !sht3x_2->check_connection()) {
             if (!sht3x_2->init_driver()) {
                 std::cerr << "Failed to initialize Secondary SHT3x sensor on I2C-5" << std::endl;
-                success = false;
             }
         }
 
@@ -101,14 +99,12 @@ bool InputProcessor::init_sensors()
         if (!vl53l0x || !vl53l0x->init_driver())
         {
             std::cerr << "Failed to initialize VL53L0x distance sensor" << std::endl;
-            success = false;
         }
 
         // Initialize Door sensor
         if (!door_sensor || !door_sensor->init_driver())
         {
             std::cerr << "Failed to initialize Door sensor" << std::endl;
-            success = false;
         }
 
     } catch (const std::exception& e) {

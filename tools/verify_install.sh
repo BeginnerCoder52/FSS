@@ -50,12 +50,7 @@ else
     fail "camera_core_exec NOT FOUND at $FSS_CAMERA_EXEC"
 fi
 
-if [[ -f "$FSS_TFLITE_LIB" ]]; then
-    pass "libtflite_reader.so exists"
-else
-    warn "libtflite_reader.so NOT FOUND (optional C backend)"
-fi
-
+# (libtflite_reader.so check removed as C backend is no longer used)
 # --- 2. Python virtual environments ------------------------------------------
 echo ""
 echo "--- [2] Python Virtual Environments ---"
@@ -181,16 +176,16 @@ else
     echo "$HARDCODED" | head -10
 fi
 
-# --- 9. Phase 1 tests ---------------------------------------------------------
+# --- 9. D-Bus Daemon Policy Check -----------------------------------------------
 echo ""
-echo "--- [9] Phase 1 Tests ---"
-if [[ -f "$FSS_ROOT/tests/run_phase1_tests.py" ]]; then
-    pass "Phase 1 test file exists"
-    # Note: Actually running tests requires the correct venv and Linux
-    warn "Run manually: python3 tests/run_phase1_tests.py"
-else
-    fail "Phase 1 test file MISSING"
-fi
+echo "--- [9] D-Bus Policy Check ---"
+for svc in vn.edu.uit.FSS.DBDaemon vn.edu.uit.FSS.RecommendDaemon vn.edu.uit.FSS.FRTApp vn.edu.uit.FSS.Sensor vn.edu.uit.FSS.RecipeExtractor; do
+    if grep -q "$svc" "$FSS_DBUS_CONF_SYSTEM" 2>/dev/null; then
+        pass "D-Bus policy allows $svc"
+    else
+        warn "D-Bus policy missing $svc"
+    fi
+done
 
 # --- Summary ------------------------------------------------------------------
 echo ""

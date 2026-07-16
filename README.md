@@ -1,192 +1,121 @@
 # Fridge Supervisor System (FSS)
 
-Hệ thống nhúng quản lý thực phẩm và giám sát tủ lạnh thông minh, tích hợp AI Vision (YOLOv11), kiến trúc đa tiến trình (C/C++, Python) và giao diện MagicMirror.
+Hệ thống nhúng quản lý thực phẩm và giám sát tủ lạnh thông minh, tích hợp AI Vision (YOLOv11), kiến trúc đa tiến trình (C/C++, Python) và giao diện MagicMirror. FSS được thiết kế tối ưu hóa cho Raspberry Pi 4B.
+
+---
 
 ## 🚀 Kiến Trúc Đa Ngôn Ngữ (Polyglot Architecture)
 
-Dựa trên sơ đồ SAD và SDD mới nhất, hệ thống được tối ưu hóa theo ngôn ngữ lập trình để tận dụng tối đa sức mạnh phần cứng:
+Hệ thống tận dụng thế mạnh của từng ngôn ngữ để giải quyết bài toán hiệu năng trên thiết bị nhúng:
 
-1. **SensorDaemon (C/C++)**: Giao tiếp trực tiếp với I2C và GPIO ở cấp độ Kernel. Viết bằng C/C++ đảm bảo không có độ trễ (Zero-latency) khi đọc cảm biến, đồng thời tích hợp trực tiếp với `systemd` watchdog.
+1. **SensorDaemon (C/C++)**: Giao tiếp trực tiếp với I2C và GPIO ở cấp độ Kernel thông qua `libsmbus2` và `libgpiod`. Đảm bảo độ trễ thấp nhất (Zero-latency) khi đọc cảm biến, gửi tín hiệu Broadcast qua D-Bus.
 2. **FRTApp (Hybrid C/C++ & Python)**:
-   - **C++ Core**: Đảm nhiệm việc mở V4L2 Camera và đẩy frame thô (Raw bytes) thẳng vào POSIX Shared Memory (`/fss_video_frame`).
-   - **Python Core**: Đọc ảnh trực tiếp từ bộ nhớ RAM, đưa qua ma trận NumPy và chạy suy luận YOLOv11 qua `ultralytics`.
-3. **DBDaemon (Python)**: Quản lý logic nghiệp vụ và cơ sở dữ liệu. Sử dụng `sqlite3` và `asyncio` để xử lý các luồng sự kiện I/O bất đồng bộ, lưu ảnh vật lý xuống `/opt/fss` và đẩy trạng thái.
-4. **MagicMirror UI (Node.js & Python)**: Core UI chạy bằng Electron (JS/HTML/CSS). Các `node_helper.js` sử dụng thư viện `python-shell` để gọi các script Python Bridge cục bộ. Lớp Python này đóng vai trò lắng nghe D-Bus/ZMQ, xử lý payload phức tạp và trả dữ liệu sạch về cho JS render.
+   - **Camera Core (C/C++)**: Giao tiếp trực tiếp phần cứng camera qua chuẩn V4L2. Ghi mảng byte thô thẳng vào POSIX Shared Memory (`/fss_video_frame`).
+   - **AI Core (Python)**: Xử lý inference YOLOv11 bằng `tflite-runtime` (tối ưu hóa INT8) và thuật toán tracking ByteTrack. Giao tiếp với DB qua D-Bus.
+3. **DBDaemon (Python)**: Trái tim lưu trữ và luân chuyển dữ liệu. Sử dụng `sqlite3` và Event Loop `asyncio`. Quản lý I/O bất đồng bộ và đóng vai trò IPC Broker (luân chuyển ảnh qua `/opt/fss/`).
+4. **RecommendDaemon (Python)**: Điều phối logic nghiệp vụ cốt lõi, gọi API sang NLP Engine (RecipeExtractor) để phân tách nguyên liệu, chạy thuật toán "Bù-Trừ" với Tồn kho thực tế, từ đó sinh ra Danh sách mua sắm.
+5. **MagicMirror UI (Node.js & Python)**: Front-end chạy bằng Electron framework. Dùng các Python Bridge Subprocess để bắt tín hiệu D-Bus, truyền tải qua Socket.IO tới Javascript để render giao diện Real-time.
 
-## 📁 Cấu Trúc Hệ Thống
+---
 
-```
+## 📁 Cây Thư Mục Toàn Hệ Thống
+
+```text
 FSS/
-├── fss_profile.conf            # Central configuration profile for paths and user settings
-├── setup.sh                    # Unified installer (dependencies, build, venvs, DBus, systemd)
-├── fss_env_setup.sh            # Helper script for systemd services (called by setup.sh)
-├── startup_fss_system.sh       # Integrated startup (all daemons + systemd watchdog)
-├── tools/verify_install.sh     # Post-install verification script
-├── docs/                       # Chứa tài liệu SAD, SDD, Class Diagram
+├── fss_profile.conf             # (Cấu hình) Biến môi trường, user, đường dẫn cài đặt
+├── FSS_SETUP.sh                 # Script Setup toàn bộ (Cài packages, biên dịch, venvs)
+├── FSS_RUN.sh                   # Script Khởi chạy toàn bộ hệ thống (Quản lý PID, monitoring)
+├── README.md                    # File thông tin tổng quan hệ thống (Bạn đang đọc)
+├── .gitignore                   # Quy tắc bỏ qua file của Git
+├── LICENSE                      # Giấy phép mã nguồn
 │
-├── drivers/                    # Hardware Abstraction Layer (HAL)
-│   ├── sensor/
-│   │   ├── mc-38/              # Driver cho cảm biến cửa từ tính
-│   │   ├── sht3x/              # Driver I2C cho cảm biến nhiệt độ/độ ẩm
-│   │   └── vl53l0x/            # Driver I2C cho cảm biến khoảng cách ToF
-│   └── usb_web_camera/         # Driver bọc các hàm V4L2 cho Camera
+├── sensor_daemon/               # [C/C++] Xử lý phần cứng (Nhiệt, Ẩm, Cửa)
+│   ├── CMakeLists.txt           # File build C++
+│   ├── include/                 # Header files (SensorDaemonMain.hpp,...)
+│   └── src/                     # Source files (main.cpp, InputProcessor.cpp,...)
 │
-├── sensor_daemon/              # [C/C++] Core giao tiếp phần cứng tốc độ cao
-│   ├── CMakeLists.txt
-│   ├── include/
-│   │   ├── SensorDaemonApp.hpp
-│   │   ├── InputProcessor.hpp
-│   │   ├── OutputProcessor.hpp
-│   │   ├── SystemdWatchdog.hpp
-│   │   └── SdbusInterface.hpp
-│   ├── src/
-│   │   ├── main.cpp
-│   │   ├── SensorDaemonApp.cpp
-│   │   └── ...
-│   └── tests/
+├── frt_app/                     # [C/C++ & Python] Nhận diện món ăn (AI)
+│   ├── cpp_camera_core/         # Lõi C++ V4L2 đẩy ảnh vào RAM (Shared Memory)
+│   ├── c_tflite_reader/         # Lõi C++ TF-Lite C API inference engine
+│   └── py_ai_core/              # Lõi Python YOLO Pipeline + ByteTrack
 │
-├── frt_app/                    # [C/C++ & Python] Hybrid AI Vision Core
-│   ├── CMakeLists.txt          # Root build: builds cpp_camera_core + c_tflite_reader
-│   ├── cpp_camera_core/        # [C/C++] V4L2 capture + POSIX SHM writer
-│   │   ├── CMakeLists.txt
-│   │   ├── include/
-│   │   └── src/
-│   │       ├── main.cpp
-│   │       ├── VideoCapture.cpp
-│   │       └── ShmWriter.cpp
-│   ├── c_tflite_reader/        # [C] Standalone TF Lite C API inference engine
-│   │   ├── CMakeLists.txt
-│   │   ├── include/
-│   │   │   └── TfliteReader.h
-│   │   └── src/
-│   │       ├── TfliteReader.c
-│   │       └── tflite_reader_test.c
-│   └── py_ai_core/             # [Python] YOLOv11 inference + ByteTrack
-│       ├── requirements.txt
-│       ├── models/
-│       └── src/
-│           ├── __init__.py
-│           ├── main.py
-│           ├── FrtDaemonApp.py  # (planned: FrtMain.py in Phase 1)
-│           ├── YoloPipeline.py
-│           └── SdbusInterface.py
+├── db_daemon/                   # [Python] Bộ trung chuyển dữ liệu & SQLite
+│   ├── requirements.txt         # Package phụ thuộc
+│   └── src/                     # main.py, SqliteManager.py, PosixShmReader.py
 │
-├── db_daemon/                  # [Python] Data Controller & IPC Broker
+├── recommend_daemon/            # [Python] Logic Gợi ý mua sắm & Bù-Trừ
 │   ├── requirements.txt
-│   └── src/
-│       ├── __init__.py
-│       ├── main.py
-│       ├── DbDaemonMain.py
-│       ├── SqliteManager.py
-│       ├── PosixShmReader.py
-│       ├── DiskFileManager.py
-│       └── DbDbusInterface.py
+│   └── src/                     # RecommendEngine.py, DbusInterface.py
 │
-├── recipe_extractor/           # [Python] NLP/Recipe Analysis Library (CRF-based NER)
-│   ├── requirements.txt
-│   ├── data/
-│   │   └── recipes/            # ~250 Vietnamese recipes
-│   ├── models/                 # fss_ner_crf_optimized.joblib
-│   └── src/
-│       ├── __init__.py
-│       ├── RecipeAnalyzerAPI.py
-│       ├── RecipeProcessor.py
-│       └── ...
+├── recipe_extractor/            # [Python] Model NLP xử lý Tiếng Việt (NER)
+│   ├── models/                  # File trọng số (fss_ner_crf_optimized.joblib)
+│   └── src/                     # RecipeAnalyzerAPI.py
 │
-├── recommend_daemon/           # [Python] Business Logic Orchestrator
-│   ├── requirements.txt
-│   ├── src/
-│   │   ├── __init__.py
-│   │   ├── main.py
-│   │   ├── RecommendEngine.py  # Bù Trừ algorithm
-│   │   ├── RecommendDbManager.py
-│   │   └── DbusInterface.py
-│   ├── systemd/
-│   │   └── recommend_daemon.service
-│   └── tests/
-│       └── test_recommend_engine.py
+├── electron_app/                # [Node.js] UI hiển thị trên Màn hình tủ lạnh
+│   ├── magicmirror/             # Core MagicMirror (HTML/CSS/JS)
+│   └── py_bridge/               # Các script Python đẩy tín hiệu D-bus sang UI
 │
-├── electron_app/               # [Node.js & Python] UI & Dashboard
-│   ├── config.json
-│   ├── magicmirror/            # Core Electron/MagicMirror app
-│   │   ├── package.json
-│   │   ├── config/
-│   │   │   └── config.js
-│   │   └── modules/
-│   │       ├── MMM-FSS-Env/          # Môi trường (nhiệt độ/độ ẩm)
-│   │       ├── MMM-FSS-Monitor/      # Giám sát cửa & khoảng cách
-│   │       ├── MMM-FSS-Inventory/    # Tồn kho thực phẩm
-│   │       ├── MMM-FSS-LivePreview/  # Xem trước camera trực tiếp
-│   │       ├── MMM-FSS-VirtualKeyboard/ # Bàn phím ảo tìm kiếm
-│   │       ├── MMM-FSS-Recommend/    # Gợi ý mua sắm thông minh
-│   │       └── MMM-FSS-Notification/ # Thông báo trung tâm
-│   └── py_bridge/              # Python D-Bus listeners (relay → socket.io)
-│       ├── requirements.txt
-│       ├── env_dbus_listener.py
-│       ├── monitor_dbus_listener.py
-│       ├── inventory_dbus_listener.py
-│       ├── live_preview_bridge.py
-│       └── recommend_dbus_listener.py
-│
-├── fss-test/                   # Integration & benchmark tests
-│   ├── test-cases.sh
-│   ├── test-inference.py
-│   ├── models/
-│   └── results/
-│
-├── tests/                      # Phase 1 validation suite
-│   ├── run_phase1_tests.py
-│   └── unit/
-│       └── db_daemon/
-│
-├── tools/                      # Utility scripts
-│   ├── verify_dbus_config.sh
-│   └── deploy-model/
-│
-└── docs/                       # Tài liệu thiết kế
+├── fss-test/                    # [Test] Benchmark và Integration tests
+├── tests/                       # [Test] Validation phase 1 (Database schema tests)
+├── tools/                       # [Tools] Các công cụ deploy model, verify config
+└── drivers/                     # [Drivers] Hardware Abstraction Layer (HAL)
 ```
 
-## ⚙️ Hướng dẫn Cài đặt & Khởi chạy
+---
 
-Toàn bộ hệ thống được cài đặt thông qua 1 file cấu hình duy nhất: `fss_profile.conf` và script `setup.sh`.
+## ⚙️ Hướng dẫn Cài đặt Môi trường (FSS_SETUP.sh)
 
-### 1. Cài đặt hệ thống
-Bạn có thể cài đặt theo 2 chế độ: Development (chạy thủ công bằng Terminal) hoặc Production (chạy tự động ngầm qua systemd).
+`FSS_SETUP.sh` là script duy nhất bạn cần chạy để build từ đầu (zero). Nó sẽ cài APT dependencies, cấp quyền group phần cứng (`video`, `i2c`, `gpio`), tạo thư mục `/opt/fss`, build C++, tạo môi trường ảo Python venv, và cài node_modules.
 
-**Cài đặt Development (Mặc định)**:
+**Cú pháp chạy nhanh (Khuyên dùng cho người mới):**
 ```bash
-bash setup.sh
-bash tools/verify_install.sh
+sudo bash FSS_SETUP.sh
 ```
 
-**Cài đặt Production (Raspberry Pi)**:
+**Các Options (Macro) hỗ trợ:**
+| Option / Biến Môi trường | Ý nghĩa |
+|--------------------------|---------|
+| `--skip-models` | Bỏ qua việc tải model YOLO (hữu ích nếu đã có sẵn model trong folder). |
+| `--skip-verify` | Bỏ qua bước kiểm tra lại hệ thống (`verify_install.sh`) sau khi cài xong. |
+| `FSS_MODE=production` | Đặt trước lệnh chạy. Cài đặt ở chế độ Production (Tự động sinh các Systemd Service để khởi động cùng hệ điều hành). Mặc định là `dev`. |
+| `--help` | Hiện bảng hướng dẫn chi tiết. |
+
+*Ví dụ đầy đủ:*
 ```bash
-FSS_MODE=production bash setup.sh
-bash tools/verify_install.sh
+FSS_MODE=production bash FSS_SETUP.sh --skip-models --skip-verify
 ```
 
-### 2. Khởi chạy (Chế độ Development)
-Sau khi cài đặt xong, bạn có thể mở 6 terminal để khởi chạy độc lập các thành phần, hoặc dùng script tự động:
+---
 
+## 🚀 Hướng dẫn Khởi chạy Hệ thống (FSS_RUN.sh)
+
+`FSS_RUN.sh` là trái tim luân chuyển vận hành. Nó gọi tuần tự các daemon theo đúng dependency, lưu trữ PID của chúng để dễ quản lý, và liên tục monitor (theo dõi) nếu tiến trình bị treo sẽ tự động restart.
+
+**Cú pháp chạy nhanh (Khuyên dùng):**
 ```bash
-# Terminal 1: Chạy Core Sensor (C++)
-./sensor_daemon/build/sensor_daemon_exec
+sudo bash FSS_RUN.sh
+```
 
-# Terminal 2: Chạy Camera Core (C++)
-./frt_app/cpp_camera_core/build/camera_core_exec
+**Các Options (Macro) hỗ trợ:**
+| Option | Ý nghĩa |
+|--------|---------|
+| `--daemon <list>` | Chạy giới hạn các daemon được chỉ định. Ví dụ: `--daemon sensor,db,camera,ai,recipe,recommend,magicmirror`. |
+| `--no-monitor` | Khởi chạy các tiến trình ngầm nhưng KHÔNG bật vòng lặp giám sát (Auto-restart) ở terminal hiện tại. |
+| `--status` | Không chạy hệ thống, chỉ kiểm tra các PID hiện hành xem daemon nào đang sống/chết và D-Bus có đăng ký thành công không. |
+| `--stop` | Gửi tín hiệu Graceful Shutdown (SIGTERM/SIGKILL) tắt toàn bộ các Daemon FSS đang chạy. |
+| `--disable-door-sensor`| Khởi chạy MagicMirror mà bỏ qua (disable) tín hiệu từ cảm biến cửa (tiện lợi khi debug không có phần cứng). |
+| `--help` | Hiển thị bảng trợ giúp. |
 
-# Terminal 3: Chạy AI Pipeline (Python)
-source frt_app/py_ai_core/venv/bin/activate && python frt_app/py_ai_core/src/main.py
+*Luồng khởi động (Thứ tự nghiêm ngặt):*
+1. **SensorDaemon** (Hardware IO)
+2. **DBDaemon** (SQLite Ready)
+3. **FRT Camera** (V4L2 Stream Ready)
+4. **FRT AI** (YOLO Model Ready)
+5. **RecipeExtractor** (NLP Ready)
+6. **RecommendDaemon** (Business Logic Ready)
+7. **MagicMirror UI** (Trình chiếu)
 
-# Terminal 4: Chạy Data Controller (Python)
-source db_daemon/venv/bin/activate && python db_daemon/src/main.py
-
-# Terminal 5: Chạy Recommend Daemon (Python)
-source recommend_daemon/venv/bin/activate && python recommend_daemon/src/main.py
-
-# Terminal 6: Khởi chạy Giao diện
-cd electron_app/magicmirror && npm run start
-
-# --- Hoặc khởi chạy toàn bộ hệ thống tự động ---
-bash startup_fss_system.sh
+*Ví dụ khởi chạy rút gọn cho Debug AI:*
+```bash
+bash FSS_RUN.sh --daemon db,camera,ai --no-monitor
 ```

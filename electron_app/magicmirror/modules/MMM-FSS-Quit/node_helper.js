@@ -8,8 +8,9 @@ module.exports = NodeHelper.create({
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "QUIT_MAGICMIRROR") {
-            console.log("MMM-FSS-Quit received QUIT command. Stopping all FSS services.");
-            exec("bash /home/richardmelvin52/FSS/FSS_RUN.sh --stop", (error, stdout, stderr) => {
+            const path = require('path');
+            const fssRunPath = path.resolve(__dirname, '../../../../../FSS_RUN.sh');
+            exec(`sudo bash ${fssRunPath} --stop`, (error, stdout, stderr) => {
                 console.log("FSS_RUN.sh --stop output: ", stdout);
                 if (error) console.error("Error stopping services: ", stderr);
                 

@@ -7,9 +7,9 @@
 # ------------------------------------------------------------------------------
 # Bỏ qua toàn bộ thư mục build sinh ra từ CMake
 build/
-CMakeCache.txt
+# CMakeCache.txt
 CMakeFiles/
-Makefile
+# Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
@@ -19,8 +19,8 @@ compile_commands.json
 *.a
 *.out
 *.exe
-sensor_daemon_exec
-camera_core_exec
+# sensor_daemon_exec
+# camera_core_exec
 
 # ------------------------------------------------------------------------------
 # 2. Python (py_ai_core, db_daemon, py_bridge)
@@ -56,10 +56,13 @@ magicmirror/config/config.js
 *.pt
 *.onnx
 *.engine
+# *.tflite
 # Bỏ qua thư mục sinh ra khi training/testing model của Ultralytics
 runs/
 # Bỏ qua các tập dữ liệu ảnh/video test cục bộ
 frt_app/py_ai_core/tests/data/*
+# Bỏ qua C TFLite Reader (không còn sử dụng)
+frt_app/c_tflite_reader/
 
 # ------------------------------------------------------------------------------
 # 5. Database & Dữ liệu hệ thống
@@ -85,3 +88,20 @@ Thumbs.db
 
 video/
 frt_app/py_ai_core/demo/live
+
+# ------------------------------------------------------------------------------
+# 7. Additional folders
+# ------------------------------------------------------------------------------
+.kilo/
+.venv/
+annotated/
+system_results/
+camera_test
+capture_tool
+/docs/
+
+# ------------------------------------------------------------------------------
+# 8. Markdown files in the root level
+# ------------------------------------------------------------------------------
+/*.md
+!/README.md

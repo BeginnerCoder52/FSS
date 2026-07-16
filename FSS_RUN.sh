@@ -85,7 +85,7 @@ DAEMON_CMDS=(
     ["sensor"]="sudo ${FSS_SENSOR_EXEC}"
     ["db"]="sudo ${FSS_VENV_DB_DAEMON}/bin/python ${FSS_ROOT}/db_daemon/src/main.py"
     ["camera"]="sudo ${FSS_CAMERA_EXEC} --fps 10"
-    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --use-c-backend --model /opt/fss/models/0607_best_int8.tflite --model-precision int8"
+    ["ai"]="sudo ${FSS_VENV_FRT_AI}/bin/python ${FSS_ROOT}/frt_app/py_ai_core/src/main.py --model /opt/fss/models/0607_best_int8.tflite --model-precision int8"
     ["recipe"]="sudo ${FSS_VENV_RECIPE_EXTRACTOR}/bin/python ${FSS_ROOT}/recipe_extractor/src/recipe_extractor_main.py"
     ["recommend"]="sudo ${FSS_VENV_RECOMMEND_DAEMON}/bin/python ${FSS_ROOT}/recommend_daemon/src/main.py"
     ["magicmirror"]="pm2"
@@ -376,9 +376,17 @@ stop_all() {
 
     sudo rm -f "$PID_DIR"/*.pid 2>/dev/null || true
     # Kill the monitor loop if it's running
-    pids=$(pgrep -f "bash FSS_RUN.sh" | grep -v $$)
+    if [[ -f "${PID_DIR}/monitor.pid" ]]; then
+        local monitor_pid=$(cat "${PID_DIR}/monitor.pid")
+        if [[ -n "$monitor_pid" && "$monitor_pid" != "$$" ]]; then
+            kill -9 "$monitor_pid" 2>/dev/null || true
+        fi
+        sudo rm -f "${PID_DIR}/monitor.pid" 2>/dev/null || true
+    fi
+    
+    pids=$(pgrep -f "FSS_RUN.sh" | grep -v $$ | grep -v $PPID)
     if [[ -n "$pids" ]]; then
-        kill $pids 2>/dev/null || true
+        kill -9 $pids 2>/dev/null || true
     fi
 }
 
@@ -563,9 +571,10 @@ done
 
 setup_log_directory
 cleanup_stale
+echo $$ > "${PID_DIR}/monitor.pid"
 
 # Determine which daemons to start
-DISABLED_DAEMONS=("camera") # Default is disable fss-camera
+DISABLED_DAEMONS=() # Enable all daemons
 
 if [[ -z "$SELECTED_DAEMONS" ]]; then
     DAEMON_ORDER=("sensor" "db" "camera" "ai" "recipe" "recommend" "magicmirror")
@@ -584,7 +593,7 @@ for key in "${DAEMON_ORDER[@]}"; do
     if [[ "$key" == "sensor" ]]; then
         sleep 2
         fss_log_info "--- Sensor Smoke Test ---"
-        python3 /home/richardmelvin52/FSS/tools/smoke_test.py
+        python3 "${FSS_ROOT}/tools/smoke_test.py"
         fss_log_info "-------------------------"
     fi
 done

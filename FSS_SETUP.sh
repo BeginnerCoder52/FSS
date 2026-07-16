@@ -84,19 +84,14 @@ if [[ "$FSS_DEVICE" == "rpi4b" ]]; then
           -DCMAKE_BUILD_TYPE=Release
     make -C "${FSS_ROOT}/sensor_daemon/build" -j4
 
-    # FRT Camera Core + C TFLite Reader
-    fss_log_info " -> Building FRT Camera Core and C TFLite Reader..."
+    # FRT Camera Core
+    fss_log_info " -> Building FRT Camera Core..."
     mkdir -p "${FSS_ROOT}/frt_app/build"
-    cmake -S "${FSS_ROOT}/frt_app" -B "${FSS_ROOT}/frt_app/build" \
+    # Note: AI Core uses python ai-edge-litert runtime instead of C backend
+    cmake -S "${FSS_ROOT}/frt_app/cpp_camera_core" -B "${FSS_ROOT}/frt_app/build" \
           -DCMAKE_BUILD_TYPE=Release
     make -C "${FSS_ROOT}/frt_app/build" -j4
 
-    # Install libtflite_reader.so
-    if [[ -f "${FSS_TFLITE_LIB}" ]]; then
-        fss_log_info " -> Installing libtflite_reader.so..."
-        sudo cp "${FSS_TFLITE_LIB}" /usr/local/lib/
-        sudo ldconfig
-    fi
     fss_log_ok "C++ components built"
 else
     fss_log_skip "Skipping C++ build on ${FSS_DEVICE} (requires rpi4b)"
