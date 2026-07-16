@@ -148,7 +148,7 @@ void SensorDaemonMain::run_main_loop() {
             bool current_door = input_processor->get_door_status();
             if (current_door != last_door_state) {
                 door_debounce++;
-                if (door_debounce >= 2) { // 200ms debounce
+                if (door_debounce >= 10) { // 1000ms debounce to prevent high sensitivity
                     last_door_state = current_door;
                     output_processor->broadcast_door_status(current_door);
                     door_debounce = 0;

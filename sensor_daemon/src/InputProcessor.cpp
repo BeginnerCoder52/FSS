@@ -273,20 +273,15 @@ void InputProcessor::get_env_data(float &temp, float &hum)
 
 uint16_t InputProcessor::get_distance_data()
 {
-    try
+    if (vl53l0x)
     {
-        if (vl53l0x)
-        {
-            return vl53l0x->get_distance();
-        }
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "InputProcessor get_distance_data exception: " << e.what() << std::endl;
-    }
-    catch (...)
-    {
-        std::cerr << "InputProcessor get_distance_data unknown exception" << std::endl;
+        GUARDED_SENSOR("VL53L0X_fast",
+            /* fallback */,
+            {
+                vl53l0x->read_distance_meters();
+            }
+        );
+        return vl53l0x->get_distance();
     }
     return 0;
 }

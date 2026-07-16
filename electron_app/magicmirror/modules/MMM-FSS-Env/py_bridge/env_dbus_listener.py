@@ -45,7 +45,6 @@ dbus_config = get_dbus_config()
 
 try:
     from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
-    set_default_bus(sd_bus_open_system())
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -377,6 +376,7 @@ class EnvironmentListener:
 
 async def main():
     """Main entry point."""
+    set_default_bus(sd_bus_open_system())
     listener = EnvironmentListener()
 
     def handle_signal(signum, frame):

@@ -109,3 +109,37 @@ target_link_libraries(vl53l0x_test
 # Compilation flags for libgpiod
 target_compile_options(vl53l0x_test PRIVATE ${GPIOD_CFLAGS})
 
+# MC-38 Driver source file
+set(MC38_DRIVER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/mc-38/src/MC38.cpp"
+)
+
+# MC-38 Test sources
+set(MC38_TEST_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/mc-38/DoorSensorTest.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/mc-38/test_main.cpp"
+)
+
+# MC-38 Wrapper implementation
+set(MC38_WRAPPER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/GpioHandler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../sensor_daemon/src/DoorSensorDriver.cpp"
+)
+
+# Create MC-38 test executable
+add_executable(mc38_test
+    ${MC38_DRIVER_SOURCES}
+    ${MC38_WRAPPER_SOURCES}
+    ${MC38_TEST_SOURCES}
+)
+
+# Link libraries for MC-38 test
+target_link_libraries(mc38_test
+    PRIVATE
+    pthread
+    ${GPIOD_LIBRARIES}
+)
+
+# Compilation flags for libgpiod
+target_compile_options(mc38_test PRIVATE ${GPIOD_CFLAGS})
+target_include_directories(mc38_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../drivers/sensor/mc-38/include")

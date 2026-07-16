@@ -36,6 +36,7 @@ bool Vl53l0xDriver::init_driver() {
     }
 
     m_is_connected = true;
+    start_continuous(); // Enable continuous mode for more stable polling
     return true;
 }
 

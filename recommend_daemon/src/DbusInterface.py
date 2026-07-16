@@ -135,7 +135,7 @@ class RecommendDbusInterface:
     async def _async_emit_recommendation_updated(
         self, recipe_name: str, shopping_list_json: str
     ):
-        self.dbus_object.RecommendationUpdated(recipe_name, shopping_list_json)
+        self.dbus_object.RecommendationUpdated.emit((recipe_name, shopping_list_json))
 
     async def _call_dbus_get_inventory(self) -> str:
         try:

@@ -246,7 +246,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit custom food request: {e}")
 
     async def _async_emit_custom_food_request(self, temp_image_path: str, frame_crop_b64: str):
-        self.dbus_object.CustomFoodRequest.emit(temp_image_path, frame_crop_b64)
+        self.dbus_object.CustomFoodRequest.emit((temp_image_path, frame_crop_b64))
 
     def emit_ui_update_signal(self, food_id: str, quantity: int, 
                                image_path: str, delta: int) -> None:
@@ -266,7 +266,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit UI update signal: {e}")
 
     async def _async_emit_ui_update(self, food_id: str, quantity: int, image_path: str, delta: int):
-        self.dbus_object.UIUpdateRequired.emit(food_id, quantity, image_path, delta)
+        self.dbus_object.UIUpdateRequired.emit((food_id, quantity, image_path, delta))
 
     def emit_food_notification(self, notification_type: str, message: str) -> None:
         """Emit signal to broadcast a food notification."""
@@ -285,7 +285,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit food notification signal: {e}")
 
     async def _async_emit_food_notification(self, notification_type: str, message: str):
-        self.dbus_object.FoodNotification.emit(notification_type, message)
+        self.dbus_object.FoodNotification.emit((notification_type, message))
 
     def emit_environment_update_signal(self, temperature: float, humidity: float) -> None:
         """Emit signal to update UI with environmental data (Sensor 1)."""
@@ -304,7 +304,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit environment update signal: {e}")
 
     async def _async_emit_env_update(self, temperature: float, humidity: float):
-        self.dbus_object.EnvironmentUpdateRequired.emit(temperature, humidity)
+        self.dbus_object.EnvironmentUpdateRequired.emit((temperature, humidity))
 
     def emit_secondary_environment_update_signal(self, temperature: float, humidity: float) -> None:
         """Emit signal to update UI with environmental data (Sensor 2)."""
@@ -323,7 +323,7 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit secondary environment update signal: {e}")
 
     async def _async_emit_secondary_env_update(self, temperature: float, humidity: float):
-        self.dbus_object.SecondaryEnvironmentUpdateRequired.emit(temperature, humidity)
+        self.dbus_object.SecondaryEnvironmentUpdateRequired.emit((temperature, humidity))
 
     def emit_door_state_update(self, door_state: str, timestamp: float) -> None:
         """Emit signal to update UI with door state changes."""
@@ -342,7 +342,10 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit door state update signal: {e}")
 
     async def _async_emit_door_state_update(self, door_state: str, timestamp: float):
-        self.dbus_object.DoorStateUpdate.emit(door_state, timestamp)
+        try:
+            self.dbus_object.DoorStateUpdate.emit((door_state, timestamp))
+        except Exception as e:
+            self.logger.error(f"FATAL EMIT DoorStateUpdate ERROR: {e}")
 
     def emit_distance_alert(self, distance: float, within_threshold: bool) -> None:
         """Emit signal to update UI with distance alert."""
@@ -361,7 +364,10 @@ class DbDbusInterface:
             self.logger.error(f"Failed to emit distance alert signal: {e}")
 
     async def _async_emit_distance_alert(self, distance: float, within_threshold: bool):
-        self.dbus_object.DistanceAlert.emit(distance, within_threshold)
+        try:
+            self.dbus_object.DistanceAlert.emit((distance, within_threshold))
+        except Exception as e:
+            self.logger.error(f"FATAL EMIT DistanceAlert ERROR: {e}")
 
     def emit_user_presence_update(self, detected: bool) -> None:
         """Emit signal to update UI with user presence detection."""

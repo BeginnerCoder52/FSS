@@ -49,7 +49,6 @@ dbus_config = get_dbus_config()
 
 try:
     from sdbus import DbusInterfaceCommonAsync, dbus_signal_async, set_default_bus, sd_bus_open_system
-    set_default_bus(sd_bus_open_system())
 except ImportError:
     print("ERROR: sdbus package not installed. Install with: pip install python-sdbus", file=sys.stderr)
     sys.exit(1)
@@ -62,7 +61,7 @@ logger = logging.getLogger(__name__)
 DB_PATH = "/opt/fss/data/fss_data.db"
 DB_QUERY_TIMEOUT_S = 15
 DB_POLL_INTERVAL_S = 2
-DISTANCE_THRESHOLD_M = 0.6  # 60cm
+DISTANCE_THRESHOLD_CM = 60.0  # 60cm
 
 
 class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get("sensor_interface", "vn.edu.uit.FSS.Sensor")):
@@ -76,6 +75,11 @@ class SensorDaemonProxy(DbusInterfaceCommonAsync, interface_name=dbus_config.get
     @dbus_signal_async("s")
     def DoorStateChanged(self) -> None:
         """Signal: Door state."""
+        pass
+
+    @dbus_signal_async("b")
+    def UserPresenceDetected(self) -> None:
+        """Signal: User presence detection."""
         pass
 
 
@@ -142,9 +146,9 @@ class MonitorListener:
             
             if distance_row:
                 distance, ts = distance_row
-                is_user_detected = distance < DISTANCE_THRESHOLD_M
+                is_user_detected = distance < DISTANCE_THRESHOLD_CM
                 self.last_db_update_time = time.time()
-                logger.debug(f"DB Query: distance={distance:.2f}m, user_detected={is_user_detected}")
+                logger.debug(f"DB Query: distance={distance:.2f}cm, user_detected={is_user_detected}")
             
             if door_row:
                 door_state, ts = door_row
@@ -231,10 +235,11 @@ class MonitorListener:
             return
             
         try:
+            logger.info("Entering async for loop for DistanceAlert")
             async for distance, within_threshold in self.dbus_proxy.DistanceAlert:
                 try:
                     self.last_db_update_time = time.time()
-                    is_user_detected = distance < DISTANCE_THRESHOLD_M
+                    is_user_detected = distance < DISTANCE_THRESHOLD_CM
                     data = {
                         "type": "DISTANCE_ALERT",
                         "distance": float(distance),
@@ -244,7 +249,7 @@ class MonitorListener:
                         "timestamp": int(time.time() * 1000),
                     }
                     print(json.dumps(data), flush=True)
-                    logger.debug(f"Distance from DBDaemon: {distance:.2f}m, user_detected={is_user_detected}")
+                    logger.debug(f"Distance from DBDaemon: {distance:.2f}cm, user_detected={is_user_detected}")
                 except Exception as e:
                     logger.error(f"Error processing distance data: {e}")
         except asyncio.CancelledError:
@@ -309,18 +314,20 @@ class MonitorListener:
         try:
             async for distance in self.sensor_proxy.DistanceDataChanged:
                 try:
+                    # distance from raw sensor is in millimeters!
+                    distance_cm = float(distance) / 10.0
                     self.last_db_update_time = time.time()
-                    is_user_detected = distance < DISTANCE_THRESHOLD_M
+                    is_user_detected = distance_cm < DISTANCE_THRESHOLD_CM
                     data = {
                         "type": "DISTANCE_ALERT",
-                        "distance": float(distance),
+                        "distance": distance_cm,
                         "withinThreshold": is_user_detected,
                         "isUserDetected": is_user_detected,
                         "source": "raw_sensor",
                         "timestamp": int(time.time() * 1000),
                     }
                     print(json.dumps(data), flush=True)
-                    logger.debug(f"Raw distance: {distance:.2f}m, user_detected={is_user_detected}")
+                    logger.debug(f"Raw distance: {distance_cm:.2f}cm, user_detected={is_user_detected}")
                 except Exception as e:
                     logger.error(f"Error processing raw distance: {e}")
         except asyncio.CancelledError:
@@ -451,6 +458,7 @@ class MonitorListener:
 
 async def main():
     """Main entry point."""
+    set_default_bus(sd_bus_open_system())
     listener = MonitorListener()
 
     def handle_signal(signum, frame):
