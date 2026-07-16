@@ -85,12 +85,7 @@ let config = {
 			module: "MMM-FSS-Notification",
 			position: "top_center"
 		},
-		/*
-		{
-			module: "MMM-FSS-Monitor",
-			position: "top_bar"
-		},
-		*/
+
 		{
 			module: "MMM-FSS-Inventory",
 			position: "top_center",
@@ -107,6 +102,14 @@ let config = {
 				roundTemperature: false,
 				roundHumidity: false,
 				displayUnits: true
+			}
+		},
+		{
+			module: "MMM-FSS-Monitor",
+			position: "top_right",
+			config: {
+				showDebugInfo: true,
+				disableBlackout: true
 			}
 		},
 		{

@@ -69,9 +69,13 @@ module.exports = NodeHelper.create({
 			});
 
 			this.pythonProcess.stdout.on("data", (data) => {
-				const message = data.toString().trim();
-				console.log(`${this.name} [PY]: ${message}`);
-				this.handlePythonOutput(message);
+				const messages = data.toString().split("\n");
+				for (let msg of messages) {
+					const message = msg.trim();
+					if (message) {
+						this.handlePythonOutput(message);
+					}
+				}
 			});
 
 			this.pythonProcess.stderr.on("data", (data) => {
@@ -124,7 +128,7 @@ module.exports = NodeHelper.create({
           });
         } else if (data.type === "DISTANCE_ALERT") {
 				console.log(
-					`${this.name}: Relaying distance alert - ${data.distance.toFixed(2)}m, within threshold: ${data.withinThreshold}`
+					`${this.name}: Relaying distance alert - ${data.distance.toFixed(2)}cm, within threshold: ${data.withinThreshold}`
 				);
 				this.sendSocketNotification("DISTANCE_ALERT", {
 					distance: data.distance,

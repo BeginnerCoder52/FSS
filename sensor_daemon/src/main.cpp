@@ -16,22 +16,33 @@
  */
 int main(int argc, char *argv[])
 {
-    SensorDaemonMain app;
-
-    // Retry initialization until successful
-    while (!app.init_app())
+    try
     {
-        std::cerr << "Initialization failed. Retrying in 2 seconds..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        SensorDaemonMain app;
+
+        // Retry initialization until successful
+        while (!app.init_app())
+        {
+            std::cerr << "Initialization failed. Retrying in 2 seconds..." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+
+        if (!app.start_app())
+        {
+            std::cerr << "Failed to start Sensor Daemon application." << std::endl;
+            return 1;
+        }
     }
-
-    if (!app.start_app())
+    catch (const std::exception &e)
     {
-        std::cerr << "Failed to start Sensor Daemon application." << std::endl;
+        std::cerr << "FATAL: main() unhandled exception: " << e.what() << std::endl;
         return 1;
     }
-
-    app.run_main_loop();
+    catch (...)
+    {
+        std::cerr << "FATAL: main() unknown exception" << std::endl;
+        return 1;
+    }
 
     return 0;
 }
